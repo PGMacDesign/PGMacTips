@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmacutilities;
+package com.pgmacdesign.pgmacutilities.utilities;
 
 import android.content.ContentUris;
 import android.content.Context;

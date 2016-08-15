@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmacutilities;
+package com.pgmacdesign.pgmacutilities.utilities;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

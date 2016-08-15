@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmacutilities;
+package com.pgmacdesign.pgmacutilities.utilities;
 
 import android.app.ProgressDialog;
 import android.content.Context;

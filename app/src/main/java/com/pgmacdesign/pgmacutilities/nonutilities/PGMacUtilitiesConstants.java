@@ -46,9 +46,15 @@ public class PGMacUtilitiesConstants {
     public static final int TAG_OAUTH_ERROR = 4415;
     public static final int TAG_PHOTO_BAD_URL = 4416;
     public static final int TAG_FILE_DOWNLOADED = 4417;
-    public static final int TAG_OAUTH_ERROR11 = 4418;
-    public static final int TAG_OAUTH_ERROR111 = 4419;
-    public static final int TAG_OAUTH_ERROR1111 = 4420;
+    public static final int TAG_DIALOG_POPUP_YES = 4418;
+    public static final int TAG_DIALOG_POPUP_NO = 4419;
+    public static final int TAG_DIALOG_POPUP_CANCEL = 4420;
+    public static final int TAG_PHONE_QUERY_REGEX_FAIL = 4421;
+    public static final int TAG_PHONE_QUERY_REGEX_SUCCESS = 4422;
+    public static final int TAG_CONTACT_QUERY_EMAIL = 4423;
+    public static final int TAG_CONTACT_QUERY_PHONE = 4424;
+    public static final int TAG_CONTACT_QUERY_ADDRESS = 4425;
+    public static final int TAG_CONTACT_QUERY_NAME = 4426;
 
 
 
@@ -100,4 +106,17 @@ public class PGMacUtilitiesConstants {
     public static final String COLOR_SEMI_TRANSPARENT_7 = "#89111111";
     public static final String COLOR_SEMI_TRANSPARENT_8 = "#99111111";
     public static final String COLOR_SEMI_TRANSPARENT_9 = "#A9111111";
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    /////Credit Card Regular Expressions////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public static final String CARD_REGEX_VISA = "^4[0-9]{12}(?:[0-9]{3})?$";
+    public static final String CARD_REGEX_MASTERCARD = "^5[1-5][0-9]{14}$";
+    public static final String CARD_REGEX_AMERICAN_EXPRESS = "^3[47][0-9]{13}$";
+    public static final String CARD_REGEX_DINERS_CLUB = "^3(?:0[0-5]|[68][0-9])[0-9]{11}$";
+    public static final String CARD_REGEX_DISCOVER = "^6(?:011|5[0-9]{2})[0-9]{12}$";
+    public static final String CARD_REGEX_JCB = "^(?:2131|1800|35\\d{3})\\d{11}$";
+
+
 }

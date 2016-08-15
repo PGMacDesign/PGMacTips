@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmacutilities;
+package com.pgmacdesign.pgmacutilities.utilities;
 
 
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;

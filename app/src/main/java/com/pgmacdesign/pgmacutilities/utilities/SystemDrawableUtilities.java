@@ -1,5 +1,6 @@
-package com.pgmacdesign.pgmacutilities;
+package com.pgmacdesign.pgmacutilities.utilities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -7,6 +8,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.pgmacdesign.pgmacutilities.R;
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
 
 /**
@@ -14,6 +16,22 @@ import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
  * Created by pmacdowell on 8/12/2016.
  */
 public class SystemDrawableUtilities {
+
+    /**
+     * Get the hamburger icon and return it (Used for setting colors to it)
+     * @param activity activity referencing
+     * @return
+     */
+    public static View getToolbarHamburgerButton(Activity activity){
+        try {
+            View view = ((View) activity.getWindow().getDecorView().findViewById(android.R.id.home));
+            return view;
+        } catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
     /**
      * Overloaded method for passing in String colors

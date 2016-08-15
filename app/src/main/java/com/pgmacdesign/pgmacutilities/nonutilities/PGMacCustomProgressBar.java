@@ -9,8 +9,8 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.jrummyapps.android.widget.AnimatedSvgView;
-import com.pgmacdesign.pgmacutilities.ColorUtilities;
-import com.pgmacdesign.pgmacutilities.L;
+import com.pgmacdesign.pgmacutilities.utilities.ColorUtilities;
+import com.pgmacdesign.pgmacutilities.utilities.L;
 import com.pgmacdesign.pgmacutilities.R;
 
 import java.util.Timer;

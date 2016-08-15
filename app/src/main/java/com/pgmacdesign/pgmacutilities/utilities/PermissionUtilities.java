@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmacutilities;
+package com.pgmacdesign.pgmacutilities.utilities;
 
 import android.Manifest;
 import android.app.Activity;
@@ -18,6 +18,8 @@ public class PermissionUtilities {
             PGMacUtilitiesConstants.TAG_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE;
     private static final int MY_PERMISSIONS_REQUEST_CAMERA =
             PGMacUtilitiesConstants.TAG_PERMISSIONS_REQUEST_CAMERA;
+    private static final int MY_PERMISSIONS_REQUEST_CONTACTS =
+            PGMacUtilitiesConstants.MY_PERMISSIONS_REQUEST_CONTACTS;
     private static final int MY_PERMISSIONS_REQUEST_ALL =
             PGMacUtilitiesConstants.TAG_PERMISSIONS_REQUEST_ALL;
 
@@ -254,6 +256,30 @@ public class PermissionUtilities {
                             new String[]{Manifest.permission.CAMERA,
                                     Manifest.permission.WRITE_EXTERNAL_STORAGE},
                             MY_PERMISSIONS_REQUEST_CAMERA);
+                } else {
+                    return true;
+                }
+            } else {
+                return true;
+            }
+        } catch (Exception e){}
+        return false;
+    }
+
+    /**
+     * Checks for contact permissions
+     * @param activity
+     * @return
+     */
+    public static boolean getContactPermissions(Activity activity){
+        try {
+            if (Build.VERSION.SDK_INT >= 23) {
+                if (ContextCompat.checkSelfPermission(activity,
+                        Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+
+                    ActivityCompat.requestPermissions(activity,
+                            new String[]{Manifest.permission.READ_CONTACTS},
+                            MY_PERMISSIONS_REQUEST_CONTACTS);
                 } else {
                     return true;
                 }

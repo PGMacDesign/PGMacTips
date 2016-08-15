@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
+import com.pgmacdesign.pgmacutilities.services.GPSTracker;
+
 /**
  * Created by pmacdowell on 8/12/2016.
  */
@@ -25,7 +27,8 @@ public class TESTING extends AppCompatActivity {
 
         //ProgressBarUtilities.showSVGProgressDialog(this);
 
-
+        GPSTracker tracker = new GPSTracker(this);
+        tracker.
 
     }
 }
