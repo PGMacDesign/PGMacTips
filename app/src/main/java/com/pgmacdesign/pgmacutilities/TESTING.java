@@ -16,11 +16,16 @@ public class TESTING extends AppCompatActivity {
         setContentView(R.layout.testing_layout);
 
         init();
+
+
     }
 
     private void init(){
         //Custom stuff here
 
-        ProgressBarUtilities.showSVGProgressDialog(this);
+        //ProgressBarUtilities.showSVGProgressDialog(this);
+
+
+
     }
 }

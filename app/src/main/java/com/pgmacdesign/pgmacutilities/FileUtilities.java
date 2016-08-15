@@ -1,11 +1,18 @@
 package com.pgmacdesign.pgmacutilities;
 
+import android.content.Context;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 
+import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 
 /**
@@ -202,6 +209,44 @@ public class FileUtilities {
         }
     }
 
+    /**
+     * Converts an inputstream to a byte array (Mostly useful for sending images via JSON)
+     * @param is Input stream, if using a URI, open it by calling:
+     *     InputStream iStream = context.getContentResolver().openInputStream(uri);
+     * @return Byte Array
+     */
+    public static byte[] getBytes(InputStream is){
+        try {
+            ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+            int bufferSize = 1024;
+            byte[] buffer = new byte[bufferSize];
+
+            int len = 0;
+            while ((len = is.read(buffer)) != -1) {
+                byteBuffer.write(buffer, 0, len);
+            }
+            return byteBuffer.toByteArray();
+        } catch (Exception e){
+            return null;
+        }
+    }
+
+    /**
+     * Convert a file to a Uri
+     * @param file
+     * @return
+     */
+    public static Uri convertFileToUri(File file){
+        if(file == null){
+            return null;
+        }
+        Uri imgUri = Uri.fromFile(file);
+        return imgUri;
+    }
+
+    /**
+     * See Javadoc below in constructor
+     */
     public static class FileGeneratorAsync extends AsyncTask<Void, Void, String> {
 
         private OnTaskCompleteListener listener;
@@ -237,4 +282,45 @@ public class FileUtilities {
         }
     }
 
+    /**
+     * Generate an ImageURI
+     * @param mContext
+     * @return
+     */
+    public static File generateFileForImage(Context mContext){
+        return (generateFileForImage(mContext, null, null));
+    }
+
+    /**
+     * Overloaded method, generate the Image URI with more control over name and type
+     * @param mContext Context
+     * @param fileName The file name (IE picture_001)
+     * @param fileType The file type (IE .png or .jpg)
+     * @return
+     */
+    public static File generateFileForImage(Context mContext, String fileName, String fileType){
+        if(mContext == null){
+            return null;
+        }
+        if(fileType == null){
+            fileType = ".png";
+        }
+        if(!fileType.substring(0,1).equalsIgnoreCase(".")){
+            fileType = "." + fileType;
+        }
+        if(fileName == null){
+            fileName = "MyFile";
+        }
+        fileName = StringUtilities.removeSpaces(fileName);
+        String state = Environment.getExternalStorageState();
+        File file;
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            file = new File(Environment.getExternalStorageDirectory() + "/DCIM/", fileName +
+                    "_" + DateUtilities.getCurrentDateLong() + fileType);
+        }else {
+            file = new File(mContext.getFilesDir() , fileName +
+                    DateUtilities.getCurrentDateLong() + fileType);
+        }
+        return file;
+    }
 }

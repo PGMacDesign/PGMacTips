@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;

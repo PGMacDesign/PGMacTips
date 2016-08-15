@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmacutilities.customstuff;
+package com.pgmacdesign.pgmacutilities.nonutilities;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -11,7 +11,6 @@ import android.view.WindowManager;
 import com.jrummyapps.android.widget.AnimatedSvgView;
 import com.pgmacdesign.pgmacutilities.ColorUtilities;
 import com.pgmacdesign.pgmacutilities.L;
-import com.pgmacdesign.pgmacutilities.PGMacUtilitiesConstants;
 import com.pgmacdesign.pgmacutilities.R;
 
 import java.util.Timer;

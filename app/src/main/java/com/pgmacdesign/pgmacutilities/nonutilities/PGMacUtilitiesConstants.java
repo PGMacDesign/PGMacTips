@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmacutilities;
+package com.pgmacdesign.pgmacutilities.nonutilities;
 
 /**
  * Created by pmacdowell on 8/12/2016.
@@ -44,6 +44,13 @@ public class PGMacUtilitiesConstants {
     //More Misc Tags
     public static final int TAG_OAUTH_DATA_OBJECT = 4414;
     public static final int TAG_OAUTH_ERROR = 4415;
+    public static final int TAG_PHOTO_BAD_URL = 4416;
+    public static final int TAG_FILE_DOWNLOADED = 4417;
+    public static final int TAG_OAUTH_ERROR11 = 4418;
+    public static final int TAG_OAUTH_ERROR111 = 4419;
+    public static final int TAG_OAUTH_ERROR1111 = 4420;
+
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /////Time Values ///////////////////////////////////////////////////////////////////////////////

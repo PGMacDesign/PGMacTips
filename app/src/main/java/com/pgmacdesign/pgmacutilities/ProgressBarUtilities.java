@@ -5,7 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 
-import com.pgmacdesign.pgmacutilities.customstuff.PGMacCustomProgressBar;
+import com.pgmacdesign.pgmacutilities.nonutilities.PGMacCustomProgressBar;
+import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
 
 import java.util.Timer;
 import java.util.TimerTask;

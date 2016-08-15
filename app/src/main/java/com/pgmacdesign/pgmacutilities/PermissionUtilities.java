@@ -7,6 +7,8 @@ import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
+import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
+
 /**
  * Created by pmacdowell on 8/12/2016.
  */
@@ -180,6 +182,29 @@ public class PermissionUtilities {
         return false;
     }
 
+    public static boolean getLocationPermissions(Activity activity){
+        try {
+            if (Build.VERSION.SDK_INT >= 23) {
+                if (ContextCompat.checkSelfPermission(activity,
+                        Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                        ||
+                    ContextCompat.checkSelfPermission(activity,
+                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+
+                    ActivityCompat.requestPermissions(activity,
+                            new String[]{
+                                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                                    Manifest.permission.ACCESS_FINE_LOCATION},
+                            MY_PERMISSIONS_REQUEST_ALL);
+                } else {
+                    return true;
+                }
+            } else {
+                return true;
+            }
+        } catch (Exception e){}
+        return false;
+    }
     /**
      * Combining all permissions together into one
      * @param activity
