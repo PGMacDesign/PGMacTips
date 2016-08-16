@@ -3,6 +3,8 @@ package com.pgmacdesign.pgmacutilities.utilities;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
 
@@ -64,6 +66,43 @@ public class NetworkUtilities {
             }
         } else {
             return false;
+        }
+    }
+
+    /**
+     * This checks the system-side for network connectivity, then pings the google
+     * server to make sure they have internet connection. One other method avail here for use
+     * in checking via ConnectivityManager.
+     * @param context Context to be passed
+     * @return Returns a boolean, true if they have internet, false if they do not.
+     */
+    public static boolean haveNetworkConnection3(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null
+                && activeNetwork.isConnectedOrConnecting();
+    }
+
+    @SuppressWarnings("deprecation")
+    public static void clearCookies(Context context)
+    {
+
+        if (SystemUtilities.userHasLollipopMR1OrHigher()) {
+            try {
+                CookieManager.getInstance().removeAllCookies(null);
+                CookieManager.getInstance().flush();
+            } catch (Exception e){}
+        } else {
+            try {
+                CookieSyncManager cookieSyncMngr = CookieSyncManager.createInstance(context);
+                cookieSyncMngr.startSync();
+                CookieManager cookieManager = CookieManager.getInstance();
+                cookieManager.removeAllCookie();
+                cookieManager.removeSessionCookie();
+                cookieSyncMngr.stopSync();
+                cookieSyncMngr.sync();
+            } catch (Exception e){}
         }
     }
 }

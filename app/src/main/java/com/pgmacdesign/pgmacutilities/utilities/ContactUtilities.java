@@ -22,6 +22,11 @@ import java.util.regex.Pattern;
  */
 public class ContactUtilities {
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //----------Variables, enums, projections, and sort-by Strings---------------------------------/
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+
     public static final String SORT_BY_DISPLAY_NAME =
             "upper(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + ") ASC";
     public static final String SORT_BY_EMAIL =
@@ -33,21 +38,37 @@ public class ContactUtilities {
 
     /**
      * The type of search options that can be performed.
-     * 1)
-     * 2)
-     * 3)
+     * 1) EMAIL - This will search the address book for contacts nested under the email data table.
+     *            Any queries sent in with it will search via the contact display name (raw) and the
+     *            email address as well. So searching for: "La" will return both "Larry" the name
+     *            and "Laura@something.com" the email as both have 'LA'.
+     * 2)ADDRESS - This will search the address book for contacts nested under the postal address
+     *             data table. Any query passed will search both the full structured postal address
+     *             as well as the raw display name.
+     * 3)PHONE - This will search the address book for contacts nested under the phone number
+     *           data table. Any query passed will search both the phone number (without any
+     *           special characters) as the raw display name.
+     * 4)NAME - This will search the address book for contacts nested under the Name
+     *          data table. Any query passed will search the raw display name.
      */
-    public static enum SEARCH_TYPES {
+    public static enum SearchTypes {
         EMAIL, ADDRESS, PHONE, NAME
     }
-// TODO: 8/15/2016 come back and fill in details here 
     /**
      * These filters add options for query results
-     * 1)
-     * 2)
-     * 3)
+     * 1)ADD_ALPHABET_HEADERS - Adds alphabetically ordered headers to the top to match the
+     *                          First name of the contact (raw display name). So P would be
+     *                          above Patrick in the contact list
+     * 2)USE_ALL_ALPHABET_LETTERS - If this flag is passed, it will use all letters in the alphabet
+     *                              for the headers. IE, it will append A, B, C, D to the contact
+     *                              list regardless of matching names. If false, it will instead
+     *                              just put letter headers for actual contacts. For example, Bob
+     *                              and David will have 'B' and 'D' but no 'C'  header.
+     * 3)MOVE_FAVORITES_TO_TOP_OF_LIST - This flag will move favorites within the contact list to
+     *                                   the top of the list. The favorites are selected via the
+     *                                   contact app and not via this app.
      */
-    public static enum SEARCH_QUERY_OPTIONS {
+    public static enum SearchQueryFlags {
         ADD_ALPHABET_HEADERS, USE_ALL_ALPHABET_LETTERS, MOVE_FAVORITES_TO_TOP_OF_LIST
     }
 
@@ -126,28 +147,55 @@ public class ContactUtilities {
     //----------Async Query Methods for Single table pull------------------------------------------/
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static class ContactQueryAsync extends AsyncTask<Void, Void, Map<SEARCH_TYPES, List<Contact>>> {
+    /**
+     * See Javadoc on constructor below
+     */
+    public static class ContactQueryAsync extends AsyncTask<Void, Void, Map<SearchTypes, List<Contact>>> {
 
         private OnTaskCompleteListener listener;
         private Activity activity;
         private String query;
-        private SEARCH_TYPES[] typesToQuery;
+        private SearchTypes[] typesToQuery;
         private int maxNumResults;
         private boolean includeAlphabetHeaders, includeAllLetters,  moveFavoritesToTop;
 
+        /**
+         * Perform a contact query on an asynchronous background thread
+         * @param listener The listener to pass data back on. Note! Data sent back will be a
+         *                 list of Contact Objects. See {@link Contact}. The data is sent back
+         *                 along the Listener with a tag to match the returned results:
+         *                 Email: PGMacUtilitiesConstants.TAG_CONTACT_QUERY_EMAIL
+         *                 Phone: PGMacUtilitiesConstants.TAG_CONTACT_QUERY_PHONE
+         *                 Name: PGMacUtilitiesConstants.TAG_CONTACT_QUERY_NAME
+         *                 Address: PGMacUtilitiesConstants.TAG_CONTACT_QUERY_ADDRESS
+         * @param activity The activity this is being called from
+         * @param query The query to be included (in String format)
+         * @param maxNumResults The int max number of results. If null or zero is passed, it will
+         *                      simply have no limit on the max number of results.
+         * @param typesToQuery Array of SearchTypes enum objects. These are the types of items
+         *                     to actually make a query to. Sending multiple will return multiple
+         *                     See {@link SearchTypes}
+         * @param queryOptions An array of SearchQueryFlags that alter how the data is returned.
+         *                     See {@link SearchQueryFlags}
+         */
         public ContactQueryAsync(OnTaskCompleteListener listener, Activity activity,
-                                 String query, SEARCH_TYPES[] typesToQuery, int maxNumResults,
-                                 SEARCH_QUERY_OPTIONS[] queryOptions){
+                                 String query, Integer maxNumResults,
+                                 SearchTypes[] typesToQuery,
+                                 SearchQueryFlags[] queryOptions){
             this.listener = listener;
             this.activity = activity;
             this.query = query;
             this.typesToQuery = typesToQuery;
-            this.maxNumResults = maxNumResults;
+            if(maxNumResults != null) {
+                this.maxNumResults = maxNumResults;
+            } else {
+                this.maxNumResults = 0;
+            }
             this.includeAlphabetHeaders = false;
             this.includeAllLetters = false;
             this.moveFavoritesToTop = false;
             if(queryOptions != null){
-                for(SEARCH_QUERY_OPTIONS option : queryOptions){
+                for(SearchQueryFlags option : queryOptions){
                     switch (option){
                         case ADD_ALPHABET_HEADERS:
                             this.includeAlphabetHeaders = true;
@@ -165,11 +213,11 @@ public class ContactUtilities {
         }
 
         @Override
-        protected Map<SEARCH_TYPES, List<Contact>> doInBackground(Void... params) {
+        protected Map<SearchTypes, List<Contact>> doInBackground(Void... params) {
 
-            Map<SEARCH_TYPES, List<Contact>> toGenerate = new HashMap<>();
+            Map<SearchTypes, List<Contact>> toGenerate = new HashMap<>();
 
-            for(SEARCH_TYPES type : typesToQuery){
+            for(SearchTypes type : typesToQuery){
                 switch (type){
                     case EMAIL:
                         List<Contact> emailContacts = ContactUtilities.getEmailQuery(
@@ -183,7 +231,7 @@ public class ContactUtilities {
                         if(moveFavoritesToTop) {
                             emailContacts = ContactUtilities.moveFavoritesToTop(emailContacts);
                         }
-                        toGenerate.put(SEARCH_TYPES.EMAIL, emailContacts);
+                        toGenerate.put(SearchTypes.EMAIL, emailContacts);
                         break;
 
                     case PHONE:
@@ -198,7 +246,7 @@ public class ContactUtilities {
                         if(moveFavoritesToTop) {
                             phoneContacts = ContactUtilities.moveFavoritesToTop(phoneContacts);
                         }
-                        toGenerate.put(SEARCH_TYPES.PHONE, phoneContacts);
+                        toGenerate.put(SearchTypes.PHONE, phoneContacts);
                         break;
 
                     case ADDRESS:
@@ -213,7 +261,7 @@ public class ContactUtilities {
                         if(moveFavoritesToTop) {
                             addressContacts = ContactUtilities.moveFavoritesToTop(addressContacts);
                         }
-                        toGenerate.put(SEARCH_TYPES.ADDRESS, addressContacts);
+                        toGenerate.put(SearchTypes.ADDRESS, addressContacts);
                         break;
 
                     case NAME:
@@ -228,7 +276,7 @@ public class ContactUtilities {
                         if(moveFavoritesToTop) {
                             nameContacts = ContactUtilities.moveFavoritesToTop(nameContacts);
                         }
-                        toGenerate.put(SEARCH_TYPES.NAME, nameContacts);
+                        toGenerate.put(SearchTypes.NAME, nameContacts);
                         break;
                 }
             }
@@ -237,9 +285,9 @@ public class ContactUtilities {
         }
 
         @Override
-        protected void onPostExecute(Map<SEARCH_TYPES, List<Contact>> contacts) {
-            for(Map.Entry<SEARCH_TYPES, List<Contact>> myMap : contacts.entrySet()){
-                SEARCH_TYPES SEARCHTYPES = myMap.getKey();
+        protected void onPostExecute(Map<SearchTypes, List<Contact>> contacts) {
+            for(Map.Entry<SearchTypes, List<Contact>> myMap : contacts.entrySet()){
+                SearchTypes SEARCHTYPES = myMap.getKey();
                 List<Contact> contacts1 = myMap.getValue();
 
                 //Skip the loop if null
@@ -269,17 +317,17 @@ public class ContactUtilities {
         }
     }
 
-    public static class ContactQueryAsyncTESTING extends AsyncTask <Void, Void, List<Contact>>{
+    private static class ContactQueryAsyncTESTING extends AsyncTask <Void, Void, List<Contact>>{
 
         private OnTaskCompleteListener listener;
         private Activity activity;
         private String query;
-        private SEARCH_TYPES[] typesToQuery;
+        private SearchTypes[] typesToQuery;
         private int maxNumResults;
         private List<String> testAlphabetQueries;
 
-        public ContactQueryAsyncTESTING(OnTaskCompleteListener listener, Activity activity,
-                                        String query, SEARCH_TYPES[] typesToQuery, int maxNumResults,
+        private ContactQueryAsyncTESTING(OnTaskCompleteListener listener, Activity activity,
+                                        String query, SearchTypes[] typesToQuery, int maxNumResults,
                                         List<String> testAlphabetQueries){
             this.listener = listener;
             this.activity = activity;
@@ -367,7 +415,7 @@ public class ContactUtilities {
             int counter = 0;
             while (pCur.moveToNext()) {
 
-                if(counter < maxNumResults){
+                if(counter < maxNumResults || maxNumResults == 0){
 
                     Contact contact = new Contact();
 
@@ -471,7 +519,7 @@ public class ContactUtilities {
 
             int counter = 0;
             while (emailCur.moveToNext()) {
-                if(counter < maxNumResults) {
+                if(counter < maxNumResults || maxNumResults == 0) {
 
                     Contact contact = new Contact();
 
@@ -581,7 +629,7 @@ public class ContactUtilities {
             int counter = 0;
             while (addrCur.moveToNext()) {
 
-                if(counter < maxNumResults) {
+                if(counter < maxNumResults || maxNumResults == 0) {
 
                     Contact contact = new Contact();
 
@@ -688,7 +736,7 @@ public class ContactUtilities {
             int counter = 0;
             while (nameCur.moveToNext()) {
 
-                if(counter < maxNumResults) {
+                if(counter < maxNumResults || maxNumResults == 0) {
 
                     Contact contact = new Contact();
 
@@ -788,7 +836,7 @@ public class ContactUtilities {
             int counter = 0;
             while (pCur.moveToNext()) {
 
-                if(counter < maxNumResults){
+                if(counter < maxNumResults || maxNumResults == 0){
 
                     Contact contact = new Contact();
 

@@ -1,5 +1,7 @@
 package com.pgmacdesign.pgmacutilities.nonutilities;
 
+import com.daimajia.androidanimations.library.Techniques;
+
 /**
  * Created by pmacdowell on 8/12/2016.
  */
@@ -21,6 +23,7 @@ public class PGMacUtilitiesConstants {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     //Request codes used for permission requests
+    public static final int MY_PERMISSIONS_REQUEST_CONTACTS = 4399;
     public static final int TAG_PERMISSIONS_REQUEST_CODE_INT = 4400;
     public static final int TAG_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 4401;
     public static final int TAG_PERMISSIONS_REQUEST_CAMERA = 4402;
@@ -55,6 +58,19 @@ public class PGMacUtilitiesConstants {
     public static final int TAG_CONTACT_QUERY_PHONE = 4424;
     public static final int TAG_CONTACT_QUERY_ADDRESS = 4425;
     public static final int TAG_CONTACT_QUERY_NAME = 4426;
+    public static final int TAG_TAKE_PICTURE_WITH_CAMERA = 4427;
+    public static final int TAG_PHOTO_FROM_GALLERY = 4428;
+    public static final int TAG_CROP_PHOTO = 4429;
+    public static final int TAG_RETURN_IMAGE_URL = 4430;
+    public static final int TAG_TAKE_VIDEO_WITH_RECORDER = 4431;
+    public static final int TAG_MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 4432;
+    public static final int TAG_MY_PERMISSIONS_REQUEST_CAMERA = 4433;
+    public static final int TAG_PHOTO_UNKNOWN_ERROR = 4434;
+    public static final int TAG_CROP_ERROR = 4435;
+    public static final int TAG_CROP_SUCCESS = 4436;
+    public static final int TAG_PHOTO_CANCEL = 4437;
+    public static final int TAG_UPLOAD_ERROR = 4438;
+    public static final int TAG_UPLOAD_SUCCESS = 4439;
 
 
 
@@ -118,5 +134,30 @@ public class PGMacUtilitiesConstants {
     public static final String CARD_REGEX_DISCOVER = "^6(?:011|5[0-9]{2})[0-9]{12}$";
     public static final String CARD_REGEX_JCB = "^(?:2131|1800|35\\d{3})\\d{11}$";
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    /////Animation Constants and Tags///////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //Animation Techniques (From the library using YoYo).
+    //Prefix: In means it brings them into sight while out takes them out of sight
+    public static final Techniques IN_ZOOM_UP = Techniques.ZoomInUp; //Fun one, opposite of ZoomOutDown, zooms it up and then in
+    public static final Techniques OUT_ZOOM_DOWN = Techniques.ZoomOutDown; //Fun one, zooms away (back) and then down, useful for getting rid of things
+    public static final Techniques IN_ROLL = Techniques.RollIn;//Fly in effect looks nice for new views popping in
+    public static final Techniques IN_PULSE = Techniques.Pulse; //Pops the view front and back, good for a focuser
+    public static final Techniques OUT_HINGE = Techniques.Hinge; //Looks like broken hinge on view and it falls off, fun looking
+    public static final Techniques IN_RUBBERBAND = Techniques.RubberBand; //Good for a 'de-select' kind of effect
+    public static final Techniques OUT_FLIP_Y = Techniques.FlipOutY; //Clean looking flip out on y Axis, good for deletion/ removal
+    public static final Techniques IN_FLIP_X = Techniques.FlipInX;  //Clean flip look. Looks like it's rotating on the X axis in
+    public static final Techniques OUT_FLIP_X = Techniques.FlipOutX; //Opposite of FlipInX, good for deletetion / removal
+    public static final Techniques OUT_SLIDE = Techniques.SlideOutUp; //Using SlideOutUp in conjunction with SlideInUp would look kinda cool...
+    public static final Techniques IN_RIGHT_SLIDE = Techniques.SlideInRight; //Using SlideOutUp in conjunction with SlideInUp would look kinda cool...
+    public static final Techniques IN_LEFT_SLIDE = Techniques.SlideInLeft; //Using SlideOutUp in conjunction with SlideInUp would look kinda cool...
+    public static final Techniques IN_SLIDE = Techniques.SlideInUp; //Using SlideOutUp in conjunction with SlideInUp would look kinda cool...
+    public static final Techniques IN_FADE_DOWN = Techniques.FadeInDown; //Simple fade in and down animation
+    public static final Techniques IN_FADE_UP = Techniques.FadeInUp; //Simple fade in and up animation
+    public static final Techniques IN_DROP = Techniques.DropOut; //Looks cool, falls down from top and bounces
+    public static final Techniques IN_TADA = Techniques.Tada; //Fun one, seems useful for focusing on a view
+    public static final Techniques OUT_ROLL = Techniques.RollOut;
+    public static final Techniques OUT_ZOOM = Techniques.ZoomOut;
 
 }

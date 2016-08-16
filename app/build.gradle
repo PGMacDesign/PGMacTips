@@ -49,6 +49,15 @@ android {
         compile 'com.android.support:support-v4:24.1.1'
         compile 'com.android.support:cardview-v7:24.1.1'
 
+        //Animations. Link: https://github.com/daimajia/AndroidViewAnimations
+        compile 'com.nineoldandroids:library:2.4.0'
+        compile 'com.daimajia.easing:library:1.0.1@aar'
+        compile 'com.daimajia.androidanimations:library:1.1.3@aar'
+
+        //Updated Cropper. https://github.com/Yalantis/uCrop
+        compile 'com.yalantis:ucrop:2.1.2'
+
+
         /*
         //Google play services
         compile 'com.google.android.gms:play-services:9.2.1'
