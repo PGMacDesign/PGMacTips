@@ -16,7 +16,9 @@ import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
 
+import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmacutilities.nonutilities.CircleTransform;
+import com.pgmacdesign.pgmacutilities.nonutilities.PGMacCustomProgressBar;
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.LruCache;
@@ -466,6 +468,9 @@ public class ImageUtilities {
             this.imageUrl = imageUrl;
             this.listener = listener;
             this.dialog = dialog;
+            if(this.dialog == null){
+                this.dialog = PGMacCustomProgressBar.buildSVGDialog(context);
+            }
             if(lengthOfTimeToDelay == null){
                 lengthOfTimeToDelay = (long)(PGMacUtilitiesConstants.ONE_SECOND * 2.6);
             }

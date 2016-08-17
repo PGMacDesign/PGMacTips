@@ -8,6 +8,7 @@ import com.cloudrail.si.services.Facebook;
 import com.cloudrail.si.services.GooglePlus;
 import com.cloudrail.si.services.Instagram;
 import com.cloudrail.si.services.Twitter;
+import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
 
 import org.json.JSONArray;

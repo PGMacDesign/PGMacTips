@@ -71,7 +71,8 @@ public class PGMacUtilitiesConstants {
     public static final int TAG_PHOTO_CANCEL = 4437;
     public static final int TAG_UPLOAD_ERROR = 4438;
     public static final int TAG_UPLOAD_SUCCESS = 4439;
-
+    public static final int TAG_CLICK_NO_TAG_SENT = 4440;
+    public static final int TAG_LONG_CLICK_NO_TAG_SENT = 4440;
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

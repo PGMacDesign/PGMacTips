@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 
+import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
 
 import java.io.ByteArrayOutputStream;
@@ -321,6 +322,25 @@ public class FileUtilities {
             file = new File(mContext.getFilesDir() , fileName +
                     DateUtilities.getCurrentDateLong() + fileType);
         }
+        return file;
+    }
+
+    /**
+     * Overloaded method that allows for more customization
+     * @param filePath
+     * @param fileName
+     * @param fileType
+     * @return
+     */
+    public static File generateFileForImage(@NonNull String filePath, @NonNull String fileName,
+                                            @NonNull String fileType){
+        fileName = StringUtilities.removeSpaces(fileName);
+        String state = Environment.getExternalStorageState();
+        File file = null;
+        try {
+            file = new File(filePath, fileName + "_" + DateUtilities.getCurrentDateLong()
+                    + fileType);
+        } catch (Exception e){}
         return file;
     }
 }

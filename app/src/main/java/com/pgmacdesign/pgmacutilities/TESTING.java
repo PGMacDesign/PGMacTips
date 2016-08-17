@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.pgmacdesign.pgmacutilities.services.GPSTracker;
 import com.pgmacdesign.pgmacutilities.utilities.ContactUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.L;
-import com.pgmacdesign.pgmacutilities.utilities.OnTaskCompleteListener;
+import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 
 import java.util.List;
 

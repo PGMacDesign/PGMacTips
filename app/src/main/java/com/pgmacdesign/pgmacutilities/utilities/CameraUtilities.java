@@ -2,7 +2,7 @@ package com.pgmacdesign.pgmacutilities.utilities;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.ProgressDialog;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,16 +13,17 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
-import com.pgmacdesign.pgmacutilities.R;
+import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
+import com.pgmacdesign.pgmacutilities.nonutilities.PGMacCustomProgressBar;
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.net.URI;
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -60,16 +61,16 @@ public class CameraUtilities {
      4) Once they click the button to open the photo / video / gallery intent, put this code there.
         Need to make sure to change the last one (The enum variable) to decide which is to be done
             cameraUtilities.startPhotoProcess(
-                CameraUtilities.sourceType.CAMERA);
+                CameraUtilities.SourceType.CAMERA);
 
      5) Lastly, need to implement the onTaskComplete listener
             @Override
-            public void onTaskCompleteV2(Object result) {
+            public void onTaskComplete(Object result) {
                 //Do stuff here
             }
 
             @Override
-            public void onTaskCompleteV2(Object result, int customTag) {
+            public void onTaskComplete(Object result, int customTag) {
                 if(result != null) {
                     switch (customTag) {
                         //Crop was success, no upload, PhotoObject sent back
@@ -134,21 +135,24 @@ public class CameraUtilities {
     public static final int TAG_UPLOAD_SUCCESS = PGMacUtilitiesConstants.TAG_UPLOAD_SUCCESS;
 
     //UCrop Variables
-    private int maxWidth, maxHeight;
-    private UCrop.Options options; //Empty for now
-
-    //String Constants
-    public final String BASE_IMAGE_STRING = "LoveLab_"; //RENAME THIS WITH WHATEVER APP IS BEING RUN
+    private UCrop.Options options;
 
     //Variables passed in via constructor
     private Activity activity;
     private Context context;
     private OnTaskCompleteListener listener;
+
+    //Variables set by Flags and Options
     private boolean shouldUploadPhoto, shouldDeletePhoto, useFrontFacingCamera;
+    private CameraUtilityOptionsAndFlags optionsAndFlags;
+    private String userSentNameOfFile, userSentPathToFile;
+    private Integer maxDurationForVideo;
 
     //Misc Variables
-    private ProgressDialog alertDialog;
+    private AlertDialog alertDialog;
     private String webImageUrl;
+    private SupportedPhotoFileExtensions photoFileExtension;
+    private SupportedVideoFileExtensions videoFileExtension;
 
     //Uri / File to hold while photo is being taken
     private Uri takePhotoUri, takeVideoUri, downloadedPhotoUri;
@@ -167,59 +171,257 @@ public class CameraUtilities {
     /**
      * Source Type enum to be used for photo setting / getting
      */
-    public enum sourceType {
+    public enum SourceType {
         CAMERA, VIDEO, GALLERY, WEB_URL
     }
 
     /**
-     * Constructor For Camer Image Utilities Class
-     * @param context Context
-     * @param activity Activity
-     * @param shouldUploadPhoto boolean, if true, photo will auto upload to default chosen
-     *                          photo service (on a per app basis). If false, it will not upload.
-     *                          If null is passed, defaults to false
-     * @param listener listener to send data back on
+     * Supported Video File extensions. Link for list below:
+     * https://developer.android.com/guide/appendix/media-formats.html
      */
-    public CameraUtilities(Context context, Activity activity, Boolean shouldUploadPhoto,
-                                  Boolean useFrontFacingCamera, OnTaskCompleteListener listener){
-        this.context = context;
-        this.activity = activity;
-        this.listener = listener;
-        this.alertDialog = PatsCustomAlertDialog.buildSVGDialog(context);
+    public enum SupportedVideoFileExtensions {
+        GPP3(".3gp"),
+        MP4(".mp4");
 
-        if(shouldUploadPhoto == null){
-            this.shouldUploadPhoto = false;
-        } else {
-            this.shouldUploadPhoto = shouldUploadPhoto;
+        public String videoExtensionName;
+
+        SupportedVideoFileExtensions(String videoExtensionName){
+            this.videoExtensionName = videoExtensionName;
         }
 
-        if(useFrontFacingCamera == null){
-            this.useFrontFacingCamera = false;
-        } else {
-            this.useFrontFacingCamera = useFrontFacingCamera;
+        /**
+         * Checks if the type passed in is a supported type.
+         * @param str Extension to check. IE, ".jpg", ".gif"
+         * @return Boolean. True if it is supported, false if not
+         */
+        public static boolean isSupportedType(String str){
+            if(StringUtilities.isNullOrEmpty(str)){
+                return false;
+            }
+            if(str.equals(GPP3.videoExtensionName) ||
+                    str.equals(MP4.videoExtensionName)){
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+    /**
+     * Supported Photo File extensions. Link for list below:
+     * https://developer.android.com/guide/appendix/media-formats.html
+     */
+    public enum SupportedPhotoFileExtensions {
+        JPEG(".jpg"),
+        GIF(".gif"),
+        PNG(".png"),
+        BMP(".bmp"),
+        WEBP(".webp");
+
+        public String photoExtensionName;
+
+        SupportedPhotoFileExtensions(String photoExtensionName){
+            this.photoExtensionName = photoExtensionName;
+        }
+
+        /**
+         * Checks if the type passed in is a supported type.
+         * @param str Extension to check. IE, ".jpg", ".gif"
+         * @return Boolean. True if it is supported, false if not
+         */
+        public static boolean isSupportedType(String str){
+            if(StringUtilities.isNullOrEmpty(str)){
+                return false;
+            }
+            if(str.equals(JPEG.photoExtensionName) ||
+                    str.equals(GIF.photoExtensionName) ||
+                    str.equals(PNG.photoExtensionName) ||
+                    str.equals(BMP.photoExtensionName) ||
+                    str.equals(WEBP.photoExtensionName)){
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
     /**
-     * This overloaded constructor is used for skipping the camera and gallery and cropping /
-     * uploading an image directly from a web url
-     * @param context
-     * @param activity
-     * @param webImageUrl Web URL of the photo
-     * @param listener
+     * Flags and options class for specific things to happen within the Camera Utilities calls
      */
-    public CameraUtilities(Context context, Activity activity, Boolean shouldUploadPhoto,
-                                  String webImageUrl, OnTaskCompleteListener listener){
+    public class CameraUtilityOptionsAndFlags {
+        private Integer maxVideoRecordingTime;
+        private String nameOfFile;
+        private String pathToFile;
+        private boolean shouldUploadPhoto;
+        private boolean shouldDeletePhotoAfter;
+        private boolean useDefaultToFrontFacingCamera;
+        private AlertDialog alertDialog;
+        private String webImageUrlToDownload;
+        private SupportedVideoFileExtensions videoExtension;
+        private SupportedPhotoFileExtensions photoExtension;
+
+        public CameraUtilityOptionsAndFlags(Context context){
+            this.maxVideoRecordingTime = null;
+            this.nameOfFile = null;
+            this.pathToFile = null;
+            this.shouldUploadPhoto = false;
+            this.shouldDeletePhotoAfter = false;
+            this.useDefaultToFrontFacingCamera = false;
+            this.alertDialog = PGMacCustomProgressBar.buildSVGDialog(context);
+            this.webImageUrlToDownload = null;
+            this.videoExtension = SupportedVideoFileExtensions.MP4;
+            this.photoExtension = SupportedPhotoFileExtensions.PNG;
+        }
+
+        /**
+         * Constructor
+         * @param maxVideoRecordingTime If recording a video, max recording time. (IN SECONDS! NOT
+         *                              IN MILLISECONDS!)
+         * @param nameOfFile The name of the file
+         * @param pathToFile The path to the file
+         * @param shouldUploadPhoto Boolean, should the photo be uploaded or not
+         * @param shouldDeletePhotoAfter Boolean, should the photo be deleted or not afterwards
+         * @param useDefaultToFrontFacingCamera Boolean, should the camera default to the front
+         *                                      facing camera or not
+         * @param alertDialog Alert dialog. If none selected, default one (PGMacCustom SVG)
+         *                    will be selected
+         * @param webImageUrlToDownload The web imageURL String if included
+         * @param videoExtension The video extension format {@link SupportedVideoFileExtensions}
+         * @param photoExtension The photo extension format {@link SupportedPhotoFileExtensions}
+         */
+        public CameraUtilityOptionsAndFlags(Integer maxVideoRecordingTime, String nameOfFile,
+                                            String pathToFile, boolean shouldUploadPhoto,
+                                            boolean shouldDeletePhotoAfter,
+                                            boolean useDefaultToFrontFacingCamera,
+                                            AlertDialog alertDialog, String webImageUrlToDownload,
+                                            SupportedVideoFileExtensions videoExtension,
+                                            SupportedPhotoFileExtensions photoExtension) {
+            this.videoExtension = videoExtension;
+            this.photoExtension = photoExtension;
+            this.maxVideoRecordingTime = maxVideoRecordingTime;
+            this.nameOfFile = nameOfFile;
+            this.pathToFile = pathToFile;
+            this.shouldUploadPhoto = shouldUploadPhoto;
+            this.shouldDeletePhotoAfter = shouldDeletePhotoAfter;
+            this.useDefaultToFrontFacingCamera = useDefaultToFrontFacingCamera;
+            this.alertDialog = alertDialog;
+            this.webImageUrlToDownload = webImageUrlToDownload;
+        }
+
+        public SupportedVideoFileExtensions getVideoExtension() {
+            return videoExtension;
+        }
+
+        public void setVideoExtension(SupportedVideoFileExtensions videoExtension) {
+            this.videoExtension = videoExtension;
+        }
+
+        public SupportedPhotoFileExtensions getPhotoExtension() {
+            return photoExtension;
+        }
+
+        public void setPhotoExtension(SupportedPhotoFileExtensions photoExtension) {
+            this.photoExtension = photoExtension;
+        }
+
+        public String getWebImageUrlToDownload() {
+            return webImageUrlToDownload;
+        }
+
+        public void setWebImageUrlToDownload(String webImageUrlToDownload) {
+            this.webImageUrlToDownload = webImageUrlToDownload;
+        }
+
+        public Integer getMaxVideoRecordingTime() {
+            return maxVideoRecordingTime;
+        }
+
+        public void setMaxVideoRecordingTime(Integer maxVideoRecordingTime) {
+            this.maxVideoRecordingTime = maxVideoRecordingTime;
+        }
+
+        public String getNameOfFile() {
+            return nameOfFile;
+        }
+
+        public void setNameOfFile(String nameOfFile) {
+            this.nameOfFile = nameOfFile;
+        }
+
+        public String getPathToFile() {
+            return pathToFile;
+        }
+
+        public void setPathToFile(String pathToFile) {
+            this.pathToFile = pathToFile;
+        }
+
+        public boolean getShouldUploadPhoto() {
+            return shouldUploadPhoto;
+        }
+
+        public void setShouldUploadPhoto(boolean shouldUploadPhoto) {
+            this.shouldUploadPhoto = shouldUploadPhoto;
+        }
+
+        public boolean getShouldDeletePhotoAfter() {
+            return shouldDeletePhotoAfter;
+        }
+
+        public void setShouldDeletePhotoAfter(boolean shouldDeletePhotoAfter) {
+            this.shouldDeletePhotoAfter = shouldDeletePhotoAfter;
+        }
+
+        public boolean isUseDefaultToFrontFacingCamera() {
+            return useDefaultToFrontFacingCamera;
+        }
+
+        public void setUseDefaultToFrontFacingCamera(boolean useDefaultToFrontFacingCamera) {
+            this.useDefaultToFrontFacingCamera = useDefaultToFrontFacingCamera;
+        }
+
+        public AlertDialog getAlertDialog() {
+            return alertDialog;
+        }
+
+        public void setAlertDialog(AlertDialog alertDialog) {
+            this.alertDialog = alertDialog;
+        }
+    }
+
+    /**
+     * Constructor For Camera Image Utilities Class. Note! This will set the OptionsAndFlags
+     * variable to defaults.
+     * @param context Context
+     * @param activity Activity
+     * @param listener listener to send data back on
+     */
+    public CameraUtilities(Context context, Activity activity, OnTaskCompleteListener listener){
+        if(context == null){
+            return;
+        }
         this.context = context;
         this.activity = activity;
         this.listener = listener;
-        this.alertDialog = PatsCustomAlertDialog.buildSVGDialog(context);
-        if(shouldUploadPhoto == null){
-            this.shouldUploadPhoto = false;
-        } else {
-            this.shouldUploadPhoto = shouldUploadPhoto;
-        }
-        this.webImageUrl = webImageUrl;
+        this.optionsAndFlags = new CameraUtilityOptionsAndFlags(context);
+    }
+
+    /**
+     * Overloaded method to allow for options and flags to be passed in
+     * @param context
+     * @param activity
+     * @param listener
+     * @param optionsAndFlags {@link CameraUtilityOptionsAndFlags}
+     */
+    public CameraUtilities(Context context, Activity activity, OnTaskCompleteListener listener,
+                           CameraUtilityOptionsAndFlags optionsAndFlags){
+        this.context = context;
+        this.activity = activity;
+        this.listener = listener;
+        this.optionsAndFlags = optionsAndFlags;
+    }
+    //Setter for optionsAndFlags
+    public void setCameraUtilityOptionsAndFlas(@NonNull CameraUtilityOptionsAndFlags optionsAndFlags){
+        this.optionsAndFlags = optionsAndFlags;
     }
 
     /**
@@ -258,11 +460,12 @@ public class CameraUtilities {
             } catch (Exception e){}
         }
     }
+
     /**
      * Starts the photo process depending on what is passed in
-     * @param typeOfPicture Type of action to be taken depending on the sourceType
+     * @param typeOfPicture Type of action to be taken depending on the SourceType
      */
-    public void startPhotoProcess(sourceType typeOfPicture){
+    public void startPhotoProcess(SourceType typeOfPicture){
         //First request permissions
         boolean canUseCamera, canUserStorage;
         canUseCamera = getCameraPermissions();
@@ -271,17 +474,46 @@ public class CameraUtilities {
             return;
         }
 
+        //Set variables from options
+        this.alertDialog = optionsAndFlags.getAlertDialog();
+        this.shouldDeletePhoto = optionsAndFlags.getShouldDeletePhotoAfter();
+        this.shouldUploadPhoto = optionsAndFlags.getShouldUploadPhoto();
+        this.userSentNameOfFile = optionsAndFlags.getNameOfFile();
+        this.userSentPathToFile = optionsAndFlags.getPathToFile();
+        this.maxDurationForVideo = optionsAndFlags.getMaxVideoRecordingTime();
+        this.photoFileExtension = optionsAndFlags.getPhotoExtension();
+        this.videoFileExtension = optionsAndFlags.getVideoExtension();
+
+        if(!SupportedPhotoFileExtensions.isSupportedType(photoFileExtension.photoExtensionName)){
+            photoFileExtension = SupportedPhotoFileExtensions.PNG;
+        }
+        if(!SupportedVideoFileExtensions.isSupportedType(videoFileExtension.videoExtensionName)){
+            videoFileExtension = SupportedVideoFileExtensions.MP4;
+        }
+
+        if(StringUtilities.isNullOrEmpty(userSentNameOfFile)){
+            userSentNameOfFile = "PGMacUtilities";
+        }
+        userSentNameOfFile = StringUtilities.removeSpaces(userSentNameOfFile);
+
+        if(StringUtilities.isNullOrEmpty(userSentPathToFile)){
+            userSentPathToFile = Environment.getExternalStorageDirectory() + "/DCIM/";
+        }
+        userSentPathToFile = StringUtilities.removeSpaces(userSentPathToFile);
+
+        if(this.maxDurationForVideo == null){
+            this.maxDurationForVideo = 0;
+        }
+        if(this.maxDurationForVideo > 1000){
+            //Doing this in case someone mistakenly sends in milliseconds when the system has it in seconds
+            this.maxDurationForVideo /= 1000;
+        }
+        this.webImageUrl = optionsAndFlags.getWebImageUrlToDownload();
+
         //Clear from last run
         takePhotoUri = null;
         takeVideoUri = null;
         fileToPassAround = null;
-
-        //To Delete or not
-        if(typeOfPicture == sourceType.CAMERA || typeOfPicture == sourceType.WEB_URL){
-            shouldDeletePhoto = true;
-        } else {
-            shouldDeletePhoto = false;
-        }
 
         switch (typeOfPicture){
 
@@ -290,7 +522,7 @@ public class CameraUtilities {
                 break;
 
             case VIDEO:
-                this.takeVideoWithCamera(DURATION_LIMIT_FOR_VIDEOS); //Hard coding this for now, add int param
+                this.takeVideoWithCamera();
                 break;
 
             case GALLERY:
@@ -355,13 +587,13 @@ public class CameraUtilities {
      */
     private void cropPhotoFromWeb() {
         if (webImageUrl == null) {
-            listener.onTaskCompleteV2("URL was invalid", TAG_PHOTO_BAD_URL);
+            listener.onTaskComplete("URL was invalid", TAG_PHOTO_BAD_URL);
             return;
         }
-        L.m("webImageUrl = " + webImageUrl);
 
         final ImageUtilities.DownloadImageFromWeb downloadImageFromWeb =
-                new ImageUtilities.DownloadImageFromWeb(context, webImageUrl, new OnTaskCompleteListener() {
+                new ImageUtilities.DownloadImageFromWeb(context, webImageUrl, null,
+                        new OnTaskCompleteListener() {
                     @Override
                     public void onTaskComplete(Object result, int customTag) {
                         showAlertOrNot(false);
@@ -377,16 +609,16 @@ public class CameraUtilities {
                                     CameraUtilities.this.startCropping(
                                             downloadedPhotoUri, downloadedPhotoUri);
                                 } else {
-                                    listener.onTaskCompleteV2("An Error Occured", TAG_PHOTO_UNKNOWN_ERROR);
+                                    listener.onTaskComplete("An Error Occured", TAG_PHOTO_UNKNOWN_ERROR);
                                 }
                             } catch (Exception e) {
-                                listener.onTaskCompleteV2("An Error Occured", TAG_PHOTO_UNKNOWN_ERROR);
+                                listener.onTaskComplete("An Error Occured", TAG_PHOTO_UNKNOWN_ERROR);
                             }
                         } else {
-                            listener.onTaskCompleteV2("An Error Occurred", TAG_PHOTO_UNKNOWN_ERROR);
+                            listener.onTaskComplete("An Error Occurred", TAG_PHOTO_UNKNOWN_ERROR);
                         }
                     }
-                });
+                }, null);
 
         downloadImageFromWeb.execute();
 
@@ -399,7 +631,14 @@ public class CameraUtilities {
      */
     private void takePhotoWithCamera(){
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, this.generateImageUri(context));
+        Uri uri = this.generateImageUri(context);
+        if(uri != null) {
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        } else {
+            L.m("invalid file data passed. Check your file Path, name, and extension");
+            listener.onTaskComplete("Error", TAG_PHOTO_UNKNOWN_ERROR);
+            return;
+        }
         if(useFrontFacingCamera){
             int frontFacing = this.doesUserHaveFrontFacingCamera(context);
             if(frontFacing != -1){
@@ -416,28 +655,29 @@ public class CameraUtilities {
 
     /**
      * Take a video
-     * @param optionalDurationLimit Optional duration limit (In seconds)
      */
-    private void takeVideoWithCamera(int optionalDurationLimit){
+    private void takeVideoWithCamera(){
         Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-        if(optionalDurationLimit > 0){
-            takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, optionalDurationLimit);
+        if(maxDurationForVideo > 0){
+            takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, maxDurationForVideo);
         }
-        takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, generateVideoUri(context));
-        activity.startActivityForResult(takeVideoIntent, TAG_TAKE_VIDEO_WITH_RECORDER);
+        Uri uri = generateVideoUri(context);
+        if(uri == null){
+            L.m("invalid file data passed. Check your file Path, name, and extension");
+            listener.onTaskComplete("Error", TAG_PHOTO_UNKNOWN_ERROR);
+        } else {
+            takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+            activity.startActivityForResult(takeVideoIntent, TAG_TAKE_VIDEO_WITH_RECORDER);
+        }
     }
 
     /**
      * Get a Photo from the gallery
      */
     private void getPhotoFromGallery(){
-        L.l(447);
         Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        L.l(449);
         galleryIntent.setType("image/*");
-        L.l(451);
         activity.startActivityForResult(galleryIntent, TAG_PHOTO_FROM_GALLERY);
-        L.l(453);
     }
 
     /**
@@ -456,33 +696,23 @@ public class CameraUtilities {
             if (requestcode == TAG_TAKE_PICTURE_WITH_CAMERA
                     && resultcode == activity.RESULT_OK) {
                 if(data == null){
-                    L.m("take photo with camera, sending uri");
-                    L.m("uri = " + takePhotoUri);
-                    //This means I need to use the Uri set by the generateUri function
                     startCropping(takePhotoUri, takePhotoUri);
                 } else {
-                    //
-                    L.m("Data is NOT null within afterOnActivityResult & Tag = TAG_TAKE_PICTURE_WITH_CAMERA");
-                    listener.onTaskCompleteV2(ERROR_STRING, TAG_PHOTO_UNKNOWN_ERROR);
+                    listener.onTaskComplete(ERROR_STRING, TAG_PHOTO_UNKNOWN_ERROR);
                 }
             }
 
             //Photo is from Gallery
             else if (requestcode == TAG_PHOTO_FROM_GALLERY
                     && resultcode == activity.RESULT_OK) {
-                L.l(486);
                 resultUri = data.getData();
                 resultUri = this.fixImageUri(context, resultUri);
                 startCropping(resultUri, resultUri);
-                L.l(490);
             }
 
             //Video is from Recording (Video)
             else if (requestcode == TAG_TAKE_VIDEO_WITH_RECORDER) {
-
-                // TODO: 7/27/2016  Decide what to do with this
-                listener.onTaskCompleteV2(takeVideoUri, TAG_TAKE_VIDEO_WITH_RECORDER);
-
+                listener.onTaskComplete(takeVideoUri, TAG_TAKE_VIDEO_WITH_RECORDER);
             }
 
             //Photo from Crop Photo
@@ -491,23 +721,17 @@ public class CameraUtilities {
                 //Check for result code before moving on
                 if(resultcode == activity.RESULT_OK){
                     resultUri = UCrop.getOutput(data);
-
-                    L.m("result from cropping = " + resultUri);
                     PhotoObject photoObject = new PhotoObject();
                     photoObject.androidUri = resultUri;
                     photoObject.stringPath = StringUtilities.convertAndroidUriToString(resultUri);
                     photoObject.javaUri = StringUtilities.convertStringToJavaUri(photoObject.stringPath);
                     photoObject.photoFile = fileToPassAround;
 
-                    if(shouldUploadPhoto){
-                        this.uploadPhotosViaDefaultMethod(photoObject);
-                    } else {
-                        listener.onTaskCompleteV2(photoObject, TAG_CROP_SUCCESS);
-                    }
+                    listener.onTaskComplete(photoObject, TAG_CROP_SUCCESS);
 
                 } else if(resultcode == UCrop.RESULT_ERROR){
                     final Throwable cropError = UCrop.getError(data);
-                    listener.onTaskCompleteV2(ERROR_STRING + cropError.toString(), TAG_CROP_ERROR);
+                    listener.onTaskComplete(ERROR_STRING + cropError.toString(), TAG_CROP_ERROR);
                 }
             }
 
@@ -515,16 +739,15 @@ public class CameraUtilities {
             else if (requestcode == TAG_MY_PERMISSIONS_REQUEST_CAMERA
                     && resultcode == activity.RESULT_OK
                     && data != null) {
-                L.m("Request Camera Permissions");
+                // TODO: 8/17/2016 nothing here currently, will implement soon
 
-
-                //Storage Permission Request
+            //Storage Permission Request
             } else if (requestcode == TAG_MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
                     && resultcode == activity.RESULT_OK
                     && data != null) {
-                L.m("Request Storage Permissions");
+                // TODO: 8/17/2016 nothing here currently, will implement soon
 
-                //In this scenario, sending the image URI back to the activity
+            //In this scenario, sending the image URI back to the activity
             } else if (requestcode == TAG_RETURN_IMAGE_URL) {
 
                 resultUri = data.getData();
@@ -536,16 +759,14 @@ public class CameraUtilities {
                 photoObject.javaUri = javaUri;
                 photoObject.stringPath = pathUri;
                 photoObject.photoFile = fileToPassAround;
-                L.m("return Image url @ 558");
-                listener.onTaskCompleteV2(photoObject, TAG_RETURN_IMAGE_URL);
+                listener.onTaskComplete(photoObject, TAG_RETURN_IMAGE_URL);
 
-                //Else, something weird happened
+            //Else, something weird happened
             } else {
-                L.m("Something else happened, request code = " + requestcode);
-                listener.onTaskCompleteV2("Photo Select was canceled", TAG_PHOTO_CANCEL);
+                listener.onTaskComplete("An unknown error occurred", TAG_PHOTO_CANCEL);
             }
         } else {
-            listener.onTaskCompleteV2("Photo Select was canceled", TAG_PHOTO_CANCEL);
+            listener.onTaskComplete("Photo Select was canceled", TAG_PHOTO_CANCEL);
         }
     }
 
@@ -555,34 +776,80 @@ public class CameraUtilities {
      * @param destinationUri Destination URI
      */
     public void startCropping(Uri sourceUri, Uri destinationUri){
-        //Build options for Love Lab Custom
-        options = LoveLabCustomUtilities.buildUCropOptionsForLoveLab();
+        //Build options
+        options = CameraUtilities.buildUCropOptions();
 
         try {
             UCrop cropping = UCrop.of(sourceUri, destinationUri);
-            if(!(maxHeight == 0 || maxWidth == 0)){
-                cropping.withMaxResultSize(maxWidth, maxHeight);
-            }
+            //cropping.withMaxResultSize(maxWidth, maxHeight);
             if(options != null){
                 cropping.withOptions(options);
             }
-            L.m("cropping start");
             cropping.start(activity, TAG_CROP_PHOTO);
         } catch (Exception e){
-            L.m("cropping error");
             e.printStackTrace();
-            listener.onTaskCompleteV2("An error occurred while processing your photo", TAG_CROP_ERROR);
+            listener.onTaskComplete("An error occurred while processing your photo", TAG_CROP_ERROR);
         }
     }
 
+    /**
+     * Build uCrop Options
+     * @param frameColor int color for the frame. Pass -100 to default them to regular colors
+     * @param statusBarColor int color for the status bar. Pass -100 to default them to regular colors
+     * @param toolbarColor int color for the toolbar. Pass -100 to default them to regular colors
+     * @return Return UCrop.Options object
+     */
+    private static UCrop.Options buildUCropOptions(int frameColor, int statusBarColor,
+                                                             int toolbarColor){
+        UCrop.Options options = new UCrop.Options();
+        options.useSourceImageAspectRatio();
+        //https://github.com/Yalantis/uCrop/issues/173
+        //options.withAspectRatio(1, 1);
+        if(frameColor != -100){
+            options.setCropFrameColor(frameColor);
+        }
+        if(statusBarColor != -100){
+            options.setCropFrameColor(statusBarColor);
+        }
+        if(toolbarColor != -100){
+            options.setCropFrameColor(toolbarColor);
+        }
+
+        return options;
+    }
+    /**
+     * Build uCrop Options
+     * @param frameColor String color for the frame. Pass -100 or null to default them to
+     *                   regular colors
+     * @param statusBarColor String color for the status bar. Pass -100 or null to default
+     *                       them to regular colors
+     * @param toolbarColor String color for the toolbar. Pass -100 or null to default them to
+     *                     regular colors
+     * @return Return UCrop.Options object
+     */
+    private static UCrop.Options buildUCropOptions(String frameColor, String statusBarColor,
+                                                             String toolbarColor){
+        int frameColorInt, statusBarColorInt, toolbarColorInt;
+
+        frameColorInt = ColorUtilities.parseMyColor(frameColor);
+        statusBarColorInt = ColorUtilities.parseMyColor(statusBarColor);
+        toolbarColorInt = ColorUtilities.parseMyColor(toolbarColor);
+
+        return (CameraUtilities.buildUCropOptions(frameColorInt, statusBarColorInt, toolbarColorInt));
+    }
+    //Overloaded method
+    private static UCrop.Options buildUCropOptions(){
+        return (CameraUtilities.buildUCropOptions(null, null, null));
+    }
     /**
      * Generate an ImageUri
      * @param mContext
      * @return
      */
     public Uri generateImageUri(Context mContext){
-        fileToPassAround = ImageUtilities.generateFileForImage(mContext);
-        takePhotoUri = ImageUtilities.convertFileToUri(fileToPassAround);
+        fileToPassAround = FileUtilities.generateFileForImage(userSentPathToFile,
+                userSentNameOfFile, photoFileExtension.photoExtensionName);
+        takePhotoUri = FileUtilities.convertFileToUri(fileToPassAround);
         return takePhotoUri;
     }
 
@@ -596,74 +863,33 @@ public class CameraUtilities {
             mContext = this.context;
         }
         if(mContext == null){
-            mContext = MyApplication.getAppContext();
+            return null;
         }
         Uri vidUri = null;
-        String state = Environment.getExternalStorageState();
-        String appName = mContext.getString(R.string.app_name_for_uri);
-        appName = StringUtilities.removeSpaces(appName);
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            File file = new File(Environment.getExternalStorageDirectory() + "/DCIM/", appName +
-                    "_Video_" + DateUtilities.getCurrentDateLong() + ".mp4");
-            vidUri = Uri.fromFile(file);
-            fileToPassAround = file;
-        }else {
-            File file = new File(mContext.getFilesDir() , appName + Calendar.getInstance().getTimeInMillis()+ ".png");
-            vidUri = Uri.fromFile(file);
-            fileToPassAround = file;
+        String nameOfFile = userSentNameOfFile;
+        String myPath = userSentPathToFile;
+
+        File file = null;
+        try {
+            file = new File(myPath,
+                    nameOfFile +
+                    "_" +
+                    DateUtilities.getCurrentDateLong() +
+                    videoFileExtension.videoExtensionName);
+        } catch (Exception e){}
+        if(file == null){
+            return null;
         }
+        vidUri = Uri.fromFile(file);
+        fileToPassAround = file;
+
         takeVideoUri = vidUri;
         return vidUri;
     }
 
-    /**
-     * Upload a photo object
-     * @param photoObject Photo object to upload
-     */
-    private void uploadPhotosViaDefaultMethod(final PhotoObject photoObject){
-        showAlertOrNot(true);
-        CloudineryAPI cloudineryAPI = new CloudineryAPI(context, photoObject.photoFile,
-                new OnTaskCompleteListner() {
-                    @Override
-                    public void onTaskComplete(Object result) {
-                        //NOTE! IN THIS PROJECT, DELETING THE IMAGE AFTERWARDS.
-                        //REMOVE THIS CODE FOR OTHER PROJECTS
-                        try {
-                            if(shouldDeletePhoto) {
-                                try {
-                                    photoObject.photoFile.delete();
-                                } catch (Exception e){}
-                                try {
-                                    fileToPassAround.delete();
-                                } catch (Exception e){}
-                                try {
-                                    tempFile.delete();
-                                } catch (Exception e){}
-                            }
-                        } catch (Exception e){}
-                        showAlertOrNot(false);
-
-                        if(result == null){
-                            String str = LoveLabCustomUtilities.getErrorString(null);
-                            listener.onTaskCompleteV2(str, TAG_UPLOAD_ERROR);
-                        }
-
-                        if(result instanceof LovelabError){
-                            String str = LoveLabCustomUtilities.getErrorString((LovelabError)result);
-                            listener.onTaskCompleteV2(str, TAG_UPLOAD_ERROR);
-                        }
-
-                        if(result instanceof String){
-                            String str = (String) result;
-                            listener.onTaskCompleteV2(str, TAG_UPLOAD_SUCCESS);
-                        }
-                    }
-                });
-        cloudineryAPI.execute();
-    }
 
     /**
-     * Overloaded method, see description above for method information
+     * Not used atm
      * @param photoObjects Photo objects to delete
      */
     private void uploadPhotosViaDefaultMethod(List<PhotoObject> photoObjects){
@@ -672,7 +898,9 @@ public class CameraUtilities {
 
     /**
      * Use this method to fix URIs that are not usable or are in a format not readable. An example
-     * would be one that starts with content://..........
+     * would be one that starts with content://.......... This tries to make a file and when it
+     * succeeds, it means that the URI was correct. The main purpose of this method is to handle
+     * how some phone makers handle this differently (IE Motorola vs HTC vs Samsung)
      * @param context Context
      * @param selectedImageUri The Uri to work with
      * @return
@@ -791,7 +1019,6 @@ public class CameraUtilities {
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
-
 
         return -1; // No front-facing camera found
     }
