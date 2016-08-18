@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 /**
  * This class is here because of the current bug wherein you call wrap_content on a recyclerview
- * and it will NOT expand out. This solves by calling the onMeasure() method against it.
+ * and it will NOT expand out fully. This solves by calling the onMeasure() method against it.
  * http://stackoverflow.com/questions/27475178/how-do-i-make-wrap-content-work-on-a-recyclerview
  * Created by pmacdowell on 8/15/2016.
  */

@@ -335,7 +335,7 @@ public class FileUtilities {
     public static File generateFileForImage(@NonNull String filePath, @NonNull String fileName,
                                             @NonNull String fileType){
         fileName = StringUtilities.removeSpaces(fileName);
-        String state = Environment.getExternalStorageState();
+        //String state = Environment.getExternalStorageState();
         File file = null;
         try {
             file = new File(filePath, fileName + "_" + DateUtilities.getCurrentDateLong()
@@ -343,4 +343,23 @@ public class FileUtilities {
         } catch (Exception e){}
         return file;
     }
+
+
+    public static String getFileWriteDirectory(){
+        String str = Environment.getExternalStorageDirectory().getPath();
+        return str;
+    }
+    /*
+    private static String tempTest(){
+        String state = Environment.getExternalStorageState();
+        if(Environment.MEDIA_MOUNTED.equals(state)){
+            String str = Environment.getExternalStorageDirectory().getPath();
+        } else {
+            //
+        }
+        //String str = Environment.getExternalStorageState();
+
+        return null;
+    }
+    */
 }

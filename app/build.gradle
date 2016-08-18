@@ -1,5 +1,15 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'realm-android'
+buildscript{
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        //Database Management Library. Link: https://realm.io/docs/java/latest
+        classpath "io.realm:realm-gradle-plugin:1.1.1"
+    }
+}
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.1"
@@ -13,13 +23,7 @@ android {
         versionName "1.0"
     }
     repositories {
-        //maven { url "https://jitpack.io" }
-        //maven { url  "https://urbanairship.bintray.com/android" }
-        //maven { url "http://maven.cloudrail.com" }
-        //maven { url "http://dl.bintray.com/glomadrian/maven" }
-        //maven { url 'https://maven.fabric.io/public' } //Fabric / Twitter
-        //mavenCentral()
-        //jcenter()
+        //
     }
     dependencies {
 
@@ -56,6 +60,7 @@ android {
 
         //Updated Cropper. https://github.com/Yalantis/uCrop
         compile 'com.yalantis:ucrop:2.1.2'
+
 
 
         /*

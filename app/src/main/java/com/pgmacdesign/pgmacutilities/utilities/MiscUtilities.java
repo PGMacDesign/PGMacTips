@@ -10,6 +10,8 @@ import android.util.ArrayMap;
 import android.util.Base64;
 import android.util.Log;
 
+import com.pgmacdesign.pgmacutilities.BuildConfig;
+
 import java.lang.reflect.Field;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -125,6 +127,20 @@ public class MiscUtilities {
     }
 
     /**
+     * Checks a boolean for null (returns false if it is null) and then returns actual
+     * bool if not null
+     * @param bool boolean to check
+     * @return Boolean, true if it is null or empty, false it if is not
+     */
+    public static boolean isBooleanNullTrueFalse(Boolean bool){
+        if(bool == null){
+            return false;
+        } else {
+            return bool;
+        }
+    }
+
+    /**
      * Checks a map for either being empty or containing objects within it
      * @param myMap map to check
      * @param <T> T extends object
@@ -138,5 +154,42 @@ public class MiscUtilities {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Gets the package name. If null returned, send call again with context
+     * @return
+     */
+    public static String getPackageName(){
+        try {
+            return BuildConfig.APPLICATION_ID;
+        } catch (Exception e){
+            return null;
+        }
+    }
+
+    /**
+     * Overloaded method in case getPackageName returns null
+     * @param context context
+     * @return
+     */
+    public static String getPackageName(Context context){
+
+        String packageName = null;
+
+        try {
+            packageName = context.getPackageManager().getPackageInfo(
+                    getPackageName(), 0).packageName;
+        } catch (Exception e){}
+
+        if(packageName != null){
+            return packageName;
+        }
+
+        try{
+            packageName = context.getPackageName();
+        } catch (Exception e){}
+
+        return packageName;
     }
 }
