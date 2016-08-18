@@ -2,8 +2,6 @@ package com.pgmacdesign.pgmacutilities.utilities;
 
 import com.google.gson.Gson;
 
-import io.realm.RealmObject;
-
 /**
  * Created by pmacdowell on 8/18/2016.
  */
@@ -16,11 +14,11 @@ public class GsonUtilities {
             gson = new Gson();
         }
     }
-    public static <T extends RealmObject> String convertObjectToJson(T t, Class objectSourceClass){
+    public static String convertObjectToJson(Object object, Class objectSourceClass){
         GsonUtilities.init();
         String str = null;
         try {
-            str = gson.toJson(t, objectSourceClass);
+            str = gson.toJson(object, objectSourceClass);
         } catch (Exception e){
             //For testing
         }

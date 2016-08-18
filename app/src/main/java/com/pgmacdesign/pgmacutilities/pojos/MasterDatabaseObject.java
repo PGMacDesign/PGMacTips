@@ -1,31 +1,36 @@
 package com.pgmacdesign.pgmacutilities.pojos;
 
-import java.util.Map;
-
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.RealmClass;
 
 /**
  * Created by pmacdowell on 8/18/2016.
  */
+@RealmClass
 public class MasterDatabaseObject extends RealmObject{
+    //@PrimaryKey
+    //private long id;
     @PrimaryKey
-    private long id;
-    private Map<String, Object> mapObjects;
+    private String id;
+    //String is the package name and the object is the object to place
+    //@SerializedName("mapObjects")
 
-    public long getId() {
+    private String jsonString;
+
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Map<String, Object> getMapObjects() {
-        return mapObjects;
+    public String getJsonString() {
+        return jsonString;
     }
 
-    public void setMapObjects(Map<String, Object> mapObjects) {
-        this.mapObjects = mapObjects;
+    public void setJsonString(String jsonString) {
+        this.jsonString = jsonString;
     }
 }

@@ -3,6 +3,8 @@ package com.pgmacdesign.pgmacutilities.utilities;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.pgmacdesign.pgmacutilities.pojos.MasterDatabaseObject;
+
 import org.json.JSONObject;
 
 import java.io.File;
@@ -28,23 +30,40 @@ import io.realm.RealmResults;
  */
 public class DatabaseUtilities {
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    /////dddddddddddddd/////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-
+    //Global Vars
     private RealmConfiguration realmConfiguration;
     private Context context;
 
+    //Defaults. If no configuration is set, these will be used
+    private static final String DEFAULT_DB_NAME = "PGMacUtilities.DB";
+    private static final int DEFAULT_DB_SCHEMA = 1;
+    private static final boolean DEFAULT_DELETE_OPTION = true;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    /////Constructors - init ///////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Constructor
+     * @param context Context. Cannot be null
+     */
     public DatabaseUtilities(@NonNull Context context){
         this.context = context;
         this.realmConfiguration = DatabaseUtilities.buildRealmConfig(context, null, null, null);
     }
+
+    /**
+     * Constructor using a realm configuration
+     * @param context Context
+     * @param realmConfiguration {@link RealmConfiguration} If this is left as null, it will
+     *                           build the default version with hard coded info listed here in
+     *                           this class.
+     */
     public DatabaseUtilities(@NonNull Context context, RealmConfiguration realmConfiguration){
         this.context = context;
         this.realmConfiguration = realmConfiguration;
         if(realmConfiguration == null){
-            this.realmConfiguration = DatabaseUtilities.buildDefaultRealmConfig(this.context);
+            this.realmConfiguration = DatabaseUtilities.buildRealmConfig(this.context);
         }
     }
 
@@ -53,6 +72,58 @@ public class DatabaseUtilities {
     /////Insert Methods/////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    public <T extends RealmObject> boolean executeInsertIntoDBMaster(final Class myClass,
+                                                                     final T obj){
+
+        if(myClass == null){
+            return false;
+        }
+        if(obj == null){
+            //This means they want to delete the item from the DB. Remove then leave
+            return(this.deleteFromMasterDB(myClass));
+        }
+
+        Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
+        String className = myClass.getName();
+        String jsonString = null;
+        try {
+            jsonString = GsonUtilities.convertObjectToJson(obj, myClass);
+        } catch (Exception e){}
+
+        if(jsonString == null){
+            try {
+                realm.close();
+            } catch (Exception e){}
+            return false;
+        }
+
+        MasterDatabaseObject mdo = new MasterDatabaseObject();
+        mdo.setId(className);
+        mdo.setJsonString(jsonString);
+
+        final MasterDatabaseObject mdoFinal = mdo;
+
+        try {
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    realm.copyToRealm(mdoFinal);
+                }
+            });
+            realm.close();
+            return true;
+        } catch (IllegalArgumentException e1){
+            e1.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            try {
+                realm.close();
+            } catch (Exception e){}
+        }
+        return false;
+
+    }
 
     public <T extends RealmObject> boolean executeInsertIntoDB(final Class myClass,
                                                                final String jsonString,
@@ -167,26 +238,107 @@ public class DatabaseUtilities {
         return false;
     }
 
+    public <T extends RealmObject> boolean deleteFromMasterDB(final Class myClass){
+
+        if(myClass == null){
+            return false;
+        }
+
+        Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
+        RealmQuery query = RealmQuery.createQuery(realm, MasterDatabaseObject.class);
+
+        //Start transaction
+        RealmResults<T> results = query.findAll();
+        if(results.size() <= 0){
+            return false;
+        }
+        List<MasterDatabaseObject> masterDatabaseObjectList = new ArrayList<MasterDatabaseObject>();
+        for(T t : results){
+            if(t != null){
+                MasterDatabaseObject mdo = (MasterDatabaseObject) t;
+                if(!StringUtilities.isNullOrEmpty(mdo.getId()) &&
+                        !StringUtilities.isNullOrEmpty(mdo.getJsonString())){
+                    masterDatabaseObjectList.add(mdo);
+
+                    try {
+                        realm.close();
+                    } catch (Exception e){}
+                    // TODO: 8/18/2016 delete it here
+                    return true;
+                    /*
+                    Realm realm1 = DatabaseUtilities.buildRealm(this.realmConfiguration);
+                    realm1.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            users.get(0).deleteFromRealm(); // indirectly delete object
+                        }
+                    });
+                    */
+                }
+            }
+        }
+        try {
+            realm.close();
+        } catch (Exception e){}
+        return false;
+    }
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /////Query Methods//////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public <T extends RealmModel> Object queryDatabaseMaster(RealmQuery<T> passedQuery,
-                                                             Class myClass){
+    public <T extends RealmModel> Object queryDatabaseMasterSingle(Class myClass){
+
         Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
-        if(passedQuery == null){
-            passedQuery = this.buildRealmQuery(realm, myClass);
+        String className = myClass.getName();
+        List<MasterDatabaseObject> fullList = this.queryDatabaseMasterAll();
+
+        MasterDatabaseObject pulledObject = null;
+        //Loop through to check if the String matches the ID
+        for(MasterDatabaseObject mdo : fullList){
+            String id = mdo.getId();
+            if(!StringUtilities.isNullOrEmpty(id)){
+                if(id.equals(className)){
+                    pulledObject = mdo;
+                    continue;
+                }
+            }
         }
+
+        if(pulledObject == null){
+            return null;
+        } else {
+            try {
+                String jsonString = pulledObject.getJsonString();
+                Object obj = GsonUtilities.convertJsonToObject(jsonString, myClass);
+                return obj;
+            } catch (Exception e){
+                //In case they pass the wrong class name
+                return null;
+            }
+        }
+    }
+    public <T extends RealmModel> List<MasterDatabaseObject> queryDatabaseMasterAll(){
+
+        Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
+        RealmQuery query = RealmQuery.createQuery(realm, MasterDatabaseObject.class);
 
         //Start transaction
-        RealmResults<T> results = passedQuery.findAll();
-
-        if (results != null) {
-            Object object = results.get(0);
-            return object;
-        } else {
+        RealmResults<T> results = query.findAll();
+        if(results.size() <= 0){
             return null;
         }
+        List<MasterDatabaseObject> masterDatabaseObjectList = new ArrayList<MasterDatabaseObject>();
+        for(T t : results){
+            if(t != null){
+                MasterDatabaseObject mdo = (MasterDatabaseObject) t;
+                if(!StringUtilities.isNullOrEmpty(mdo.getId()) &&
+                        !StringUtilities.isNullOrEmpty(mdo.getJsonString())){
+                    masterDatabaseObjectList.add(mdo);
+                }
+            }
+        }
+
+        return masterDatabaseObjectList;
     }
     public <T extends RealmModel> Object queryDatabaseSingle(RealmQuery<T> passedQuery,
                                                              Class myClass){
@@ -240,7 +392,7 @@ public class DatabaseUtilities {
      * @return Realm object
      */
     public static Realm buildRealm(Context context){
-        RealmConfiguration config = DatabaseUtilities.buildDefaultRealmConfig(context);
+        RealmConfiguration config = DatabaseUtilities.buildRealmConfig(context);
         Realm realm = Realm.getInstance(config);
         return realm;
     }
@@ -279,20 +431,21 @@ public class DatabaseUtilities {
      *                       to manually take care of db updates/ concurrency issues.
      * @return
      */
-    public static RealmConfiguration buildRealmConfig(Context context, String dbName,
+    public static RealmConfiguration buildRealmConfig(@NonNull Context context,
+                                                      String dbName,
                                                       Integer schemaVersion,
                                                       Boolean deleteIfNeeded){
         if(context == null){
             return null;
         }
         if(dbName == null){
-            dbName = "PGMacUtilities.DB";
+            dbName = DEFAULT_DB_NAME;
         }
         if(schemaVersion == null){
-            schemaVersion = 1;
+            schemaVersion = DEFAULT_DB_SCHEMA;
         }
         if(deleteIfNeeded == null){
-            deleteIfNeeded = true;
+            deleteIfNeeded = DEFAULT_DELETE_OPTION;
         }
         //Builder
         RealmConfiguration.Builder builder = new RealmConfiguration.Builder(context);
@@ -309,7 +462,7 @@ public class DatabaseUtilities {
     }
 
     /**
-     * If no query is set, this will build a query with the class sent
+     * If no query is set, this will build a query with the class sent in
      * @param realm
      * @param myClass
      * @return

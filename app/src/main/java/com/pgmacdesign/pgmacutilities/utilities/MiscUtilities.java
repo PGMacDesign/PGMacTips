@@ -13,6 +13,7 @@ import android.util.Log;
 import com.pgmacdesign.pgmacutilities.BuildConfig;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -191,5 +192,35 @@ public class MiscUtilities {
         } catch (Exception e){}
 
         return packageName;
+    }
+
+    //Not used atm. Re-working to fix exception issues. Supposed to work via reflection.
+    //Link: http://stackoverflow.com/questions/6591665/merging-two-objects-in-java
+    private Object mergeObjects(Object obj, Object update){
+        if(!obj.getClass().isAssignableFrom(update.getClass())){
+            return null;
+        }
+
+        Method[] methods = obj.getClass().getMethods();
+
+        for(Method fromMethod: methods){
+            if(fromMethod.getDeclaringClass().equals(obj.getClass())
+                    && fromMethod.getName().startsWith("get")){
+
+                String fromName = fromMethod.getName();
+                String toName = fromName.replace("get", "set");
+
+                try {
+                    Method toMetod = obj.getClass().getMethod(toName, fromMethod.getReturnType());
+                    Object value = fromMethod.invoke(update, (Object[])null);
+                    if(value != null){
+                        toMetod.invoke(obj, value);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
     }
 }

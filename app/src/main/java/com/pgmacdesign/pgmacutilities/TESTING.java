@@ -17,14 +17,12 @@ import com.pgmacdesign.pgmacutilities.utilities.PermissionUtilities;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
-
 /**
  * Created by pmacdowell on 8/12/2016.
  */
 public class TESTING extends AppCompatActivity {
 
+    private DatabaseUtilities dbUtilities;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,7 +34,7 @@ public class TESTING extends AppCompatActivity {
 
     private void init(){
         //Custom stuff here
-
+        dbUtilities = new DatabaseUtilities(this);
 
 
         writeDBStuff();
@@ -49,7 +47,7 @@ public class TESTING extends AppCompatActivity {
 
     private void moveDBFile(){
         PermissionUtilities.getStoragePermissions(this);
-        DatabaseUtilities.copyDBToExternalDirectory(null);
+        dbUtilities.copyDBToDownloadDirectory(null);
     }
     private void writeDBStuff(){
         PermissionUtilities.getStoragePermissions(this);
@@ -57,16 +55,20 @@ public class TESTING extends AppCompatActivity {
         TESTINGPOJO testingpojo = new TESTINGPOJO();
         testingpojo.setId(1);
         testingpojo.setAge(21);
-        testingpojo.setName("Patt");
+        testingpojo.setName("Patrick");
         testingpojo.setGender("MM");
+
+        boolean bool = dbUtilities.executeInsertIntoDBMaster(TESTINGPOJO.class, testingpojo);
+        L.m("insert success = " + bool);
+
+        /*
         String jsonToTest = gson.toJson(testingpojo, TESTINGPOJO.class);
-        RealmConfiguration realmConfiguration = DatabaseUtilities.buildDefaultRealmConfig(this);
-        //Realm realm = DatabaseUtilities.buildRealm(realmConfiguration);
         if(DatabaseUtilities.executeInsertIntoDB(TESTINGPOJO.class, jsonToTest, null, true)){
             L.m("success");
         } else {
             L.m("Failure");
         }
+        */
     }
     private void temp(){
         L.m(MiscUtilities.getPackageName());
@@ -109,7 +111,7 @@ public class TESTING extends AppCompatActivity {
         L.m("async started");
     }
     private void queryDB(){
-        RealmConfiguration realmConfiguration = DatabaseUtilities.buildDefaultRealmConfig(this);
+        //RealmConfiguration realmConfiguration = DatabaseUtilities.buildDefaultRealmConfig(this);
         //Realm realm = DatabaseUtilities.buildRealm(realmConfiguration);
         /*
         Object obj = DatabaseUtilities.queryDatabaseSingle(null, TESTINGPOJO.class, realm);
@@ -122,7 +124,8 @@ public class TESTING extends AppCompatActivity {
         } catch (Exception e){}
         */
 
-        Realm realm = DatabaseUtilities.buildRealm(this);
+        //Realm realm = DatabaseUtilities.buildRealm(this);
+        /*
         List<Object> objects = DatabaseUtilities.queryDatabaseList(null, TESTINGPOJO.class, realm);
         try {
             for(Object object : objects){
@@ -133,7 +136,9 @@ public class TESTING extends AppCompatActivity {
                 L.m("gender = " + pojo.getGender());
             }
         } catch (Exception e){}
-
+        */
+        TESTINGPOJO obj = (TESTINGPOJO) dbUtilities.queryDatabaseMasterSingle(TESTINGPOJO.class);
+        L.m("TESTING POJO NAME = " + obj.getName());
 
     }
 }
