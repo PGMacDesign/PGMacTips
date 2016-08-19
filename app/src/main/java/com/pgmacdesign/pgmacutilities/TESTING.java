@@ -6,8 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
-import com.google.gson.Gson;
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
+import com.pgmacdesign.pgmacutilities.pojos.MasterDatabaseObject;
 import com.pgmacdesign.pgmacutilities.utilities.ContactUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.DatabaseUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.L;
@@ -16,6 +16,7 @@ import com.pgmacdesign.pgmacutilities.utilities.PermissionUtilities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by pmacdowell on 8/12/2016.
@@ -23,6 +24,8 @@ import java.util.List;
 public class TESTING extends AppCompatActivity {
 
     private DatabaseUtilities dbUtilities;
+
+    private static final String CUSTOM_STRING = "-PAT";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,13 +40,15 @@ public class TESTING extends AppCompatActivity {
         dbUtilities = new DatabaseUtilities(this);
 
 
-        writeDBStuff();
+        //writeDBStuff();
         //moveDBFile();
-        queryDB();
+        //queryDB();
         //contactQuery();
         //temp();
         //temp2();
-        deleteStuff();
+        //deleteStuff();
+        deleteCustom();
+        //deleteAll();
     }
 
     private void moveDBFile(){
@@ -52,7 +57,7 @@ public class TESTING extends AppCompatActivity {
     }
     private void writeDBStuff(){
         PermissionUtilities.getStoragePermissions(this);
-        Gson gson = new Gson();
+
         TESTINGPOJO testingpojo = new TESTINGPOJO();
         testingpojo.setAge(300);
         testingpojo.setName("Patrick Was here");
@@ -67,20 +72,18 @@ public class TESTING extends AppCompatActivity {
         TESTINGPOJO3 testingpojo3 = new TESTINGPOJO3();
         testingpojo3.setX(22);
 
-        boolean bool = dbUtilities.executeInsertIntoDBMaster(TESTINGPOJO.class, testingpojo);
-        boolean bool2 = dbUtilities.executeInsertIntoDBMaster(TESTINGPOJO2.class, testingpojo2);
-        boolean bool3 = dbUtilities.executeInsertIntoDBMaster(TESTINGPOJO3.class, testingpojo3);
+        TESTINGPOJO3 testingpojo4 = new TESTINGPOJO3();
+        testingpojo4.setX(221111111);
+
+        boolean bool = dbUtilities.persistObject(TESTINGPOJO.class, testingpojo);
+        boolean bool2 = dbUtilities.persistObject(TESTINGPOJO2.class, testingpojo2);
+        boolean bool3 = dbUtilities.persistObject(TESTINGPOJO3.class, testingpojo3);
+        boolean bool4 = dbUtilities.persistObjectCustom(TESTINGPOJO3.class, testingpojo4, CUSTOM_STRING);
         L.m("insert success = " + bool);
         L.m("insert success = " + bool2);
         L.m("insert success = " + bool3);
-        /*
-        String jsonToTest = gson.toJson(testingpojo, TESTINGPOJO.class);
-        if(DatabaseUtilities.executeInsertIntoDB(TESTINGPOJO.class, jsonToTest, null, true)){
-            L.m("success");
-        } else {
-            L.m("Failure");
-        }
-        */
+        L.m("insert success = " + bool4);
+
     }
     private void temp(){
         L.m(MiscUtilities.getPackageName());
@@ -123,63 +126,76 @@ public class TESTING extends AppCompatActivity {
         L.m("async started");
     }
     private void queryDB(){
-        //RealmConfiguration realmConfiguration = DatabaseUtilities.buildDefaultRealmConfig(this);
-        //Realm realm = DatabaseUtilities.buildRealm(realmConfiguration);
-        /*
-        Object obj = DatabaseUtilities.queryDatabaseSingle(null, TESTINGPOJO.class, realm);
-        try {
-            L.m(obj.toString());
-            TESTINGPOJO pojo = (TESTINGPOJO) obj;
-            L.m("name = " + pojo.getName());
-            L.m("age = " + pojo.getAge());
-            L.m("gender = " + pojo.getGender());
-        } catch (Exception e){}
-        */
 
-        //Realm realm = DatabaseUtilities.buildRealm(this);
-        /*
-        List<Object> objects = DatabaseUtilities.queryDatabaseList(null, TESTINGPOJO.class, realm);
-        try {
-            for(Object object : objects){
-                L.m(object.toString());
-                TESTINGPOJO pojo = (TESTINGPOJO) object;
-                L.m("name = " + pojo.getName());
-                L.m("age = " + pojo.getAge());
-                L.m("gender = " + pojo.getGender());
-            }
-        } catch (Exception e){}
-        */
-        TESTINGPOJO obj = (TESTINGPOJO) dbUtilities.queryDatabaseMasterSingle(TESTINGPOJO.class);
-        L.m("TESTING POJO name = " + obj.getName());
-        L.m("TESTING POJO gender = " + obj.getGender());
-        L.m("TESTING POJO age = " + obj.getAge());
-        L.m("TESTING POJO id = " + obj.getId());
+        Map<String, String> allObjects = dbUtilities.getAllPersistedObjects();
+        L.m("total number of allObjects = " + allObjects.size());
+        L.m("begin map \n\n");
+        int counter = 0;
+        for(Map.Entry<String, String> myMap : allObjects.entrySet()){
+            String key = myMap.getKey();
+            String json = myMap.getValue();
+            L.m("ITEM NUMBER " + counter);
+            counter++;
+            L.m("key = " + key);
+            L.m("json = " + json);
+        }
+        L.m("end map \n\n");
+        TESTINGPOJO obj = (TESTINGPOJO) dbUtilities.getPersistedObject(TESTINGPOJO.class);
+        if(obj != null) {
+            L.m("TESTING POJO name = " + obj.getName());
+            L.m("TESTING POJO gender = " + obj.getGender());
+            L.m("TESTING POJO age = " + obj.getAge());
+            L.m("TESTING POJO id = " + obj.getId());
+        } else {
+            L.m("TESTINGPOJO.class" + " is not in DB");
+        }
 
-        TESTINGPOJO2 obj2 = (TESTINGPOJO2) dbUtilities.queryDatabaseMasterSingle(TESTINGPOJO2.class);
-        L.m("TESTING POJO2 name = " + obj2.getName());
-        L.m("TESTING POJO2 gender = " + obj2.getGender());
-        L.m("TESTING POJO2 age = " + obj2.getAge());
-        L.m("TESTING POJO2 id = " + obj2.getId());
-        L.m("TESTING POJO2 okie = " + obj2.getOkie());
+        TESTINGPOJO2 obj2 = (TESTINGPOJO2) dbUtilities.getPersistedObject(TESTINGPOJO2.class);
+        if(obj2 != null) {
+            L.m("TESTING POJO2 name = " + obj2.getName());
+            L.m("TESTING POJO2 gender = " + obj2.getGender());
+            L.m("TESTING POJO2 age = " + obj2.getAge());
+            L.m("TESTING POJO2 id = " + obj2.getId());
+            L.m("TESTING POJO2 okie = " + obj2.getOkie());
+        } else {
+            L.m("TESTINGPOJO2.class" + " is not in DB");
+        }
 
-        TESTINGPOJO3 obj3 = (TESTINGPOJO3) dbUtilities.queryDatabaseMasterSingle(TESTINGPOJO3.class);
+        TESTINGPOJO3 obj3 = (TESTINGPOJO3) dbUtilities.getPersistedObject(TESTINGPOJO3.class);
         if(obj3 != null) {
             L.m("X = " + obj3.getX());
+        } else {
+            L.m("TESTINGPOJO3.class" + " is not in DB");
+        }
+
+        L.m("testing custom now");
+        TESTINGPOJO3 obj4 = (TESTINGPOJO3) dbUtilities.getPersistedObjectCustom(TESTINGPOJO3.class, CUSTOM_STRING);
+        if(obj4 != null) {
+            L.m("X = " + obj4.getX());
+        } else {
+            L.m("TESTINGPOJO3 + " + CUSTOM_STRING + " is not in DB");
         }
         //List<DatabaseUtilities.MasterDatabaseObject> mObjects = dbUtilities.queryDatabaseMasterAll();
         //L.m("size = " + mObjects.size());
     }
 
+    private void deleteAll(){
+        dbUtilities.deleteAllPersistedObjects(true, false);
+    }
     private void deleteStuff(){
-        dbUtilities.deleteFromMasterDB(TESTINGPOJO3.class);
-
+        //dbUtilities.executeDeleteFromDB(null, TESTINGPOJO3.class);
+        L.l(176);
+        dbUtilities.dePersistObject(MasterDatabaseObject.class);
         L.m("pause");
 
-        TESTINGPOJO3 obj3 = (TESTINGPOJO3) dbUtilities.queryDatabaseMasterSingle(TESTINGPOJO3.class);
+        TESTINGPOJO3 obj3 = (TESTINGPOJO3) dbUtilities.getPersistedObject(TESTINGPOJO3.class);
         if(obj3 != null) {
             L.m("X = " + obj3.getX());
         } else {
             L.m("delete worked");
         }
+    }
+    private void deleteCustom(){
+        L.m("It was a " + dbUtilities.dePersistObjectCustom(TESTINGPOJO3.class, CUSTOM_STRING));
     }
 }
