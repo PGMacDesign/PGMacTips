@@ -5,18 +5,17 @@ import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.RealmClass;
 
 /**
- * Created by pmacdowell on 8/18/2016.
+ * MasterDatabaseObject Class for data serialization into the DB
+ * Created by pmacdowell on 8/19/2016.
  */
 @RealmClass
-public class MasterDatabaseObject extends RealmObject{
-    //@PrimaryKey
-    //private long id;
+public class MasterDatabaseObject extends RealmObject {
     @PrimaryKey
     private String id;
-    //String is the package name and the object is the object to place
-    //@SerializedName("mapObjects")
 
     private String jsonString;
+
+    public MasterDatabaseObject(){}
 
     public String getId() {
         return id;

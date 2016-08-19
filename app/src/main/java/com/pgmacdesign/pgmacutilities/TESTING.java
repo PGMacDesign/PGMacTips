@@ -43,6 +43,7 @@ public class TESTING extends AppCompatActivity {
         //contactQuery();
         //temp();
         //temp2();
+        deleteStuff();
     }
 
     private void moveDBFile(){
@@ -53,14 +54,25 @@ public class TESTING extends AppCompatActivity {
         PermissionUtilities.getStoragePermissions(this);
         Gson gson = new Gson();
         TESTINGPOJO testingpojo = new TESTINGPOJO();
-        testingpojo.setId(1);
-        testingpojo.setAge(21);
-        testingpojo.setName("Patrick");
-        testingpojo.setGender("MM");
+        testingpojo.setAge(300);
+        testingpojo.setName("Patrick Was here");
+        testingpojo.setGender("MMMMMMMM");
+
+        TESTINGPOJO2 testingpojo2 = new TESTINGPOJO2();
+        testingpojo2.setAge(11100);
+        testingpojo2.setName("Patrick Wasn't here");
+        testingpojo2.setGender("Nooooo!");
+        testingpojo2.setOkie("oh hai!");
+
+        TESTINGPOJO3 testingpojo3 = new TESTINGPOJO3();
+        testingpojo3.setX(22);
 
         boolean bool = dbUtilities.executeInsertIntoDBMaster(TESTINGPOJO.class, testingpojo);
+        boolean bool2 = dbUtilities.executeInsertIntoDBMaster(TESTINGPOJO2.class, testingpojo2);
+        boolean bool3 = dbUtilities.executeInsertIntoDBMaster(TESTINGPOJO3.class, testingpojo3);
         L.m("insert success = " + bool);
-
+        L.m("insert success = " + bool2);
+        L.m("insert success = " + bool3);
         /*
         String jsonToTest = gson.toJson(testingpojo, TESTINGPOJO.class);
         if(DatabaseUtilities.executeInsertIntoDB(TESTINGPOJO.class, jsonToTest, null, true)){
@@ -138,7 +150,36 @@ public class TESTING extends AppCompatActivity {
         } catch (Exception e){}
         */
         TESTINGPOJO obj = (TESTINGPOJO) dbUtilities.queryDatabaseMasterSingle(TESTINGPOJO.class);
-        L.m("TESTING POJO NAME = " + obj.getName());
+        L.m("TESTING POJO name = " + obj.getName());
+        L.m("TESTING POJO gender = " + obj.getGender());
+        L.m("TESTING POJO age = " + obj.getAge());
+        L.m("TESTING POJO id = " + obj.getId());
 
+        TESTINGPOJO2 obj2 = (TESTINGPOJO2) dbUtilities.queryDatabaseMasterSingle(TESTINGPOJO2.class);
+        L.m("TESTING POJO2 name = " + obj2.getName());
+        L.m("TESTING POJO2 gender = " + obj2.getGender());
+        L.m("TESTING POJO2 age = " + obj2.getAge());
+        L.m("TESTING POJO2 id = " + obj2.getId());
+        L.m("TESTING POJO2 okie = " + obj2.getOkie());
+
+        TESTINGPOJO3 obj3 = (TESTINGPOJO3) dbUtilities.queryDatabaseMasterSingle(TESTINGPOJO3.class);
+        if(obj3 != null) {
+            L.m("X = " + obj3.getX());
+        }
+        //List<DatabaseUtilities.MasterDatabaseObject> mObjects = dbUtilities.queryDatabaseMasterAll();
+        //L.m("size = " + mObjects.size());
+    }
+
+    private void deleteStuff(){
+        dbUtilities.deleteFromMasterDB(TESTINGPOJO3.class);
+
+        L.m("pause");
+
+        TESTINGPOJO3 obj3 = (TESTINGPOJO3) dbUtilities.queryDatabaseMasterSingle(TESTINGPOJO3.class);
+        if(obj3 != null) {
+            L.m("X = " + obj3.getX());
+        } else {
+            L.m("delete worked");
+        }
     }
 }

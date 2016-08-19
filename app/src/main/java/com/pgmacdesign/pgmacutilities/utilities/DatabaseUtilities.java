@@ -3,6 +3,7 @@ package com.pgmacdesign.pgmacutilities.utilities;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.pgmacdesign.pgmacutilities.TESTINGPOJO;
 import com.pgmacdesign.pgmacutilities.pojos.MasterDatabaseObject;
 
 import org.json.JSONObject;
@@ -72,6 +73,28 @@ public class DatabaseUtilities {
     /////Insert Methods/////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Overloaded method. Does the same thing as executeInsertIntoDBMaster, but wanted to keep
+     * a simpler naming scheme. This works in that if you send an object, it WILL OVERRIDE the
+     * one in the database for it. This is used for persisting objects while using their
+     * class names as the primary key. If you send null as the obj, it will delete the
+     * persisted item in the DB.
+     * @param myClass Class that is of the object you are sending
+     * @param obj Object to persist.
+     * @param <T>
+     * @return
+     */
+    public <T extends RealmObject> boolean persistObject(final Class myClass, final T obj){
+        return (executeInsertIntoDBMaster(myClass, obj));
+    }
+
+    /**
+     *
+     * @param myClass
+     * @param obj
+     * @param <T>
+     * @return
+     */
     public <T extends RealmObject> boolean executeInsertIntoDBMaster(final Class myClass,
                                                                      final T obj){
 
@@ -107,7 +130,7 @@ public class DatabaseUtilities {
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
-                    realm.copyToRealm(mdoFinal);
+                    realm.copyToRealmOrUpdate(mdoFinal);
                 }
             });
             realm.close();
@@ -238,49 +261,60 @@ public class DatabaseUtilities {
         return false;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    /////Delete Methods/////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     public <T extends RealmObject> boolean deleteFromMasterDB(final Class myClass){
 
         if(myClass == null){
             return false;
         }
+        //Class name String
+        final String myClassName = myClass.getName();
+
+        //Returned object from the master search
+        Object obj = this.queryDatabaseMasterSingle(TESTINGPOJO.class);
+        if(obj == null){
+            //IF it is null, it has already been deleted, return true and move on
+            return true;
+        }
 
         Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
-        RealmQuery query = RealmQuery.createQuery(realm, MasterDatabaseObject.class);
-
-        //Start transaction
-        RealmResults<T> results = query.findAll();
-        if(results.size() <= 0){
-            return false;
-        }
-        List<MasterDatabaseObject> masterDatabaseObjectList = new ArrayList<MasterDatabaseObject>();
-        for(T t : results){
-            if(t != null){
-                MasterDatabaseObject mdo = (MasterDatabaseObject) t;
-                if(!StringUtilities.isNullOrEmpty(mdo.getId()) &&
-                        !StringUtilities.isNullOrEmpty(mdo.getJsonString())){
-                    masterDatabaseObjectList.add(mdo);
-
-                    try {
-                        realm.close();
-                    } catch (Exception e){}
-                    // TODO: 8/18/2016 delete it here
-                    return true;
-                    /*
-                    Realm realm1 = DatabaseUtilities.buildRealm(this.realmConfiguration);
-                    realm1.executeTransaction(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm realm) {
-                            users.get(0).deleteFromRealm(); // indirectly delete object
+        final RealmQuery query = RealmQuery.createQuery(realm, MasterDatabaseObject.class);
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                //Start transaction
+                RealmResults<T> results = query.findAll();
+                if(results == null){
+                    return;
+                }
+                for(T t : results){
+                    if(t != null){
+                        MasterDatabaseObject mdo = (MasterDatabaseObject) t;
+                        String id = mdo.getId();
+                        if(!StringUtilities.isNullOrEmpty(id)){
+                            //Check if ID Matches package name
+                            if(myClassName.equals(id)){
+                                try {
+                                    t.deleteFromRealm();
+                                    L.m("delete succeeded");
+                                    return;
+                                } catch (Exception e){
+                                    L.m("delete failed");
+                                }
+                            }
                         }
-                    });
-                    */
+                    }
                 }
             }
-        }
+        });
+
         try {
             realm.close();
         } catch (Exception e){}
-        return false;
+        return true;
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /////Query Methods//////////////////////////////////////////////////////////////////////////////
@@ -531,4 +565,10 @@ public class DatabaseUtilities {
         }
         return success;
     }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    /////sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss//////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
 }
