@@ -508,7 +508,7 @@ public class DatabaseUtilities {
                                 if (customId.equals(id)) {
                                     try {
                                         t.deleteFromRealm();
-                                        L.m("delete succeeded");
+                                        L.m("delete from DB succeeded");
                                         return;
                                     } catch (Exception e) {
                                         L.m("delete failed");
@@ -565,9 +565,6 @@ public class DatabaseUtilities {
             public void execute(Realm realm) {
                 //Start transaction
                 RealmResults<T> results = query.findAll();
-                if (results == null) {
-                    return;
-                }
                 for (T t : results) {
                     if (t != null) {
                         try {
