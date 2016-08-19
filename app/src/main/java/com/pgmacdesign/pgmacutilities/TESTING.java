@@ -36,19 +36,22 @@ public class TESTING extends AppCompatActivity {
     }
 
     private void init(){
+
+        //contactQuery();
+        //temp();
+        //temp2();
+
+
         //Custom stuff here
         dbUtilities = new DatabaseUtilities(this);
-
 
         //writeDBStuff();
         //moveDBFile();
         //queryDB();
-        //contactQuery();
-        //temp();
-        //temp2();
         //deleteStuff();
-        deleteCustom();
+        //deleteCustom();
         //deleteAll();
+        //superDeleteEverything();
     }
 
     private void moveDBFile(){
@@ -197,5 +200,8 @@ public class TESTING extends AppCompatActivity {
     }
     private void deleteCustom(){
         L.m("It was a " + dbUtilities.dePersistObjectCustom(TESTINGPOJO3.class, CUSTOM_STRING));
+    }
+    private void superDeleteEverything(){
+        dbUtilities.deleteEntireDB(true, false);
     }
 }

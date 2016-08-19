@@ -541,6 +541,36 @@ public class DatabaseUtilities {
     }
 
     /**
+     * DANGER ZONE! This will wipe the entire database (Of the configuration set. If you have
+     * multiple RealmConfigurations, you will need to create a DatabaseUtilities Object for
+     * each one and loop this method to delete them all).
+     * @param areYouSure Pass true to confirm wipe
+     * @param areYouNotSure Pass false to confirm wipe
+     * @return Boolean of success or not
+     */
+    public boolean deleteEntireDB(boolean areYouSure, boolean areYouNotSure) {
+        if (!areYouSure) {
+            return false;
+        }
+        if (areYouNotSure) {
+            return false;
+        }
+        try {
+            L.m("Deleting entire database!");
+            return (deleteRealmFileInStorage(realmConfiguration));
+        } catch (Exception e){
+            return false;
+        }
+    }
+    /**
+     * Only to be called if the realm instance needs to be deleted
+     * @return boolean of completion, true if success.
+     */
+    private static boolean deleteRealmFileInStorage(RealmConfiguration realmConfiguration){
+        return (Realm.deleteRealm(realmConfiguration));
+    }
+
+    /**
      * This will delete all persisted objects in the MasterDatabaseObject table
      *
      * @param areYouSure    If you want to delete everything, send true here
