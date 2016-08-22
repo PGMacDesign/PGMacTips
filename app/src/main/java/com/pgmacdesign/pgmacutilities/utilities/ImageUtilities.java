@@ -569,4 +569,8 @@ public class ImageUtilities {
             }
         }
     }
+
+    public static void zoomAView(){
+        //https://developer.android.com/training/animation/zoom.html
+    }
 }

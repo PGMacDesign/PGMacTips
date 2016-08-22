@@ -1,6 +1,7 @@
 package com.pgmacdesign.pgmacutilities.utilities;
 
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
@@ -81,6 +82,23 @@ public class TextFieldUtilities {
             return str;
         }
         return str;
+    }
+
+    /**
+     * Set the textview with HTML style text IE, <b>Words</b>
+     * @param viewToSet The view to set
+     * @param stringToSet The string to set
+     * @param <T> T extends TextView
+     */
+    public static <T extends TextView> void setTextWithHtml(T viewToSet, String stringToSet){
+        if(viewToSet == null || StringUtilities.isNullOrEmpty(stringToSet)){
+            return;
+        }
+        if(SystemUtilities.userHasNougatOrHigher()){
+            viewToSet.setText(Html.fromHtml(stringToSet, Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            viewToSet.setText(Html.fromHtml(stringToSet));
+        }
     }
 
     /**

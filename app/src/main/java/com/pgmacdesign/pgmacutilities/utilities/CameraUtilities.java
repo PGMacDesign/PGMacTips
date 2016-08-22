@@ -46,8 +46,6 @@ public class CameraUtilities {
         cameraUtilities = new CameraUtilities(NAME_OF_ACTIVITY.this,
             NAME_OF_ACTIVITY.this, true, STRING_WEB_IMAGE_URL_GOES_HERE, NAME_OF_ACTIVITY.this);
 
-     2.5) If in Love lab and using a TrustLevelDialog, don't forget to call dialog.setCameraImageUtility(obj)
-
      3) It's own method. If already in class, make sure that the if check is near the top
      @Override
      protected void onActivityResult(int requestcode, int resultcode, Intent data) {

@@ -420,6 +420,7 @@ public class StringUtilities {
         }
     }
 
+
     /**
      * Shortens a String to X characters or less
      * @param str String to shorten

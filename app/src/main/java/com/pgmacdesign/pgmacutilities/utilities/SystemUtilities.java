@@ -128,6 +128,22 @@ public class SystemUtilities {
     }
     //These are all checks for determining the build version.
 
+    public static int phoneBuildVersion(){
+        return Build.VERSION.SDK_INT;
+    }
+
+    /**
+     * API Level 24 or higher
+     * @return
+     */
+    public static boolean userHasNougatOrHigher(){
+        if(Build.VERSION.SDK_INT >= BuildVersions.N.getBuildVersion()){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * API Level 23 or higher
      * @return

@@ -56,7 +56,8 @@ public class PGMacCustomProgressBar extends ProgressDialog {
      *                  STRINGS!
      * @param svgTraceColors The array of svg tracing colors. SIZE MUST MATCH THE SIZE OF
      *                       THE ARRAY OF SVG STRINGS!
-     * @return
+     * @return ProgressDialog
+     * todo come back and refactor this in
      */
     public static ProgressDialog buildSVGDialog(Context context, boolean cancelable,
                                                 Integer imageSizeX, Integer imageSizeY,
