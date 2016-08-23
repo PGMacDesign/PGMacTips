@@ -3,6 +3,7 @@ package com.pgmacdesign.pgmacutilities.utilities;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -85,12 +86,41 @@ public class TextFieldUtilities {
     }
 
     /**
-     * Set the textview with HTML style text IE, <b>Words</b>
+     * Set the textview with HTML style text IE, <b>Words</b> or
+     * "<i><small><font color=\"#c5c5c5\">" + "Words Go Here" + "</font></small></i>"
      * @param viewToSet The view to set
      * @param stringToSet The string to set
      * @param <T> T extends TextView
      */
     public static <T extends TextView> void setTextWithHtml(T viewToSet, String stringToSet){
+        TextFieldUtilities.setTextWithHtml(viewToSet, stringToSet, null);
+    }
+    /**
+     * Set the textview with HTML style text IE, <b>Words</b> or
+     * "<i><small><font color=\"#c5c5c5\">" + "Words Go Here" + "</font></small></i>"
+     * @param viewToSet The view to set
+     * @param stringToSet The string to set
+     * @param hasUrlLinks Boolean, if true, will set the individual URL links to web clickable
+     *                    options. IE, if you have something like, "By continuing, you agree to
+     *                    our terms and conditions and privacy policy" where the 'terms and
+     *                    conditions' are one URL and the 'privacy policy' is another url, this
+     *                    will set each of those to open to their respective url links in the
+     *                    default web browser (IE chrome) so long as they are set with properly
+     *                    encoded HTML Tags. An example would be:
+     *            String str = "Do you want to search on " + "<a href=http//www.google.com>" +
+                  "Google" + "</a>" + " or " + "<a href=http//www.yahoo.com>" +
+                  "Yahoo" + "</a>" + "?";
+                          NOTE! This will auto underlign and highlight the URL links with your
+                          app's "Primary color" (or accent color), so customize those colors
+                          if desired.
+     * @param <T> T extends TextView
+     */
+    public static <T extends TextView> void setTextWithHtml(T viewToSet, String stringToSet,
+                                                            Boolean hasUrlLinks){
+        if(hasUrlLinks == null){
+            hasUrlLinks = false;
+        }
+
         if(viewToSet == null || StringUtilities.isNullOrEmpty(stringToSet)){
             return;
         }
@@ -98,6 +128,9 @@ public class TextFieldUtilities {
             viewToSet.setText(Html.fromHtml(stringToSet, Html.FROM_HTML_MODE_LEGACY));
         } else {
             viewToSet.setText(Html.fromHtml(stringToSet));
+        }
+        if(hasUrlLinks){
+            viewToSet.setMovementMethod(LinkMovementMethod.getInstance());
         }
     }
 
