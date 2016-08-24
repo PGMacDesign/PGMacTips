@@ -119,7 +119,9 @@ public class DatabaseUtilities {
             e.printStackTrace();
         } finally {
             try {
-                realm.close();
+                if(!realm.isClosed()) {
+                    realm.close();
+                }
             } catch (Exception e) {
             }
         }
@@ -181,7 +183,9 @@ public class DatabaseUtilities {
             e.printStackTrace();
         } finally {
             try {
-                realm.close();
+                if(!realm.isClosed()) {
+                    realm.close();
+                }
             } catch (Exception e) {
             }
         }
@@ -232,7 +236,9 @@ public class DatabaseUtilities {
             e.printStackTrace();
         } finally {
             try {
-                realm.close();
+                if(!realm.isClosed()) {
+                    realm.close();
+                }
             } catch (Exception e) {
             }
         }
@@ -400,7 +406,9 @@ public class DatabaseUtilities {
             e.printStackTrace();
         } finally {
             try {
-                realm.close();
+                if(!realm.isClosed()) {
+                    realm.close();
+                }
             } catch (Exception e) {
             }
         }
@@ -651,7 +659,9 @@ public class DatabaseUtilities {
             e.printStackTrace();
         } finally {
             try {
-                realm.close();
+                if(!realm.isClosed()) {
+                    realm.close();
+                }
             } catch (Exception e) {
             }
         }

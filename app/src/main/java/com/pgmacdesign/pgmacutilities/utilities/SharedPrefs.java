@@ -245,7 +245,35 @@ public class SharedPrefs {
             edit1.commit();
         }
     }
-    
+
+    /**
+     * Will convert the secondary value of type ? to a String and set it into the Shared Prefs
+     * @param map Map of type <String, ?>
+     */
+    public void save(Map<String, ?> map){
+        init();
+
+        if(isEncrypted) {
+            for (Map.Entry<String, ?> entry : map.entrySet()) {
+                String key = entry.getKey();
+                Object object = entry.getValue();
+                if (!StringUtilities.isNullOrEmpty(key) && object != null) {
+                    secureEdit.putString(key, object.toString());
+                }
+            }
+            secureEdit.commit();
+        } else {
+            for (Map.Entry<String, ?> entry : map.entrySet()) {
+                String key = entry.getKey();
+                Object object = entry.getValue();
+                if (!StringUtilities.isNullOrEmpty(key) && object != null) {
+                    edit1.putString(key, object.toString());
+                }
+            }
+            edit1.commit();
+        }
+    }
+
     //
     //Get methods
     //

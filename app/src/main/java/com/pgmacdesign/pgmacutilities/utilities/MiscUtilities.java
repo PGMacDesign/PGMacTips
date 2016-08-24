@@ -158,6 +158,24 @@ public class MiscUtilities {
     }
 
     /**
+     * Print out a hashmap
+     * @param myMap Map of type String, ?
+     */
+    public static void printOutHashMap(Map<String, ?> myMap){
+        if(myMap == null){
+            return;
+        }
+        L.m("Printing out entire Hashmap:\n");
+        for(Map.Entry<String, ?> map : myMap.entrySet()){
+            String key = map.getKey();
+            Object value = map.getValue();
+            L.m("Key = " + key);
+            L.m("Value = " + value.toString());
+        }
+        L.m("\nEnd printing out Hashmap:");
+    }
+
+    /**
      * Gets the package name. If null returned, send call again with context
      * @return
      */
