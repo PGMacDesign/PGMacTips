@@ -906,6 +906,7 @@ public class DatabaseUtilities {
     public static Realm buildRealm(RealmConfiguration realmConfiguration) {
         Realm realm = null;
         if (realmConfiguration != null) {
+            // TODO: 8/25/2016 may need check into whether or not realm is open()! and then re-init
             realm = Realm.getInstance(realmConfiguration);
         }
         return realm;

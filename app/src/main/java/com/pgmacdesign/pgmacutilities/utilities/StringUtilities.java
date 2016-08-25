@@ -11,6 +11,7 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 
+import com.pgmacdesign.pgmacutilities.R;
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
 
 import java.io.BufferedReader;
@@ -847,5 +848,32 @@ public class StringUtilities {
         return null;
     }
 
+    /**
+     * Checks for curse words in the String
+     * @param str String to compare against.
+     * @return True if it matches a curse word, false it it does not.
+     * NOTE! This will not check for contains, only equals. The reason for this is because
+     * if you have something like the word "assistant" the first 3 letters will trigger this
+     * to return true.
+     */
+    public static boolean isCurseWord(Context context, String str){
+        if(!StringUtilities.isNullOrEmpty(str)){
+            return false;
+        }
+        String[] curseWords = context.getResources().getStringArray(R.array.curse_words);
+        if(curseWords == null){
+            return false;
+        }
+        for(int i = 0; i < curseWords.length; i++){
+            if(str.equalsIgnoreCase(curseWords[i])){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*
+
+     */
 }
 
