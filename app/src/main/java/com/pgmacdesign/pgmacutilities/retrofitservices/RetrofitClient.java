@@ -49,8 +49,9 @@ public class RetrofitClient <T> {
     //Service Client used for web calls
     private T serviceClient;
 
-    public static T RetrofitFactoryBuilder(){
-
+    public static T RetrofitFactoryBuilder(@NonNull final T serviceInterface,
+                                           @NonNull String urlBase){
+        RetrofitClient myClient = new RetrofitClient();
     }
     /**
      * Constructor
@@ -265,27 +266,7 @@ public class RetrofitClient <T> {
         return client;
     }
 
-    public class RetrofitOptions {
-        private String urlBase;
-        private Map<String, String> headers;
-        private HttpLoggingInterceptor.Level logLevel;
-        private int readTimeout, writeTimeout;
-        private String dateFormat;
-        private T serviceClient;
 
-        public RetrofitOptions(String urlBase, Map<String, String> headers,
-                               HttpLoggingInterceptor.Level logLevel,
-                               int readTimeout, int writeTimeout,
-                               String dateFormat, T serviceClient) {
-            this.urlBase = urlBase;
-            this.headers = headers;
-            this.logLevel = logLevel;
-            this.readTimeout = readTimeout;
-            this.writeTimeout = writeTimeout;
-            this.dateFormat = dateFormat;
-            this.serviceClient = serviceClient;
-        }
-    }
 
 }
 
