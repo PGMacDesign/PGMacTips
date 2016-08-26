@@ -65,6 +65,8 @@ android {
         compile 'com.squareup.retrofit2:retrofit:2.1.0'
         compile 'com.squareup.okhttp3:okhttp:3.4.1'
         compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
+        //Type-safe HTTP client for Android and Java: https://github.com/square/retrofit
+        compile 'com.squareup.retrofit2:converter-gson:2.0.0-beta3'
 
         /*
         //Google play services

@@ -1,8 +1,11 @@
 package com.pgmacdesign.pgmacutilities.retrofitservices;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
+import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
 import com.pgmacdesign.pgmacutilities.utilities.MiscUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.StringUtilities;
 
@@ -10,6 +13,7 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -24,38 +28,93 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
 
 /**
  * Created by pmacdowell on 8/25/2016.
  */
-public class RetrofitClient {
+public class RetrofitClient <T> {
 
-    //This log level is used to log in the logcat what is being sent and received via the body
-    @SerializedName("httpLogLevel")
-    private static HttpLoggingInterceptor.Level httpLogLevel = HttpLoggingInterceptor.Level.BODY;
-    private String urlEndpoint;
+    // TODO: 8/26/2016 add link to http://square.github.io/retrofit/ into build.gradle
+
+    private String urlBase;
     private Map<String, String> headers;
     private HttpLoggingInterceptor.Level logLevel;
     private int readTimeout, writeTimeout;
+    private String dateFormat;
+    private Class<T> serviceInterface;
+    private static final int SIXTY_SECONDS = (int)(PGMacUtilitiesConstants.ONE_MINUTE / 1000);
 
-    /*
-    Todo refactor in check for
-    "Content-Type", "application/json"
+    //Service Client used for web calls
+    private T serviceClient;
+
+    public static T RetrofitFactoryBuilder(){
+
+    }
+    /**
+     * Constructor
+     * @param serviceInterface Service Client. For example, see: {@link ddddd}
+     * @param urlBase The String URL base. An example would be:
      */
+    public RetrofitClient(@NonNull final Class<T> serviceInterface, @NonNull String urlBase) {
+        this.urlBase = urlBase;
+        this.serviceInterface = serviceInterface;
+        initDefaults();
+    }
 
     /**
-     *
-     * @param urlEndpoint
-     * @param headers
-     * @param logLevel {@link okhttp3.logging.HttpLoggingInterceptor.Level}
+     * init defaults in case the user doesn't set any default log level, date format, or timeouts
      */
-    public RetrofitClient(String urlEndpoint, Map<String, String> headers, HttpLoggingInterceptor.Level logLevel) {
-        this.urlEndpoint = urlEndpoint;
-        this.headers = headers;
-        this.logLevel = logLevel;
-        if(logLevel == null){
-            logLevel = HttpLoggingInterceptor.Level.NONE;
+    private void initDefaults(){
+        this.headers = null;
+        this.setLogLevel(HttpLoggingInterceptor.Level.BODY);
+        this.setDateFormat(PGMacUtilitiesConstants.DEFAULT_DATE_FORMAT);
+        this.setTimeouts(SIXTY_SECONDS, SIXTY_SECONDS);
+    }
+
+    /**
+     * Simple setter method for those who are too lazy to make a hashmap containing
+     * "Content-Type", "application/json" as headers. Just call this and it will set it
+     */
+    public void callIsJsonFormat(){
+        Map<String, String> myMap = new HashMap<>();
+        myMap.put("Content-Type", "application/json");
+        this.headers = myMap;
+    }
+
+    /**
+     * Simple setter method for those who are too lazy to make a hashmap containing
+     * "Content-Type", "multipart/form-data" as headers. Just call this and it will set it
+     */
+    public void callIsMultipartFormat(){
+        Map<String, String> myMap = new HashMap<>();
+        myMap.put("Content-Type", "multipart/form-data");
+        this.headers = myMap;
+    }
+
+    /**
+     * Set the logging level. Log level is text displayed in the logcat for testing / debugging
+     * For more info, see {@link okhttp3.logging.HttpLoggingInterceptor.Level}
+     * @param logLevel
+     */
+    public void setLogLevel(HttpLoggingInterceptor.Level logLevel){
+        if(logLevel != null){
+            this.logLevel = logLevel;
+        }
+    }
+
+    /**
+     * Set the headers. This would be where you would send in a map with header Strings.
+     * Samples would be a map containing types like these:
+     * <"Authentication", "password123">
+     * <"Content-Type", "application/json">
+     * <"Content-Type", "multipart/form-data">
+     * @param headers
+     */
+    public void setHeaders(Map<String, String> headers){
+        if(MiscUtilities.isMapNullOrEmpty(headers)) {
+            this.headers = headers;
         }
     }
 
@@ -69,49 +128,30 @@ public class RetrofitClient {
         writeTimeout = writeTimeoutInSeconds;
     }
 
-
-
-
-
-
-
-
-
-    //Service Client used for our endpoint calls
-    private static GenericRetrofitService serviceClient;
-    //Service Client used for image multi-part upload calls
-    private static RetrofitService serviceMultipartClient;
-
-
-
-
-    //This static method is called when the class is created and runs on its own
-    static {
-        buildAClient();
+    /**
+     * Set the data format.
+     * @param dateFormat Date format String structured like this:
+     *                   "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+     *                   If not set or null passed, it will be set to default listed above.
+     */
+    public void setDateFormat(String dateFormat){
+        if(!StringUtilities.isNullOrEmpty(dateFormat)) {
+            this.dateFormat = dateFormat;
+        }
     }
 
     /**
-     * Simple getter method. When this is called, the static method is initiated and the client is
-     * built and returned.
-     * @return Fully built RetrofitService client that is ready for outbound calls
+     * Build a Client
+     * @return
      */
-    public static RetrofitService getServiceClient(){
-        return serviceClient;
-    }
-    /**
-     * Simple getter method. When this is called, the static method is initiated and the client is
-     * built and returned.
-     * @return Fully built RetrofitService client that is ready for outbound calls (Multi-part)
-     */
-    public static RetrofitService getServiceMultipartClientClient(){
-        return serviceMultipartClient;
+    public T buildClient(){
+        return buildAClient();
     }
 
     /**
-     * This builds a client that will be used for outbound calls
+     * This builds a client that will be used for network calls
      */
-    public void buildAClient(){
-
+    private T buildAClient(){
         //First create the interceptor, which will be used in the Retrofit call
         Interceptor interceptor = new Interceptor() {
             @Override
@@ -154,73 +194,28 @@ public class RetrofitClient {
         builder.addInterceptor(interceptor);
         builder.addInterceptor(logging);
 
-        client.interceptors().add(interceptor);
-        client.interceptors().add(logging);
-
         OkHttpClient client = builder.build();
-        
 
-
-        //Next, we are making a Gson object that will be used for parsing the response from the server
-        Gson gson = new GsonBuilder()
-                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-                .create();
-
-        //Lastly, create the retrofit object, which will use the variables/ objects we have created above
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .client(client)
-                .build();
-
-        //Now that it is built, create the service client, which references the interface we made
-        serviceClient = retrofit.create(RetrofitService.class);
-    }
-
-    /**
-     * This builds a client that will be used for outbound calls
-     */
-    private static void buildImageClient(){
-
-        //First create the interceptor, which will be used in the Retrofit call
-        Interceptor interceptor = new Interceptor() {
-            @Override
-            public Response intercept(Interceptor.Chain chain) throws IOException {
-                Request newRequest = chain.request().newBuilder()
-                        //This is where you would add headers if need be. An example would be:
-                        //.addHeader("Authorization", "Token:" + someAPIToken)
-                        .addHeader("Content-Type", "multipart/form-data")
-                        .build(); //Finally, build it
-                return chain.proceed(newRequest);
-            }
-        };
-
-        //Next, we set the logging level
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(httpLogLevel);
-
-        //Next, create the OkHttpClient
-        OkHttpClient client = RetrofitClient.configureClient(new OkHttpClient());
         client.interceptors().add(interceptor);
         client.interceptors().add(logging);
-        //Set the timeout to 1 minute for now. We can set it to more, but for simplicity, keep it at 1 min
-        client.setWriteTimeout(1, TimeUnit.MINUTES);
-        client.setReadTimeout(1, TimeUnit.MINUTES);
+
+        client = configureClient(client);
 
         //Next, we are making a Gson object that will be used for parsing the response from the server
         Gson gson = new GsonBuilder()
-                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+                .setDateFormat(dateFormat)
                 .create();
 
         //Lastly, create the retrofit object, which will use the variables/ objects we have created above
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(urlBase)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(client)
                 .build();
 
         //Now that it is built, create the service client, which references the interface we made
-        serviceMultipartClient = retrofit.create(RetrofitService.class);
+        serviceClient = retrofit.create(serviceInterface);
+        return serviceClient;
     }
 
     /**
@@ -228,7 +223,7 @@ public class RetrofitClient {
      * @param client The client object being changes
      * @return an Altered OkHttpClient with these new features added
      */
-    public static OkHttpClient configureClient(final OkHttpClient client) {
+    private static OkHttpClient configureClient(final OkHttpClient client) {
         final TrustManager[] certs = new TrustManager[]{new X509TrustManager() {
             @Override
             public X509Certificate[] getAcceptedIssuers() {
@@ -269,6 +264,29 @@ public class RetrofitClient {
 
         return client;
     }
+
+    public class RetrofitOptions {
+        private String urlBase;
+        private Map<String, String> headers;
+        private HttpLoggingInterceptor.Level logLevel;
+        private int readTimeout, writeTimeout;
+        private String dateFormat;
+        private T serviceClient;
+
+        public RetrofitOptions(String urlBase, Map<String, String> headers,
+                               HttpLoggingInterceptor.Level logLevel,
+                               int readTimeout, int writeTimeout,
+                               String dateFormat, T serviceClient) {
+            this.urlBase = urlBase;
+            this.headers = headers;
+            this.logLevel = logLevel;
+            this.readTimeout = readTimeout;
+            this.writeTimeout = writeTimeout;
+            this.dateFormat = dateFormat;
+            this.serviceClient = serviceClient;
+        }
+    }
+
 }
 
 
