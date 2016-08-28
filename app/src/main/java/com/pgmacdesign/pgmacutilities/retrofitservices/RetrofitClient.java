@@ -49,9 +49,25 @@ public class RetrofitClient <T> {
     //Service Client used for web calls
     private T serviceClient;
 
-    public static T RetrofitFactoryBuilder(@NonNull final T serviceInterface,
-                                           @NonNull String urlBase){
-        RetrofitClient myClient = new RetrofitClient();
+    /**
+     * Factory builder method for quick access. This will build the class and set some
+     * defaults. More can be customized if
+     * @param serviceInterface The class represented by a retrofit service {@link dddd}
+     * @param urlBase The string URL base to use IE: dddd
+     * @param headers Headers. EX = "Content-Type", "application/json"
+     * @return RetrofitClient object
+     * todo eventually refactor this into a builder style
+     */
+    public static RetrofitClient RetrofitFactoryBuilder(@NonNull final Class serviceInterface,
+                                           @NonNull String urlBase,
+                                           Map<String, String> headers){
+        RetrofitClient myClient = new RetrofitClient(serviceInterface, urlBase);
+        myClient.setDateFormat(PGMacUtilitiesConstants.DEFAULT_DATE_FORMAT);
+        myClient.setLogLevel(HttpLoggingInterceptor.Level.BODY);
+        myClient.setHeaders(headers);
+        myClient.setTimeouts(SIXTY_SECONDS, SIXTY_SECONDS);
+
+        return myClient;
     }
     /**
      * Constructor
