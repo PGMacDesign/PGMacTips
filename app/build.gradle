@@ -61,7 +61,9 @@ android {
         //Updated Cropper. https://github.com/Yalantis/uCrop
         compile 'com.yalantis:ucrop:2.1.2'
 
-        //Retrofit and OKHTTP
+        //Retrofit and OKHTTP.
+        //Retrofit - http://square.github.io/retrofit/
+        //OKHttp - http://square.github.io/okhttp/
         compile 'com.squareup.retrofit2:retrofit:2.1.0'
         compile 'com.squareup.okhttp3:okhttp:3.4.1'
         compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'

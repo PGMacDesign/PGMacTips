@@ -4,23 +4,24 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.annotations.SerializedName;
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
 import com.pgmacdesign.pgmacutilities.utilities.MiscUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.StringUtilities;
 
 import java.io.IOException;
-import java.security.SecureRandom;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Interceptor;
@@ -52,7 +53,7 @@ public class RetrofitClient <T> {
     /**
      * Factory builder method for quick access. This will build the class and set some
      * defaults. More can be customized if
-     * @param serviceInterface The class represented by a retrofit service {@link dddd}
+     * @param serviceInterface The class represented by a retrofit service {@link SampleRetrofitService}
      * @param urlBase The string URL base to use IE: dddd
      * @param headers Headers. EX = "Content-Type", "application/json"
      * @return RetrofitClient object
@@ -71,7 +72,7 @@ public class RetrofitClient <T> {
     }
     /**
      * Constructor
-     * @param serviceInterface Service Client. For example, see: {@link ddddd}
+     * @param serviceInterface Service Client. For example, see: {@link SampleRetrofitService}
      * @param urlBase The String URL base. An example would be:
      */
     public RetrofitClient(@NonNull final Class<T> serviceInterface, @NonNull String urlBase) {
@@ -208,22 +209,26 @@ public class RetrofitClient <T> {
             builder.writeTimeout(writeTimeout, TimeUnit.SECONDS);
         }
 
+        //Add logging and interceptor
         builder.addInterceptor(interceptor);
         builder.addInterceptor(logging);
 
+        //Configure SSL
+        builder = configureClient(builder);
+
+        //Build the client
         OkHttpClient client = builder.build();
 
-        client.interceptors().add(interceptor);
-        client.interceptors().add(logging);
+        //Old way of adding interceptors, refactored into builder now
+        //client.interceptors().add(interceptor);
+        //client.interceptors().add(logging);
 
-        client = configureClient(client);
-
-        //Next, we are making a Gson object that will be used for parsing the response from the server
+        //Gson object that will be used for parsing the response from the server
         Gson gson = new GsonBuilder()
                 .setDateFormat(dateFormat)
                 .create();
 
-        //Lastly, create the retrofit object, which will use the variables/ objects we have created above
+        //Create the retrofit object, which will use the variables/ objects we have created above
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(urlBase)
                 .addConverterFactory(GsonConverterFactory.create(gson))
@@ -237,49 +242,41 @@ public class RetrofitClient <T> {
 
     /**
      * This class will configure the OkHttpClient to add things like SSL, certs, etc.
-     * @param client The client object being changes
-     * @return an Altered OkHttpClient with these new features added
+     * @param builder The builder that will be altered and returned
+     * @return Altered builder method.
+     * For more information on this, please see
+     * {@link okhttp3.OkHttpClient.Builder} <-- sslSocketFactory
      */
-    private static OkHttpClient configureClient(final OkHttpClient client) {
-        final TrustManager[] certs = new TrustManager[]{new X509TrustManager() {
-            @Override
-            public X509Certificate[] getAcceptedIssuers() {
-                return null;
-            }
-            @Override
-            public void checkServerTrusted(final X509Certificate[] chain,
-                                           final String authType)
-                    throws CertificateException {
-            }
-
-            @Override
-            public void checkClientTrusted(final X509Certificate[] chain,
-                                           final String authType)
-                    throws CertificateException {
-            }
-        }};
-
-        SSLContext ssl = null;
-        try {
-            ssl = SSLContext.getInstance("TLS");
-            ssl.init(null, certs, new SecureRandom());
-        } catch (final java.security.GeneralSecurityException ex) {
-        }
+    private static OkHttpClient.Builder configureClient(final OkHttpClient.Builder builder) {
 
         try {
-            final HostnameVerifier hostnameVerifier = new HostnameVerifier() {
-                @Override
-                public boolean verify(final String hostname,
-                                      final SSLSession session) {
-                    return true;
-                }
-            };
-            client.setHostnameVerifier(hostnameVerifier);
-            client.setSslSocketFactory(ssl.getSocketFactory());
-        } catch (final Exception e) {
+            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
+                    TrustManagerFactory.getDefaultAlgorithm());
+            trustManagerFactory.init((KeyStore) null);
+            TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+            if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
+                throw new IllegalStateException("Unexpected default trust managers:"
+                        + Arrays.toString(trustManagers));
+            }
+            X509TrustManager trustManager = (X509TrustManager) trustManagers[0];
+
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, new TrustManager[]{trustManager}, null);
+            SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+
+            builder.sslSocketFactory(sslSocketFactory, trustManager);
+
+        } catch (KeyManagementException kme){
+            kme.printStackTrace();
+        } catch (NoSuchAlgorithmException nsa){
+            nsa.printStackTrace();
+        } catch (KeyStoreException kse){
+            kse.printStackTrace();
+        } catch (IllegalStateException ise){
+            ise.printStackTrace();
         }
 
-        return client;
+        return builder;
     }
 
 
