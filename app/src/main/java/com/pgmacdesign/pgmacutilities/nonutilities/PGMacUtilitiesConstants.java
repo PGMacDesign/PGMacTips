@@ -11,18 +11,17 @@ public class PGMacUtilitiesConstants {
     /////Misc Strings///////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static final String WEB_URL_ENCODING = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
-    public static final String PASSWORD_PATTERN = "^\\S*(?=\\S*[a-zA-Z])(?=\\S*[0-9])\\S*$";
     public static final String PHONE_URI_TO_WRITE_TO = "/storage/emulated/0/Download/";
     public static final String FILE_NAME = "debugLoggingData.txt";
     public static final String URL_GOOGLE = "https://www.google.com";
-
+    public static final String NO_INTERNET = "It looks like you do not have a stable internet connection. Please check for connectivity and try again";
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /////Custom Tags (There is no specific order to these numbers)//////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     //Request codes used for permission requests
+    public static final int TAG_PERMISSIONS_ACCESS_NETWORK_STATE = 4398;
     public static final int MY_PERMISSIONS_REQUEST_CONTACTS = 4399;
     public static final int TAG_PERMISSIONS_REQUEST_CODE_INT = 4400;
     public static final int TAG_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 4401;
@@ -72,7 +71,11 @@ public class PGMacUtilitiesConstants {
     public static final int TAG_UPLOAD_ERROR = 4438;
     public static final int TAG_UPLOAD_SUCCESS = 4439;
     public static final int TAG_CLICK_NO_TAG_SENT = 4440;
-    public static final int TAG_LONG_CLICK_NO_TAG_SENT = 4440;
+    public static final int TAG_LONG_CLICK_NO_TAG_SENT = 4441;
+    public static final int TAG_RETROFIT_CALL_FAILED = 4442;
+    public static final int TAG_RETROFIT_CALL_SUCCESS_BOOLEAN = 4443;
+    public static final int TAG_RETROFIT_CALL_SUCCESS_STRING = 4444;
+    public static final int TAG_RETROFIT_CALL_SUCCESS_OBJECT = 4445;
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -128,21 +131,26 @@ public class PGMacUtilitiesConstants {
     public static final String COLOR_SEMI_TRANSPARENT_9 = "#A9111111";
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-    /////Credit Card Regular Expressions////////////////////////////////////////////////////////////
+    /////Regular Expressions////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static final String CARD_REGEX_VISA = "^4[0-9]{12}(?:[0-9]{3})?$";
-    public static final String CARD_REGEX_MASTERCARD = "^5[1-5][0-9]{14}$";
-    public static final String CARD_REGEX_AMERICAN_EXPRESS = "^3[47][0-9]{13}$";
-    public static final String CARD_REGEX_DINERS_CLUB = "^3(?:0[0-5]|[68][0-9])[0-9]{11}$";
-    public static final String CARD_REGEX_DISCOVER = "^6(?:011|5[0-9]{2})[0-9]{12}$";
-    public static final String CARD_REGEX_JCB = "^(?:2131|1800|35\\d{3})\\d{11}$";
+    //Credit Card Regular Expressions
+    public static final String REGEX_CREDIT_CARD_VISA = "^4[0-9]{12}(?:[0-9]{3})?$";
+    public static final String REGEX_CREDIT_CARD_MASTERCARD = "^5[1-5][0-9]{14}$";
+    public static final String REGEX_CREDIT_CARD_AMERICAN_EXPRESS = "^3[47][0-9]{13}$";
+    public static final String REGEX_CREDIT_CARD_DINERS_CLUB = "^3(?:0[0-5]|[68][0-9])[0-9]{11}$";
+    public static final String REGEX_CREDIT_CARD_DISCOVER = "^6(?:011|5[0-9]{2})[0-9]{12}$";
+    public static final String REGEX_CREDIT_CARD_JCB = "^(?:2131|1800|35\\d{3})\\d{11}$";
+
+    //Misc Regexs
+    public static final String REGEX_WEB_URL_ENCODING = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
+    public static final String REGEX_PASSWORD_PATTERN = "^\\S*(?=\\S*[a-zA-Z])(?=\\S*[0-9])\\S*$";
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /////Animation Constants and Tags///////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //Animation Techniques (From the library using YoYo).
+    //Animation Techniques (From the library com.daimajia.androidanimations:library:1.1.3@aar).
     //Prefix: In means it brings them into sight while out takes them out of sight
     public static final Techniques IN_ZOOM_UP = Techniques.ZoomInUp; //Fun one, opposite of ZoomOutDown, zooms it up and then in
     public static final Techniques OUT_ZOOM_DOWN = Techniques.ZoomOutDown; //Fun one, zooms away (back) and then down, useful for getting rid of things

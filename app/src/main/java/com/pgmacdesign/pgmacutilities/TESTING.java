@@ -8,10 +8,12 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmacutilities.pojos.MasterDatabaseObject;
+import com.pgmacdesign.pgmacutilities.retrofitutilities.serviceapiinterfaces.ProfantiyCheckerAPICalls;
 import com.pgmacdesign.pgmacutilities.utilities.ContactUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.DatabaseUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.L;
 import com.pgmacdesign.pgmacutilities.utilities.MiscUtilities;
+import com.pgmacdesign.pgmacutilities.utilities.NetworkUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.PermissionUtilities;
 
 import java.util.ArrayList;
@@ -41,9 +43,21 @@ public class TESTING extends AppCompatActivity {
         //temp();
         //temp2();
 
+        boolean bool = NetworkUtilities.haveNetworkPermission(this);
+        if(bool) {
+            //L.m("Synchronous result = " + ProfantiyCheckerAPICalls.checkProfanity(this, "eeee"));
+
+            ProfantiyCheckerAPICalls.checkProfanityAsynchronous(this, new OnTaskCompleteListener() {
+                @Override
+                public void onTaskComplete(Object result, int customTag) {
+                    L.m("Asynchronous result = " + result);
+                }
+            }, "eeee");
+
+        }
 
         //Custom stuff here
-        dbUtilities = new DatabaseUtilities(this);
+        //dbUtilities = new DatabaseUtilities(this);
 
         //writeDBStuff();
         //moveDBFile();

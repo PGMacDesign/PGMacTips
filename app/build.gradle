@@ -61,7 +61,7 @@ android {
         //Updated Cropper. https://github.com/Yalantis/uCrop
         compile 'com.yalantis:ucrop:2.1.2'
 
-        //Retrofit and OKHTTP.
+        //Retrofit, Retrofit Converters, and OKHTTP.
         //Retrofit - http://square.github.io/retrofit/
         //OKHttp - http://square.github.io/okhttp/
         compile 'com.squareup.retrofit2:retrofit:2.1.0'
@@ -69,6 +69,8 @@ android {
         compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
         //Type-safe HTTP client for Android and Java: https://github.com/square/retrofit
         compile 'com.squareup.retrofit2:converter-gson:2.0.0-beta3'
+        //Other Converters for Custom JSON Serialization
+        compile 'com.squareup.retrofit2:adapter-rxjava:2.0.0-beta3'
 
         /*
         //Google play services

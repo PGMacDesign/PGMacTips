@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmacutilities.retrofitservices;
+package com.pgmacdesign.pgmacutilities.retrofitutilities.serviceapiinterfaces;
 
 import com.pgmacdesign.pgmacutilities.TESTINGPOJO;
 import com.pgmacdesign.pgmacutilities.TESTINGPOJO2;

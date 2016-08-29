@@ -21,12 +21,12 @@ public class CreditCardUtilities {
      */
     public static enum CardType {
         UNKNOWN,
-        VISA(PGMacUtilitiesConstants.CARD_REGEX_VISA),
-        MASTERCARD(PGMacUtilitiesConstants.CARD_REGEX_MASTERCARD),
-        AMERICAN_EXPRESS(PGMacUtilitiesConstants.CARD_REGEX_AMERICAN_EXPRESS),
-        DINERS_CLUB(PGMacUtilitiesConstants.CARD_REGEX_DINERS_CLUB),
-        DISCOVER(PGMacUtilitiesConstants.CARD_REGEX_DISCOVER),
-        JCB(PGMacUtilitiesConstants.CARD_REGEX_JCB);
+        VISA(PGMacUtilitiesConstants.REGEX_CREDIT_CARD_VISA),
+        MASTERCARD(PGMacUtilitiesConstants.REGEX_CREDIT_CARD_MASTERCARD),
+        AMERICAN_EXPRESS(PGMacUtilitiesConstants.REGEX_CREDIT_CARD_AMERICAN_EXPRESS),
+        DINERS_CLUB(PGMacUtilitiesConstants.REGEX_CREDIT_CARD_DINERS_CLUB),
+        DISCOVER(PGMacUtilitiesConstants.REGEX_CREDIT_CARD_DISCOVER),
+        JCB(PGMacUtilitiesConstants.REGEX_CREDIT_CARD_JCB);
 
         private Pattern pattern;
 

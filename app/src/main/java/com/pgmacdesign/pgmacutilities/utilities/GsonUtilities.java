@@ -26,12 +26,13 @@ public class GsonUtilities {
     }
     public static Object convertJsonToObject(String jsonString, Class objectSourceClass){
         GsonUtilities.init();
-        Object obj = null;
         try {
-            obj = gson.fromJson(jsonString, objectSourceClass);
+            Object obj = gson.fromJson(jsonString, objectSourceClass);
+            return obj;
         } catch (Exception e){
             //For testing
+            e.printStackTrace();
+            return null;
         }
-        return(obj);
     }
 }

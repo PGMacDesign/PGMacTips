@@ -21,8 +21,11 @@ public class PermissionUtilities {
             PGMacUtilitiesConstants.TAG_PERMISSIONS_REQUEST_CAMERA;
     private static final int MY_PERMISSIONS_REQUEST_CONTACTS =
             PGMacUtilitiesConstants.MY_PERMISSIONS_REQUEST_CONTACTS;
+    private static final int MY_PERMISSIONS_ACCESS_NETWORK_STATE =
+            PGMacUtilitiesConstants.TAG_PERMISSIONS_ACCESS_NETWORK_STATE;
     private static final int MY_PERMISSIONS_REQUEST_ALL =
             PGMacUtilitiesConstants.TAG_PERMISSIONS_REQUEST_ALL;
+
 
     private static final int PERMISSIONS_REQUEST_CODE_INT =
             PGMacUtilitiesConstants.TAG_PERMISSIONS_REQUEST_CODE_INT;
@@ -53,23 +56,31 @@ public class PermissionUtilities {
                 Manifest.permission.ACCESS_COARSE_LOCATION, 20, false),
         ACCESS_FINE_LOCATION("Access Fine Location", "Used in determining your location",
                 Manifest.permission.ACCESS_FINE_LOCATION, 21, false),
-        WRITE_EXTERNAL_STORAGE("Write External Storage", "Allows pictures to be taken, edited, and cropped",
+        WRITE_EXTERNAL_STORAGE("Write External Storage", "Allows the ability to write to external " +
+                "storage. An example of this would be allowing pictures to be taken, edited, " +
+                "and cropped",
                 Manifest.permission.WRITE_EXTERNAL_STORAGE, 22, false),
         CAMERA("Camera", "Allows pictures to be taken with the camera",
                 Manifest.permission.CAMERA, 23, false),
-        READ_EXTERNAL_STORAGE("Read External Storage", "Allows gallery pictures to be accessed",
+        READ_EXTERNAL_STORAGE("Read External Storage", "Allows the ability to read external " +
+                "storage. An example of this would be allowing gallery pictures to be accessed",
                 Manifest.permission.READ_EXTERNAL_STORAGE, 24, false),
-        READ_PHONE_STATE("Read Phone State", "Used for determining phone state (IE Wifi) so internet calls will not fail",
+        READ_PHONE_STATE("Read Phone State", "Used for determining phone state (IE Wifi) so " +
+                "internet calls will not fail",
                 Manifest.permission.READ_PHONE_STATE, 25, false),
-        READ_CONTACTS("Read Contacts", "Used to provide you direct access to your contacts from within the app",
+        READ_CONTACTS("Read Contacts", "Used to provide you direct access to your contacts " +
+                "from within the app",
                 Manifest.permission.READ_CONTACTS, 26, false),//,
-        ACCESS_WIFI_STATE("Determine Wifi State", "Used in determining internet connectivity",
+        ACCESS_WIFI_STATE("Determine Wifi State", "Used in determining internet connectivity " +
+                "before making web calls.",
                 Manifest.permission.ACCESS_WIFI_STATE, 27, false),
-        ACCESS_NETWORK_STATE("Read Contacts", "Used in determining internet connectivity",
+        ACCESS_NETWORK_STATE("Access Network State", "Used in determining internet connectivity " +
+                "before making web calls.",
                 Manifest.permission.ACCESS_NETWORK_STATE, 28, false),
-        BLUETOOTH("Read Contacts", "Used for connection with bluetooth devices",
+        BLUETOOTH("BlueTooth", "Used for connection with bluetooth devices",
                 Manifest.permission.BLUETOOTH, 29, false),
-        BLUETOOTH_ADMIN("Read Contacts", "Used for connection with various location-based services and misc bluetooth settings",
+        BLUETOOTH_ADMIN("BlueTooth Admin", "Used for making changes to the Bluetooth settings. " +
+                "An example of this would be usage with various location-based services",
                 Manifest.permission.BLUETOOTH_ADMIN, 30, false)
         ;
 
@@ -149,6 +160,8 @@ public class PermissionUtilities {
         }
 
     }
+
+    // TODO: 8/29/2016 in refactoring portion for this. Will return and fix more
     public boolean requestPermission(permissionsEnum whichPerm){
         try {
             if(ContextCompat.checkSelfPermission(activity, whichPerm.getPermissionManifestName())
@@ -182,6 +195,26 @@ public class PermissionUtilities {
         } catch (Exception e0){
             e0.printStackTrace();
         }
+        return false;
+    }
+
+    public static boolean getAccessNetworkStatePermissions(Activity activity){
+        try {
+            if (SystemUtilities.userHasMarshmallowOrHigher()) {
+                if (ContextCompat.checkSelfPermission(activity,
+                        Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED ){
+
+                    ActivityCompat.requestPermissions(activity,
+                            new String[]{
+                                    Manifest.permission.ACCESS_NETWORK_STATE},
+                            MY_PERMISSIONS_ACCESS_NETWORK_STATE);
+                } else {
+                    return true;
+                }
+            } else {
+                return true;
+            }
+        } catch (Exception e){}
         return false;
     }
 

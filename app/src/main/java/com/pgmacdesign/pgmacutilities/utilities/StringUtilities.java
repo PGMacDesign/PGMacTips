@@ -240,6 +240,40 @@ public class StringUtilities {
     }
 
     /**
+     * Checks a String to see if it can be easilly converted to a boolean. If it can be, it will
+     * be returned as true or false, else, it will return null.
+     * @param str String to check
+     * @return Boolean, true or false, null if it cannot be parsed
+     */
+    public static Boolean convertStringToBoolean(String str){
+        if(str == null){
+            return null;
+        }
+        if(str.length() == 0){
+            return null;
+        }
+        str = str.trim();
+        //Checking for simple response, like T or F or 1, 0 in binary
+        if(str.length() == 1){
+            if(str.equalsIgnoreCase("t") || str.equalsIgnoreCase("1")){
+                return true;
+            } else if(str.equalsIgnoreCase("f") || str.equalsIgnoreCase("0")){
+                return false;
+            } else {
+                return null;
+            }
+        } else {
+            //Check for full words now
+            if (str.equalsIgnoreCase("true")) {
+                return true;
+            } else if (str.equalsIgnoreCase("false")) {
+                return false;
+            } else {
+                return null;
+            }
+        }
+    }
+    /**
      * Checks if a string passed in is numeric (IE pass in "2" and it will return true)
      * @param str String to check against
      * @return Return true if it is numeric, false if it is not
@@ -477,7 +511,7 @@ public class StringUtilities {
             //Check for letters, then numbers, then special characters
             Matcher matcher;
             Pattern pattern;
-            pattern = Pattern.compile(PGMacUtilitiesConstants.PASSWORD_PATTERN);
+            pattern = Pattern.compile(PGMacUtilitiesConstants.REGEX_PASSWORD_PATTERN);
             matcher = pattern.matcher(password);
             boolean hasLetterAndNumber = matcher.matches();
 
@@ -498,7 +532,7 @@ public class StringUtilities {
     public static String encodeURIStringWithRegex(String uriToEncode){
         try {
             //TEST
-            uriToEncode = uriToEncode.replaceAll(PGMacUtilitiesConstants.WEB_URL_ENCODING, uriToEncode);
+            uriToEncode = uriToEncode.replaceAll(PGMacUtilitiesConstants.REGEX_WEB_URL_ENCODING, uriToEncode);
 
             return uriToEncode;
         } catch (Exception e){

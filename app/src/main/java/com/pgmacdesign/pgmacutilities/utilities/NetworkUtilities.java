@@ -1,5 +1,6 @@
 package com.pgmacdesign.pgmacutilities.utilities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -13,9 +14,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
+ * Class Uses Permission android.permission.ACCESS_NETWORK_STATE.
+ * {@link com.pgmacdesign.pgmacutilities.utilities.PermissionUtilities.permissionsEnum}
  * Created by pmacdowell on 8/12/2016.
  */
 public class NetworkUtilities {
+
+    public static boolean haveNetworkPermission(Activity activity){
+        return(PermissionUtilities.getAccessNetworkStatePermissions(activity));
+    }
 
     /**
      * Checks for network connectivity either via wifi or cellular.
