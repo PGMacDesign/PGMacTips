@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmacutilities.pojos.MasterDatabaseObject;
-import com.pgmacdesign.pgmacutilities.retrofitutilities.serviceapiinterfaces.ProfantiyCheckerAPICalls;
+import com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities.serviceapiinterfaces.ProfantiyCheckerAPICalls;
 import com.pgmacdesign.pgmacutilities.utilities.ContactUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.DatabaseUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.L;

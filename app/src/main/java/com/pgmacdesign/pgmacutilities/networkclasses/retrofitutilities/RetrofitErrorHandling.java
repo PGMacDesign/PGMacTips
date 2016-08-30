@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmacutilities.retrofitutilities;
+package com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities;
 
 import com.pgmacdesign.pgmacutilities.utilities.GsonUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.StringUtilities;

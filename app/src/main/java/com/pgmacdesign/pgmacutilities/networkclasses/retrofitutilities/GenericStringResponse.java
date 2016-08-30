@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmacutilities.retrofitutilities;
+package com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities;
 
 import com.google.gson.annotations.SerializedName;
 

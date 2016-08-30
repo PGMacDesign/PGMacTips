@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmacutilities.retrofitutilities.serviceapiinterfaces;
+package com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities.serviceapiinterfaces;
 
 /**
  * This class is a sample of sample API calls and how to use them.

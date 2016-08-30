@@ -1,11 +1,11 @@
-package com.pgmacdesign.pgmacutilities.retrofitutilities;
+package com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities;
 
 import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
-import com.pgmacdesign.pgmacutilities.retrofitutilities.serviceapiinterfaces.SampleRetrofitService;
+import com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities.serviceapiinterfaces.SampleRetrofitService;
 import com.pgmacdesign.pgmacutilities.utilities.L;
 import com.pgmacdesign.pgmacutilities.utilities.MiscUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.StringUtilities;

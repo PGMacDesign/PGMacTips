@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmacutilities.retrofitutilities.serviceapiinterfaces;
+package com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities.serviceapiinterfaces;
 
 import android.content.Context;
 import android.os.NetworkOnMainThreadException;
@@ -6,8 +6,8 @@ import android.support.annotation.NonNull;
 
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
-import com.pgmacdesign.pgmacutilities.retrofitutilities.RetrofitClient;
-import com.pgmacdesign.pgmacutilities.retrofitutilities.RetrofitErrorHandling;
+import com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities.RetrofitClient;
+import com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities.RetrofitErrorHandling;
 import com.pgmacdesign.pgmacutilities.utilities.L;
 import com.pgmacdesign.pgmacutilities.utilities.NetworkUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.StringUtilities;
