@@ -171,5 +171,6 @@ public class PGMacUtilitiesConstants {
     public static final Techniques IN_TADA = Techniques.Tada; //Fun one, seems useful for focusing on a view
     public static final Techniques OUT_ROLL = Techniques.RollOut;
     public static final Techniques OUT_ZOOM = Techniques.ZoomOut;
+    public static final Techniques IN_FLASH = Techniques.Flash; //Quick flash
 
 }

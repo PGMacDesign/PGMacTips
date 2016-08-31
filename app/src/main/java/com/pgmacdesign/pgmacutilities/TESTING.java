@@ -1,12 +1,14 @@
 package com.pgmacdesign.pgmacutilities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
+import com.pgmacdesign.pgmacutilities.enhancedphotoclasses.AutoPhotoActivity;
 import com.pgmacdesign.pgmacutilities.pojos.MasterDatabaseObject;
 import com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities.serviceapiinterfaces.ProfantiyCheckerAPICalls;
 import com.pgmacdesign.pgmacutilities.utilities.ContactUtilities;
@@ -43,6 +45,7 @@ public class TESTING extends AppCompatActivity {
         //temp();
         //temp2();
 
+        PermissionUtilities.getAllRequiredPermissions(this);
         boolean bool = NetworkUtilities.haveNetworkPermission(this);
         if(bool) {
             //L.m("Synchronous result = " + ProfantiyCheckerAPICalls.checkProfanity(this, "eeee"));
@@ -51,8 +54,11 @@ public class TESTING extends AppCompatActivity {
                 @Override
                 public void onTaskComplete(Object result, int customTag) {
                     L.m("Asynchronous result = " + result);
+
+                    Intent intent = new Intent(TESTING.this, AutoPhotoActivity.class);
+                    startActivity(intent);
                 }
-            }, "eeee");
+            }, "crap");
 
         }
 

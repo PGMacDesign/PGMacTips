@@ -1,14 +1,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.pgmacdesign.pgmacutilities">
 
-
-    <!--
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    -->
+    <!-- Permissions used in this library -->
+    <!-- Used to determine connectivity before making a call-->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Used to Utilitze the camera-->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- Used to Crop and save photos in order to use them-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <!-- Used to read from the gallery and select photos-->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- Used for location based utilities like getting latitude and longitude -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <!-- Used for location based utilities like getting latitude and longitude-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!-- Used in Selecting contacts from the internal SQLite DB of contacts-->
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
 
     <application
@@ -27,6 +34,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".enhancedphotoclasses.AutoPhotoActivity"
+            android:screenOrientation="portrait"
+            />
 
     </application>
 
