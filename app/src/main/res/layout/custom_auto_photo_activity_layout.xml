@@ -9,6 +9,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <TextureView
+            android:id="@+id/auto_photo_activity_textureview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible"
+            />
+
         <!-- Full screen layout -->
         <LinearLayout
             android:id="@+id/auto_photo_activity_main_layout2"
@@ -75,13 +82,6 @@
                 android:layout_weight="0"
                 />
             -->
-            <View
-                android:id="@+id/filter_overlay2"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="85"
-                android:background="@drawable/custom_overlay_filter"
-                />
 
         </LinearLayout>
 
@@ -124,6 +124,10 @@
         android:visibility="invisible"
         />
 
-
+    <FrameLayout
+        android:id="@+id/auto_photo_activity_frame_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
 
     </RelativeLayout>

@@ -40,6 +40,11 @@
             android:screenOrientation="portrait"
             />
 
+        <!-- Services -->
+        <service
+            android:name=".services.ServiceFlash"
+            android:exported="false"/>
+
     </application>
 
 </manifest>

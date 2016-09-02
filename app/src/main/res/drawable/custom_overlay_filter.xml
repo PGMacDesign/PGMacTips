@@ -19,7 +19,7 @@
 
     <!-- Color edges -->
     <stroke
-        android:width="10000dip"
+        android:width="100dip"
         android:color="@color/Semi_Transparent9" />
 
 
