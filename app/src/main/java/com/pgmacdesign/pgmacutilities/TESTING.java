@@ -1,16 +1,16 @@
 package com.pgmacdesign.pgmacutilities;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
-import com.pgmacdesign.pgmacutilities.enhancedphotoclasses.AutoPhotoActivity;
-import com.pgmacdesign.pgmacutilities.pojos.MasterDatabaseObject;
 import com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities.serviceapiinterfaces.ProfantiyCheckerAPICalls;
+import com.pgmacdesign.pgmacutilities.pojos.MasterDatabaseObject;
 import com.pgmacdesign.pgmacutilities.utilities.ContactUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.DatabaseUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.L;
@@ -25,17 +25,18 @@ import java.util.Map;
 /**
  * Created by pmacdowell on 8/12/2016.
  */
-public class TESTING extends AppCompatActivity {
+public class TESTING extends AppCompatActivity implements View.OnClickListener {
 
     private DatabaseUtilities dbUtilities;
-
+    private Button button;
     private static final String CUSTOM_STRING = "-PAT";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.testing_layout);
-
+        button = (Button) this.findViewById(R.id.button);
+        button.setOnClickListener(this);
         init();
     }
 
@@ -45,22 +46,7 @@ public class TESTING extends AppCompatActivity {
         //temp();
         //temp2();
 
-        PermissionUtilities.getAllRequiredPermissions(this);
-        boolean bool = NetworkUtilities.haveNetworkPermission(this);
-        if(bool) {
-            //L.m("Synchronous result = " + ProfantiyCheckerAPICalls.checkProfanity(this, "eeee"));
 
-            ProfantiyCheckerAPICalls.checkProfanityAsynchronous(this, new OnTaskCompleteListener() {
-                @Override
-                public void onTaskComplete(Object result, int customTag) {
-                    L.m("Asynchronous result = " + result);
-
-                    Intent intent = new Intent(TESTING.this, AutoPhotoActivity.class);
-                    startActivity(intent);
-                }
-            }, "crap");
-
-        }
 
         //Custom stuff here
         //dbUtilities = new DatabaseUtilities(this);
@@ -223,5 +209,33 @@ public class TESTING extends AppCompatActivity {
     }
     private void superDeleteEverything(){
         dbUtilities.deleteEntireDB(true, false);
+    }
+
+    private void testRetrofit(){
+        PermissionUtilities.getAllRequiredPermissions(this);
+        boolean bool = NetworkUtilities.haveNetworkPermission(this);
+        if(bool) {
+            //L.m("Synchronous result = " + ProfantiyCheckerAPICalls.checkProfanity(this, "eeee"));
+
+            ProfantiyCheckerAPICalls.checkProfanityAsynchronous(this, new OnTaskCompleteListener() {
+                @Override
+                public void onTaskComplete(Object result, int customTag) {
+                    L.m("Asynchronous result = " + result);
+
+                    //Intent intent = new Intent(TESTING.this, AutoPhotoActivity.class);
+                    //startActivity(intent);
+                }
+            }, "crap");
+
+        }
+    }
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.button:
+                testRetrofit();
+                break;
+            //
+        }
     }
 }

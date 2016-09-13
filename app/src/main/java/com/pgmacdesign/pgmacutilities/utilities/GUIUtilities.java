@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -170,4 +171,43 @@ public class GUIUtilities {
         return alertDialog;
     }
 
+    /**
+     * Simple class for pausing a certain number of milliseconds. Useful for interacting with the
+     * Main UI Thread when running on things like timers and can't cross threads
+     */
+    public static class PauseForXSeconds extends AsyncTask<Void, Void, Void> {
+
+        private long numberOfMillisecondsToWait;
+        private OnTaskCompleteListener listener;
+        /**
+         * Pause for X seconds on background thread and then pass back word of finishing on a
+         * listener. Used mainly for interacting with the UI when you need to update a field (IE
+         * a textview) but need to wait X seconds. Usually this would cause an exception where
+         * you are calling it NOT on the main thread. This alleviates that
+         * @param numberOfMillisecondsToWait long number of milliseconds to wait. Minimum 10, no max
+         * @param listener Listener to pass back word of completion
+         */
+        public PauseForXSeconds(long numberOfMillisecondsToWait, OnTaskCompleteListener listener){
+            this.listener = listener;
+            this.numberOfMillisecondsToWait = numberOfMillisecondsToWait;
+            if(this.numberOfMillisecondsToWait < 10){
+                //Minimum of 10 milliseconds in case 0 is sent by accident
+                this.numberOfMillisecondsToWait = 10;
+            }
+        }
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                Thread.sleep(numberOfMillisecondsToWait);
+            } catch (InterruptedException e){
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            listener.onTaskComplete(null, -1);
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities.serviceapiinterfaces;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -25,5 +26,5 @@ public interface ProfantiyCheckerInterface {
      * @return A simple boolean, true or false. If no text is sent, it will return "No Input"
      */
     @GET(SERVICE_BASE_STRING + PROFANITY_BASE_STRING)
-    Call<String> checkProfanity(@Query("text") String text);
+    Call<ResponseBody> checkProfanity(@Query("text") String text);
 }

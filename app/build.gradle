@@ -84,6 +84,15 @@ android {
         //Neat looking shatter/ break animation by Yalantis. Link: https://github.com/Yalantis/StarWars.Android
         compile 'com.yalantis:starwarstiles:0.1.1'
 
+        //Text View Animations. Link: https://github.com/hanks-zyh/HTextView
+        compile 'hanks.xyz:htextview-library:0.1.5'
+
+        //Auto-formatted Material Text Field. Link: https://github.com/florent37/MaterialTextField
+        compile 'com.github.florent37:materialtextfield:1.0.5'
+
+        //Auto-resizing edit text. Link: https://github.com/grantland/android-autofittextview
+        compile 'me.grantland:autofittextview:0.2.1'
+
         /*
         //Google play services
         compile 'com.google.android.gms:play-services:9.2.1'
