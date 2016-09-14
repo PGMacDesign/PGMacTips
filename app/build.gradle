@@ -35,7 +35,7 @@ android {
 
         //Progress bar animator. This one is better for longer processes, IE uploading photos.
         //Link: https://github.com/Tibolte/ElasticDownload
-        compile 'com.github.tibolte:elasticdownload:1.0.+'
+        compile 'com.github.tibolte:elasticdownload:1.0.4'
 
         //Animated SVG View (Custom, takes an SVG To work).
         //Link: https://github.com/jaredrummler/AnimatedSvgView
