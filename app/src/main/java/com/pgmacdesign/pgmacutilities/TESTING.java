@@ -36,6 +36,7 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.testing_layout);
         button = (Button) this.findViewById(R.id.button);
+        button.setTag("button");
         button.setOnClickListener(this);
         init();
     }
@@ -231,11 +232,12 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
     }
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.button:
-                testRetrofit();
-                break;
-            //
+        String id = null;
+        try {
+            id = (String) view.getTag();
+        } catch (Exception e){}
+        if(id.equals("button")){
+            testRetrofit();
         }
     }
 }

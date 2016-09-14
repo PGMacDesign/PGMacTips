@@ -429,7 +429,10 @@ public class DatabaseUtilities {
     public boolean dePersistObject(final Class myClass) {
         return this.deleteFromMasterDB(myClass);
     }
-
+    //Overloaded for naming simplicity since I forget what things are called all the time!
+    public boolean deletePersistedObject(final Class myClass) {
+        return this.deleteFromMasterDB(myClass);
+    }
     /**
      * Delete an object from the Master Table. For deleting persisted objects
      *

@@ -1,21 +1,26 @@
-apply plugin: 'com.android.application'
+//apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 apply plugin: 'realm-android'
 buildscript{
     repositories {
         jcenter()
         mavenCentral()
+        maven { url "https://jitpack.io" }
     }
     dependencies {
         //Database Management Library. Link: https://realm.io/docs/java/latest
         classpath "io.realm:realm-gradle-plugin:1.1.1"
     }
 }
+allprojects {
+
+}
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.1"
 
     defaultConfig {
-        applicationId "com.pgmacdesign.pgmacutilities"
+        //applicationId "com.pgmacdesign.pgmacutilities"
         minSdkVersion 15
         targetSdkVersion 24
         multiDexEnabled true

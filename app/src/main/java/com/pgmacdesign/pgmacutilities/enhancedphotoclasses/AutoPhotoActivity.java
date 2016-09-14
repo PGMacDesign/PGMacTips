@@ -274,6 +274,7 @@ public class AutoPhotoActivity extends AppCompatActivity implements View.OnClick
         auto_photo_activity_frame_layout = (FrameLayout) this.findViewById(
                 R.id.auto_photo_activity_frame_layout);
         //Click Listeners
+        auto_photo_shutter_button.setTag("auto_photo_shutter_button");
         auto_photo_shutter_button.setOnClickListener(this);
         numFacesOk = isBlocked = blockTheBlock = blockAll = false;
         currentNumFaces = previousNumFaces = 0;
@@ -702,15 +703,16 @@ public class AutoPhotoActivity extends AppCompatActivity implements View.OnClick
     }
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.auto_photo_shutter_button:
-                if(blockTheBlock){
-                    return;
-                }
-                blockTheBlock = true;
-                takePhotoWithCountdown();
-                break;
-
+        String id = null;
+        try {
+            id = (String) view.getTag();
+        } catch (Exception e){}
+        if(id.equals("auto_photo_shutter_button")){
+            if(blockTheBlock){
+                return;
+            }
+            blockTheBlock = true;
+            takePhotoWithCountdown();
         }
     }
 
