@@ -2,21 +2,23 @@
 apply plugin: 'com.android.library'
 apply plugin: 'realm-android'
 apply plugin: 'com.github.dcendents.android-maven'
+
 group='com.github.PGMacDesign'
+allprojects {
+    repositories {
+        jcenter()
+        maven { url "https://jitpack.io" }
+    }
+}
 buildscript{
     repositories {
         jcenter()
         mavenCentral()
-        maven { url "https://jitpack.io" }
     }
     dependencies {
         //Database Management Library. Link: https://realm.io/docs/java/latest
         classpath "io.realm:realm-gradle-plugin:1.1.1"
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.3'
     }
-}
-allprojects {
-
 }
 android {
     compileSdkVersion 24
@@ -272,4 +274,5 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:24.1.1'
+
 }
