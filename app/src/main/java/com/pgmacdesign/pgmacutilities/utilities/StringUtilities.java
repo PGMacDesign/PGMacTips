@@ -376,6 +376,26 @@ public class StringUtilities {
 
 
     /**
+     * Convert an Android Uri to a Java URI
+     * @param uri Android Uri
+     * @return Java URI
+     */
+    public static java.net.URI convertAndroidUriToJavaURI(android.net.Uri uri){
+        String ss = StringUtilities.convertAndroidUriToString(uri);
+        return StringUtilities.convertStringToJavaUri(ss);
+    }
+
+    /**
+     * Convert a Java URI to an Android Uri
+     * @param uri Java URI
+     * @return Android Uri
+     */
+    public static android.net.Uri convertJavaURIToAndroidUri(java.net.URI uri){
+        String ss = StringUtilities.convertJavaUriToString(uri);
+        return StringUtilities.convertStringToAndroidUri(ss);
+    }
+
+    /**
      * Using code from this link: http://hmkcode.com/android-display-selected-image-and-its-real-path/
      * This method will return the absolute path Android.net.Uri.
      * NOTE!!! THIS DOES NOT SUPPORT API 10 OR BELOW!!! IF YOU NEED TO WORK WITH THAT, CHECK LINK ABOVE

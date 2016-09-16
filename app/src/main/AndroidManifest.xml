@@ -17,34 +17,35 @@
     <!-- Used in Selecting contacts from the internal SQLite DB of contacts-->
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
+    <!--
+        <application
+            android:allowBackup="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme">
 
-    <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+
+            <activity
+                android:name=".TESTING"
+                android:screenOrientation="portrait">
+                <intent-filter>
+                    <action android:name="android.intent.action.MAIN" />
+                    <category android:name="android.intent.category.LAUNCHER" />
+                </intent-filter>
+            </activity>
+
+            <activity
+                android:name=".enhancedphotoclasses.AutoPhotoActivity"
+                android:screenOrientation="portrait"
+                />
 
 
-        <activity
-            android:name=".TESTING"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".enhancedphotoclasses.AutoPhotoActivity"
-            android:screenOrientation="portrait"
-            />
-
-        <!-- Services -->
+            <!-- Services
         <service
             android:name=".services.ServiceFlash"
             android:exported="false"/>
 
     </application>
-
+    -->
 </manifest>

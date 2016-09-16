@@ -13,7 +13,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 
 /**
@@ -344,22 +346,60 @@ public class FileUtilities {
         return file;
     }
 
-
+    /**
+     * Get the file write directory (Mostly used on APIs KitKat+)
+     * @return
+     */
     public static String getFileWriteDirectory(){
         String str = Environment.getExternalStorageDirectory().getPath();
         return str;
     }
-    /*
-    private static String tempTest(){
-        String state = Environment.getExternalStorageState();
-        if(Environment.MEDIA_MOUNTED.equals(state)){
-            String str = Environment.getExternalStorageDirectory().getPath();
-        } else {
-            //
-        }
-        //String str = Environment.getExternalStorageState();
 
-        return null;
+    /**
+     * Copy a file from one to another.
+     * @param fromFile The from file that is being copied
+     * @param toFile The to file that it will be copied to
+     * @throws IOException Throws an IOException
+     * NOTE, if file paths are the same, it will not run
+     */
+    public static void copyFile(@NonNull File fromFile, @NonNull File toFile) throws IOException {
+
+        try {
+            if(fromFile.getPath().equalsIgnoreCase(toFile.getPath())){
+                L.m("File paths are the same");
+                return;
+            }
+        } catch (Exception e){}
+
+        FileChannel outputChannel = null;
+        FileChannel inputChannel = null;
+        try {
+            inputChannel = new FileInputStream(fromFile).getChannel();
+            outputChannel = new FileOutputStream(toFile).getChannel();
+            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
+            inputChannel.close();
+        } finally {
+            if (inputChannel != null) inputChannel.close();
+            if (outputChannel != null) outputChannel.close();
+        }
     }
-    */
+
+    /**
+     * Copy a file (Overloaded). Takes in String paths to use instead of files
+     * @param pathFrom From file path being copied
+     * @param pathTo To File path being copied to
+     * @throws IOException
+     * NOTE, if file paths are the same, it will not run
+     */
+    public static void copyFile(@NonNull String pathFrom, @NonNull String pathTo) throws IOException {
+        if (pathFrom.equalsIgnoreCase(pathTo)) {
+            L.m("File paths are the same");
+            return;
+        }
+        try {
+            File inFile = new File(pathFrom);
+            File outFile = new File(pathTo);
+            FileUtilities.copyFile(inFile, outFile);
+        } catch (IOException e){}
+    }
 }

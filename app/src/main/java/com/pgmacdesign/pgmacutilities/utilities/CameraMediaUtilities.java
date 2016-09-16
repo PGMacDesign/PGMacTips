@@ -29,28 +29,28 @@ import java.util.List;
 /**
  * Created by pmacdowell on 8/16/2016.
  */
-public class CameraUtilities {
+public class CameraMediaUtilities {
 
     /*
     //This code goes in every activity calling this class for photo stuff
 
      1) Up top as a global variable
-     private CameraUtilities cameraUtilities;
+     private CameraMediaUtilities cameraUtilities;
 
      2) In the init method somewhere. Adjust the true params as needed
-        cameraUtilities = new CameraUtilities(NAME_OF_ACTIVITY.this,
+        cameraUtilities = new CameraMediaUtilities(NAME_OF_ACTIVITY.this,
             NAME_OF_ACTIVITY.this, true, true, NAME_OF_ACTIVITY.this);
 
         Or, like this if using a photo from the web
 
-        cameraUtilities = new CameraUtilities(NAME_OF_ACTIVITY.this,
+        cameraUtilities = new CameraMediaUtilities(NAME_OF_ACTIVITY.this,
             NAME_OF_ACTIVITY.this, true, STRING_WEB_IMAGE_URL_GOES_HERE, NAME_OF_ACTIVITY.this);
 
      3) It's own method. If already in class, make sure that the if check is near the top
      @Override
      protected void onActivityResult(int requestcode, int resultcode, Intent data) {
 
-        if(CameraUtilities.doesCodeBelongToUtility(requestcode)){
+        if(CameraMediaUtilities.doesCodeBelongToUtility(requestcode)){
             cameraUtilities.afterOnActivityResult(requestcode, resultcode, data);
             return;
         }
@@ -59,7 +59,7 @@ public class CameraUtilities {
      4) Once they click the button to open the photo / video / gallery intent, put this code there.
         Need to make sure to change the last one (The enum variable) to decide which is to be done
             cameraUtilities.startPhotoProcess(
-                CameraUtilities.SourceType.CAMERA);
+                CameraMediaUtilities.SourceType.CAMERA);
 
      5) Lastly, need to implement the onTaskComplete listener
             @Override
@@ -72,38 +72,38 @@ public class CameraUtilities {
                 if(result != null) {
                     switch (customTag) {
                         //Crop was success, no upload, PhotoObject sent back
-                        case CameraUtilities.TAG_CROP_SUCCESS:
-                            CameraUtilities.PhotoObject photoObject =
-                                    (CameraUtilities.PhotoObject) result;
+                        case CameraMediaUtilities.TAG_CROP_SUCCESS:
+                            CameraMediaUtilities.PhotoObject photoObject =
+                                    (CameraMediaUtilities.PhotoObject) result;
                             break;
 
                         //Cropping error, caused by something like file not found error, String sent back
-                        case CameraUtilities.TAG_CROP_ERROR:
+                        case CameraMediaUtilities.TAG_CROP_ERROR:
                             String cropErrorString = (String) result;
                             break;
 
                         //They canceled the select / take photo by exiting out before finishing
-                        case CameraUtilities.TAG_PHOTO_CANCEL:
+                        case CameraMediaUtilities.TAG_PHOTO_CANCEL:
                             String cancelString = (String) result;
                             break;
 
                         //The file did not upload properly, string error sent back
-                        case CameraUtilities.TAG_UPLOAD_ERROR:
+                        case CameraMediaUtilities.TAG_UPLOAD_ERROR:
                             String uploadErrorString = (String) result;
                             break;
 
                         //The File uploaded successfully, String Image URL sent back
-                        case CameraUtilities.TAG_UPLOAD_SUCCESS:
+                        case CameraMediaUtilities.TAG_UPLOAD_SUCCESS:
                             String imageUrl = (String) result;
                             break;
 
                         //Some unknown error. Display a toast to the user of problems
-                        case CameraUtilities.TAG_PHOTO_UNKNOWN_ERROR:
+                        case CameraMediaUtilities.TAG_PHOTO_UNKNOWN_ERROR:
                             String unknownErrorString = (String) result;
                             break;
 
                         //Some bad url error. Display a toast to the user of problems
-                        case CameraUtilities.TAG_PHOTO_BAD_URL:
+                        case CameraMediaUtilities.TAG_PHOTO_BAD_URL:
                             String badUrlString = (String) result;
                             break;
                     }
@@ -393,7 +393,7 @@ public class CameraUtilities {
      * @param activity Activity
      * @param listener listener to send data back on
      */
-    public CameraUtilities(Context context, Activity activity, OnTaskCompleteListener listener){
+    public CameraMediaUtilities(Context context, Activity activity, OnTaskCompleteListener listener){
         if(context == null){
             return;
         }
@@ -410,8 +410,8 @@ public class CameraUtilities {
      * @param listener
      * @param optionsAndFlags {@link CameraUtilityOptionsAndFlags}
      */
-    public CameraUtilities(Context context, Activity activity, OnTaskCompleteListener listener,
-                           CameraUtilityOptionsAndFlags optionsAndFlags){
+    public CameraMediaUtilities(Context context, Activity activity, OnTaskCompleteListener listener,
+                                CameraUtilityOptionsAndFlags optionsAndFlags){
         this.context = context;
         this.activity = activity;
         this.listener = listener;
@@ -604,7 +604,7 @@ public class CameraUtilities {
                                 downloadedPhotoUri = Uri.fromFile(fileToPassAround);
 
                                 if (fileToPassAround != null && downloadedPhotoUri != null) {
-                                    CameraUtilities.this.startCropping(
+                                    CameraMediaUtilities.this.startCropping(
                                             downloadedPhotoUri, downloadedPhotoUri);
                                 } else {
                                     listener.onTaskComplete("An Error Occured", TAG_PHOTO_UNKNOWN_ERROR);
@@ -705,6 +705,18 @@ public class CameraUtilities {
                     && resultcode == activity.RESULT_OK) {
                 resultUri = data.getData();
                 resultUri = this.fixImageUri(context, resultUri);
+                try {
+                    //This try section is to alleviate Permission issues on KitKat Devices
+                    File tempFile = null;
+                    if(fileToPassAround == null){
+                        fileToPassAround = new File(
+                                StringUtilities.convertAndroidUriToString(resultUri));
+                    }
+                    tempFile = File.createTempFile("pgmac_photo", ".jpg", context.getCacheDir());
+                    FileUtilities.copyFile(fileToPassAround, tempFile);
+                    resultUri = StringUtilities.convertJavaURIToAndroidUri(tempFile.toURI());
+                    tempFile.deleteOnExit();
+                } catch (Exception e){}
                 startCropping(resultUri, resultUri);
             }
 
@@ -775,7 +787,7 @@ public class CameraUtilities {
      */
     public void startCropping(Uri sourceUri, Uri destinationUri){
         //Build options
-        options = CameraUtilities.buildUCropOptions();
+        options = CameraMediaUtilities.buildUCropOptions();
 
         try {
             UCrop cropping = UCrop.of(sourceUri, destinationUri);
@@ -833,11 +845,11 @@ public class CameraUtilities {
         statusBarColorInt = ColorUtilities.parseMyColor(statusBarColor);
         toolbarColorInt = ColorUtilities.parseMyColor(toolbarColor);
 
-        return (CameraUtilities.buildUCropOptions(frameColorInt, statusBarColorInt, toolbarColorInt));
+        return (CameraMediaUtilities.buildUCropOptions(frameColorInt, statusBarColorInt, toolbarColorInt));
     }
     //Overloaded method
     private static UCrop.Options buildUCropOptions(){
-        return (CameraUtilities.buildUCropOptions(null, null, null));
+        return (CameraMediaUtilities.buildUCropOptions(null, null, null));
     }
     /**
      * Generate an ImageUri
