@@ -25,7 +25,7 @@ public class ProgressBarUtilities {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Shows an SVG Dialog
+     * Shows an SVG Dialog. Overloaded for only context needed
      * @param context context
      */
     public static void showSVGProgressDialog(@NonNull Context context){
@@ -33,11 +33,22 @@ public class ProgressBarUtilities {
     }
 
     /**
+     * Shows an SVG Dialog. Overloaded for only context needed
+     * @param context context
+     * @param timeoutInMilliseconds timeout in milliseconds. If null, will default to 5 seconds.
+     *                              If <0, indefinite
+     */
+    public static void showSVGProgressDialog(@NonNull Context context, Integer timeoutInMilliseconds){
+        showSVGProgressDialog(context, false, timeoutInMilliseconds, null, null, null, null, null);
+    }
+
+    /**
      * Builds an SVG Progress Dialog and shows it. For more detailed param info,
      * see {@link PGMacCustomProgressBar}
      * @param context Context
-     * @param dismissable Is cancellable progress bar or not
-     * @param timeoutInMilliseconds timeout in milliseconds. If null, will default to 5 seconds
+     * @param dismissible Is cancellable progress bar or not
+     * @param timeoutInMilliseconds timeout in milliseconds. If null, will default to 5 seconds.
+     *                              If <0, indefinite
      * @param imageSizeX Size of the SVG Image (x - width)
      * @param imageSizeY Size of the SVG Image (y - height)
      * @param svgArray The array of SVG Strings. If null, it will default to the spinning circle
@@ -46,14 +57,14 @@ public class ProgressBarUtilities {
      * @param svgTraceColors The array of svg tracing colors. SIZE MUST MATCH THE SIZE OF
      *                       THE ARRAY OF SVG STRINGS!
      */
-    public static void showSVGProgressDialog(@NonNull final Context context, boolean dismissable,
+    public static void showSVGProgressDialog(@NonNull final Context context, boolean dismissible,
                                           Integer timeoutInMilliseconds, Integer imageSizeX,
                                           Integer imageSizeY, String[] svgArray,
                                           int[] svgColors, int[] svgTraceColors) {
         mContext = context;
         try {
             if (progressDialog == null) {
-                progressDialog = PGMacCustomProgressBar.buildSVGDialog(context, dismissable,
+                progressDialog = PGMacCustomProgressBar.buildSVGDialog(context, dismissible,
                         imageSizeX, imageSizeY, svgArray, svgColors, svgTraceColors);
                 progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                     @Override
@@ -170,6 +181,9 @@ public class ProgressBarUtilities {
 
         timeoutTimer.cancel();
         timeoutTimer = new Timer();
+        if(millisecondsToEnd < 0){
+            return;
+        }
         timeoutTimer.schedule(new TimerTask() {
             @Override
             public void run() {

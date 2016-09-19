@@ -428,7 +428,7 @@ public class CameraMediaUtilities {
      * @param requestCode request code to compare against from the onActivityResult method
      * @return Boolean, true if it should be send back to this class' afterOnActivityResult method
      */
-    public boolean doesCodeBelongToUtility(int requestCode){
+    public static boolean doesCodeBelongToUtility(int requestCode){
         switch (requestCode){
             case TAG_TAKE_PICTURE_WITH_CAMERA:
             case TAG_PHOTO_FROM_GALLERY:
