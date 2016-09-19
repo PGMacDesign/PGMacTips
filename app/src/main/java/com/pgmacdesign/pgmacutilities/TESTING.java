@@ -194,7 +194,7 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
     }
     private void deleteStuff(){
         //dbUtilities.executeDeleteFromDB(null, TESTINGPOJO3.class);
-        L.l(176);
+        
         dbUtilities.dePersistObject(MasterDatabaseObject.class);
         L.m("pause");
 
