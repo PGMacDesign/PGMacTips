@@ -41,7 +41,7 @@
                 />
 
 
-            
+
         <service
             android:name=".services.ServiceFlash"
             android:exported="false"/>
