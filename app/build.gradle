@@ -1,5 +1,5 @@
-//apply plugin: 'com.android.application'
-apply plugin: 'com.android.library'
+apply plugin: 'com.android.application' //Remove this when pushing to git
+//apply plugin: 'com.android.library'
 apply plugin: 'realm-android'
 apply plugin: 'com.github.dcendents.android-maven'
 
@@ -25,7 +25,7 @@ android {
     buildToolsVersion "24.0.1"
 
     defaultConfig {
-        //applicationId "com.pgmacdesign.pgmacutilities"
+        applicationId "com.pgmacdesign.pgmacutilities" //Remove this when pushing to git
         minSdkVersion 15
         targetSdkVersion 24
         multiDexEnabled true
@@ -46,6 +46,7 @@ android {
         //Progress bar animator. This one is better for longer processes, IE uploading photos.
         //Link: https://github.com/Tibolte/ElasticDownload
         compile 'com.github.tibolte:elasticdownload:1.0.4'
+        //compile 'com.github.tibolte:elasticdownload:master-SNAPSHOT'
 
         //Animated SVG View (Custom, takes an SVG To work).
         //Link: https://github.com/jaredrummler/AnimatedSvgView
