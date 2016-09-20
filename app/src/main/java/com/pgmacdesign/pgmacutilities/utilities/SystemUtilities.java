@@ -133,6 +133,21 @@ public class SystemUtilities {
     }
 
     /**
+     * Dynamic method to check against a specific API level. Pass in the api level to check
+     * @param x The int API level checking against
+     * @return True if the user has that API level or higher, false if it is lower than that
+     */
+    public static boolean userHasOrIsHigherThan(int x){
+        if(x < 0){
+            return false;
+        }
+        if(SystemUtilities.phoneBuildVersion() >= x){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    /**
      * API Level 24 or higher
      * @return
      */

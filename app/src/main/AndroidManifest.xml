@@ -49,7 +49,14 @@
             </activity>
 
             <activity
-                android:name=".TESTING3"
+                android:name=".enhancedphotoclasses.TakePhotoActivityAPI21"
+                android:screenOrientation="portrait"
+                android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+                >
+            </activity>
+
+            <activity
+                android:name=".enhancedphotoclasses.TakePhotoActivity"
                 android:screenOrientation="portrait"
                 android:theme="@style/Theme.AppCompat.Light.NoActionBar"
                 >

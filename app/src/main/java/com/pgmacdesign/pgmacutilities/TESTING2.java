@@ -81,7 +81,7 @@ public class TESTING2 extends AppCompatActivity implements View.OnClickListener,
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         preInit();
-        setContentView(R.layout.testing_layout2);
+        setContentView(R.layout.take_photo_activity_api21);
         initUI();
         initVariables();
     }
@@ -110,16 +110,16 @@ public class TESTING2 extends AppCompatActivity implements View.OnClickListener,
     }
     private void initUI() {
         testing_layout2_textureview = (TextureView) this.findViewById(
-                R.id.testing_layout2_textureview);
+                R.id.take_photo_activity_api21_textureview);
         testing_layout2_textureview.setTag("testing_layout2_textureview");
         testing_layout2_relative_layout = (RelativeLayout) this.findViewById(
-                R.id.testing_layout2_relative_layout);
+                R.id.take_photo_activity_api21_relative_layout);
         testing_layout2_relative_layout.setTag("testing_layout2_relative_layout");
         testing_layout2_textview = (TextView) this.findViewById(
-                R.id.testing_layout2_textview);
+                R.id.take_photo_activity_api21_top_textview);
         testing_layout2_textview.setTag("testing_layout2_textview");
         testing_layout2_shutter_button = (ImageView) this.findViewById(
-                R.id.testing_layout2_shutter_button);
+                R.id.take_photo_activity_api21_shutter_button);
         testing_layout2_shutter_button.setTag("testing_layout2_shutter_button");
 
         testing_layout2_shutter_button.setOnClickListener(this);

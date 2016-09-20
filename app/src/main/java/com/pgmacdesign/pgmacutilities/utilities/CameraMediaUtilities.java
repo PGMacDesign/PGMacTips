@@ -132,6 +132,13 @@ public class CameraMediaUtilities {
     public static final int TAG_UPLOAD_ERROR = PGMacUtilitiesConstants.TAG_UPLOAD_ERROR;
     public static final int TAG_UPLOAD_SUCCESS = PGMacUtilitiesConstants.TAG_UPLOAD_SUCCESS;
 
+    //Tags used for passing to other activities via intents
+    public static final String TAG_FILE_PATH = "tag_file_path";
+    public static final String TAG_FILE_NAME = "tag_file_name";
+    public static final String TAG_FILE_EXTENSION = "tag_file_extension";
+    public static final String TAG_USE_FLASH = "tag_use_flash";
+    public static final String TAG_USE_FRONT_FACING_CAMERA = "tag_use_front_facing_camera";
+
     //UCrop Variables
     private UCrop.Options options;
 
@@ -245,7 +252,7 @@ public class CameraMediaUtilities {
     /**
      * Flags and options class for specific things to happen within the Camera Utilities calls
      */
-    public class CameraUtilityOptionsAndFlags {
+    public static class CameraUtilityOptionsAndFlags {
         private Integer maxVideoRecordingTime;
         private String nameOfFile;
         private String pathToFile;
