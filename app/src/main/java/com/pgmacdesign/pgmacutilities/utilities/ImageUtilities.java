@@ -7,9 +7,11 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -236,6 +238,71 @@ public class ImageUtilities {
 
             return null;
         }
+    }
+
+    /**
+     * Adjust the photo orientation
+     * @param pathToFile
+     * @return
+     */
+    public static Bitmap adjustPhotoOrientation(String pathToFile) {
+        try {
+            Bitmap bitmap = BitmapFactory.decodeFile(pathToFile);
+            ExifInterface exif = new ExifInterface(pathToFile);
+            int exifOrientation = exif.getAttributeInt(
+                    ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_NORMAL);
+            int rotate = 0;
+
+            switch (exifOrientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    rotate = 90;
+                    break;
+
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    rotate = 180;
+                    break;
+
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    rotate = 270;
+                    break;
+            }
+            if (rotate != 0) {
+                int w = bitmap.getWidth();
+                int h = bitmap.getHeight();
+
+                // Setting pre rotate
+                Matrix mtx = new Matrix();
+                mtx.preRotate(rotate);
+
+                // Rotating Bitmap & convert to ARGB_8888, required by tess
+                bitmap = Bitmap.createBitmap(bitmap, 0, 0, w, h, mtx, false);
+                bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+                return bitmap;
+            }
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * For rotating images
+     * @param bitmap Bitmap to rotate
+     * @param degree Degree amount to rotate
+     * @return
+     */
+    public static Bitmap rotate(Bitmap bitmap, int degree) {
+        if(bitmap == null){
+            return null;
+        }
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+
+        Matrix mtx = new Matrix();
+        mtx.setRotate(degree);
+
+        return Bitmap.createBitmap(bitmap, 0, 0, w, h, mtx, true);
     }
 
     /**

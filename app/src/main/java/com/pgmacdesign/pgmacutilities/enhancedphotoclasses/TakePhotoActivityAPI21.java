@@ -36,14 +36,18 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pgmacdesign.pgmacutilities.R;
+import com.pgmacdesign.pgmacutilities.graphicsanddrawing.CircleOverlayView;
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
 import com.pgmacdesign.pgmacutilities.utilities.CameraMediaUtilities;
+import com.pgmacdesign.pgmacutilities.utilities.ColorUtilities;
+import com.pgmacdesign.pgmacutilities.utilities.DisplayManagerUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.FileUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.L;
 import com.pgmacdesign.pgmacutilities.utilities.PermissionUtilities;
@@ -70,11 +74,12 @@ import java.util.List;
 public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.OnClickListener {
 
     //UI
-    private ImageView testing_layout2_shutter_button;
-    private CoordinatorLayout testing_layout2_top_coordinator_layout;
-    private TextView testing_layout2_top_textview;
-    private RelativeLayout testing_layout2_relative_layout;
-    private TextureView testing_layout2_textureview;
+    private ImageView take_photo_activity_api21_shutter_button;
+    private CoordinatorLayout take_photo_activity_api21_top_coordinator_layout;
+    private TextView take_photo_activity_api21_top_textview;
+    private RelativeLayout take_photo_activity_api21_relative_layout;
+    private TextureView take_photo_activity_api21_textureview;
+    private CircleOverlayView circleOverlayView;
 
     //Misc
     private boolean okToTake;
@@ -94,6 +99,9 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
     private HandlerThread mBackgroundThread;
     private boolean swappedDimensions = false;
     private TextureView.SurfaceTextureListener textureListener;
+
+    //Custom UI Features
+    private GraphicOverlay graphic_face_overlay;
 
     /**
      * Orientation of the camera sensor
@@ -131,25 +139,49 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
      * initialize the ui
      */
     private void initUI() {
-        testing_layout2_textureview = (TextureView) this.findViewById(
+        take_photo_activity_api21_textureview = (TextureView) this.findViewById(
                 R.id.take_photo_activity_api21_textureview);
-        testing_layout2_textureview.setTag("testing_layout2_textureview");
+        take_photo_activity_api21_textureview.setTag("take_photo_activity_api21_textureview");
 
-        testing_layout2_relative_layout = (RelativeLayout) this.findViewById(
+        take_photo_activity_api21_relative_layout = (RelativeLayout) this.findViewById(
                 R.id.take_photo_activity_api21_relative_layout);
-        testing_layout2_relative_layout.setTag("testing_layout2_relative_layout");
+        take_photo_activity_api21_relative_layout.setTag("take_photo_activity_api21_relative_layout");
 
-        testing_layout2_top_textview = (TextView) this.findViewById(
+        take_photo_activity_api21_top_textview = (TextView) this.findViewById(
                 R.id.take_photo_activity_api21_top_textview);
-        testing_layout2_top_textview.setTag("testing_layout2_top_textview");
+        take_photo_activity_api21_top_textview.setTag("take_photo_activity_api21_top_textview");
 
-        testing_layout2_top_coordinator_layout = (CoordinatorLayout) this.findViewById(
+        take_photo_activity_api21_top_coordinator_layout = (CoordinatorLayout) this.findViewById(
                 R.id.take_photo_activity_api21_top_coordinator_layout);
-        testing_layout2_top_coordinator_layout.setTag("testing_layout2_top_coordinator_layout");
+        take_photo_activity_api21_top_coordinator_layout.setTag("take_photo_activity_api21_top_coordinator_layout");
 
-        testing_layout2_shutter_button = (ImageView) this.findViewById(
+        take_photo_activity_api21_shutter_button = (ImageView) this.findViewById(
                 R.id.take_photo_activity_api21_shutter_button);
-        testing_layout2_shutter_button.setTag("testing_layout2_shutter_button");
+        take_photo_activity_api21_shutter_button.setTag("take_photo_activity_api21_shutter_button");
+
+        graphic_face_overlay = (GraphicOverlay) this.findViewById(
+                R.id.graphic_face_overlay);
+
+        setupOverlay();
+    }
+
+    private void setupOverlay(){
+        //Local, for use in setting the overlay view
+        // TODO: 9/21/2016 refactor this into constructor preferences
+        FrameLayout take_photo_activity_api21_overlay_layout = (FrameLayout) this.findViewById(
+                R.id.take_photo_activity_api21_overlay_layout);
+        take_photo_activity_api21_overlay_layout.setVisibility(View.VISIBLE);
+        DisplayManagerUtilities dmu = new DisplayManagerUtilities(this);
+        int width = (int) (dmu.getWidthRadius() * 0.83);
+        CircleOverlayView.CircleOverlayParams params = new CircleOverlayView.CircleOverlayParams();
+        params.setShapeType(CircleOverlayView.CircleOverlayParams.ShapeTypes.OVAL);
+        params.setColorToSet(ColorUtilities.parseMyColor(PGMacUtilitiesConstants.COLOR_BLACK));
+        params.setAlphaToUse(99);
+        params.setShapeRadius(width);
+        circleOverlayView = new CircleOverlayView(this, params);
+        take_photo_activity_api21_overlay_layout.addView(circleOverlayView);
+
+        take_photo_activity_api21_shutter_button.bringToFront();
     }
 
     /**
@@ -222,9 +254,9 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
      * Last calls happen here
      */
     private void initLastCalls(){
-        assert testing_layout2_textureview != null;
-        testing_layout2_shutter_button.setOnClickListener(this);
-        testing_layout2_textureview.setSurfaceTextureListener(textureListener);
+        assert take_photo_activity_api21_textureview != null;
+        take_photo_activity_api21_shutter_button.setOnClickListener(this);
+        take_photo_activity_api21_textureview.setSurfaceTextureListener(textureListener);
     }
 
     /**
@@ -238,7 +270,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
             str = (String) view.getTag();
         } catch (Exception e){}
         if(str != null){
-            if(str.equalsIgnoreCase("testing_layout2_shutter_button")){
+            if(str.equalsIgnoreCase("take_photo_activity_api21_shutter_button")){
                 if(okToTake) {
                     // TODO: 9/20/2016 add code for face recognition to auto take picture
                     takePicture();
@@ -326,7 +358,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
             ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
             List<Surface> outputSurfaces = new ArrayList<Surface>(2);
             outputSurfaces.add(reader.getSurface());
-            outputSurfaces.add(new Surface(testing_layout2_textureview.getSurfaceTexture()));
+            outputSurfaces.add(new Surface(take_photo_activity_api21_textureview.getSurfaceTexture()));
             final CaptureRequest.Builder captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
 
             captureBuilder.addTarget(reader.getSurface());
@@ -481,7 +513,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
 
     protected void createCameraPreview() {
         try {
-            SurfaceTexture texture = testing_layout2_textureview.getSurfaceTexture();
+            SurfaceTexture texture = take_photo_activity_api21_textureview.getSurfaceTexture();
             assert texture != null;
             texture.setDefaultBufferSize(imageDimension.getWidth(), imageDimension.getHeight());
             Surface surface = new Surface(texture);
@@ -653,10 +685,10 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
         super.onResume();
         L.m("onResume");
         startBackgroundThread();
-        if (testing_layout2_textureview.isAvailable()) {
+        if (take_photo_activity_api21_textureview.isAvailable()) {
             openCamera();
         } else {
-            testing_layout2_textureview.setSurfaceTextureListener(textureListener);
+            take_photo_activity_api21_textureview.setSurfaceTextureListener(textureListener);
         }
     }
     @Override
