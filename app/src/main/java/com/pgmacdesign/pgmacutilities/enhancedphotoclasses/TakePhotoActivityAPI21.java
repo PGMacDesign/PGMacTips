@@ -20,8 +20,8 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
@@ -29,6 +29,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.Surface;
@@ -42,10 +43,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.face.FaceDetector;
 import com.pgmacdesign.pgmacutilities.R;
 import com.pgmacdesign.pgmacutilities.graphicsanddrawing.CircleOverlayView;
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmacutilities.utilities.AnimationUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.CameraMediaUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.ColorUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.DateUtilities;
@@ -81,7 +85,8 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
     private CoordinatorLayout take_photo_activity_api21_top_coordinator_layout;
     private TextView take_photo_activity_api21_top_textview,
             take_photo_activity_api21_center_countdown_textview;
-    private RelativeLayout take_photo_activity_api21_relative_layout;
+    private RelativeLayout take_photo_activity_api21_relative_layout,
+            take_photo_activity_api21_top_text_layout;
     private TextureView take_photo_activity_api21_textureview;
     private CircleOverlayView circleOverlayView;
 
@@ -107,6 +112,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
     private HandlerThread mBackgroundThread;
     private boolean swappedDimensions = false;
     private TextureView.SurfaceTextureListener textureListener;
+    private CameraSource mCameraSource = null;
 
     //Custom UI Features
     private GraphicOverlay graphic_face_overlay;
@@ -169,6 +175,9 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
         take_photo_activity_api21_center_countdown_textview.setTag(
                 "take_photo_activity_api21_center_countdown_textview");
 
+        take_photo_activity_api21_top_text_layout = (RelativeLayout) this.findViewById(
+                R.id.take_photo_activity_api21_top_text_layout);
+
         take_photo_activity_api21_top_coordinator_layout = (CoordinatorLayout) this.findViewById(
                 R.id.take_photo_activity_api21_top_coordinator_layout);
         take_photo_activity_api21_top_coordinator_layout.setTag(
@@ -219,9 +228,8 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
 
         if(StringUtilities.anyNullsOrEmptyInStrings(new String[]{userSentPathToFile,
                 userSentNameOfFile, photoExtensionName})){
-            // TODO: 9/20/2016 refactor this back in once set to secondary activity
-            //L.toast(this, "An error occurred, please try again");
-            //this.finish();
+            L.toast(this, "An error occurred, please try again");
+            this.finish();
         }
     }
 
@@ -254,7 +262,9 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
                 //open your camera here
+                postAMessage(AlertMessages.INITIAL);
                 openCamera();
+
             }
             @Override
             public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
@@ -386,11 +396,9 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
             captureBuilder.addTarget(reader.getSurface());
             this.setCaptureRequestDetails(captureBuilder);
 
-            // TODO: 9/20/2016 change file location here
-            //file = FileUtilities.generateFileForImage(userSentPathToFile,
-                    //userSentNameOfFile, photoExtensionName);
-            // TODO: 9/20/2016 remove this once new activity intro set
-            file = new File(Environment.getExternalStorageDirectory()+"/pic.jpg");
+            file = FileUtilities.generateFileForImage(userSentPathToFile,
+                    userSentNameOfFile, photoExtensionName);
+            //file = new File(Environment.getExternalStorageDirectory()+"/pic.jpg");
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader reader) {
@@ -435,8 +443,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
                     super.onCaptureCompleted(session, request, result);
                     createCameraPreview();
                     if(file != null) {
-                        // TODO: 9/20/2016 refactor this back in once activity before it
-                        //successMethod();
+                        successMethod();
                     }
                 }
             };
@@ -467,7 +474,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
     private void successMethod(){
         android.net.Uri uri = FileUtilities.convertFileToUri(file);
         Intent resultIntent = new Intent();
-        resultIntent.putExtra(PGMacUtilitiesConstants.TAG_SELF_PHOTO_URI,
+        resultIntent.putExtra(CameraMediaUtilities.TAG_SELF_PHOTO_URI,
                 StringUtilities.convertAndroidUriToString(uri));
         setResult(Activity.RESULT_OK, resultIntent);
         TakePhotoActivityAPI21.this.finish();
@@ -799,7 +806,111 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
         }
     }
 
-    post gist here
+    /**
+     * Post a message on the top section
+     * @param whichMessage
+     */
+    private void postAMessage(AlertMessages whichMessage){
+        if(blockPosts){
+            return;
+        }
+        switch (whichMessage){
+            case INITIAL:
+                if(!postedInitialText){
+                    postedInitialText = true;
+                    String message = whichMessage.message;
+                    int lengthOfDisplay = whichMessage.lengthOfDisplay;
+                    new MessageUserTop(message, lengthOfDisplay).execute();
+                }
+                break;
+
+            case BAD_FACES:
+                if(!postedNot1FaceText){
+                    postedNot1FaceText = true;
+                    String message = whichMessage.message;
+                    int lengthOfDisplay = whichMessage.lengthOfDisplay;
+                    new MessageUserTop(message, lengthOfDisplay).execute();
+                }
+                break;
+        }
+    }
+
+    /**
+     * For sending a message up top, fading in and out, and making it (in)visible
+     */
+    private class MessageUserTop extends AsyncTask<Void, Void, Void> {
+        String message;
+        long seconds;
+
+        /**
+         * Loads a message
+         * @param message String message to show
+         * @param seconds length of time
+         */
+        MessageUserTop(String message, long seconds){
+            this.seconds = seconds;
+            this.message = message;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            try {
+                fadeInTextSlow(message);
+            } catch (Exception e){e.printStackTrace();}
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                Thread.sleep(seconds);
+            } catch (InterruptedException e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            blockPosts = false;
+            try {
+                fadeOutTextSlow();
+            } catch (Exception e){e.printStackTrace();}
+        }
+    }
+    private void fadeInTextSlow(String message){
+        take_photo_activity_api21_top_textview.setText(Html.fromHtml(message));
+        take_photo_activity_api21_relative_layout.setVisibility(View.VISIBLE);
+        take_photo_activity_api21_top_text_layout.setVisibility(View.VISIBLE);
+        AnimationUtilities.animateMyView(take_photo_activity_api21_top_textview,
+                (int)(PGMacUtilitiesConstants.ONE_SECOND * 0.4),
+                Techniques.FadeInUp);
+        take_photo_activity_api21_top_textview.bringToFront();
+    }
+    private void fadeOutTextSlow(){
+        AnimationUtilities.animateMyView(take_photo_activity_api21_top_text_layout,
+                (int)(PGMacUtilitiesConstants.ONE_SECOND * 0.4),
+                Techniques.FadeOutDown);
+    }
+
+    /**
+     * Alert messages to show the user.
+     */
+    private static enum AlertMessages{
+        INITIAL("Center your face in circle and give us your best smile!",
+                (int)(PGMacUtilitiesConstants.ONE_SECOND * 3)),
+        BAD_FACES("We can't see your face!",
+                (int)(PGMacUtilitiesConstants.ONE_SECOND * 2.5));
+
+        String message;
+        int lengthOfDisplay;
+        AlertMessages(String message, int lengthOfDisplay){
+            this.message = message;
+            this.lengthOfDisplay = lengthOfDisplay;
+        }
+    }
+    //post gist here
 
     @Override
     protected void onResume() {

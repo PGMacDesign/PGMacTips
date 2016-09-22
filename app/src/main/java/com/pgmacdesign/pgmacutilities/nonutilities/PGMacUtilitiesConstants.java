@@ -76,7 +76,9 @@ public class PGMacUtilitiesConstants {
     public static final int TAG_RETROFIT_CALL_SUCCESS_BOOLEAN = 4443;
     public static final int TAG_RETROFIT_CALL_SUCCESS_STRING = 4444;
     public static final int TAG_RETROFIT_CALL_SUCCESS_OBJECT = 4445;
-
+    public static final int TAG_TAKE_SELF_PHOTO = 4446;
+    public static final int TAG_TAKE_SELF_PHOTO_SUCCESS = 4447;
+    public static final int TAG_TAKE_SELF_PHOTO_FAILURE = 4448;
 
     //String Tags
     public static final String TAG_SELF_PHOTO_URI = "tag_self_photo_uri";

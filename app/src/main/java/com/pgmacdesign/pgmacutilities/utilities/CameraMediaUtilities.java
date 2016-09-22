@@ -18,6 +18,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
+import com.pgmacdesign.pgmacutilities.enhancedphotoclasses.TakePhotoActivity;
+import com.pgmacdesign.pgmacutilities.enhancedphotoclasses.TakePhotoActivityAPI21;
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacCustomProgressBar;
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
 import com.yalantis.ucrop.UCrop;
@@ -120,7 +122,7 @@ public class CameraMediaUtilities {
     public static final int TAG_PHOTO_FROM_GALLERY = PGMacUtilitiesConstants.TAG_PHOTO_FROM_GALLERY;
     public static final int TAG_CROP_PHOTO = PGMacUtilitiesConstants.TAG_CROP_PHOTO;
     public static final int TAG_TAKE_VIDEO_WITH_RECORDER = PGMacUtilitiesConstants.TAG_TAKE_VIDEO_WITH_RECORDER;
-    public static final int TAG_RETURN_IMAGE_URL = PGMacUtilitiesConstants.TAG_RETURN_IMAGE_URL;
+    public static final int TAG_RETURN_IMAGE_URL = PGMacUtilitiesConstants.TAG_RETURN_IMAGE_URL; //Should be URI
     public static final int TAG_MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = PGMacUtilitiesConstants.TAG_MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE;
     public static final int TAG_MY_PERMISSIONS_REQUEST_CAMERA = PGMacUtilitiesConstants.TAG_MY_PERMISSIONS_REQUEST_CAMERA;
     public static final int TAG_PHOTO_UNKNOWN_ERROR = PGMacUtilitiesConstants.TAG_PHOTO_UNKNOWN_ERROR;
@@ -131,6 +133,10 @@ public class CameraMediaUtilities {
     public static final int TAG_PHOTO_CANCEL = PGMacUtilitiesConstants.TAG_PHOTO_CANCEL;
     public static final int TAG_UPLOAD_ERROR = PGMacUtilitiesConstants.TAG_UPLOAD_ERROR;
     public static final int TAG_UPLOAD_SUCCESS = PGMacUtilitiesConstants.TAG_UPLOAD_SUCCESS;
+    public static final int TAG_TAKE_SELF_PHOTO = PGMacUtilitiesConstants.TAG_TAKE_SELF_PHOTO;
+    public static final int TAG_TAKE_SELF_PHOTO_SUCCESS = PGMacUtilitiesConstants.TAG_TAKE_SELF_PHOTO_SUCCESS;
+    public static final int TAG_TAKE_SELF_PHOTO_FAILURE = PGMacUtilitiesConstants.TAG_TAKE_SELF_PHOTO_FAILURE;
+
 
     //Tags used for passing to other activities via intents
     public static final String TAG_FILE_PATH = "tag_file_path";
@@ -138,6 +144,7 @@ public class CameraMediaUtilities {
     public static final String TAG_FILE_EXTENSION = "tag_file_extension";
     public static final String TAG_USE_FLASH = "tag_use_flash";
     public static final String TAG_USE_FRONT_FACING_CAMERA = "tag_use_front_facing_camera";
+    public static final String TAG_SELF_PHOTO_URI = PGMacUtilitiesConstants.TAG_SELF_PHOTO_URI;
 
     //UCrop Variables
     private UCrop.Options options;
@@ -150,7 +157,7 @@ public class CameraMediaUtilities {
     //Variables set by Flags and Options
     private boolean shouldUploadPhoto, shouldDeletePhoto, useFrontFacingCamera;
     private CameraUtilityOptionsAndFlags optionsAndFlags;
-    private String userSentNameOfFile, userSentPathToFile;
+    private String userSentNameOfFile, userSentPathToFile, photoExtension;
     private Integer maxDurationForVideo;
 
     //Misc Variables
@@ -177,7 +184,7 @@ public class CameraMediaUtilities {
      * Source Type enum to be used for photo setting / getting
      */
     public enum SourceType {
-        CAMERA, VIDEO, GALLERY, WEB_URL
+        CAMERA, VIDEO, GALLERY, WEB_URL, CAMERA_SELF_PHOTO
     }
 
     /**
@@ -256,6 +263,7 @@ public class CameraMediaUtilities {
         private Integer maxVideoRecordingTime;
         private String nameOfFile;
         private String pathToFile;
+        private boolean shouldCropPhoto;
         private boolean shouldUploadPhoto;
         private boolean shouldDeletePhotoAfter;
         private boolean useDefaultToFrontFacingCamera;
@@ -268,6 +276,7 @@ public class CameraMediaUtilities {
             this.maxVideoRecordingTime = null;
             this.nameOfFile = null;
             this.pathToFile = null;
+            this.shouldCropPhoto = true;
             this.shouldUploadPhoto = false;
             this.shouldDeletePhotoAfter = false;
             this.useDefaultToFrontFacingCamera = false;
@@ -294,7 +303,8 @@ public class CameraMediaUtilities {
          * @param photoExtension The photo extension format {@link SupportedPhotoFileExtensions}
          */
         public CameraUtilityOptionsAndFlags(Integer maxVideoRecordingTime, String nameOfFile,
-                                            String pathToFile, boolean shouldUploadPhoto,
+                                            String pathToFile, boolean shouldCropPhoto,
+                                            boolean shouldUploadPhoto,
                                             boolean shouldDeletePhotoAfter,
                                             boolean useDefaultToFrontFacingCamera,
                                             AlertDialog alertDialog, String webImageUrlToDownload,
@@ -306,10 +316,19 @@ public class CameraMediaUtilities {
             this.nameOfFile = nameOfFile;
             this.pathToFile = pathToFile;
             this.shouldUploadPhoto = shouldUploadPhoto;
+            this.shouldCropPhoto = shouldCropPhoto;
             this.shouldDeletePhotoAfter = shouldDeletePhotoAfter;
             this.useDefaultToFrontFacingCamera = useDefaultToFrontFacingCamera;
             this.alertDialog = alertDialog;
             this.webImageUrlToDownload = webImageUrlToDownload;
+        }
+
+        public boolean isShouldCropPhoto() {
+            return shouldCropPhoto;
+        }
+
+        public void setShouldCropPhoto(boolean shouldCropPhoto) {
+            this.shouldCropPhoto = shouldCropPhoto;
         }
 
         public SupportedVideoFileExtensions getVideoExtension() {
@@ -425,7 +444,7 @@ public class CameraMediaUtilities {
         this.optionsAndFlags = optionsAndFlags;
     }
     //Setter for optionsAndFlags
-    public void setCameraUtilityOptionsAndFlas(@NonNull CameraUtilityOptionsAndFlags optionsAndFlags){
+    public void setCameraUtilityOptionsAndFlags(@NonNull CameraUtilityOptionsAndFlags optionsAndFlags){
         this.optionsAndFlags = optionsAndFlags;
     }
 
@@ -444,6 +463,9 @@ public class CameraMediaUtilities {
             case TAG_RETURN_IMAGE_URL:
             case TAG_MY_PERMISSIONS_REQUEST_CAMERA:
             case TAG_MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE:
+            case TAG_TAKE_SELF_PHOTO:
+            case TAG_TAKE_SELF_PHOTO_SUCCESS:
+            case TAG_TAKE_SELF_PHOTO_FAILURE:
                 return true;
 
             default:
@@ -492,6 +514,8 @@ public class CameraMediaUtilities {
         if(!SupportedPhotoFileExtensions.isSupportedType(photoFileExtension.photoExtensionName)){
             photoFileExtension = SupportedPhotoFileExtensions.PNG;
         }
+        this.photoExtension = photoFileExtension.photoExtensionName;
+
         if(!SupportedVideoFileExtensions.isSupportedType(videoFileExtension.videoExtensionName)){
             videoFileExtension = SupportedVideoFileExtensions.MP4;
         }
@@ -536,6 +560,10 @@ public class CameraMediaUtilities {
 
             case WEB_URL:
                 this.cropPhotoFromWeb();
+                break;
+
+            case CAMERA_SELF_PHOTO:
+                this.startSelfPhoto();
                 break;
         }
     }
@@ -659,6 +687,26 @@ public class CameraMediaUtilities {
     }
 
     /**
+     * Take a self photo (Again, I refuse to say selfie)
+     */
+    private void startSelfPhoto(){
+        //Get their build version first
+        Intent intent;
+        if(SystemUtilities.userHasMarshmallowOrHigher()){
+            intent = new Intent(activity, TakePhotoActivityAPI21.class);
+        } else {
+            intent = new Intent(activity, TakePhotoActivity.class);
+        }
+
+        intent.putExtra(CameraMediaUtilities.TAG_FILE_PATH, userSentPathToFile);
+        intent.putExtra(CameraMediaUtilities.TAG_FILE_NAME, userSentNameOfFile);
+        intent.putExtra(CameraMediaUtilities.TAG_FILE_EXTENSION, photoExtension);
+        intent.putExtra(CameraMediaUtilities.TAG_USE_FLASH, true);
+
+        activity.startActivityForResult(intent, TAG_TAKE_SELF_PHOTO);
+    }
+
+    /**
      * Take a video
      */
     private void takeVideoWithCamera(){
@@ -730,6 +778,35 @@ public class CameraMediaUtilities {
             //Video is from Recording (Video)
             else if (requestcode == TAG_TAKE_VIDEO_WITH_RECORDER) {
                 listener.onTaskComplete(takeVideoUri, TAG_TAKE_VIDEO_WITH_RECORDER);
+            }
+
+            //Picture is from self photo (I refuse to call it a selfie)
+            else if(requestcode == TAG_TAKE_SELF_PHOTO) {
+                try {
+                    String androidUri = data.getStringExtra(PGMacUtilitiesConstants.TAG_SELF_PHOTO_URI);
+                    Uri uri = StringUtilities.convertStringToAndroidUri(androidUri);
+                    if(uri != null){
+                        if(optionsAndFlags.shouldCropPhoto){
+                            startCropping(uri, uri);
+                        } else {
+
+                            String pathUri = androidUri;
+                            URI javaUri = StringUtilities.convertStringToJavaUri(pathUri);
+                            Uri androidUriUri = StringUtilities.convertStringToAndroidUri(pathUri);
+
+                            PhotoObject photoObject = new PhotoObject();
+                            photoObject.androidUri = androidUriUri;
+                            photoObject.javaUri = javaUri;
+                            photoObject.stringPath = pathUri;
+                            photoObject.photoFile = fileToPassAround;
+                            listener.onTaskComplete(photoObject, TAG_RETURN_IMAGE_URL);
+                        }
+                    } else {
+                        listener.onTaskComplete("An unknown error occurred", TAG_PHOTO_CANCEL);
+                    }
+                } catch (Exception e){
+                    listener.onTaskComplete("An unknown error occurred", TAG_PHOTO_CANCEL);
+                }
             }
 
             //Photo from Crop Photo

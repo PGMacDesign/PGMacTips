@@ -1,6 +1,7 @@
 package com.pgmacdesign.pgmacutilities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,6 +12,7 @@ import android.widget.Button;
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities.serviceapiinterfaces.ProfantiyCheckerAPICalls;
 import com.pgmacdesign.pgmacutilities.pojos.MasterDatabaseObject;
+import com.pgmacdesign.pgmacutilities.utilities.CameraMediaUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.ContactUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.DatabaseUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.L;
@@ -28,6 +30,7 @@ import java.util.Map;
 public class TESTING extends AppCompatActivity implements View.OnClickListener {
 
     private DatabaseUtilities dbUtilities;
+    private CameraMediaUtilities cam;
     private Button button;
     private static final String CUSTOM_STRING = "-PAT";
 
@@ -230,6 +233,23 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
 
         }
     }
+    private void testPhoto(){
+        cam = new CameraMediaUtilities(this, this, new OnTaskCompleteListener() {
+            @Override
+            public void onTaskComplete(Object result, int customTag) {
+                L.m("custom tag = " + customTag);
+            }
+        });
+        cam.startPhotoProcess(CameraMediaUtilities.SourceType.CAMERA_SELF_PHOTO);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(CameraMediaUtilities.doesCodeBelongToUtility(requestCode)){
+            cam.afterOnActivityResult(requestCode, resultCode, data);
+        }
+    }
+
     @Override
     public void onClick(View view) {
         String id = null;
@@ -237,7 +257,7 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
             id = (String) view.getTag();
         } catch (Exception e){}
         if(id.equals("button")){
-            testRetrofit();
+            testPhoto();
         }
     }
 }

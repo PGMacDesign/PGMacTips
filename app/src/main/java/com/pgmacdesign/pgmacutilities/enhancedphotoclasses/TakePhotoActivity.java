@@ -9,11 +9,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
+import android.util.SparseArray;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
@@ -25,10 +28,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.google.android.gms.vision.CameraSource;
+import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
 import com.pgmacdesign.pgmacutilities.R;
 import com.pgmacdesign.pgmacutilities.graphicsanddrawing.CircleOverlayView;
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmacutilities.utilities.AnimationUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.CameraMediaUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.ColorUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.DateUtilities;
@@ -56,7 +64,8 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
     private CoordinatorLayout take_photo_activity_top_coordinator_layout;
     private TextView take_photo_activity_top_textview,
             take_photo_activity_center_countdown_textview;
-    private RelativeLayout take_photo_activity_relative_layout;
+    private RelativeLayout take_photo_activity_relative_layout,
+            take_photo_activity_top_text_layout;
     private TextureView take_photo_activity_textureview;
     private CircleOverlayView circleOverlayView;
 
@@ -70,6 +79,7 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
     private String userSentPathToFile, userSentNameOfFile, photoExtensionName;
     private boolean useFlash, useFrontFacingCamera, isActuallyUsingFrontCamera;
     private boolean postedSmileText, postedNot1FaceText, postedInitialText, blockPosts;
+    private int cameraWidth, cameraHeight;
 
     //Camera
     private Camera camera;
@@ -78,11 +88,17 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
     private Camera.Size imageSizes;
     private Camera.Parameters cameraParameters;
 
+
     //Custom UI Features and face detection
     private GraphicOverlay graphic_face_overlay;
     private FaceTrackerWithGraphic faceTracker;
     private TakePhotoWithCountdownAsync async;
+    private CameraSource mCameraSource = null;
+    private FaceDetector detector;
 
+    /*
+
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,6 +136,9 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
                 R.id.take_photo_activity_relative_layout);
         take_photo_activity_relative_layout.setTag("take_photo_activity_relative_layout");
 
+        take_photo_activity_top_text_layout = (RelativeLayout) this.findViewById(
+                R.id.take_photo_activity_top_text_layout);
+
         take_photo_activity_top_textview = (TextView) this.findViewById(
                 R.id.take_photo_activity_top_textview);
         take_photo_activity_top_textview.setTag("take_photo_activity_top_textview");
@@ -141,6 +160,7 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
                 R.id.graphic_face_overlay);
 
         setupOverlay();
+
     }
 
     private void setupOverlay(){
@@ -161,6 +181,7 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
 
         take_photo_activity_shutter_button.bringToFront();
     }
+
     /**
      * Load up the data from the intent
      */
@@ -176,15 +197,14 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
 
         if(StringUtilities.anyNullsOrEmptyInStrings(new String[]{userSentPathToFile,
                 userSentNameOfFile, photoExtensionName})){
-            // TODO: 9/20/2016 refactor this back in once set to secondary activity
-            //L.toast(this, "An error occurred, please try again");
-            //this.finish();
+            L.toast(this, "An error occurred, please try again");
+            this.finish();
         } else {
             file = FileUtilities.generateFileForImage(userSentPathToFile,
                     userSentNameOfFile, photoExtensionName);
         }
-        // TODO: 9/21/2016 refactor this out once pre activity is written
-        file = new File(Environment.getExternalStorageDirectory()+"/pic.jpg");
+
+        //file = new File(Environment.getExternalStorageDirectory()+"/pic.jpg");
     }
 
     /**
@@ -218,8 +238,17 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
                 //open your camera here
                 //TakePhotoActivity.this.texture = texture;
+                postAMessage(AlertMessages.INITIAL);
                 setupCamera();
                 camera.startPreview();
+
+                try {
+                    //mCameraSource.start();
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+
+
             }
             @Override
             public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
@@ -330,7 +359,11 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
             //Sizes
             List<Camera.Size> availSizes = cameraParameters.getSupportedPreviewSizes();
                 texture = take_photo_activity_textureview.getSurfaceTexture();
-            cameraParameters.setPreviewSize(availSizes.get(0).width, availSizes.get(0).height);
+            cameraWidth = availSizes.get(0).width;
+            cameraHeight = availSizes.get(0).height;
+            cameraParameters.setPreviewSize(cameraWidth, cameraHeight);
+            //Set the camera source with data here
+
             camera.setPreviewTexture(texture);
             camera.setParameters(cameraParameters);
         } catch (Exception e){
@@ -357,14 +390,40 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
             }
         } catch (Exception e){}
 
-        //Move on to Face graphic overlayv
+//Face graphic overlay + Facial tracking
+
+        //builder.setImageData()
         try {
+
             faceTracker = new FaceTrackerWithGraphic(graphic_face_overlay, this);
-            FaceDetector detector = new FaceDetector.Builder(this)
+            detector = new FaceDetector.Builder(this)
                     .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
                     .build();
             detector.setProcessor(faceTracker.buildDetector());
+            L.m("face tracker setup");
+            if(detector.isOperational()){
+                L.m("detector is operational");
+            } else {
+                L.m("detector is NOT operational");
+            }
+
+            CameraSource.Builder myBuilder = new CameraSource.Builder(this, detector);
+            myBuilder.setRequestedPreviewSize(cameraWidth, cameraHeight);
+            myBuilder.setAutoFocusEnabled(true);
+            int facing;
+            if(isActuallyUsingFrontCamera){
+                facing = CameraSource.CAMERA_FACING_FRONT;
+            } else {
+                facing = CameraSource.CAMERA_FACING_BACK;
+            }
+            myBuilder.setFacing(facing);
+            myBuilder.setRequestedFps(30.0f);
+            mCameraSource = myBuilder.build();
+            graphic_face_overlay.setCameraInfo(cameraWidth, cameraHeight, facing);
+            graphic_face_overlay.setVisibility(View.INVISIBLE);
+
         } catch (Exception e){
+            detector = null;
             e.printStackTrace();
         }
     }
@@ -438,31 +497,45 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
      * Take the actual picture
      */
     private void takePicture(){
+        L.m("takepicture");
         stopPhotoCountdown();
         ProgressBarUtilities.showSVGProgressDialog(this);
         camera.takePicture(null, null, new PhotoHandler(this));
     }
 
     @Override
-    public void facesChanged(int numberOfFaces) {
-        if(numberOfFaces == 1){
-            enableCamera(true);
-            if(isPastInitialStartupTime()){
-                startPhotoCountdown();
+    public void facesChanged(final int numberOfFaces) {
+        L.m("num faces changed = " + numberOfFaces);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(numberOfFaces == 1){
+                    enableCamera(true);
+                    if(isPastInitialStartupTime()){
+                        startPhotoCountdown();
+                    }
+                } else {
+                    enableCamera(false);
+                }
             }
-        } else {
-            enableCamera(false);
-        }
+        });
     }
 
     @Override
-    public void countdownFinished(boolean bool) {
-        if(bool){
-            //Photo is ready to go
-            takePicture();
-        } else {
-            //Photo was cancelled (maybe they moved?) popup here with text
-        }
+    public void countdownFinished(final boolean bool) {
+        L.m("countdown finished");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(bool){
+                    //Photo is ready to go
+                    takePicture();
+                } else {
+                    //Photo was cancelled (maybe they moved?) popup here with text
+                }
+            }
+        });
+
     }
 
     /**
@@ -482,6 +555,7 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
      * Start the auto photo countdown
      */
     private void startPhotoCountdown(){
+        L.l(486);
         if(async != null){
             return;
         }
@@ -494,6 +568,7 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
      * Stop the auto photo countdown
      */
     private void stopPhotoCountdown(){
+        L.l(499);
         if(async != null){
             async.cancel(false);
         }
@@ -528,6 +603,13 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
 
                 Bitmap realImage = BitmapFactory.decodeByteArray(data, 0, data.length);
 
+                if(detector != null) {
+                    Frame frame = new Frame.Builder().setBitmap(realImage).build();
+                    SparseArray<Face> faces = detector.detect(frame);
+                    int x = faces.size();
+                    L.m("NUMBER OF FACES = " + x);
+                }
+
                 int amountToRotate = (360 - displayOrientation) % 360;
                 realImage = ImageUtilities.rotate(realImage, amountToRotate);
 
@@ -537,8 +619,7 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
                 fos.close();
 
                 //Success
-                // TODO: 9/20/2016 refactor this back in once activity before it
-                //successMethod();
+                successMethod();
 
             } catch (Exception error) {
                 error.printStackTrace();
@@ -559,13 +640,117 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
     private void successMethod(){
         android.net.Uri uri = FileUtilities.convertFileToUri(file);
         Intent resultIntent = new Intent();
-        resultIntent.putExtra(PGMacUtilitiesConstants.TAG_SELF_PHOTO_URI,
+        resultIntent.putExtra(CameraMediaUtilities.TAG_SELF_PHOTO_URI,
                 StringUtilities.convertAndroidUriToString(uri));
+        setResult(Activity.RESULT_OK, resultIntent);
         setResult(Activity.RESULT_OK, resultIntent);
         TakePhotoActivity.this.finish();
     }
 
-    post gist here
+    /**
+     * Post a message on the top section
+     * @param whichMessage
+     */
+    private void postAMessage(AlertMessages whichMessage){
+        if(blockPosts){
+            return;
+        }
+        switch (whichMessage){
+            case INITIAL:
+                if(!postedInitialText){
+                    postedInitialText = true;
+                    String message = whichMessage.message;
+                    int lengthOfDisplay = whichMessage.lengthOfDisplay;
+                    new MessageUserTop(message, lengthOfDisplay).execute();
+                }
+                break;
+
+            case BAD_FACES:
+                if(!postedNot1FaceText){
+                    postedNot1FaceText = true;
+                    String message = whichMessage.message;
+                    int lengthOfDisplay = whichMessage.lengthOfDisplay;
+                    new MessageUserTop(message, lengthOfDisplay).execute();
+                }
+                break;
+        }
+    }
+
+    /**
+     * For sending a message up top, fading in and out, and making it (in)visible
+     */
+    private class MessageUserTop extends AsyncTask<Void, Void, Void> {
+        String message;
+        long seconds;
+
+        /**
+         * Loads a message
+         * @param message String message to show
+         * @param seconds length of time
+         */
+        MessageUserTop(String message, long seconds){
+            this.seconds = seconds;
+            this.message = message;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            try {
+                fadeInTextSlow(message);
+            } catch (Exception e){e.printStackTrace();}
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                Thread.sleep(seconds);
+            } catch (InterruptedException e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            blockPosts = false;
+            try {
+                fadeOutTextSlow();
+            } catch (Exception e){e.printStackTrace();}
+        }
+    }
+    private void fadeInTextSlow(String message){
+        take_photo_activity_top_textview.setText(Html.fromHtml(message));
+        take_photo_activity_relative_layout.setVisibility(View.VISIBLE);
+        take_photo_activity_top_text_layout.setVisibility(View.VISIBLE);
+        AnimationUtilities.animateMyView(take_photo_activity_top_textview,
+                (int)(PGMacUtilitiesConstants.ONE_SECOND * 0.4),
+                Techniques.FadeInUp);
+        take_photo_activity_top_textview.bringToFront();
+    }
+    private void fadeOutTextSlow(){
+        AnimationUtilities.animateMyView(take_photo_activity_top_text_layout,
+                (int)(PGMacUtilitiesConstants.ONE_SECOND * 0.4),
+                Techniques.FadeOutDown);
+    }
+
+    /**
+     * Alert messages to show the user.
+     */
+    private static enum AlertMessages{
+        INITIAL("Center your face in circle and give us your best smile!",
+                (int)(PGMacUtilitiesConstants.ONE_SECOND * 3)),
+        BAD_FACES("We can't see your face!",
+                (int)(PGMacUtilitiesConstants.ONE_SECOND * 2.5));
+
+        String message;
+        int lengthOfDisplay;
+        AlertMessages(String message, int lengthOfDisplay){
+            this.message = message;
+            this.lengthOfDisplay = lengthOfDisplay;
+        }
+    }
 
     @Override
     protected void onResume() {
@@ -583,4 +768,15 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
         super.onPause();
         ProgressBarUtilities.dismissProgressDialog();
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    /*
+    Unused code
+
+
+     */
 }

@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.google.android.gms.vision.CameraSource;
+import com.pgmacdesign.pgmacutilities.utilities.L;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -175,6 +176,7 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
      */
     @Override
     protected void onDraw(Canvas canvas) {
+        L.m("Graphic overlay = " + 180);
         super.onDraw(canvas);
 
         synchronized (mLock) {
