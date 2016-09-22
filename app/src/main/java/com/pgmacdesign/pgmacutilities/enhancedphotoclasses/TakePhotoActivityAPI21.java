@@ -42,15 +42,18 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.vision.face.FaceDetector;
 import com.pgmacdesign.pgmacutilities.R;
 import com.pgmacdesign.pgmacutilities.graphicsanddrawing.CircleOverlayView;
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
 import com.pgmacdesign.pgmacutilities.utilities.CameraMediaUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.ColorUtilities;
+import com.pgmacdesign.pgmacutilities.utilities.DateUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.DisplayManagerUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.FileUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.L;
 import com.pgmacdesign.pgmacutilities.utilities.PermissionUtilities;
+import com.pgmacdesign.pgmacutilities.utilities.ProgressBarUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.StringUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.SystemUtilities;
 
@@ -71,21 +74,26 @@ import java.util.List;
  *
  * Created by pmacdowell on 9/19/2016.
  */
-public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.OnClickListener {
+public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.OnClickListener, CustomPhotoListener {
 
     //UI
     private ImageView take_photo_activity_api21_shutter_button;
     private CoordinatorLayout take_photo_activity_api21_top_coordinator_layout;
-    private TextView take_photo_activity_api21_top_textview;
+    private TextView take_photo_activity_api21_top_textview,
+            take_photo_activity_api21_center_countdown_textview;
     private RelativeLayout take_photo_activity_api21_relative_layout;
     private TextureView take_photo_activity_api21_textureview;
     private CircleOverlayView circleOverlayView;
 
     //Misc
+    private long timeActivityOpened;
+    private static final long TIME_IN_MILLISECONDS_FOR_INITIAL_DELAY =
+            (PGMacUtilitiesConstants.ONE_SECOND * 4);
     private boolean okToTake;
     private File file;
     private String userSentPathToFile, userSentNameOfFile, photoExtensionName;
     private boolean useFlash, useFrontFacingCamera;
+    private boolean postedSmileText, postedNot1FaceText, postedInitialText, blockPosts;
 
     //Camera2 Stuff
     private String cameraId;
@@ -102,6 +110,8 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
 
     //Custom UI Features
     private GraphicOverlay graphic_face_overlay;
+    private FaceTrackerWithGraphic faceTracker;
+    private TakePhotoWithCountdownAsync async;
 
     /**
      * Orientation of the camera sensor
@@ -141,23 +151,33 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
     private void initUI() {
         take_photo_activity_api21_textureview = (TextureView) this.findViewById(
                 R.id.take_photo_activity_api21_textureview);
-        take_photo_activity_api21_textureview.setTag("take_photo_activity_api21_textureview");
+        take_photo_activity_api21_textureview.setTag(
+                "take_photo_activity_api21_textureview");
 
         take_photo_activity_api21_relative_layout = (RelativeLayout) this.findViewById(
                 R.id.take_photo_activity_api21_relative_layout);
-        take_photo_activity_api21_relative_layout.setTag("take_photo_activity_api21_relative_layout");
+        take_photo_activity_api21_relative_layout.setTag(
+                "take_photo_activity_api21_relative_layout");
 
         take_photo_activity_api21_top_textview = (TextView) this.findViewById(
                 R.id.take_photo_activity_api21_top_textview);
-        take_photo_activity_api21_top_textview.setTag("take_photo_activity_api21_top_textview");
+        take_photo_activity_api21_top_textview.setTag(
+                "take_photo_activity_api21_top_textview");
+
+        take_photo_activity_api21_center_countdown_textview = (TextView) this.findViewById(
+                R.id.take_photo_activity_api21_center_countdown_textview);
+        take_photo_activity_api21_center_countdown_textview.setTag(
+                "take_photo_activity_api21_center_countdown_textview");
 
         take_photo_activity_api21_top_coordinator_layout = (CoordinatorLayout) this.findViewById(
                 R.id.take_photo_activity_api21_top_coordinator_layout);
-        take_photo_activity_api21_top_coordinator_layout.setTag("take_photo_activity_api21_top_coordinator_layout");
+        take_photo_activity_api21_top_coordinator_layout.setTag(
+                "take_photo_activity_api21_top_coordinator_layout");
 
         take_photo_activity_api21_shutter_button = (ImageView) this.findViewById(
                 R.id.take_photo_activity_api21_shutter_button);
-        take_photo_activity_api21_shutter_button.setTag("take_photo_activity_api21_shutter_button");
+        take_photo_activity_api21_shutter_button.setTag(
+                "take_photo_activity_api21_shutter_button");
 
         graphic_face_overlay = (GraphicOverlay) this.findViewById(
                 R.id.graphic_face_overlay);
@@ -254,6 +274,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
      * Last calls happen here
      */
     private void initLastCalls(){
+        timeActivityOpened = DateUtilities.getCurrentDateLong();
         assert take_photo_activity_api21_textureview != null;
         take_photo_activity_api21_shutter_button.setOnClickListener(this);
         take_photo_activity_api21_textureview.setSurfaceTextureListener(textureListener);
@@ -333,6 +354,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
             L.m("cameraDevice is null");
             return;
         }
+        stopPhotoCountdown();
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
 
         try {
@@ -403,6 +425,9 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
             };
             reader.setOnImageAvailableListener(readerListener, mBackgroundHandler);
 
+            //Show the spinner
+            ProgressBarUtilities.showSVGProgressDialog(this);
+
             //For some unknown reason this had to be local and not global. Just for future reference
             final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
                 @Override
@@ -415,6 +440,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
                     }
                 }
             };
+
             //Set the capture session
             cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
                 @Override
@@ -568,10 +594,27 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
                 return;
             }
             manager.openCamera(cameraId, stateCallback, null);
+            setupFaceTracker();
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
         L.m("openCamera X");
+    }
+
+    /**
+     * Setup the face tracker
+     */
+    private void setupFaceTracker(){
+        //Move on to Face graphic overlay
+        try {
+            faceTracker = new FaceTrackerWithGraphic(graphic_face_overlay, this);
+            FaceDetector detector = new FaceDetector.Builder(this)
+                    .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
+                    .build();
+            detector.setProcessor(faceTracker.buildDetector());
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void adjustImageRotation(CameraCharacteristics characteristics){
@@ -655,6 +698,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
             e.printStackTrace();
         }
     }
+
     private void closeCamera() {
         if (null != cameraDevice) {
             cameraDevice.close();
@@ -665,6 +709,80 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
             imageReader = null;
         }
     }
+
+    /**
+     * Enable or disable the camera functionality
+     * @param bool true for enable false for disable
+     */
+    private void enableCamera(boolean bool){
+        if(bool){
+            okToTake = true;
+            take_photo_activity_api21_shutter_button.setImageResource(R.drawable.shutter_blue);
+        } else {
+            stopPhotoCountdown();
+            okToTake = false;
+            take_photo_activity_api21_shutter_button.setImageResource(R.drawable.shutter_grey);
+        }
+    }
+
+    @Override
+    public void facesChanged(int numberOfFaces) {
+        if(numberOfFaces == 1){
+            enableCamera(true);
+            if(isPastInitialStartupTime()){
+                startPhotoCountdown();
+            }
+        } else {
+            enableCamera(false);
+        }
+    }
+
+    @Override
+    public void countdownFinished(boolean bool) {
+        if(bool){
+            //Photo is ready to go
+            takePicture();
+        } else {
+            //Photo was cancelled (maybe they moved?) popup here with text
+        }
+    }
+
+    /**
+     * Checks if the initial time has passed on startup in order to give the user
+     * some extra time to get situated before the auto timer starts
+     * @return
+     */
+    private boolean isPastInitialStartupTime(){
+        long currentTime = DateUtilities.getCurrentDateLong();
+        if(currentTime - timeActivityOpened > TIME_IN_MILLISECONDS_FOR_INITIAL_DELAY){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Start the auto photo countdown
+     */
+    private void startPhotoCountdown(){
+        if(async != null){
+            return;
+        }
+        async = new TakePhotoWithCountdownAsync(this, 4,
+                take_photo_activity_api21_center_countdown_textview);
+        async.execute();
+    }
+
+    /**
+     * Stop the auto photo countdown
+     */
+    private void stopPhotoCountdown(){
+        if(async != null){
+            async.cancel(false);
+        }
+        async = null;
+    }
+
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -674,12 +792,15 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
                 // close the app
                 try {
                     L.toast(TakePhotoActivityAPI21.this,
-                            "This feature cannot be used without grantin camera permissions first");
+                            "This feature cannot be used without granting camera permissions first");
                 } catch (Exception e){}
                 finish();
             }
         }
     }
+
+    post gist here
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -694,6 +815,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
     @Override
     protected void onPause() {
         L.m("onPause");
+        ProgressBarUtilities.dismissProgressDialog();
         closeCamera();
         stopBackgroundThread();
         super.onPause();

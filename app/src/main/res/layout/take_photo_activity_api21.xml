@@ -33,28 +33,7 @@
 
     </RelativeLayout>
 
-    <!-- Text layout for alerting with info -->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="150dp">
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/take_photo_activity_api21_top_textview"
-                />
-        </ScrollView>
-
-        <android.support.design.widget.CoordinatorLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/take_photo_activity_api21_top_coordinator_layout"
-            />
-
-    </RelativeLayout>
 
 
     <!-- Full screen layout -->
@@ -78,5 +57,39 @@
 
     </RelativeLayout>
 
+    <!-- Text layout for alerting with info -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/take_photo_activity_api21_top_textview"
+                />
+        </ScrollView>
+
+        <android.support.design.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/take_photo_activity_api21_top_coordinator_layout"
+            />
+
+    </RelativeLayout>
+
+    <!-- Countdown timer for taking photos. If countdown timer is not used, this will never showup -->
+    <TextView
+        android:id="@+id/take_photo_activity_api21_center_countdown_textview"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:text=""
+        android:textColor="@color/white"
+        android:textSize="40sp" />
 
 </RelativeLayout>

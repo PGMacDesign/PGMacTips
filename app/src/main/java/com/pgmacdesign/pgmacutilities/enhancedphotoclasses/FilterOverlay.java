@@ -17,6 +17,7 @@ import java.util.Set;
  * todo refactor this back in
  * Created by pmacdowell on 8/31/2016.
  */
+@Deprecated
 public class FilterOverlay <T extends FilterOverlay.Graphic> extends View {
     private final Object mLock = new Object();
     private int mPreviewWidth;

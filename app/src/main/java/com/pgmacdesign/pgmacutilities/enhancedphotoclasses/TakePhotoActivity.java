@@ -25,16 +25,19 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.vision.face.FaceDetector;
 import com.pgmacdesign.pgmacutilities.R;
 import com.pgmacdesign.pgmacutilities.graphicsanddrawing.CircleOverlayView;
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
 import com.pgmacdesign.pgmacutilities.utilities.CameraMediaUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.ColorUtilities;
+import com.pgmacdesign.pgmacutilities.utilities.DateUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.DisplayManagerUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.FileUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.ImageUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.L;
 import com.pgmacdesign.pgmacutilities.utilities.PermissionUtilities;
+import com.pgmacdesign.pgmacutilities.utilities.ProgressBarUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.StringUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.SystemUtilities;
 
@@ -46,33 +49,39 @@ import java.util.List;
  * For Pre API21 devices that need to use the old, deprecated camera class
  * Created by pmacdowell on 9/20/2016.
  */
-public class TakePhotoActivity extends AppCompatActivity implements View.OnClickListener {
+public class TakePhotoActivity extends AppCompatActivity implements View.OnClickListener, CustomPhotoListener {
 
     //UI
     private ImageView take_photo_activity_shutter_button;
     private CoordinatorLayout take_photo_activity_top_coordinator_layout;
-    private TextView take_photo_activity_top_textview;
+    private TextView take_photo_activity_top_textview,
+            take_photo_activity_center_countdown_textview;
     private RelativeLayout take_photo_activity_relative_layout;
     private TextureView take_photo_activity_textureview;
     private CircleOverlayView circleOverlayView;
 
     //Misc
+    private static final long TIME_IN_MILLISECONDS_FOR_INITIAL_DELAY =
+            (PGMacUtilitiesConstants.ONE_SECOND * 4);
     private boolean okToTake;
     private int displayOrientation;
     private File file;
+    private long timeActivityOpened;
     private String userSentPathToFile, userSentNameOfFile, photoExtensionName;
     private boolean useFlash, useFrontFacingCamera, isActuallyUsingFrontCamera;
+    private boolean postedSmileText, postedNot1FaceText, postedInitialText, blockPosts;
 
     //Camera
     private Camera camera;
     private TextureView.SurfaceTextureListener textureListener;
     private SurfaceTexture texture;
-    private Camera.FaceDetectionListener faceDetectionListener;
     private Camera.Size imageSizes;
     private Camera.Parameters cameraParameters;
 
-    //Custom UI Features
+    //Custom UI Features and face detection
     private GraphicOverlay graphic_face_overlay;
+    private FaceTrackerWithGraphic faceTracker;
+    private TakePhotoWithCountdownAsync async;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -114,6 +123,11 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
         take_photo_activity_top_textview = (TextView) this.findViewById(
                 R.id.take_photo_activity_top_textview);
         take_photo_activity_top_textview.setTag("take_photo_activity_top_textview");
+
+        take_photo_activity_center_countdown_textview = (TextView) this.findViewById(
+                R.id.take_photo_activity_center_countdown_textview);
+        take_photo_activity_center_countdown_textview.setTag(
+                "take_photo_activity_center_countdown_textview");
 
         take_photo_activity_top_coordinator_layout = (CoordinatorLayout) this.findViewById(
                 R.id.take_photo_activity_top_coordinator_layout);
@@ -221,18 +235,6 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
             public void onSurfaceTextureUpdated(SurfaceTexture surface) {
             }
         };
-        faceDetectionListener = new Camera.FaceDetectionListener() {
-            @Override
-            public void onFaceDetection(Camera.Face[] faces, Camera camera) {
-                try {
-                    if(faces.length == 1){
-                        enableCamera(true);
-                    } else {
-                        enableCamera(false);
-                    }
-                } catch (Exception e){}
-            }
-        };
     }
 
     /**
@@ -241,7 +243,7 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
      */
     private void enableCamera(boolean bool){
         if(bool){
-            okToTake = false;
+            okToTake = true;
             take_photo_activity_shutter_button.setImageResource(R.drawable.shutter_blue);
             try {
                 camera.unlock();
@@ -249,6 +251,7 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
                 e.printStackTrace();
             }
         } else {
+            stopPhotoCountdown();
             okToTake = false;
             take_photo_activity_shutter_button.setImageResource(R.drawable.shutter_grey);
             try {
@@ -262,6 +265,7 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
      * Last calls happen here
      */
     private void initLastCalls(){
+        timeActivityOpened = DateUtilities.getCurrentDateLong();
         assert take_photo_activity_textureview != null;
         take_photo_activity_shutter_button.setOnClickListener(this);
         take_photo_activity_textureview.setSurfaceTextureListener(textureListener);
@@ -290,6 +294,9 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
+    /**
+     * Setup the camera
+     */
     private void setupCamera(){
         int cameraId = this.findFrontFacingCamera();
         if(useFrontFacingCamera){
@@ -307,7 +314,6 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
                 isActuallyUsingFrontCamera = false;
             }
             camera = Camera.open(cameraId);
-            camera.setFaceDetectionListener(faceDetectionListener);
         } catch (Exception e){
             e.printStackTrace();
             L.toast(this, "An error occurred trying to open your camera");
@@ -350,6 +356,17 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
                 L.m("Phone does not have auto focus");
             }
         } catch (Exception e){}
+
+        //Move on to Face graphic overlayv
+        try {
+            faceTracker = new FaceTrackerWithGraphic(graphic_face_overlay, this);
+            FaceDetector detector = new FaceDetector.Builder(this)
+                    .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
+                    .build();
+            detector.setProcessor(faceTracker.buildDetector());
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     //NOTE! can be set to non-static if remove the actual amount rotated (or just return it)
@@ -421,11 +438,67 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
      * Take the actual picture
      */
     private void takePicture(){
+        stopPhotoCountdown();
+        ProgressBarUtilities.showSVGProgressDialog(this);
         camera.takePicture(null, null, new PhotoHandler(this));
     }
 
+    @Override
+    public void facesChanged(int numberOfFaces) {
+        if(numberOfFaces == 1){
+            enableCamera(true);
+            if(isPastInitialStartupTime()){
+                startPhotoCountdown();
+            }
+        } else {
+            enableCamera(false);
+        }
+    }
 
+    @Override
+    public void countdownFinished(boolean bool) {
+        if(bool){
+            //Photo is ready to go
+            takePicture();
+        } else {
+            //Photo was cancelled (maybe they moved?) popup here with text
+        }
+    }
 
+    /**
+     * Checks if the initial time has passed on startup in order to give the user
+     * some extra time to get situated before the auto timer starts
+     * @return
+     */
+    private boolean isPastInitialStartupTime(){
+        long currentTime = DateUtilities.getCurrentDateLong();
+        if(currentTime - timeActivityOpened > TIME_IN_MILLISECONDS_FOR_INITIAL_DELAY){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Start the auto photo countdown
+     */
+    private void startPhotoCountdown(){
+        if(async != null){
+            return;
+        }
+        async = new TakePhotoWithCountdownAsync(this, 4,
+                take_photo_activity_center_countdown_textview);
+        async.execute();
+    }
+
+    /**
+     * Stop the auto photo countdown
+     */
+    private void stopPhotoCountdown(){
+        if(async != null){
+            async.cancel(false);
+        }
+        async = null;
+    }
     /**
      * Class for handling writing
      */
@@ -492,6 +565,8 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
         TakePhotoActivity.this.finish();
     }
 
+    post gist here
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -506,5 +581,6 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onPause() {
         super.onPause();
+        ProgressBarUtilities.dismissProgressDialog();
     }
 }

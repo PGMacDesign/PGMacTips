@@ -90,6 +90,7 @@ import java.util.Timer;
  * todo this is currently under construction and will throw null pointers when attempting to run
  * Created by pmacdowell on 8/31/2016.
  */
+@Deprecated
 public class AutoPhotoActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "AutoPhotoActivity";
 
