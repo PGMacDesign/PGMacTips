@@ -100,6 +100,7 @@ public class PGMacUtilitiesConstants {
 
     //Default Date Format
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    public static final String DEFAULT_DATE_FORMAT_WITHOUT_MILLISECONDS = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /////Colors/////////////////////////////////////////////////////////////////////////////////////
