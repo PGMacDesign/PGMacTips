@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.os.AsyncTask;
 import android.os.Looper;
 import android.util.ArrayMap;
 import android.util.Base64;
 import android.util.Log;
 
 import com.pgmacdesign.pgmacutilities.BuildConfig;
+import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -114,10 +116,9 @@ public class MiscUtilities {
     /**
      * Checks a list for either being empty or containing objects within it
      * @param myList List to check
-     * @param <T> T extends object
      * @return Boolean, true if it is null or empty, false it if is not
      */
-    public static <T extends Object> boolean isListNullOrEmpty(List<T> myList){
+    public static boolean isListNullOrEmpty(List<?> myList){
         if(myList == null){
             return true;
         }
@@ -144,10 +145,9 @@ public class MiscUtilities {
     /**
      * Checks a map for either being empty or containing objects within it
      * @param myMap map to check
-     * @param <T> T extends object
      * @return Boolean, true if it is null or empty, false it if is not
      */
-    public static <T extends Object> boolean isMapNullOrEmpty(Map<T, T> myMap){
+    public static boolean isMapNullOrEmpty(Map<?, ?> myMap){
         if(myMap == null){
             return true;
         }
@@ -240,5 +240,45 @@ public class MiscUtilities {
             }
         }
         return null;
+    }
+
+    /**
+     * Simple class for pausing a certain number of milliseconds. Useful for interacting with the
+     * Main UI Thread when running on things like timers and can't cross threads
+     */
+    public static class PauseForXSeconds extends AsyncTask<Void, Void, Void> {
+
+        private long numberOfMillisecondsToWait;
+        private OnTaskCompleteListener listener;
+        /**
+         * Pause for X seconds on background thread and then pass back word of finishing on a
+         * listener. Used mainly for interacting with the UI when you need to update a field (IE
+         * a textview) but need to wait X seconds. Usually this would cause an exception where
+         * you are calling it NOT on the main thread. This alleviates that
+         * @param numberOfMillisecondsToWait long number of milliseconds to wait. Minimum 10, no max
+         * @param listener Listener to pass back word of completion
+         */
+        public PauseForXSeconds(long numberOfMillisecondsToWait, OnTaskCompleteListener listener){
+            this.listener = listener;
+            this.numberOfMillisecondsToWait = numberOfMillisecondsToWait;
+            if(this.numberOfMillisecondsToWait < 10){
+                //Minimum of 10 milliseconds in case 0 is sent by accident
+                this.numberOfMillisecondsToWait = 10;
+            }
+        }
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                Thread.sleep(numberOfMillisecondsToWait);
+            } catch (InterruptedException e){
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            listener.onTaskComplete(null, -1);
+        }
     }
 }

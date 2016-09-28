@@ -15,6 +15,7 @@ import com.pgmacdesign.pgmacutilities.R;
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
@@ -668,6 +669,217 @@ public class StringUtilities {
         }
         return false;
     }
+
+    /**
+     * Use this method to fix URIs that are not usable or are in a format not readable. An example
+     * would be one that starts with content://.......... This tries to make a file and when it
+     * succeeds, it means that the URI was correct. The main purpose of this method is to handle
+     * how some phone makers handle this differently (IE Motorola vs HTC vs Samsung)
+     * @param context Context
+     * @param selectedImageUri The Uri to work with
+     * @return
+     */
+    public static Uri fixFileUri(Context context, android.net.Uri selectedImageUri){
+        File fileToPassAround = null;
+        //Attempt 1
+        try {
+            String selectedImageUriString = selectedImageUri.toString();
+            selectedImageUriString = StringUtilities.removeSpaces(selectedImageUriString);
+            java.net.URI myUri = new java.net.URI(selectedImageUriString);
+            File file = new File(myUri);
+            fileToPassAround = file;
+            return StringUtilities.convertStringToAndroidUri(selectedImageUriString);
+        } catch (Exception e){}
+
+        //Attempt 2
+        try {
+            String toAppend = "file://";
+            String selectedImageUriString = selectedImageUri.toString();
+            selectedImageUriString = toAppend + selectedImageUriString;
+            selectedImageUriString = StringUtilities.removeSpaces(selectedImageUriString);
+            java.net.URI myUri = new java.net.URI(selectedImageUriString);
+            File file = new File(myUri);
+            fileToPassAround = file;
+            return StringUtilities.convertStringToAndroidUri(selectedImageUriString);
+        } catch (Exception e){}
+
+        //Attempt 3
+        try {
+            String selectedImageUriString = StringUtilities.getPath(context, selectedImageUri);
+            selectedImageUriString = StringUtilities.removeSpaces(selectedImageUriString);
+            java.net.URI myUri = new java.net.URI(selectedImageUriString);
+            File file = new File(myUri);
+            fileToPassAround = file;
+            return StringUtilities.convertStringToAndroidUri(selectedImageUriString);
+        } catch (Exception e){}
+
+        //Attempt 4
+        try {
+            String toAppend = "file://";
+            String selectedImageUriString = StringUtilities.getPath(context, selectedImageUri);
+            selectedImageUriString = toAppend + selectedImageUriString;
+            selectedImageUriString = StringUtilities.removeSpaces(selectedImageUriString);
+            java.net.URI myUri = new java.net.URI(selectedImageUriString);
+            File file = new File(myUri);
+            fileToPassAround = file;
+            return StringUtilities.convertStringToAndroidUri(selectedImageUriString);
+        } catch (Exception e){}
+
+        //Attempt 5
+        try {
+            String selectedImageUriString = StringUtilities.getAbsolutePath(context, selectedImageUri);
+            selectedImageUriString = StringUtilities.removeSpaces(selectedImageUriString);
+            java.net.URI myUri = new java.net.URI(selectedImageUriString);
+            File file = new File(myUri);
+            fileToPassAround = file;
+            return StringUtilities.convertStringToAndroidUri(selectedImageUriString);
+        } catch (Exception e){}
+
+        //Attempt 6
+        try {
+            String toAppend = "file://";
+            String selectedImageUriString = StringUtilities.getAbsolutePath(context, selectedImageUri);
+            selectedImageUriString = toAppend + selectedImageUriString;
+            selectedImageUriString = StringUtilities.removeSpaces(selectedImageUriString);
+            java.net.URI myUri = new java.net.URI(selectedImageUriString);
+            File file = new File(myUri);
+            fileToPassAround = file;
+            return StringUtilities.convertStringToAndroidUri(selectedImageUriString);
+        } catch (Exception e){}
+
+        //Attempt 7
+        try {
+            String toAppend = "file:/";
+            String selectedImageUriString = StringUtilities.getAbsolutePath(context, selectedImageUri);
+            selectedImageUriString = toAppend + selectedImageUriString;
+            selectedImageUriString = StringUtilities.removeSpaces(selectedImageUriString);
+            java.net.URI myUri = new java.net.URI(selectedImageUriString);
+            File file = new File(myUri);
+            fileToPassAround = file;
+            return StringUtilities.convertStringToAndroidUri(selectedImageUriString);
+        } catch (Exception e){}
+
+        //Attempt 8
+        try {
+            String toAppend = "file:/";
+            String selectedImageUriString = selectedImageUri.toString();
+            selectedImageUriString = toAppend + selectedImageUriString;
+            selectedImageUriString = StringUtilities.removeSpaces(selectedImageUriString);
+            java.net.URI myUri = new java.net.URI(selectedImageUriString);
+            File file = new File(myUri);
+            fileToPassAround = file;
+            return StringUtilities.convertStringToAndroidUri(selectedImageUriString);
+        } catch (Exception e){}
+
+        //If none have worked by this point, file will likely not work. Maybe permission issues
+        return null;
+    }
+
+    /**
+     * Use this method to fix URIs that are not usable or are in a format not readable. An example
+     * would be one that starts with content://.......... This tries to make a file and when it
+     * succeeds, it means that the URI was correct. The main purpose of this method is to handle
+     * how some phone makers handle this differently (IE Motorola vs HTC vs Samsung)
+     * @param context Context
+     * @param selectedImageUri The Uri to work with
+     * @return
+     */
+    public static File fixAndBuildFileUri(Context context, android.net.Uri selectedImageUri){
+        File fileToPassAround = null;
+        //Attempt 1
+        try {
+            String selectedImageUriString = selectedImageUri.toString();
+            selectedImageUriString = StringUtilities.removeSpaces(selectedImageUriString);
+            java.net.URI myUri = new java.net.URI(selectedImageUriString);
+            File file = new File(myUri);
+            fileToPassAround = file;
+            return fileToPassAround;
+        } catch (Exception e){}
+
+        //Attempt 2
+        try {
+            String toAppend = "file://";
+            String selectedImageUriString = selectedImageUri.toString();
+            selectedImageUriString = toAppend + selectedImageUriString;
+            selectedImageUriString = StringUtilities.removeSpaces(selectedImageUriString);
+            java.net.URI myUri = new java.net.URI(selectedImageUriString);
+            File file = new File(myUri);
+            fileToPassAround = file;
+            return fileToPassAround;
+        } catch (Exception e){}
+
+        //Attempt 3
+        try {
+            String selectedImageUriString = StringUtilities.getPath(context, selectedImageUri);
+            selectedImageUriString = StringUtilities.removeSpaces(selectedImageUriString);
+            java.net.URI myUri = new java.net.URI(selectedImageUriString);
+            File file = new File(myUri);
+            fileToPassAround = file;
+            return fileToPassAround;
+        } catch (Exception e){}
+
+        //Attempt 4
+        try {
+            String toAppend = "file://";
+            String selectedImageUriString = StringUtilities.getPath(context, selectedImageUri);
+            selectedImageUriString = toAppend + selectedImageUriString;
+            selectedImageUriString = StringUtilities.removeSpaces(selectedImageUriString);
+            java.net.URI myUri = new java.net.URI(selectedImageUriString);
+            File file = new File(myUri);
+            fileToPassAround = file;
+            return fileToPassAround;
+        } catch (Exception e){}
+
+        //Attempt 5
+        try {
+            String selectedImageUriString = StringUtilities.getAbsolutePath(context, selectedImageUri);
+            selectedImageUriString = StringUtilities.removeSpaces(selectedImageUriString);
+            java.net.URI myUri = new java.net.URI(selectedImageUriString);
+            File file = new File(myUri);
+            fileToPassAround = file;
+            return fileToPassAround;
+        } catch (Exception e){}
+
+        //Attempt 6
+        try {
+            String toAppend = "file://";
+            String selectedImageUriString = StringUtilities.getAbsolutePath(context, selectedImageUri);
+            selectedImageUriString = toAppend + selectedImageUriString;
+            selectedImageUriString = StringUtilities.removeSpaces(selectedImageUriString);
+            java.net.URI myUri = new java.net.URI(selectedImageUriString);
+            File file = new File(myUri);
+            fileToPassAround = file;
+            return fileToPassAround;
+        } catch (Exception e){}
+
+        //Attempt 7
+        try {
+            String toAppend = "file:/";
+            String selectedImageUriString = StringUtilities.getAbsolutePath(context, selectedImageUri);
+            selectedImageUriString = toAppend + selectedImageUriString;
+            selectedImageUriString = StringUtilities.removeSpaces(selectedImageUriString);
+            java.net.URI myUri = new java.net.URI(selectedImageUriString);
+            File file = new File(myUri);
+            fileToPassAround = file;
+            return fileToPassAround;
+        } catch (Exception e){}
+
+        //Attempt 8
+        try {
+            String toAppend = "file:/";
+            String selectedImageUriString = selectedImageUri.toString();
+            selectedImageUriString = toAppend + selectedImageUriString;
+            selectedImageUriString = StringUtilities.removeSpaces(selectedImageUriString);
+            java.net.URI myUri = new java.net.URI(selectedImageUriString);
+            File file = new File(myUri);
+            fileToPassAround = file;
+            return fileToPassAround;
+        } catch (Exception e){}
+
+        //If none have worked by this point, file will likely not work. Maybe permission issues
+        return null;
+    }
+
     /**
      * Builds a String via the passed String array. If the individual String is null or empty,
      * it skips it. If the delimiter is empty, skips that too

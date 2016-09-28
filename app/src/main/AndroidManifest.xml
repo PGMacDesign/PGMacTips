@@ -17,9 +17,9 @@
     <!-- Used in Selecting contacts from the internal SQLite DB of contacts-->
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
+    <!--
     <application
         >
-
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
@@ -28,7 +28,8 @@
 
 
     </application>
-    <!--
+    -->
+
         <application
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
@@ -47,16 +48,39 @@
             </activity>
 
             <activity
+                android:name=".TESTING2"
+                android:screenOrientation="portrait">
+            </activity>
+
+            <activity
+                android:name=".enhancedphotoclasses.TakePhotoActivityAPI21"
+                android:screenOrientation="portrait"
+                android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+                >
+            </activity>
+
+            <activity
+                android:name=".enhancedphotoclasses.TakePhotoActivity"
+                android:screenOrientation="portrait"
+                android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+                >
+            </activity>
+
+            <activity
                 android:name=".enhancedphotoclasses.AutoPhotoActivity"
                 android:screenOrientation="portrait"
                 />
 
-
+            <activity
+                android:name="com.yalantis.ucrop.UCropActivity"
+                android:screenOrientation="portrait"
+                android:theme="@style/MainTheme"
+                />
 
         <service
             android:name=".services.ServiceFlash"
             android:exported="false"/>
 
     </application>
-    -->
+
 </manifest>

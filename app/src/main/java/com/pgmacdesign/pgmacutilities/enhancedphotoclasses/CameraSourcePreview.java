@@ -16,6 +16,7 @@ import java.io.IOException;
 /**
  * Created by pmacdowell on 8/31/2016.
  */
+@Deprecated
 public class CameraSourcePreview  extends ViewGroup {
     private static final String TAG = "CameraSourcePreview";
 
