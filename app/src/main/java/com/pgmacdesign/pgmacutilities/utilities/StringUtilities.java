@@ -20,7 +20,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1138,8 +1140,103 @@ public class StringUtilities {
         return false;
     }
 
-    /*
-
+    /**
+     * For converting 2 times into SMS-like format where it shows "how long ago" someone did
+     * something. IE, when someone sends you a message 'just now' vs 'an hour ago'
+     * @param timeEventHappened Time the event happened
+     * @param currentTime current time (if null, it will just get current time)
+     * @return String of the converted date. If something fails, it will return the time the
+     *         event happened to string (date.toString())
      */
+    public static String convertDatesToSMSTimeMeasurements(Date timeEventHappened, Date currentTime){
+        if(timeEventHappened == null){
+            return null;
+        }
+        if(currentTime == null){
+            currentTime = new Date();
+        }
+
+        long eventTimeMil = timeEventHappened.getTime();
+        long currentTimeMil = currentTime.getTime();
+        long time = currentTimeMil - eventTimeMil;
+        if(time < 0){
+            return "In the future";
+        } else {
+            if(time <= (PGMacUtilitiesConstants.ONE_MINUTE)){
+                return "A moment ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_MINUTE * 2)){
+                return "1 minute ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_MINUTE * 3)){
+                return "2 minutes ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_MINUTE * 4)){
+                return "3 minutes ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_MINUTE * 5)){
+                return "4 minutes ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_MINUTE * 6)){
+                return "5 minutes ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_MINUTE * 7)){
+                return "6 minutes ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_MINUTE * 8)){
+                return "7 minutes ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_MINUTE * 9)){
+                return "8 minutes ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_MINUTE * 10)){
+                return "9 minutes ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_MINUTE * 11)){
+                return "10 minutes ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_MINUTE * 12)){
+                return "11 minutes ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_MINUTE * 13)){
+                return "12 minutes ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_MINUTE * 14)){
+                return "13 minutes ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_MINUTE * 15)){
+                return "14 minutes ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_MINUTE * 16)){
+                return "15 minutes ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_MINUTE * 29)){
+                return "20 minutes ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_MINUTE * 59)){
+                return "30 minutes ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_HOUR * 2)){
+                return "An hour ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_HOUR * 3)){
+                return "2 hours ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_HOUR * 4)){
+                return "3 hours ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_HOUR * 5)){
+                return "4 hours ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_HOUR * 6)){
+                return "5 hours ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_HOUR * 7)){
+                return "6 hours ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_HOUR * 8)){
+                return "7 hours ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_HOUR * 9)){
+                return "8 hours ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_HOUR * 10)){
+                return "9 hours ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_HOUR * 11)){
+                return "10 hours ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_HOUR * 12)){
+                return "11 hours ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_HOUR * 13)){
+                return "12 hours ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_HOUR * 24)){
+                return "12 hours ago";
+            } else if (time <= (PGMacUtilitiesConstants.ONE_DAY * 2)){
+                return "Yesterday";
+            } else {
+                try {
+                    return DateUtilities.convertDateToString(timeEventHappened,
+                            PGMacUtilitiesConstants.DATE_MM_DD_YY, "/", Locale.US);
+                } catch (Exception e){
+                    return timeEventHappened.toString();
+                }
+            }
+        }
+
+    }
+
 }
 
