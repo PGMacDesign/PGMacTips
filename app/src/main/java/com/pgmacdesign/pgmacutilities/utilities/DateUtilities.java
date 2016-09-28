@@ -19,7 +19,7 @@ public class DateUtilities {
     /**
      * Get the SimpleDateFormat to be used
      * @param formatType The format type to do (See PGMacUtilitiesConstants, IE DATE_YYYY_MM_DD)
-     * @param delimiter delimiter to separate them. (IE / or - or ,). If null, will use /
+     * @param delimiter delimiter to separate them. (IE / or - or ,). If null, will use nothing
      * @param locale Locale object {@link Locale} . If null, defaults to United States (US)
      * @return SimpleDateFormat
      */
@@ -30,7 +30,7 @@ public class DateUtilities {
 
         //Get rid of nulls
         if(delimiter == null){
-            delimiter = "/";
+            delimiter = "";
         }
         if(locale == null){
             locale = Locale.US;
@@ -56,7 +56,13 @@ public class DateUtilities {
             simpleDateFormat = new SimpleDateFormat("MM" + delimiter + "yyyy", locale);
         }
         if (formatType == PGMacUtilitiesConstants.DATE_MM_DD_YYYY_HH_MM) {
-            simpleDateFormat = new SimpleDateFormat("MM" + delimiter + "dd" + delimiter + "yyyy" + " hh:mm", locale);
+            simpleDateFormat = new SimpleDateFormat("MM" + delimiter + "dd" + delimiter + "yyyy" + " HH:mm", locale);
+        }
+        if(formatType == PGMacUtilitiesConstants.DATE_YYYY_MM_DD_T_HH_MM_SS_SSS_Z){
+            simpleDateFormat = new SimpleDateFormat("yyyy" + delimiter + "MM" + delimiter + "dd" + "'T'" + " HH:mm:ss.SSS'Z", locale);
+        }
+        if(formatType == PGMacUtilitiesConstants.DATE_YYYY_MM_DD_T_HH_MM_SS_Z){
+            simpleDateFormat = new SimpleDateFormat("yyyy" + delimiter + "MM" + delimiter + "dd" + "'T'" + " HH:mm:ss'Z", locale);
         }
 
         return simpleDateFormat;

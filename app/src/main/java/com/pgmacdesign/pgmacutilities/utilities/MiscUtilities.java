@@ -116,10 +116,9 @@ public class MiscUtilities {
     /**
      * Checks a list for either being empty or containing objects within it
      * @param myList List to check
-     * @param <T> T extends object
      * @return Boolean, true if it is null or empty, false it if is not
      */
-    public static <T extends Object> boolean isListNullOrEmpty(List<T> myList){
+    public static boolean isListNullOrEmpty(List<?> myList){
         if(myList == null){
             return true;
         }
@@ -146,10 +145,9 @@ public class MiscUtilities {
     /**
      * Checks a map for either being empty or containing objects within it
      * @param myMap map to check
-     * @param <T> T extends object
      * @return Boolean, true if it is null or empty, false it if is not
      */
-    public static <T extends Object> boolean isMapNullOrEmpty(Map<T, T> myMap){
+    public static boolean isMapNullOrEmpty(Map<?, ?> myMap){
         if(myMap == null){
             return true;
         }

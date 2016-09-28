@@ -79,7 +79,8 @@ public class PGMacUtilitiesConstants {
     public static final int TAG_TAKE_SELF_PHOTO = 4446;
     public static final int TAG_TAKE_SELF_PHOTO_SUCCESS = 4447;
     public static final int TAG_TAKE_SELF_PHOTO_FAILURE = 4448;
-
+    public static final int DATE_YYYY_MM_DD_T_HH_MM_SS_SSS_Z = 4449;
+    public static final int DATE_YYYY_MM_DD_T_HH_MM_SS_Z = 4450;
     //String Tags
     public static final String TAG_SELF_PHOTO_URI = "tag_self_photo_uri";
 
