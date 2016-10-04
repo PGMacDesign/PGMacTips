@@ -130,7 +130,9 @@ public class TextFieldUtilities {
             viewToSet.setText(Html.fromHtml(stringToSet));
         }
         if(hasUrlLinks){
-            viewToSet.setMovementMethod(LinkMovementMethod.getInstance());
+            try {
+                viewToSet.setMovementMethod(LinkMovementMethod.getInstance());
+            } catch (Exception e){}
         }
     }
 
