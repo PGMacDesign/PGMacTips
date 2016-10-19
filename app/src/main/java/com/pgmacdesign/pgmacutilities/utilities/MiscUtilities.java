@@ -18,6 +18,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -185,6 +186,50 @@ public class MiscUtilities {
         } catch (Exception e){
             return null;
         }
+    }
+
+
+    /**
+     * Remove nulls from a list of list of objects
+     * @param nestedListObject
+     * @return remove the nulls and return objects
+     */
+    public static List<List<Object>> removeNullsFromLists(List<List<?>> nestedListObject){
+        List<List<Object>> listsToReturn = new ArrayList<>();
+        for(int i = 0; i < nestedListObject.size(); i++){
+            try {
+                List<Object> obj = listsToReturn.get(i);
+                if(obj == null){
+                    continue;
+                }
+                obj = removeNullsFromList(obj);
+                if(obj != null){
+                    listsToReturn.add(obj);
+                }
+            } catch (Exception e){}
+        }
+        return listsToReturn;
+    }
+
+    /**
+     * Remove nulls from a list of objects
+     * @param myList
+     * @return remove the nulls and return objects
+     */
+    public static List<Object> removeNullsFromList (List<?> myList){
+        if(myList == null){
+            return null;
+        }
+        List<Object> listToReturn = new ArrayList<>();
+        for(int i = 0; i < myList.size(); i++){
+            try {
+                Object obj = myList.get(i);
+                if(obj != null){
+                    listToReturn.add(obj);
+                }
+            } catch (Exception e){}
+        }
+        return listToReturn;
     }
 
     /**
