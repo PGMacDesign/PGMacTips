@@ -1,6 +1,7 @@
 package com.pgmacdesign.pgmacutilities.utilities;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
@@ -14,13 +15,32 @@ import java.io.IOException;
  * Created by pmacdowell on 8/12/2016.
  */
 public class L {
+
+    private static final String TAG = "PGMacUtilities";
     /**
      * Quick println
      * @param myObject The string to print (or double, int, whatever)
      * @param <E> Extends object
      */
     public static <E> void m (E myObject){
-        System.out.println("PGMacUtilities: " + myObject);
+        String str = myObject + "";
+        if(StringUtilities.isNullOrEmpty(str)){
+            return;
+        }
+        if (str.length() > 4000) {
+            Log.v(TAG, "sb.length = " + str.length());
+            int chunkCount = str.length() / 4000;     // integer division
+            for (int i = 0; i <= chunkCount; i++) {
+                int max = 4000 * (i + 1);
+                if (max >= str.length()) {
+                    Log.d(TAG, "chunk " + i + " of " + chunkCount + ":" + str.substring(4000 * i));
+                } else {
+                    Log.d(TAG, "chunk " + i + " of " + chunkCount + ":" + str.substring(4000 * i, max));
+                }
+            }
+        } else {
+            Log.d(TAG, str);
+        }
     }
     /**
      * Quick println in the logcat and write it to the file under downloads
@@ -28,7 +48,7 @@ public class L {
      * @param <E> Extends object
      */
     public static <E> void logAndWrite (E myObject){
-        System.out.println("PGMacUtilities: " + myObject);
+        L.m(myObject);
         writeToOutput(myObject);
     }
     /**
@@ -36,7 +56,7 @@ public class L {
      * @param x int, line number
      */
     public static void l(int x){
-        System.out.println("PGMacUtilities: " + "Line Number " + x + " hit");
+        Log.d(TAG, "Line Number " + x + " hit");
     }
 
     /**
@@ -51,8 +71,7 @@ public class L {
         if(activityName == null){
             activityName = "Unknown";
         }
-        System.out.println("PGMacUtilities: " + "Activity: " + activityName + ", "
-                + "Line Number " + x + " hit");
+        Log.d(TAG, "Activity: " + activityName + ", " + "Line Number " + x + " hit");
     }
 
     /**
