@@ -103,7 +103,7 @@ public class StringUtilities {
                 return formatted;
             } catch (Exception e){}
         }
-        return null;
+        return str;
     }
 
     /**
@@ -627,6 +627,28 @@ public class StringUtilities {
             }
         }
         if(tmp.length() == 20){
+            tmp = tmp.substring(0, tmp.length()-1); //Get rid of last digit
+        }
+        return tmp;
+    }
+
+    /**
+     * Formats by adding forward slash every 2 numbers (IE like a credit card expiration date)
+     * @param s Charsequence being altered.
+     * @return Return an altered String with hyphens in it
+     */
+    public static String formatNumbersAsCreditCardExpiration(CharSequence s) {
+        int groupDigits = 0;
+        String tmp = "";
+        for (int i = 0; i < s.length(); ++i) {
+            tmp += s.charAt(i);
+            ++groupDigits;
+            if (groupDigits == 2) {
+                tmp += "/";
+                groupDigits = 0;
+            }
+        }
+        if(tmp.length() > 5){
             tmp = tmp.substring(0, tmp.length()-1); //Get rid of last digit
         }
         return tmp;

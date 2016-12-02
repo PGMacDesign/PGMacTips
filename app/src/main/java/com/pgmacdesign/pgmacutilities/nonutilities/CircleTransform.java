@@ -11,9 +11,6 @@ import com.squareup.picasso.Transformation;
  * Created by pmacdowell on 8/15/2016.
  */
 public class CircleTransform implements Transformation {
-
-    public CircleTransform(){}
-
     @Override
     public Bitmap transform(Bitmap source) {
         int size = Math.min(source.getWidth(), source.getHeight());
@@ -26,17 +23,16 @@ public class CircleTransform implements Transformation {
             source.recycle();
         }
 
-        Bitmap bitmap = Bitmap.createBitmap(size, size, source.getConfig());
-
+        Bitmap.Config config = source.getConfig() != null ? source.getConfig() : Bitmap.Config.ARGB_8888;
+        Bitmap bitmap = Bitmap.createBitmap(size, size, config);
 
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
-        BitmapShader shader = new BitmapShader(squaredBitmap,
-                BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP);
+        BitmapShader shader = new BitmapShader(squaredBitmap, BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP);
         paint.setShader(shader);
         paint.setAntiAlias(true);
 
-        float r = size / 2f;
+        float r = size/2f;
         canvas.drawCircle(r, r, r, paint);
 
         squaredBitmap.recycle();
@@ -45,6 +41,6 @@ public class CircleTransform implements Transformation {
 
     @Override
     public String key() {
-        return "rounded";
+        return "circle";
     }
 }

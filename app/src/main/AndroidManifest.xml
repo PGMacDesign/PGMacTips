@@ -2,6 +2,9 @@
     package="com.pgmacdesign.pgmacutilities">
 
     <!-- Permissions used in this library -->
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <!-- Used to determine connectivity before making a call-->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- Used to Utilitze the camera-->

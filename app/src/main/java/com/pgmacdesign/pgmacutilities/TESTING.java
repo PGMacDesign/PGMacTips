@@ -257,7 +257,7 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
             id = (String) view.getTag();
         } catch (Exception e){}
         if(id.equals("button")){
-            testPhoto();
+            testRetrofit();
         }
     }
 }

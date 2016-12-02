@@ -272,6 +272,7 @@ public class RetrofitClient {
         //Create the retrofit object, which will use the variables/ objects we have created above
         Retrofit.Builder myBuilder = new Retrofit.Builder();
         myBuilder.baseUrl(urlBase);
+        myBuilder.addConverterFactory(new CustomConverterFactory());
         if(isSerializableResponse){
             //Gson object that will be used for parsing the response from the server
             Gson gson = new GsonBuilder()

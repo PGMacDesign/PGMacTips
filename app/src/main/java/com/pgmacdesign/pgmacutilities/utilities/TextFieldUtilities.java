@@ -218,6 +218,27 @@ public class TextFieldUtilities {
     }
 
     /**
+     * Handles the credit card expiration formatting with the edit text.
+     * Takes in a textwatcher, the editable, and the EditText
+     * @param textWatcher
+     * @param s
+     * @param et
+     * @param <T>
+     */
+    public static <T extends EditText> void handleCreditCardExpFormatting(TextWatcher textWatcher,
+                                                                         Editable s, T et){
+        if(s == null || textWatcher == null || et == null){
+            return;
+        }
+
+        String ss = StringUtilities.formatNumbersAsCreditCardExpiration(s.toString());
+        et.removeTextChangedListener(textWatcher);
+        et.setText(ss);
+        et.setSelection(ss.length());
+        et.addTextChangedListener(textWatcher);
+    }
+
+    /**
      * Handles the credit card formatting with the edit text. Takes in a textwatcher, the
      * editable, and the EditText
      * @param textWatcher

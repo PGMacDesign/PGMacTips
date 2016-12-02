@@ -10,6 +10,7 @@ import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListene
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -452,6 +453,11 @@ public class ContactUtilities {
                     } else {
                         phone = new Contact.Phone(phoneNumber, phoneNumberType);
                     }
+
+                    //if(numberOnBlockList(phoneNumber)){
+                        // TODO: 10/20/2016 add in boolean param to throw this or not
+                        //continue;
+                    //}
 
                     List<Contact.Phone> phones = new ArrayList<>();
                     phones.add(phone);
@@ -2495,6 +2501,41 @@ public class ContactUtilities {
 
         return toReturn;
     }
+
+    /**
+     * Checks if the number is one of the ones we want to remove from list.
+     * This list includes the build in ones into the phone (IE, #data, *611, etc)
+     * @param phoneNumber Phone number to check against
+     * @return boolean, true if it is on the list, false if it is not
+     */
+    public static boolean numberOnBlockList(String phoneNumber){
+        try {
+            return Arrays.asList(SERVICE_NUMBERS).contains(phoneNumber);
+        } catch (Exception e){
+            return false;
+        }
+    }
+
+    /**
+     * List of service numbers. These can be blocked for bringing up a list to send SMS to as they
+     * will not take in SMS
+     */
+    public static final String[] SERVICE_NUMBERS = {
+            //Verizon
+            "#225", "#3282", "*226", "#646", "#768", "#874", "*86", "18668946848", "8668946848",
+            "18776237433", "8776237433", "8009220204", "18009220204", "18664065154", "8664065154",
+            "*228", "*22828", "*526", "*611", "611",
+            //AT&T
+            "*729", "*72427", "*3282#", "*3286#", "*646#", "*876#", "*225#", "*725#", "*639#",
+            "*6737#",
+            //Sprint
+            "1311", "3223", "7726", "8353", "8757", "9000", "9016", "9099", "9230", "9999",
+            //T-Mobile
+            "#932#", "#674#", "#674#", "#999#", "#225#", "#264#", "#263#", "#266#", "#646#",
+            "#932#", "#686#", "#793#", "#796#", "#763#", "#766#", "#326#", "*#06#", "*#9999#",
+            "*#0000#", "#8294", "##21#", "##61#", "##62#", "##67#", "*43#", "#43#"
+    };
+
 
     /**
      * Simple  utility method for the 'first' letter in a list. The idea being that if you

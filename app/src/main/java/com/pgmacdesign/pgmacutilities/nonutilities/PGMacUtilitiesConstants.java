@@ -153,6 +153,15 @@ public class PGMacUtilitiesConstants {
     //Misc Regexs
     public static final String REGEX_WEB_URL_ENCODING = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
     public static final String REGEX_PASSWORD_PATTERN = "^\\S*(?=\\S*[a-zA-Z])(?=\\S*[0-9])\\S*$";
+    public static final String REGEX_INTEGER = "^[0-9]+$";
+    public static final String REGEX_DECIMAL = "^[0-9]+(?:\\.[0-9]+)?$";
+    public static final String REGEX_MONEY = "^[0-9]+(?:\\.[0-9]{0,2})?$";
+    public static final String REGEX_MONEY_SIGNED = "^[-+]?[0-9]+(?:\\.[0-9]{0,2})?$";
+    public static final String REGEX_PHONE = "^ *\\(?[0-9]{3,3}[-\\.\\)]? ?[0-9]{3,3}[-\\. ]?[0-9]{4,4} *$";
+    public static final String REGEX_IPADDRESS = "^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$";
+    public static final String REGEX_COLOR = "^#[0-9a-fA-F]{6,6}$";
+    public static final String REGEX_DATE = "^[0-9]{1,2}[-/][0-9]{1,2}[-/][0-9]{2,4}$";
+    public static final String REGEX_EMAIL = "^\\s*[^@\\s]+@(?:[^@\\.\\s]+\\.[^@\\.\\s]+)+\\s*$";
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /////Animation Constants and Tags///////////////////////////////////////////////////////////////

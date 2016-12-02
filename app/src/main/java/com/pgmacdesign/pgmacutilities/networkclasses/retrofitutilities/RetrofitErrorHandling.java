@@ -87,7 +87,7 @@ public class RetrofitErrorHandling {
     }
 
     /**
-     * Simpler error code handler. Use this in confunction with other things
+     * Simpler error code handler. Use this in conjunction with other things
      * @param response {@link Response}
      * @return integer
      */

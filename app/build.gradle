@@ -32,6 +32,9 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
     repositories {
         //
     }

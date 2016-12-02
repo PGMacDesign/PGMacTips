@@ -257,6 +257,15 @@ public class MiscUtilities {
         return packageName;
     }
 
+    /*
+    public static Class getClass(String classname) throws ClassNotFoundException {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if(classLoader == null)
+            classLoader = Singleton.class.getClassLoader();
+        return (classLoader.loadClass(classname));
+    }
+    */
+
     //Not used atm. Re-working to fix exception issues. Supposed to work via reflection.
     //Link: http://stackoverflow.com/questions/6591665/merging-two-objects-in-java
     private Object mergeObjects(Object obj, Object update){
