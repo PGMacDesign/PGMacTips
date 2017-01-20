@@ -90,7 +90,13 @@ android {
         compile 'com.android.volley:volley:1.0.0'
 
         //Google play services. Full list here - https://developers.google.com/android/guides/setup
-        compile 'com.google.android.gms:play-services:9.2.1'
+        compile 'com.google.android.gms:play-services:10.0.1'
+
+        //Location Services
+        compile 'com.google.android.gms:play-services-location:10.0.1'
+
+        //Maps
+        compile 'com.google.android.gms:play-services-maps:10.0.1'
 
         //Multi-dex. For more info: https://developer.android.com/studio/build/multidex.html
         compile 'com.android.support:multidex:1.0.0'

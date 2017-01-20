@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
@@ -2399,6 +2400,9 @@ public class ContactUtilities {
             //Iterate over list
             for (Contact contact : contactList) {
 
+                if(contact == null){
+                    continue;
+                }
                 String firstLetter = contact.getRawDisplayName();
                 //In case this one is empty, bail out
                 if (StringUtilities.isNullOrEmpty(firstLetter)) {
@@ -2452,8 +2456,9 @@ public class ContactUtilities {
                             nextLetter = nextLetter.toUpperCase();
                             currentLetter = nextLetter;
 
-                            toReturn.add(contact);
+                            //toReturn.add(contact);
                         } else {
+
                             //No skip, only incremented by one letter
                             String nextLetter = StringUtilities.incrementString(currentLetter);
                             nextLetter = nextLetter.toUpperCase();
@@ -2469,6 +2474,7 @@ public class ContactUtilities {
 
                         }
                     } else if (result == 0) {
+
                         if(!firstLetterPlaced){
                             firstLetter = contact.getRawDisplayName();
                             firstLetter = firstLetter.substring(0, 1);
@@ -2484,6 +2490,7 @@ public class ContactUtilities {
                         toReturn.add(contact);
 
                     } else if (result < 0) {
+                        toReturn.add(contact);
                     /*
                     This means that the letter comes before it in the alphabet (IE A < B)
                     This gets hit when the first item in the list of contacts is later in the
@@ -2492,6 +2499,7 @@ public class ContactUtilities {
                     }
 
                 } catch (Exception e) {
+                    e.printStackTrace();
                     //In case something tries to get parsed / incremented and breaks
                     toReturn.add(contact);
                 }
@@ -2500,6 +2508,175 @@ public class ContactUtilities {
         }
 
         return toReturn;
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// Utility Methods ////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Iterates through the list of all contacts and compares to the list of selected contacts
+     * to see if they are on the list. If they are, it sets the full listOfContacts individual
+     * object to selected=true and then returns it. This is used for when a new search / query
+     * is made and you get back a full list of contacts, but don't know which ones are selected
+     * so that a recyclerview 'isSelected' won't work.
+     * @param listOfContacts The list of contacts that is unknown as to whether or not it is
+     *                       selected. This would be the list brought back from query
+     * @param selectedContacts This is the persisted list of contacts where the user has already
+     *                         selected some and they are persisted.
+     * @param typeSearchingThrough This is the type we are searching through. (To obtain the
+     *                             correct String info to compare against)
+     * @return List<Contacts> {@link ContactUtilities.Contact}
+     */
+    public static List<ContactUtilities.Contact> checkAndSetSelected(
+            List<ContactUtilities.Contact> listOfContacts,
+            List<ContactUtilities.Contact> selectedContacts,
+            @NonNull SearchTypes typeSearchingThrough){
+        if(MiscUtilities.isListNullOrEmpty(listOfContacts) ||
+                MiscUtilities.isListNullOrEmpty(selectedContacts)){
+            return listOfContacts;
+        }
+
+        List<String> listToCheckAgainst = new ArrayList<>();
+
+        if(typeSearchingThrough == SearchTypes.PHONE){
+            for(ContactUtilities.Contact contact : selectedContacts){
+                if(contact == null){
+                    continue;
+                }
+                String str = contact.getSimplifiedPhoneNumber();
+                if(!StringUtilities.isNullOrEmpty(str)){
+                    listToCheckAgainst.add(str);
+                }
+            }
+        } else if(typeSearchingThrough == SearchTypes.EMAIL){
+            for(ContactUtilities.Contact contact : selectedContacts){
+                if(contact == null){
+                    continue;
+                }
+                String str = contact.getSimplifiedEmail();
+                if(!StringUtilities.isNullOrEmpty(str)){
+                    listToCheckAgainst.add(str);
+                }
+            }
+        } else if(typeSearchingThrough == SearchTypes.NAME){
+            for(ContactUtilities.Contact contact : selectedContacts){
+                if(contact == null){
+                    continue;
+                }
+                String str = contact.getRawDisplayName();
+                if(!StringUtilities.isNullOrEmpty(str)){
+                    listToCheckAgainst.add(str);
+                }
+            }
+        } else if(typeSearchingThrough == SearchTypes.ADDRESS){
+            for(ContactUtilities.Contact contact : selectedContacts){
+                if(contact == null){
+                    continue;
+                }
+                String str = contact.getSimplifiedAddress();
+                if(!StringUtilities.isNullOrEmpty(str)){
+                    listToCheckAgainst.add(str);
+                }
+            }
+        } else {
+            //Problem
+            return listOfContacts;
+        }
+        //Iterate entire list
+        for(int i = 0; i < listOfContacts.size(); i++){
+            ContactUtilities.Contact currentContact = listOfContacts.get(i);
+
+            if(currentContact == null){
+                continue;
+            }
+
+            if(typeSearchingThrough == SearchTypes.PHONE){
+                String str = currentContact.getSimplifiedPhoneNumber();
+                if(!StringUtilities.isNullOrEmpty(str)){
+                    if(listToCheckAgainst.contains(str)){
+                        currentContact.setSelectedInList(true);
+                        listOfContacts.set(i, currentContact);
+                    }
+                }
+            } else if(typeSearchingThrough == SearchTypes.EMAIL){
+                String str = currentContact.getSimplifiedEmail();
+                if(!StringUtilities.isNullOrEmpty(str)){
+                    if(listToCheckAgainst.contains(str)){
+                        currentContact.setSelectedInList(true);
+                        listOfContacts.set(i, currentContact);
+                    }
+                }
+            } else if(typeSearchingThrough == SearchTypes.NAME){
+                String str = currentContact.getRawDisplayName();
+                if(!StringUtilities.isNullOrEmpty(str)){
+                    if(listToCheckAgainst.contains(str)){
+                        currentContact.setSelectedInList(true);
+                        listOfContacts.set(i, currentContact);
+                    }
+                }
+            } else if(typeSearchingThrough == SearchTypes.ADDRESS){
+                String str = currentContact.getSimplifiedAddress();
+                if(!StringUtilities.isNullOrEmpty(str)){
+                    if(listToCheckAgainst.contains(str)){
+                        currentContact.setSelectedInList(true);
+                        listOfContacts.set(i, currentContact);
+                    }
+                }
+            }
+        }
+        return listOfContacts;
+    }
+
+    /**
+     * Check if a list contains the email already
+     * @param contacts Contact list to compare against
+     * @param email email to check
+     * @return boolean, true if it already contains it, false if it does not.
+     */
+    public static boolean listAlreadyContainsEmail(List<Contact> contacts, String email){
+        if(contacts == null || StringUtilities.isNullOrEmpty(email)){
+            return false;
+        }
+
+        for(Contact contact : contacts){
+            List<Contact.Email> checkEmails = contact.getEmail();
+            for(Contact.Email singleEmail : checkEmails){
+                String checkEmail = singleEmail.getAddress();
+                if(!StringUtilities.isNullOrEmpty(checkEmail)){
+                    if(checkEmail.equalsIgnoreCase(email)){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if a list contains the phone number already
+     * @param contacts Contact list to compare against
+     * @param phoneNumber Phone number to check
+     * @return boolean, true if it already contains it, false if it does not.
+     */
+    public static boolean listAlreadyContainsPhoneNumber(List<Contact> contacts, String phoneNumber){
+        if(contacts == null || StringUtilities.isNullOrEmpty(phoneNumber)){
+            return false;
+        }
+
+        for(Contact contact : contacts){
+            List<Contact.Phone> checkPhones = contact.getPhone();
+            for(Contact.Phone singlePhone : checkPhones){
+                String checkPhone = singlePhone.getNumber();
+                if(!StringUtilities.isNullOrEmpty(checkPhone)){
+                    if(checkPhone.equalsIgnoreCase(phoneNumber)){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**

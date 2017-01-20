@@ -220,7 +220,6 @@ public class RetrofitClient {
             @Override
             public Response intercept(Interceptor.Chain chain) throws IOException {
                 Request.Builder builder = new Request.Builder();
-                builder.url(urlBase);
                 if(!MiscUtilities.isMapNullOrEmpty(headers)){
                     for(Map.Entry<String, String> myMap : headers.entrySet()){
                         String key = myMap.getKey();
