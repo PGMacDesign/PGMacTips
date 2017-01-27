@@ -53,7 +53,7 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
 
 
         //Custom stuff here
-        //dbUtilities = new DatabaseUtilities(this);
+        dbUtilities = new DatabaseUtilities(this);
 
         //writeDBStuff();
         //moveDBFile();
@@ -255,9 +255,12 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
         String id = null;
         try {
             id = (String) view.getTag();
-        } catch (Exception e){}
+        } catch (Exception e){
+            id = "";
+        }
         if(id.equals("button")){
-            testRetrofit();
+            //testRetrofit();
+            writeDBStuff();
         }
     }
 }

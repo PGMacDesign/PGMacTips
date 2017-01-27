@@ -1150,6 +1150,7 @@ public class StringUtilities {
         if(!StringUtilities.isNullOrEmpty(str)){
             return false;
         }
+        str = str.trim();
         String[] curseWords = context.getResources().getStringArray(R.array.curse_words);
         if(curseWords == null){
             return false;

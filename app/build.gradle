@@ -17,7 +17,6 @@ buildscript{
     }
     dependencies {
         //Database Management Library. Link: https://realm.io/docs/java/latest
-        classpath "io.realm:realm-gradle-plugin:1.1.1"
     }
 }
 android {
@@ -56,7 +55,7 @@ android {
         compile 'com.jaredrummler:animated-svg-view:1.0.0'
 
         //GSON. Link https://github.com/google/gson
-        compile 'com.google.code.gson:gson:2.7'
+        compile 'com.google.code.gson:gson:2.8.0'
 
         //Picasso. Link: https://github.com/square/picasso
         compile 'com.squareup.picasso:picasso:2.5.2'
@@ -79,8 +78,8 @@ android {
         //Retrofit - http://square.github.io/retrofit/
         //OKHttp - http://square.github.io/okhttp/
         compile 'com.squareup.retrofit2:retrofit:2.1.0'
-        compile 'com.squareup.okhttp3:okhttp:3.4.1'
-        compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
+        compile 'com.squareup.okhttp3:okhttp:3.5.0'
+        compile 'com.squareup.okhttp3:logging-interceptor:3.5.0'
         //Type-safe HTTP client for Android and Java: https://github.com/square/retrofit
         compile 'com.squareup.retrofit2:converter-gson:2.0.0-beta3'
         //Other Converters for Custom JSON Serialization

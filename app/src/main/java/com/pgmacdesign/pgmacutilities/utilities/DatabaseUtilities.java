@@ -52,6 +52,7 @@ public class DatabaseUtilities {
      */
     public DatabaseUtilities(@NonNull Context context) {
         this.context = context;
+        this.init(context);
         this.realmConfiguration = DatabaseUtilities.buildRealmConfig(context, null, null, null);
     }
 
@@ -65,12 +66,16 @@ public class DatabaseUtilities {
      */
     public DatabaseUtilities(@NonNull Context context, RealmConfiguration realmConfiguration) {
         this.context = context;
+        this.init(context);
         this.realmConfiguration = realmConfiguration;
         if (realmConfiguration == null) {
             this.realmConfiguration = DatabaseUtilities.buildRealmConfig(this.context);
         }
     }
 
+    private void init(Context context){
+        Realm.init(context);
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /////Insert Methods/////////////////////////////////////////////////////////////////////////////
@@ -85,12 +90,11 @@ public class DatabaseUtilities {
      *                       it will call 'write'. The idea being that if you want the object
      *                       already existing in the db to be overwritten entirely, set this
      *                       to false, else, set it to true.
-     * @param <T>            T extends RealmObject
      * @return Boolean. True if the insert succeeded, false if it did not
      */
-    public <T extends RealmObject> boolean executeInsertIntoDB(final Class myClass,
-                                                               final String jsonString,
-                                                               final Boolean appendToObject) {
+    public boolean executeInsertIntoDB(final Class myClass,
+                                       final String jsonString,
+                                       final Boolean appendToObject) {
         if (jsonString == null || myClass == null) {
             return false;
         }
@@ -138,12 +142,11 @@ public class DatabaseUtilities {
      *                       it will call 'write'. The idea being that if you want the object
      *                       already existing in the db to be overwritten entirely, set this
      *                       to false, else, set it to true.
-     * @param <T>            T extends RealmObject
      * @return Boolean. True if the insert succeeded, false if it did not
      */
-    public <T extends RealmObject> boolean executeInsertIntoDB(final Class myClass,
-                                                               final InputStream is,
-                                                               final Boolean appendToObject) {
+    public  boolean executeInsertIntoDB(final Class myClass,
+                                        final InputStream is,
+                                        final Boolean appendToObject) {
         if (is == null || myClass == null) {
             return false;
         }
@@ -202,12 +205,11 @@ public class DatabaseUtilities {
      *                       it will call 'write'. The idea being that if you want the object
      *                       already existing in the db to be overwritten entirely, set this
      *                       to false, else, set it to true.
-     * @param <T>            T extends RealmObject
      * @return Boolean. True if the insert succeeded, false if it did not
      */
-    public <T extends RealmObject> boolean executeInsertIntoDB(final Class myClass,
-                                                               final JSONObject jsonObject,
-                                                               final Boolean appendToObject) {
+    public boolean executeInsertIntoDB(final Class myClass,
+                                       final JSONObject jsonObject,
+                                       final Boolean appendToObject) {
         if (jsonObject == null || myClass == null) {
             return false;
         }
@@ -264,10 +266,9 @@ public class DatabaseUtilities {
      * @param myClass Class that is of the object you are sending
      * @param obj     Object to persist. If null is passed, it will delete any object matching
      *                that class name
-     * @param <T>     T extends RealmObject
      * @return Return a boolean, true if suceeded, false if not
      */
-    public <T extends RealmObject> boolean persistObject(final Class myClass, final T obj) {
+    public boolean persistObject(final Class myClass, final Object obj) {
         return (executeInsertIntoDBMaster(myClass, obj));
     }
 
@@ -277,11 +278,10 @@ public class DatabaseUtilities {
      * @param myClass Class, in this method, the class will represent the ID in the table. If
      *                another object is sent with the same class, it will overwrite it.
      * @param obj     The object to put into the db. (Will be converted to JSON using Gson)
-     * @param <T>     T extends RealmObject
      * @return Boolean, true if it succeeded, false if it did not
      */
-    private <T extends RealmObject> boolean executeInsertIntoDBMaster(final Class myClass,
-                                                                      final T obj) {
+    private boolean executeInsertIntoDBMaster(final Class myClass,
+                                              final Object obj) {
 
         if (myClass == null) {
             return false;
@@ -351,12 +351,11 @@ public class DatabaseUtilities {
      *                     add a custom suffix string (ie -user2) and it will be written into the
      *                     masterobject table with an id (primary key) that matches that custom
      *                     suffix. Use that same suffix again to delete it from the db.
-     * @param <T>          T extends RealmObject
      * @return Boolean, true if it succeeded, false if it did not
      */
-    public <T extends RealmObject> boolean persistObjectCustom(final Class myClass,
-                                                               final T obj,
-                                                               final String customSuffix) {
+    public boolean persistObjectCustom(final Class myClass,
+                                       final Object obj,
+                                       final String customSuffix) {
 
         if (myClass == null) {
             return false;
@@ -956,7 +955,8 @@ public class DatabaseUtilities {
             deleteIfNeeded = DEFAULT_DELETE_OPTION;
         }
         //Builder
-        RealmConfiguration.Builder builder = new RealmConfiguration.Builder(context);
+        RealmConfiguration.Builder builder = new RealmConfiguration.Builder();
+        //RealmConfiguration.Builder builder = new RealmConfiguration.Builder(context);
         builder.name(dbName);
         if (deleteIfNeeded) {
             builder.deleteRealmIfMigrationNeeded();

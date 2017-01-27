@@ -28,6 +28,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
+import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -71,8 +72,8 @@ public class RetrofitClient {
      */
 
     public static <T> T RetrofitFactoryBuilder(@NonNull final Class serviceInterface,
-                                                        @NonNull String urlBase,
-                                                        Map<String, String> headers){
+                                               @NonNull String urlBase,
+                                               Map<String, String> headers){
         L.m("urlbase = " + urlBase);
         try {
             RetrofitClient myClient = new RetrofitClient(serviceInterface, urlBase);
@@ -95,6 +96,9 @@ public class RetrofitClient {
      * @param urlBase The String URL base. An example would be:
      */
     public <T> RetrofitClient(@NonNull final Class<T> serviceInterface, @NonNull String urlBase) {
+        if(urlBase == null){
+            urlBase = "";
+        }
         this.urlBase = urlBase;
         this.serviceInterface = serviceInterface;
         initDefaults();
@@ -212,6 +216,27 @@ public class RetrofitClient {
     }
 
     /**
+     * Build headers from the headers map.
+     * {@link Headers}
+     * @return
+     */
+    private Headers buildHeaders(){
+        Headers.Builder builder = new Headers.Builder();
+        if(MiscUtilities.isMapNullOrEmpty(headers)){
+            return builder.build();
+        } else {
+            for (Map.Entry<String, String> myMap : headers.entrySet()) {
+                String key = myMap.getKey();
+                String value = myMap.getValue();
+                if (!StringUtilities.isNullOrEmpty(key) &&
+                        !StringUtilities.isNullOrEmpty(value)) {
+                    builder.add(key, value);
+                }
+            }
+            return builder.build();
+        }
+    }
+    /**
      * This builds a client that will be used for network calls
      */
     public <T> T buildRetrofitClient(){
@@ -219,17 +244,8 @@ public class RetrofitClient {
         Interceptor interceptor = new Interceptor() {
             @Override
             public Response intercept(Interceptor.Chain chain) throws IOException {
-                Request.Builder builder = new Request.Builder();
-                if(!MiscUtilities.isMapNullOrEmpty(headers)){
-                    for(Map.Entry<String, String> myMap : headers.entrySet()){
-                        String key = myMap.getKey();
-                        String value = myMap.getValue();
-                        if(!StringUtilities.isNullOrEmpty(key) &&
-                                !StringUtilities.isNullOrEmpty(value)){
-                            builder.addHeader(key, value);
-                        }
-                    }
-                }
+                Request.Builder builder = chain.request().newBuilder();
+                builder.headers(buildHeaders());
                 Request newRequest = builder.build();
                 return chain.proceed(newRequest);
             }
