@@ -158,7 +158,6 @@ public class ProfantiyCheckerAPICalls {
             RetrofitClient retrofitClient = new RetrofitClient(
                     ProfantiyCheckerInterface.class, BASE_URL);
             retrofitClient.setHeaders(RetrofitClient.getApplicationJSONMap());
-            retrofitClient.setIsSerializableResponse(false);
             serviceInterface = retrofitClient.buildServiceClient();
         }
         return;

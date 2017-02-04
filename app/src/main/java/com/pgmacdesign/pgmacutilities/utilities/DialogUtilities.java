@@ -26,12 +26,13 @@ import java.util.Calendar;
 /**
  * Created by Patrick MacDowell (PGMacDesign) on 2016-11-17.
  */
-
 public class DialogUtilities {
 
     public static final int FAIL_RESPONSE = -1;
     public static final int OTHER_RESPONSE = 0;
     public static final int SUCCESS_RESPONSE = 1;
+    public static final int LATER_RESPONSE = 2;
+    public static final int NEVER_RESPONSE = 3;
 
     public static interface DialogFinishedListener{
         public void dialogFinished(Object object, int tag);
@@ -93,8 +94,8 @@ public class DialogUtilities {
 
     //Simple Alert Dialog
     public static AlertDialog buildSimpleOkDialog(final Context context,
-                                                final DialogFinishedListener listener,
-                                                String okText, String title, String message){
+                                                  final DialogFinishedListener listener,
+                                                  String okText, String title, String message){
         if(StringUtilities.isNullOrEmpty(message)){
             return null;
         }
@@ -122,7 +123,7 @@ public class DialogUtilities {
         return myBuilder.create();
     }
 
-    //Option Dialog Dialog
+    //2 Option Dialog Dialog
     public static AlertDialog buildOptionDialog(final Context context,
                                                 final DialogFinishedListener listener,
                                                 String yesText, String noText,
@@ -163,11 +164,43 @@ public class DialogUtilities {
         return myBuilder.create();
     }
 
+    //3 Option Dialog Dialog
+    public static Dialog buildOptionDialog(final Context context,
+                                           final DialogFinishedListener listener,
+                                           String yesText, String laterText,
+                                           String neverText, String title, String message) {
+        if (StringUtilities.isNullOrEmpty(message)) {
+            return null;
+        }
+        if (context == null || listener == null) {
+            return null;
+        }
+        if (StringUtilities.isNullOrEmpty(yesText)) {
+            yesText = "";
+        }
+        if (StringUtilities.isNullOrEmpty(laterText)) {
+            laterText = "";
+        }
+        if (StringUtilities.isNullOrEmpty(neverText)) {
+            neverText = "";
+        }
+        if (StringUtilities.isNullOrEmpty(title)) {
+            title = "";
+        }
+
+        ThreeButtonDialog dialog = new ThreeButtonDialog(
+                context, listener, yesText, laterText, neverText, message, title
+        );
+        return dialog;
+    }
+
+
+    //Edit Text dialog
     public static Dialog buildEditTextDialog(final Context context,
-                                                  final DialogFinishedListener listener,
-                                                  String doneText, String cancelText,
-                                                  String title, String message,
-                                                  String editTextHint, Integer textInputType){
+                                             final DialogFinishedListener listener,
+                                             String doneText, String cancelText,
+                                             String title, String message,
+                                             String editTextHint, Integer textInputType){
         if(StringUtilities.isNullOrEmpty(message)){
             return null;
         }
@@ -182,6 +215,128 @@ public class DialogUtilities {
 
     }
 
+    //3 Button Dialog
+    private static class ThreeButtonDialog extends Dialog implements View.OnClickListener {
+
+        private LinearLayout three_button_dialog_buttons_layout;
+        private TextView three_button_dialog_title, three_button_dialog_body,
+                three_button_dialog_option_never, three_button_dialog_option_later,
+                three_button_dialog_option_yes;
+
+        private String yesText, laterText, neverText, title, bodyText;
+        private DialogFinishedListener listener;
+
+        public ThreeButtonDialog(@NonNull final Context context,
+                                 @NonNull final DialogFinishedListener listener,
+                                 String yesText, String laterText, String neverText,
+                                 String bodyText, String title) {
+            super(context);
+            this.listener = listener;
+            this.yesText = yesText;
+            this.laterText = laterText;
+            this.neverText = neverText;
+            this.title = title;
+            this.bodyText = bodyText;
+        }
+
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            requestWindowFeature(Window.FEATURE_NO_TITLE);
+            setCanceledOnTouchOutside(false);
+            setContentView(R.layout.three_button_dialog);
+
+            checkForNulls();
+            initUIFields();
+            setUIFields();
+        }
+
+        private void checkForNulls() {
+            if (StringUtilities.isNullOrEmpty(yesText)) {
+                this.yesText = "";
+            }
+            if (StringUtilities.isNullOrEmpty(neverText)) {
+                this.neverText = "";
+            }
+            if (StringUtilities.isNullOrEmpty(laterText)) {
+                this.laterText = "";
+            }
+            if (StringUtilities.isNullOrEmpty(title)) {
+                this.title = "";
+            }
+            if (StringUtilities.isNullOrEmpty(bodyText)) {
+                this.bodyText = "";
+            }
+        }
+
+        private void initUIFields() {
+
+            three_button_dialog_buttons_layout = (LinearLayout) this.findViewById(
+                    R.id.three_button_dialog_buttons_layout);
+            three_button_dialog_title = (TextView) this.findViewById(
+                    R.id.three_button_dialog_title);
+            three_button_dialog_body = (TextView) this.findViewById(
+                    R.id.three_button_dialog_body);
+            three_button_dialog_option_never = (TextView) this.findViewById(
+                    R.id.three_button_dialog_option_never);
+            three_button_dialog_option_later = (TextView) this.findViewById(
+                    R.id.three_button_dialog_option_later);
+            three_button_dialog_option_yes = (TextView) this.findViewById(
+                    R.id.three_button_dialog_option_yes);
+
+            three_button_dialog_option_yes.setTag("yes");
+            three_button_dialog_option_later.setTag("later");
+            three_button_dialog_option_never.setTag("never");
+
+            three_button_dialog_option_yes.setOnClickListener(this);
+            three_button_dialog_option_later.setOnClickListener(this);
+            three_button_dialog_option_never.setOnClickListener(this);
+        }
+
+        private void setUIFields() {
+
+            L.m("yes text being set = " + yesText);
+            three_button_dialog_option_yes.setText(yesText);
+            three_button_dialog_option_never.setText(neverText);
+            three_button_dialog_option_later.setText(laterText);
+
+            three_button_dialog_title.setText(title);
+            three_button_dialog_body.setText(bodyText);
+
+        }
+
+        @Override
+        public void onClick(View v) {
+
+            String tag = null;
+            try {
+                tag = (String) v.getTag();
+            } catch (Exception e) {
+            }
+
+            if (tag == null) {
+                tag = "";
+            }
+
+            if (tag.equals("yes")) {
+                this.dismiss();
+                listener.dialogFinished(true, SUCCESS_RESPONSE);
+            } else if (tag.equals("never")) {
+                this.dismiss();
+                listener.dialogFinished(true, NEVER_RESPONSE);
+            } else if (tag.equals("later")) {
+                this.dismiss();
+                listener.dialogFinished(true, LATER_RESPONSE);
+            } else {
+                this.dismiss();
+            }
+
+        }
+
+    }
+
+    //Edit Text custom Dialog
     public static class EditTextDialog extends Dialog implements View.OnClickListener, TextWatcher {
 
         private RelativeLayout edit_text_dialog_main_layout, edit_text_dialog_sub_layout,

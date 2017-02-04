@@ -1,13 +1,11 @@
 package com.pgmacdesign.pgmacutilities.utilities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
-
-import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -20,9 +18,8 @@ import java.net.URL;
  */
 public class NetworkUtilities {
 
-    public static boolean haveNetworkPermission(Activity activity){
-        return(PermissionUtilities.getAccessNetworkStatePermissions(activity));
-    }
+    public static final String URL_GOOGLE = "https://www.google.com";
+
 
     /**
      * Checks for network connectivity either via wifi or cellular.
@@ -61,7 +58,7 @@ public class NetworkUtilities {
         if(haveNetworkConnection(context)){
             try {
                 HttpURLConnection urlc = (HttpURLConnection)
-                        (new URL(PGMacUtilitiesConstants.URL_GOOGLE).openConnection());
+                        (new URL(NetworkUtilities.URL_GOOGLE).openConnection());
                 urlc.setRequestProperty("User-Agent", "Test");
                 urlc.setRequestProperty("Connection", "close");
                 urlc.setConnectTimeout(1500);
@@ -95,7 +92,7 @@ public class NetworkUtilities {
     public static void clearCookies(Context context)
     {
 
-        if (SystemUtilities.userHasLollipopMR1OrHigher()) {
+        if (Build.VERSION.SDK_INT >= 21) {
             try {
                 CookieManager.getInstance().removeAllCookies(null);
                 CookieManager.getInstance().flush();

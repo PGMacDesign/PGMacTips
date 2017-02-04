@@ -98,7 +98,7 @@ android {
         compile 'com.google.android.gms:play-services-maps:10.0.1'
 
         //Multi-dex. For more info: https://developer.android.com/studio/build/multidex.html
-        compile 'com.android.support:multidex:1.0.0'
+        compile 'com.android.support:multidex:1.0.1'
 
         //Neat looking shatter/ break animation by Yalantis. Link: https://github.com/Yalantis/StarWars.Android
         compile 'com.yalantis:starwarstiles:0.1.1'

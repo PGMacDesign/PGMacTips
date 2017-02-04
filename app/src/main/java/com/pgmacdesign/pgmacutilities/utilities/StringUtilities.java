@@ -31,6 +31,9 @@ import java.util.regex.Pattern;
  */
 public class StringUtilities {
 
+    public static final String REGEX_WEB_URL_ENCODING = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
+    public static final String REGEX_PASSWORD_PATTERN = "^\\S*(?=\\S*[a-zA-Z])(?=\\S*[0-9])\\S*$";
+
 
     /**
      * Returns just the numbers of a String
@@ -407,7 +410,7 @@ public class StringUtilities {
      * @return String for the absolute path
      */
     public static String getAbsolutePath(Context context, android.net.Uri uri) {
-        if(SystemUtilities.userHasKitKatOrHigher()){
+        if(Build.VERSION.SDK_INT >= 19){
             try {
                 String filePath = "";
                 String wholeID = DocumentsContract.getDocumentId(uri);
@@ -534,7 +537,7 @@ public class StringUtilities {
             //Check for letters, then numbers, then special characters
             Matcher matcher;
             Pattern pattern;
-            pattern = Pattern.compile(PGMacUtilitiesConstants.REGEX_PASSWORD_PATTERN);
+            pattern = Pattern.compile(StringUtilities.REGEX_PASSWORD_PATTERN);
             matcher = pattern.matcher(password);
             boolean hasLetterAndNumber = matcher.matches();
 
@@ -555,7 +558,7 @@ public class StringUtilities {
     public static String encodeURIStringWithRegex(String uriToEncode){
         try {
             //TEST
-            uriToEncode = uriToEncode.replaceAll(PGMacUtilitiesConstants.REGEX_WEB_URL_ENCODING, uriToEncode);
+            uriToEncode = uriToEncode.replaceAll(StringUtilities.REGEX_WEB_URL_ENCODING, uriToEncode);
 
             return uriToEncode;
         } catch (Exception e){

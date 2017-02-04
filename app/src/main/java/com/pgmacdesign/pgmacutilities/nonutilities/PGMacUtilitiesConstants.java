@@ -23,10 +23,18 @@ public class PGMacUtilitiesConstants {
     //Request codes used for permission requests
     public static final int TAG_PERMISSIONS_ACCESS_NETWORK_STATE = 4398;
     public static final int MY_PERMISSIONS_REQUEST_CONTACTS = 4399;
-    public static final int TAG_PERMISSIONS_REQUEST_CODE_INT = 4400;
+    public static final int TAG_PERMISSIONS_REQUEST_BASE_CALL = 4400;
     public static final int TAG_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 4401;
     public static final int TAG_PERMISSIONS_REQUEST_CAMERA = 4402;
     public static final int TAG_PERMISSIONS_REQUEST_ALL = 4403;
+    public static final int TAG_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 4404;
+    public static final int TAG_PERMISSIONS_REQUEST_READ_PHONE_STATE = 4405;
+    public static final int TAG_PERMISSIONS_REQUEST_CONTACTS = 4406;
+    public static final int TAG_PERMISSIONS_ACCESS_WIFI_STATE = 4407;
+    public static final int TAG_PERMISSIONS_ACCESS_FINE_LOCATION = 4408;
+    public static final int TAG_PERMISSIONS_ACCESS_COARSE_LOCATION = 4409;
+    public static final int TAG_PERMISSIONS_RECEIVE_BOOT_COMPLETED = 4410;
+
     //File Creation Tags
     public static final int TAG_TXT_FILE_CREATION = 4404;
     //Date Formatting Tags, used for comparison and formatting

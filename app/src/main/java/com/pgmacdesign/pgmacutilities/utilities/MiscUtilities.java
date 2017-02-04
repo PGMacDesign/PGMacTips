@@ -6,6 +6,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Looper;
 import android.util.ArrayMap;
 import android.util.Base64;
@@ -82,16 +83,18 @@ public class MiscUtilities {
                         }
                     }
                 } catch (Exception e2){
-                    ArrayMap activities = (ArrayMap) activitiesField.get(activityThread);
-                    for (Object activityRecord : activities.values()) {
-                        Class activityRecordClass = activityRecord.getClass();
-                        Field pausedField = activityRecordClass.getDeclaredField("paused");
-                        pausedField.setAccessible(true);
-                        if (!pausedField.getBoolean(activityRecord)) {
-                            Field activityField = activityRecordClass.getDeclaredField("activity");
-                            activityField.setAccessible(true);
-                            Activity activity = (Activity) activityField.get(activityRecord);
-                            return activity;
+                    if(Build.VERSION.SDK_INT >= 19) {
+                        ArrayMap activities = (ArrayMap) activitiesField.get(activityThread);
+                        for (Object activityRecord : activities.values()) {
+                            Class activityRecordClass = activityRecord.getClass();
+                            Field pausedField = activityRecordClass.getDeclaredField("paused");
+                            pausedField.setAccessible(true);
+                            if (!pausedField.getBoolean(activityRecord)) {
+                                Field activityField = activityRecordClass.getDeclaredField("activity");
+                                activityField.setAccessible(true);
+                                Activity activity = (Activity) activityField.get(activityRecord);
+                                return activity;
+                            }
                         }
                     }
                 }

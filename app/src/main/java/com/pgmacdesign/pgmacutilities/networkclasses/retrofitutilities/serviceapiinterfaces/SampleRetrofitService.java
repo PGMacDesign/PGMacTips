@@ -21,7 +21,7 @@ import retrofit2.http.Query;
  */
 public interface SampleRetrofitService {
 
-    public static final String VERSION_STRING = "v1";
+    public static final String VERSION_STRING = "/v1";
     public static final String API_SUFFIX_STRING = "/api";
 
     /**
