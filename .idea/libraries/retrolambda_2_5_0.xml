@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="retrolambda-2.5.0">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.orfjackal.retrolambda/retrolambda/2.5.0/19599120322dabbbdeac46a2d63368444656c3ca/retrolambda-2.5.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.orfjackal.retrolambda/retrolambda/2.5.0/e6c8889f38c71df4125c61e949d6e45ad0eee3fe/retrolambda-2.5.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

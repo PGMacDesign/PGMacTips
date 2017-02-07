@@ -283,7 +283,7 @@ public class RetrofitClient {
         }
 
         /**
-         * Set the read and write timeout IN SECONDS
+         * Set the read and write timeout IN MILLISECONDS
          * @param readTimeoutInMilliseconds Read timeout (60000 == 1 minute). Pass 0 for no timeout
          * @param writeTimeoutInMilliseconds Write timeout (60000 == 1 minute). Pass 0 for no timeout
          */
