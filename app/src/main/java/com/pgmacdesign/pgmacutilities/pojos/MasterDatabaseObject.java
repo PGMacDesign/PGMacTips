@@ -5,7 +5,7 @@ import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.RealmClass;
 
 /**
- * MasterDatabaseObject Class for data serialization into the DB
+ * MasterDatabaseObject Class for data de/serialization into the DB
  * Created by pmacdowell on 8/19/2016.
  */
 @RealmClass
