@@ -165,15 +165,15 @@ public class MiscUtilities {
      * Print out a hashmap
      * @param myMap Map of type String, ?
      */
-    public static void printOutHashMap(Map<String, ?> myMap){
+    public static void printOutHashMap(Map<?,?> myMap){
         if(myMap == null){
             return;
         }
         L.m("Printing out entire Hashmap:\n");
-        for(Map.Entry<String, ?> map : myMap.entrySet()){
-            String key = map.getKey();
+        for(Map.Entry<?,?> map : myMap.entrySet()){
+            Object key = map.getKey();
             Object value = map.getValue();
-            L.m("Key = " + key);
+            L.m("Key = " + key.toString());
             L.m("Value = " + value.toString());
         }
         L.m("\nEnd printing out Hashmap:");

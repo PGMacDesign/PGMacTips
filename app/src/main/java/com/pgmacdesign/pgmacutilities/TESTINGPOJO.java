@@ -1,13 +1,10 @@
 package com.pgmacdesign.pgmacutilities;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
 /**
  * Created by pmacdowell on 8/18/2016.
  */
-public class TESTINGPOJO extends RealmObject {
-    @PrimaryKey
+public class TESTINGPOJO {
+
     private long id;
     private String name;
     private int age;

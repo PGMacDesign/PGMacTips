@@ -25,7 +25,7 @@ import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
 /**
- * This class serves as a conduit for database functionalities. It is utilizing Realm for the
+ * This class serves as a conduit for database functionality. It is utilizing Realm for the
  * database. See the link below for Realm and their Wiki.
  * https://realm.io/docs/java/latest/
  * Created by pmacdowell on 8/18/2016.

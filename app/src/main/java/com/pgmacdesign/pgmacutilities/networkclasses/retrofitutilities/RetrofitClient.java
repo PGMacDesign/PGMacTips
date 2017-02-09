@@ -43,7 +43,6 @@ public class RetrofitClient {
     private Map<String, String> headers;
     private HttpLoggingInterceptor.Level logLevel;
     private int readTimeout, writeTimeout;
-    private boolean isSerializableResponse;
     private String dateFormat;
     private Class serviceInterface;
 
@@ -58,7 +57,6 @@ public class RetrofitClient {
         this.readTimeout = builder.builder_readTimeout;
         this.writeTimeout = builder.builder_writeTimeout;
         this.serviceInterface = builder.builder_serviceInterface;
-        this.isSerializableResponse = builder.builder_isSerializableResponse;
     }
 
     /**
@@ -230,7 +228,6 @@ public class RetrofitClient {
         Map<String, String> builder_headers;
         HttpLoggingInterceptor.Level builder_logLevel;
         int builder_readTimeout, builder_writeTimeout;
-        boolean builder_isSerializableResponse;
         String builder_dateFormat;
         static final int SIXTY_SECONDS = (int)(1000*60);
 
@@ -252,7 +249,6 @@ public class RetrofitClient {
             }
             this.setDateFormat(DEFAULT_DATE_FORMAT);
             this.setTimeouts(SIXTY_SECONDS, SIXTY_SECONDS);
-            this.setIsSerializableResponse(true);
         }
 
         /**
@@ -303,21 +299,6 @@ public class RetrofitClient {
             if(!StringUtilities.isNullOrEmpty(dateFormat)) {
                 this.builder_dateFormat = dateFormat;
             }
-            return this;
-        }
-
-        /**
-         * This is for setting type converter factory for response data. This is set to true by default,
-         * which means that it is assuming the code can be serialized by Gson. If not, IE, you are
-         * receiving a String response of no formatting, just "true" or "false" and nothing else,
-         * send this as false. If sent as null, it will default to true
-         * @param bool
-         */
-        public Builder setIsSerializableResponse(Boolean bool){
-            if(bool == null){
-                bool = true;
-            }
-            this.builder_isSerializableResponse = bool;
             return this;
         }
 
@@ -378,7 +359,6 @@ public class RetrofitClient {
 
 
 }
-
 
 
 
