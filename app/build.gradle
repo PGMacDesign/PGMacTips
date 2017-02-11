@@ -2,7 +2,6 @@ apply plugin: 'com.android.application' //Remove this when pushing to git
 //apply plugin: 'com.android.library'
 apply plugin: 'realm-android'
 apply plugin: 'com.github.dcendents.android-maven'
-apply plugin: 'me.tatarka.retrolambda'
 group='com.github.PGMacDesign'
 allprojects {
     repositories {
@@ -101,177 +100,17 @@ android {
         compile 'com.android.support:multidex:1.0.1'
 
         //Neat looking shatter/ break animation by Yalantis. Link: https://github.com/Yalantis/StarWars.Android
-        compile 'com.yalantis:starwarstiles:0.1.1'
+        //compile 'com.yalantis:starwarstiles:0.1.1'
 
         //Text View Animations. Link: https://github.com/hanks-zyh/HTextView
-        compile 'hanks.xyz:htextview-library:0.1.5'
+        //compile 'hanks.xyz:htextview-library:0.1.5'
 
         //Auto-formatted Material Text Field. Link: https://github.com/florent37/MaterialTextField
-        compile 'com.github.florent37:materialtextfield:1.0.5'
+        //compile 'com.github.florent37:materialtextfield:1.0.5'
 
         //Auto-resizing edit text. Link: https://github.com/grantland/android-autofittextview
         compile 'me.grantland:autofittextview:0.2.1'
 
-        //RetroLambda. Link: https://github.com/orfjackal/retrolambda
-        compile 'net.orfjackal.retrolambda:retrolambda-maven-plugin:2.5.0'
-
-        /*
-        //Google play services
-        compile 'com.google.android.gms:play-services:9.2.1'
-
-
-
-        //Android Support Design
-        compile 'com.android.support:design:24.1.1'
-
-        //App compat support
-        compile 'com.android.support:appcompat-v7:24.1.1'
-
-        //Allows for backwards comparability with appcompat on older devices for recyclerview
-        compile 'com.android.support:recyclerview-v7:24.1.+'
-
-        // Urban Airship SDK
-        compile 'com.urbanairship.android:urbanairship-sdk:7.1.+'
-        // Recommended for in-app messaging
-        compile 'com.android.support:cardview-v7:24.1.1'
-        // Recommended for location services
-        //compile 'com.google.android.gms:play-services-location:9.0.2'
-        //compile 'com.google.android.gms:play-services:9.0.2'
-
-        //Fragment Switcher. Link: https://github.com/jacobtabak/Fragment-Switcher
-        compile 'com.timehop.fragmentswitcher:library:1.1.2'
-
-        //Photoview
-        //compile 'com.github.chrisbanes:PhotoView:1.2.6'
-        //NOTE! They are using a custom Forked version of this, must use that
-
-        //Photo Cropper. Link: https://github.com/edmodo/cropper
-        //Included as module. Using old, forked model as devs changed it
-        //compile 'com.edmodo:cropper:1.0.1'
-        //New Photo Cropper link:https://github.com/ArthurHub/Android-Image-Cropper
-        compile 'com.theartofdev.edmodo:android-image-cropper:2.1.4'
-
-        //Updted Cropper. https://github.com/Yalantis/uCrop
-        compile 'com.yalantis:ucrop:2.1.2'
-
-        //Network
-        compile 'com.google.code.gson:gson:2.6.2'
-        compile 'com.google.guava:guava:19.0'
-        compile files('libs/commons-io-2.4.jar')
-        compile files('libs/json-simple-1.1.1.jar')
-
-        //Database Management Library. Link: https://realm.io/docs/java/latest/#installation
-        compile 'io.realm:realm-android:0.87.1'
-
-        //Type-safe HTTP client for Android and Java: https://github.com/square/retrofit
-        compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
-        //Retrofit response converter for GSON (https://github.com/google/gson)
-        compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
-        compile 'com.squareup.okhttp:okhttp-urlconnection:2.5.0'
-        compile 'com.squareup.okhttp:logging-interceptor:2.6.0'
-
-        //Animator for recyclerViews. Check link here for details: https://github.com/wasabeef/recyclerview-animators
-        compile 'jp.wasabeef:recyclerview-animators:2.2.3'
-
-        //Second progress bar animator. This one is better for longer processes, IE uploading photos. Check link here for details: https://github.com/Tibolte/ElasticDownload
-        compile 'com.github.tibolte:elasticdownload:1.0.+'
-
-        //For fonts. Check link here for details: https://github.com/chrisjenx/Calligraphy
-        compile 'uk.co.chrisjenx:calligraphy:2.1.0'
-
-        //Animated SVG View (Custom, takes an SVG To work). Link: https://github.com/jaredrummler/AnimatedSvgView
-        compile 'com.jaredrummler:animated-svg-view:1.0.0'
-
-        //Cloudinary
-        compile files('libs/cloudinary-core-1.2.2.jar')
-        compile files('libs/cloudinary-android-1.2.2.jar')
-
-        //Firebase
-        compile 'com.firebase:firebase-client-android:2.5.2+'
-
-        //Joda (Time)
-        compile 'net.danlew:android.joda:2.9.3'
-
-        //Web view. Link: https://github.com/TheFinestArtist/FinestWebView-Android
-        compile 'com.thefinestartist:finestwebview:1.2.1'
-
-
-
-        //Custom Expandable Selector (FAB). Link: https://github.com/Karumi/ExpandableSelector
-        compile 'com.karumi:expandableselector:1.0.0'
-
-        //Material Icons. Link: https://github.com/code-mc/material-icon-lib . Sample below
-        compile 'net.steamcrafted:materialiconlib:1.0.9'
-
-        //Fancy Buttons. Link: https://github.com/medyo/fancybuttons
-        compile 'com.github.medyo:fancybuttons:1.8.1'
-
-        //Name / Letter icons: https://github.com/akashandroid90/ImageLetterIcon .
-        //Too many samples on the web, Check link for details and samples
-        compile 'com.github.akashandroid90:imageletter:1.5'
-
-        //Android Swipe Layout. Link: https://github.com/daimajia/AndroidSwipeLayout
-        //compile 'com.android.support:recyclerview-v7:23.0.0' //Excluded, listed above.
-        compile 'com.android.support:support-v4:24.1.1'
-        compile "com.daimajia.swipelayout:library:1.2.0@aar"
-
-        //Cropper with circular crop capabilities. Link: https://github.com/ArthurHub/Android-Image-Cropper
-        //compile 'com.theartofdev.edmodo:android-image-cropper:2.1.+'
-
-        //Amazing looking Nav Drawer: Link: https://github.com/mxn21/FlowingDrawer
-        compile 'com.mxn.soul:flowingdrawer-core:1.2.2'
-        compile 'com.nineoldandroids:library:2.4.0'
-
-        //Image Slider. Link: https://github.com/daimajia/AndroidImageSlider
-        //All Commented out compiles are needed, but are defined in this file elsewhere
-        //compile "com.android.support:support-v4:+"
-        //compile 'com.squareup.picasso:picasso:2.3.2'
-        //compile 'com.nineoldandroids:library:2.4.0'
-        compile 'com.daimajia.slider:library:1.1.5@aar'
-
-        //Animations. Link: https://github.com/daimajia/AndroidViewAnimations
-        compile 'com.nineoldandroids:library:2.4.0'
-        compile 'com.daimajia.easing:library:1.0.1@aar'
-        compile 'com.daimajia.androidanimations:library:1.1.3@aar'
-
-        //Google Analytics
-        compile 'com.google.android.gms:play-services-analytics:9.2.1'
-
-        //Google OAuth login
-        compile 'com.google.android.gms:play-services-auth:9.2.1'
-
-        //GCM
-        compile 'com.google.android.gms:play-services-gcm:9.2.1'
-
-        //Facebook
-        compile 'com.facebook.android:facebook-android-sdk:4.+'
-        //compile(project(':facebook')) {
-        //exclude module: 'support-v4'
-        //}
-
-        //OAuth auto code (For facebook, INSTAGRAM, etc) Link: https://github.com/scribejava/scribejava
-        compile 'com.github.scribejava:scribejava-apis:2.7.3'
-
-        //OAuth auto code (For facebook and OTHER things) Link: https://github.com/CloudRail/cloudrail-si-java-sdk
-        compile 'com.cloudrail:cloudrail-si-android:2.4.1'
-
-        //Showcase View Link: https://github.com/amlcurran/ShowcaseView
-        compile 'com.github.amlcurran.showcaseview:library:5.4.3'
-
-        //Twilio. Link: https://www.twilio.com/docs/api/client/android
-        compile 'com.twilio:client-android:1.2.14'
-
-        //Permissions manager Link: https://github.com/Karumi/Dexter
-        compile 'com.karumi:dexter:2.2.2'
-
-        //Volley
-        compile 'com.android.volley:volley:1.0.0'
-
-        //FCM (Firebase cloud messaging, the new GCM Apparently)
-        //Link: https://firebase.google.com/docs/cloud-messaging/android/client
-        compile 'com.google.firebase:firebase-messaging:9.2.1'
-
-        */
 
     }
     buildTypes {

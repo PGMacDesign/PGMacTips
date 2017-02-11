@@ -2,6 +2,7 @@ package com.pgmacdesign.pgmacutilities.enhancedphotoclasses;
 
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -21,11 +22,13 @@ import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -252,13 +255,15 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
         }
 
         //Check camera permissions
-        if(!PermissionUtilities.getCameraPermissions(this)){
+        PermissionUtilities perm = PermissionUtilities.getInstance(this);
+        if(!perm.startPermissionsRequest(PermissionUtilities.permissionsEnum.CAMERA)){
             //No permissions given
             L.toast(this, "You must enable camera permissions to use this feature");
             this.finish();
         }
 
         textureListener = new TextureView.SurfaceTextureListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
                 //open your camera here
@@ -294,6 +299,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
      * On Click
      * @param view
      */
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onClick(View view) {
         String str = null;
@@ -312,6 +318,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
     }
 
 
+    @SuppressLint("NewApi")
     private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(CameraDevice camera) {
@@ -344,6 +351,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
     /**
      * Gets called when the screen closes (onPause or onStop)
      */
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     protected void stopBackgroundThread() {
         L.m("BACKGROUND THREAD STOPPED");
         mBackgroundThread.quitSafely();
@@ -359,6 +367,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
     /**
      * Take the actual picture
      */
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void takePicture() {
         if(null == cameraDevice) {
             L.m("cameraDevice is null");
@@ -484,6 +493,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
      * https://developer.android.com/reference/android/hardware/camera2/CaptureRequest.html
      * @param captureBuilder
      */
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void setCaptureRequestDetails(CaptureRequest.Builder captureBuilder){
 
         //Control mode
@@ -544,6 +554,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
         return (ORIENTATIONS.get(rotation) + mSensorOrientation + 270) % 360;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void createCameraPreview() {
         try {
             SurfaceTexture texture = take_photo_activity_api21_textureview.getSurfaceTexture();
@@ -573,6 +584,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
             e.printStackTrace();
         }
     }
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void openCamera() {
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         try {
@@ -624,6 +636,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void adjustImageRotation(CameraCharacteristics characteristics){
         //Set Sensor info
         try {
@@ -663,6 +676,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
      * @param manager
      * @return
      */
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private String getWhichCamera(CameraManager manager){
         if(manager == null){
             return null;
@@ -693,6 +707,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
         return null;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void updatePreview() {
         if(null == cameraDevice) {
             L.m("updatePreview error, return");
@@ -706,6 +721,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void closeCamera() {
         if (null != cameraDevice) {
             cameraDevice.close();
@@ -744,6 +760,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void countdownFinished(boolean bool) {
         if(bool){
@@ -912,6 +929,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
     }
     //post gist here
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onResume() {
         super.onResume();
@@ -923,6 +941,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
             take_photo_activity_api21_textureview.setSurfaceTextureListener(textureListener);
         }
     }
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onPause() {
         L.m("onPause");

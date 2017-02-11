@@ -19,11 +19,11 @@
         lib:animatedSvgFillTime="2000"
         lib:animatedSvgTraceTime="2000"
         lib:animatedSvgTraceTimePerGlyph="2000"
-        lib:animatedSvgImageSizeX="140"
-        lib:animatedSvgImageSizeY="172"
-        lib:animatedSvgGlyphStrings="@array/artboard_1_copy_2_svg_array"
-        lib:animatedSvgTraceColors="@array/artboard_1_copy_2_trace_color_array"
-        lib:animatedSvgFillColors="@array/artboard_1_copy_2_fill_color_array"
+        lib:animatedSvgImageSizeX="890"
+        lib:animatedSvgImageSizeY="1024"
+        lib:animatedSvgGlyphStrings="@array/california_svg_array"
+        lib:animatedSvgTraceColors="@array/california_trace_color_array"
+        lib:animatedSvgFillColors="@array/california_fill_color_array"
         />
 
     <!--

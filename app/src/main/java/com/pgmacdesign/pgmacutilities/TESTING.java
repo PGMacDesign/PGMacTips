@@ -1,5 +1,6 @@
 package com.pgmacdesign.pgmacutilities;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -10,14 +11,13 @@ import android.view.View;
 import android.widget.Button;
 
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
-import com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities.serviceapiinterfaces.ProfantiyCheckerAPICalls;
+import com.pgmacdesign.pgmacutilities.nonutilities.PGMacCustomProgressBar;
 import com.pgmacdesign.pgmacutilities.pojos.MasterDatabaseObject;
 import com.pgmacdesign.pgmacutilities.utilities.CameraMediaUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.ContactUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.DatabaseUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.L;
 import com.pgmacdesign.pgmacutilities.utilities.MiscUtilities;
-import com.pgmacdesign.pgmacutilities.utilities.NetworkUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.PermissionUtilities;
 
 import java.util.ArrayList;
@@ -65,11 +65,20 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
     }
 
     private void moveDBFile(){
-        PermissionUtilities.getStoragePermissions(this);
-        dbUtilities.copyDBToDownloadDirectory(null);
+        //Check camera permissions
+        PermissionUtilities perm = PermissionUtilities.getInstance(this);
+        if(perm.startPermissionsRequest(new PermissionUtilities.permissionsEnum[]{
+                PermissionUtilities.permissionsEnum.WRITE_EXTERNAL_STORAGE,
+                PermissionUtilities.permissionsEnum.READ_EXTERNAL_STORAGE})) {
+            dbUtilities.copyDBToDownloadDirectory(null);
+        }
     }
     private void writeDBStuff(){
-        PermissionUtilities.getStoragePermissions(this);
+        PermissionUtilities perm = PermissionUtilities.getInstance(this);
+        if(perm.startPermissionsRequest(new PermissionUtilities.permissionsEnum[]{
+                PermissionUtilities.permissionsEnum.WRITE_EXTERNAL_STORAGE,
+                PermissionUtilities.permissionsEnum.READ_EXTERNAL_STORAGE})) {
+        }
 
         TESTINGPOJO testingpojo = new TESTINGPOJO();
         testingpojo.setAge(300);
@@ -215,24 +224,6 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
         dbUtilities.deleteEntireDB(true, false);
     }
 
-    private void testRetrofit(){
-        PermissionUtilities.getAllRequiredPermissions(this);
-        boolean bool = NetworkUtilities.haveNetworkPermission(this);
-        if(bool) {
-            //L.m("Synchronous result = " + ProfantiyCheckerAPICalls.checkProfanity(this, "eeee"));
-
-            ProfantiyCheckerAPICalls.checkProfanityAsynchronous(this, new OnTaskCompleteListener() {
-                @Override
-                public void onTaskComplete(Object result, int customTag) {
-                    L.m("Asynchronous result = " + result);
-
-                    //Intent intent = new Intent(TESTING.this, AutoPhotoActivity.class);
-                    //startActivity(intent);
-                }
-            }, "crap");
-
-        }
-    }
     private void testPhoto(){
         cam = new CameraMediaUtilities(this, this, new OnTaskCompleteListener() {
             @Override
@@ -241,6 +232,11 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
             }
         });
         cam.startPhotoProcess(CameraMediaUtilities.SourceType.CAMERA_SELF_PHOTO);
+    }
+
+    private void testLoadingAnimation(){
+        Dialog progressDialog = PGMacCustomProgressBar.buildCaliforniaSVGDialog(this, true);
+        progressDialog.show();
     }
 
     @Override
@@ -260,7 +256,8 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
         }
         if(id.equals("button")){
             //testRetrofit();
-            writeDBStuff();
+            //writeDBStuff();
+            testLoadingAnimation();
         }
     }
 }

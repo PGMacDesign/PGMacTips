@@ -1,6 +1,6 @@
 package com.pgmacdesign.pgmacutilities.utilities;
 
-import android.app.ProgressDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
@@ -16,7 +16,7 @@ import java.util.TimerTask;
  */
 public class ProgressBarUtilities {
 
-    private static ProgressDialog progressDialog;
+    private static Dialog myDialog;
     private static Timer timeoutTimer;
     private static Context mContext;
 
@@ -63,24 +63,24 @@ public class ProgressBarUtilities {
                                           int[] svgColors, int[] svgTraceColors) {
         mContext = context;
         try {
-            if (progressDialog == null) {
-                progressDialog = PGMacCustomProgressBar.buildSVGDialog(context, dismissible,
+            if (myDialog == null) {
+                myDialog = PGMacCustomProgressBar.buildSVGDialog(context, dismissible,
                         imageSizeX, imageSizeY, svgArray, svgColors, svgTraceColors);
-                progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                myDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                     @Override
                     public void onCancel(DialogInterface dialog) {
                         L.toast(context, "Canceled");
                     }
                 });
-                progressDialog.show();
+                myDialog.show();
             }else {
-                progressDialog.show();
+                myDialog.show();
             }
         } catch (Exception ex) {
             setupTimeoutTimer();
             try {
-                progressDialog = PGMacCustomProgressBar.buildSVGDialog(mContext);
-                progressDialog.show();
+                myDialog = PGMacCustomProgressBar.buildSVGDialog(mContext);
+                myDialog.show();
             } catch (Exception e2){
                 e2.printStackTrace();
             }
@@ -100,23 +100,23 @@ public class ProgressBarUtilities {
                                          Integer timeoutInMilliseconds){
         mContext = context;
         try {
-            if (progressDialog == null) {
-                progressDialog = PGMacCustomProgressBar.buildElasticDialog(context, dismissable);
-                progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            if (myDialog == null) {
+                myDialog = PGMacCustomProgressBar.buildElasticDialog(context, dismissable);
+                myDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                     @Override
                     public void onCancel(DialogInterface dialog) {
                         L.toast(context, "Canceled");
                     }
                 });
-                progressDialog.show();
+                myDialog.show();
             }else {
-                progressDialog.show();
+                myDialog.show();
             }
         } catch (Exception ex) {
             setupTimeoutTimer();
             try {
-                progressDialog = PGMacCustomProgressBar.buildSVGDialog(mContext);
-                progressDialog.show();
+                myDialog = PGMacCustomProgressBar.buildSVGDialog(mContext);
+                myDialog.show();
             } catch (Exception e2){
                 e2.printStackTrace();
             }
@@ -141,9 +141,9 @@ public class ProgressBarUtilities {
      */
     public static void dismissProgressDialog() {
         try {
-            if (progressDialog != null && progressDialog.isShowing()) {
-                progressDialog.dismiss();
-                progressDialog = null;
+            if (myDialog != null && myDialog.isShowing()) {
+                myDialog.dismiss();
+                myDialog = null;
             }
         } catch (Exception ex) {
             ex.printStackTrace();

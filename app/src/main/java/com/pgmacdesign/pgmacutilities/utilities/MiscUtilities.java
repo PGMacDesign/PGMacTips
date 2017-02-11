@@ -1,26 +1,21 @@
 package com.pgmacdesign.pgmacutilities.utilities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Looper;
-import android.util.ArrayMap;
 import android.util.Base64;
 import android.util.Log;
 
 import com.pgmacdesign.pgmacutilities.BuildConfig;
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +23,8 @@ import java.util.Map;
  * Created by pmacdowell on 8/15/2016.
  */
 public class MiscUtilities {
+
+
     public static void printOutMyHashKey(Context context, String packageName){
         try {
             PackageInfo info = context.getPackageManager().getPackageInfo(
@@ -43,66 +40,6 @@ public class MiscUtilities {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Returns the current Activity. NOTE! As of 4.0+, this may throw errors
-     * @return
-     */
-    public static Activity getActivity() {
-        try {
-            Class activityThreadClass = Class.forName("android.app.ActivityThread");
-            Object activityThread = activityThreadClass.getMethod("currentActivityThread").invoke(null);
-            Field activitiesField = activityThreadClass.getDeclaredField("mActivities");
-            activitiesField.setAccessible(true);
-            try {
-                HashMap activities = (HashMap) activitiesField.get(activityThread);
-                for (Object activityRecord : activities.values()) {
-                    Class activityRecordClass = activityRecord.getClass();
-                    Field pausedField = activityRecordClass.getDeclaredField("paused");
-                    pausedField.setAccessible(true);
-                    if (!pausedField.getBoolean(activityRecord)) {
-                        Field activityField = activityRecordClass.getDeclaredField("activity");
-                        activityField.setAccessible(true);
-                        Activity activity = (Activity) activityField.get(activityRecord);
-                        return activity;
-                    }
-                }
-            } catch (Exception e1){
-                try {
-                    android.support.v4.util.ArrayMap activities = (android.support.v4.util.ArrayMap) activitiesField.get(activityThread);
-                    for (Object activityRecord : activities.values()) {
-                        Class activityRecordClass = activityRecord.getClass();
-                        Field pausedField = activityRecordClass.getDeclaredField("paused");
-                        pausedField.setAccessible(true);
-                        if (!pausedField.getBoolean(activityRecord)) {
-                            Field activityField = activityRecordClass.getDeclaredField("activity");
-                            activityField.setAccessible(true);
-                            Activity activity = (Activity) activityField.get(activityRecord);
-                            return activity;
-                        }
-                    }
-                } catch (Exception e2){
-                    if(Build.VERSION.SDK_INT >= 19) {
-                        ArrayMap activities = (ArrayMap) activitiesField.get(activityThread);
-                        for (Object activityRecord : activities.values()) {
-                            Class activityRecordClass = activityRecord.getClass();
-                            Field pausedField = activityRecordClass.getDeclaredField("paused");
-                            pausedField.setAccessible(true);
-                            if (!pausedField.getBoolean(activityRecord)) {
-                                Field activityField = activityRecordClass.getDeclaredField("activity");
-                                activityField.setAccessible(true);
-                                Activity activity = (Activity) activityField.get(activityRecord);
-                                return activity;
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (Exception e){
-            return null;
-        }
-        return null;
     }
 
     /**
@@ -173,8 +110,7 @@ public class MiscUtilities {
         for(Map.Entry<?,?> map : myMap.entrySet()){
             Object key = map.getKey();
             Object value = map.getValue();
-            L.m("Key = " + key.toString());
-            L.m("Value = " + value.toString());
+            L.m(key.toString() + ", " + value.toString());
         }
         L.m("\nEnd printing out Hashmap:");
     }

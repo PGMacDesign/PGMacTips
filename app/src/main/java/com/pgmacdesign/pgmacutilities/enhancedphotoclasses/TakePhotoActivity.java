@@ -227,7 +227,8 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
         }
 
         //Check camera permissions
-        if(!PermissionUtilities.getCameraPermissions(this)){
+        PermissionUtilities perm = PermissionUtilities.getInstance(this);
+        if(!perm.startPermissionsRequest(PermissionUtilities.permissionsEnum.CAMERA)){
             //No permissions given
             L.toast(this, "You must enable camera permissions to use this feature");
             this.finish();

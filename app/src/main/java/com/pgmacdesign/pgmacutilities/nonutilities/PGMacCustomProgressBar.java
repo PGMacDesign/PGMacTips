@@ -1,5 +1,6 @@
 package com.pgmacdesign.pgmacutilities.nonutilities;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
@@ -9,9 +10,8 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.jrummyapps.android.widget.AnimatedSvgView;
-import com.pgmacdesign.pgmacutilities.utilities.ColorUtilities;
-import com.pgmacdesign.pgmacutilities.utilities.L;
 import com.pgmacdesign.pgmacutilities.R;
+import com.pgmacdesign.pgmacutilities.utilities.DisplayManagerUtilities;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -23,27 +23,17 @@ import is.arontibo.library.ElasticDownloadView;
  */
 public class PGMacCustomProgressBar extends ProgressDialog {
 
-    //Defaults in case they pass in incorrect info
-    private final String[] defaultLoader = {
-            "M43.935,25.145c0-10.318-8.364-18.683-18.683-18.683c-10.318,0-18.683,8.365-18.683," +
-                    "18.683h4.068c0-8.071,6.543-14.615,14.615-14.615c8.072,0,14.615,6.543,14." +
-                    "615,14.615H43.935z"
-    };
-    private final int[] defaultColors = {
-            ColorUtilities.parseMyColor(PGMacUtilitiesConstants.COLOR_BLUE)
-    };
-    private final int[] defaultTraceColors = {
-            ColorUtilities.parseMyColor(PGMacUtilitiesConstants.COLOR_NAVY_BLUE)
-    };
-
     private boolean stopSVG = false;
     private Timer timer;
     private com.jrummyapps.android.widget.AnimatedSvgView animated_svg_view;
     private is.arontibo.library.ElasticDownloadView elastic_download_view;
 
-    private static final int SVG_DIALOG = 0;
-    private static final int ELASTIC_DIALOG = 1;
+    private DisplayManagerUtilities dmu;
+    public static final int SVG_DIALOG = 0;
+    public static final int ELASTIC_DIALOG = 1;
+    public static final int CALIFORNIA_SVG_DIALOG = 2;
     private int whichSelected;
+    private Context localContext;
 
     /**
      * Builder for the Custom Progress bar
@@ -59,24 +49,24 @@ public class PGMacCustomProgressBar extends ProgressDialog {
      * @return ProgressDialog
      * todo come back and refactor this in
      */
-    public static ProgressDialog buildSVGDialog(Context context, boolean cancelable,
+    public static Dialog buildSVGDialog(Context context, boolean cancelable,
                                                 Integer imageSizeX, Integer imageSizeY,
                                                 String[] svgArray,
                                                 int[] svgColors, int[] svgTraceColors){
         // TODO: 8/12/2016 checks on nulls
-        PGMacCustomProgressBar customAlertDialog = new PGMacCustomProgressBar(context, SVG_DIALOG);
-        if(customAlertDialog == null){
-            L.m("custom alert dialog is null");
-        }
-        //customAlertDialog.setSVGDetails(imageSizeX, imageSizeY, svgArray, svgColors, svgTraceColors);
-        customAlertDialog.setIndeterminate(true);
+        Dialog customAlertDialog = new PGMacCustomProgressBar(context, SVG_DIALOG);
+
+        //customAlertDialog.setIndeterminate(true);
         customAlertDialog.setCancelable(cancelable);
+        //customAlertDialog.setInverseBackgroundForced(true);
         Window window = customAlertDialog.getWindow();
-        window.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(context,
-                R.color.Transparent)));
         WindowManager.LayoutParams lp = window.getAttributes();
         lp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         window.setAttributes(lp);
+        window.setBackgroundDrawable(new ColorDrawable(
+                ContextCompat.getColor(context, R.color.Transparent)
+        ));
+
 
         return customAlertDialog;
     }
@@ -86,8 +76,26 @@ public class PGMacCustomProgressBar extends ProgressDialog {
      * @param context
      * @return
      */
-    public static ProgressDialog buildSVGDialog(Context context){
+    public static Dialog buildSVGDialog(Context context){
         return (PGMacCustomProgressBar.buildSVGDialog(context, false, 40, 40, null, null, null));
+    }
+
+    public static Dialog buildCaliforniaSVGDialog(Context context, boolean cancelable){
+        Dialog customAlertDialog = new PGMacCustomProgressBar(context, CALIFORNIA_SVG_DIALOG);
+
+        //customAlertDialog.setIndeterminate(true);
+        customAlertDialog.setCancelable(cancelable);
+        //customAlertDialog.setInverseBackgroundForced(true);
+        Window window = customAlertDialog.getWindow();
+        WindowManager.LayoutParams lp = window.getAttributes();
+        lp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        window.setAttributes(lp);
+        window.setBackgroundDrawable(new ColorDrawable(
+                ContextCompat.getColor(context, R.color.Transparent)
+        ));
+
+
+        return customAlertDialog;
     }
 
     /**
@@ -97,18 +105,22 @@ public class PGMacCustomProgressBar extends ProgressDialog {
      * @return
      */
     public static ProgressDialog buildElasticDialog(Context context, boolean cancelable){
-        PGMacCustomProgressBar customAlertDialog = new PGMacCustomProgressBar(context, ELASTIC_DIALOG);
+        PGMacCustomProgressBar customAlertDialog = new PGMacCustomProgressBar(
+                context, ELASTIC_DIALOG);
 
         customAlertDialog.setCancelable(cancelable);
         Window window = customAlertDialog.getWindow();
-        window.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(context,
-                R.color.Transparent)));
+        int transparent = ContextCompat.getColor(context, R.color.Transparent);
+        ColorDrawable colorDrawable = new ColorDrawable(transparent);
+        window.setBackgroundDrawable(colorDrawable);
         WindowManager.LayoutParams lp = window.getAttributes();
         lp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         window.setAttributes(lp);
 
         return customAlertDialog;
     }
+
+
     /**
      * Overloaded method, excludes boolean in case it is not added
      * @param context
@@ -122,9 +134,11 @@ public class PGMacCustomProgressBar extends ProgressDialog {
      * Alert dialog constructor
      * @param context
      */
-    public PGMacCustomProgressBar(Context context) {
+    private PGMacCustomProgressBar(Context context) {
         super(context);
+        this.localContext = context;
         whichSelected = 0;
+        this.dmu = new DisplayManagerUtilities(context);
     }
 
     /**
@@ -132,9 +146,11 @@ public class PGMacCustomProgressBar extends ProgressDialog {
      * @param context
      * @param whichSelected
      */
-    public PGMacCustomProgressBar(Context context, int whichSelected) {
+    private PGMacCustomProgressBar(Context context, int whichSelected) {
         super(context);
+        this.localContext = context;
         this.whichSelected = whichSelected;
+        this.dmu = new DisplayManagerUtilities(context);
     }
 
     @Override
@@ -145,26 +161,49 @@ public class PGMacCustomProgressBar extends ProgressDialog {
 
             case SVG_DIALOG:
                 setContentView(R.layout.custom_alert_dialog_svg);
-                animated_svg_view = (AnimatedSvgView) this.findViewById(R.id.animated_svg_view);
+                animated_svg_view = (AnimatedSvgView) this.findViewById(
+                        R.id.animated_svg_view);
+                /*
+                ViewGroup.LayoutParams params = animated_svg_view.getLayoutParams();
+                int screenWidth = dmu.getPixelsWidth();
+                int screenHeight = dmu.getPixelsHeight();
+                int min = screenWidth;
+                if(screenHeight < screenWidth){
+                    min = screenHeight;
+                }
+                min = (int)(min * 0.25);
+                animated_svg_view.setViewportSize(animated_svg_view.getWidth(),
+                        animated_svg_view.getHeight());
+                */
                 break;
 
             case ELASTIC_DIALOG:
                 setContentView(R.layout.custom_alert_dialog_elastic);
-                elastic_download_view = (ElasticDownloadView) this.findViewById(R.id.elastic_download_view);
+                elastic_download_view = (ElasticDownloadView) this.findViewById(
+                        R.id.elastic_download_view);
 
                 break;
+
+            case CALIFORNIA_SVG_DIALOG:
+                setContentView(R.layout.california_svg_view);
+                animated_svg_view = (AnimatedSvgView) this.findViewById(
+                        R.id.animated_svg_view);
+
         }
     }
 
-    /*
+
     public void setSVGDetails(int imageSizeX, int imageSizeY, String[] svgArray,
                               int[] svgColors, int[] svgTraceColors){
+
+
         animated_svg_view.setViewportSize(imageSizeX, imageSizeY);
         animated_svg_view.setGlyphStrings(svgArray);
         animated_svg_view.setFillColors(svgColors);
         animated_svg_view.setTraceColors(svgTraceColors);
+
     }
-    */
+
 
     @Override
     public void show() {

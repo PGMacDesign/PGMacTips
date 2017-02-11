@@ -439,6 +439,26 @@ public class PermissionUtilities {
         }
     }
 
+    //Quick Utils
 
+    public static boolean getContactPermissions(Activity activity){
+        if(Build.VERSION.SDK_INT < 23){
+            return true;
+        } else {
+            if(ContextCompat.checkSelfPermission(activity,
+                    permissionsEnum.READ_CONTACTS.getPermissionManifestName())
+                    != PackageManager.PERMISSION_GRANTED){
+
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{permissionsEnum.READ_CONTACTS.getPermissionManifestName()},
+                        PERMISSIONS_REQUEST_BASE_CALL);
+                return false;
+            } else {
+                return true;
+            }
+
+        }
+
+    }
 
 }

@@ -3,6 +3,7 @@ package com.pgmacdesign.pgmacutilities.utilities;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,6 +15,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
@@ -161,7 +163,7 @@ public class CameraMediaUtilities {
     private Integer maxDurationForVideo;
 
     //Misc Variables
-    private AlertDialog alertDialog;
+    private Dialog alertDialog;
     private String webImageUrl;
     private SupportedPhotoFileExtensions photoFileExtension;
     private SupportedVideoFileExtensions videoFileExtension;
@@ -267,7 +269,7 @@ public class CameraMediaUtilities {
         private boolean shouldUploadPhoto;
         private boolean shouldDeletePhotoAfter;
         private boolean useDefaultToFrontFacingCamera;
-        private AlertDialog alertDialog;
+        private Dialog alertDialog;
         private String webImageUrlToDownload;
         private SupportedVideoFileExtensions videoExtension;
         private SupportedPhotoFileExtensions photoExtension;
@@ -403,11 +405,11 @@ public class CameraMediaUtilities {
             this.useDefaultToFrontFacingCamera = useDefaultToFrontFacingCamera;
         }
 
-        public AlertDialog getAlertDialog() {
+        public Dialog getAlertDialog() {
             return alertDialog;
         }
 
-        public void setAlertDialog(AlertDialog alertDialog) {
+        public void setAlertDialog(Dialog alertDialog) {
             this.alertDialog = alertDialog;
         }
     }
@@ -1100,20 +1102,23 @@ public class CameraMediaUtilities {
      * @param context Context used to check
      * @return 0 For front facing, 1 for back facing, -1 for if it does not have front facing at all
      */
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static int doesUserHaveFrontFacingCamera(Context context) {
-        try {
-            CameraManager cManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
-            for (int j = 0; j < cManager.getCameraIdList().length; j++) {
-                String[] cameraId = cManager.getCameraIdList();
-                CameraCharacteristics characteristics = cManager.getCameraCharacteristics(cameraId[j]);
-                int cOrientation = characteristics.get(CameraCharacteristics.LENS_FACING);
-                if (cOrientation == CameraCharacteristics.LENS_FACING_FRONT)
-                    return j;
-            }
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
 
+        if(Build.VERSION.SDK_INT >= 21) {
+            try {
+                CameraManager cManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
+                for (int j = 0; j < cManager.getCameraIdList().length; j++) {
+                    String[] cameraId = cManager.getCameraIdList();
+                    CameraCharacteristics characteristics = cManager.getCameraCharacteristics(cameraId[j]);
+                    int cOrientation = characteristics.get(CameraCharacteristics.LENS_FACING);
+                    if (cOrientation == CameraCharacteristics.LENS_FACING_FRONT)
+                        return j;
+                }
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
+        }
         return -1; // No front-facing camera found
     }
 }

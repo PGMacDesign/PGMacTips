@@ -22,13 +22,9 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
-import com.pgmacdesign.pgmacutilities.TESTINGPOJO2;
-import com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities.RetrofitClient;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.Map;
 
 /**
  * Created by PatrickSSD2 on 8/29/2016.
@@ -205,24 +201,4 @@ public class VolleyCalls {
         mRequestQueue.add(myRequest);
     }
 
-    public static void doStuff3(RequestQueue requestQueue){
-        String url = "http://i.imgur.com/7spzG.png";
-        Map<String, String> headers = RetrofitClient.getApplicationJSONMap();
-        Response.Listener listener = new Response.Listener() {
-            @Override
-            public void onResponse(Object response) {
-                //Do stuff with response
-            }
-        };
-        Response.ErrorListener errorListener = new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                //Do stuff with error
-            }
-        };
-        VolleyGsonRequest request = new VolleyGsonRequest(url,
-                TESTINGPOJO2.class, headers, listener, errorListener
-        );
-        requestQueue.add(request);
-    }
 }

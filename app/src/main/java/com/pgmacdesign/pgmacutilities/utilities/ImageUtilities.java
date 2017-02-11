@@ -536,7 +536,7 @@ public class ImageUtilities {
             this.listener = listener;
             this.dialog = dialog;
             if(this.dialog == null){
-                this.dialog = PGMacCustomProgressBar.buildSVGDialog(context);
+                this.dialog = PGMacCustomProgressBar.buildElasticDialog(context);
             }
             if(lengthOfTimeToDelay == null){
                 lengthOfTimeToDelay = (long)(PGMacUtilitiesConstants.ONE_SECOND * 2.6);
