@@ -55,56 +55,89 @@ public class StringUtilities {
      * @return Converted String
      */
     public static String formatStringLikePhoneNumber(String str){
-        if(str == null){
-            return null;
+        if(StringUtilities.isNullOrEmpty(str)){
+            return str;
+        }
+        //Format out everything else
+        str = str.trim();
+        str = StringUtilities.keepNumbersOnly(str);
+        if(StringUtilities.isNullOrEmpty(str)){
+            return str;
         }
 
-        //Format out everything else
-        str = StringUtilities.keepNumbersOnly(str);
-
-        //Without area code
-        if(str.length() == 7){
+        // >=3 && < 7
+        if(str.length() >= 3 && str.length() < 7){
             try {
                 String phoneRawString = str;
-                java.text.MessageFormat phoneMsgFmt = new java.text.MessageFormat("{0}-{1}");
-                String[] phoneNumArr = {phoneRawString.substring(0, 3),
-                        phoneRawString.substring(3)};
 
-                String formatted = phoneMsgFmt.format(phoneNumArr);
-                return formatted;
+                if(str.length() < 4 ){
+                    java.text.MessageFormat phoneMsgFmt = new java.text.MessageFormat("({0})");
+                    String[] phoneNumArr = {
+                            phoneRawString.substring(0, 3)};
+
+                    String formatted = phoneMsgFmt.format(phoneNumArr);
+                    return formatted;
+                } else {
+                    java.text.MessageFormat phoneMsgFmt = new java.text.MessageFormat("({0}) {1}");
+                    String[] phoneNumArr = {
+                            phoneRawString.substring(0, 3),
+                            phoneRawString.substring(3)};
+
+                    String formatted = phoneMsgFmt.format(phoneNumArr);
+                    return formatted;
+                }
+
             } catch (Exception e){}
         }
-        //With area code
-        if(str.length() == 10){
+
+        // >=7 && < 10
+        if(str.length() >= 7 && str.length() <= 10){
             try {
                 String phoneRawString = str;
-                java.text.MessageFormat phoneMsgFmt=new java.text.MessageFormat("({0}) {1}-{2}");
-                String[] phoneNumArr={phoneRawString.substring(0, 3),
+                String formatted = null;
+                java.text.MessageFormat phoneMsgFmt = new java.text.MessageFormat("({0}) {1} - {2}");
+                String[] phoneNumArr = {
+                        phoneRawString.substring(0, 3),
                         phoneRawString.substring(3,6),
                         phoneRawString.substring(6)};
-
-                String formatted = phoneMsgFmt.format(phoneNumArr);
+                formatted = phoneMsgFmt.format(phoneNumArr);
                 return formatted;
+
             } catch (Exception e){}
         }
-        //With area code and possibly extra 1
-        if(str.length() == 11){
+
+        // >=3 && < 7
+        if(str.length() > 10){
             //check if the first number is one, if it is, sub out the first number
             String testFirst = str.substring(0, 1);
             if(testFirst.equalsIgnoreCase("1")){
-                str = str.substring(1);
+                try {
+                    String phoneRawString = str;
+                    java.text.MessageFormat phoneMsgFmt=new java.text.MessageFormat("+{0}({1}) {2}-{3}");
+                    String[] phoneNumArr={
+                            phoneRawString.substring(0, 1),
+                            phoneRawString.substring(1, 4),
+                            phoneRawString.substring(4,7),
+                            phoneRawString.substring(7)};
+
+                    String formatted = phoneMsgFmt.format(phoneNumArr);
+                    return formatted;
+                } catch (Exception e){}
+            } else {
+                try {
+                    String phoneRawString = str;
+                    java.text.MessageFormat phoneMsgFmt=new java.text.MessageFormat("({0}) {1} - {2}");
+                    String[] phoneNumArr={
+                            phoneRawString.substring(0, 3),
+                            phoneRawString.substring(3,6),
+                            phoneRawString.substring(6)};
+
+                    String formatted = phoneMsgFmt.format(phoneNumArr);
+                    return formatted;
+                } catch (Exception e){}
             }
 
-            try {
-                String phoneRawString = str;
-                java.text.MessageFormat phoneMsgFmt=new java.text.MessageFormat("({0}) {1}-{2}");
-                String[] phoneNumArr={phoneRawString.substring(0, 3),
-                        phoneRawString.substring(3,6),
-                        phoneRawString.substring(6)};
 
-                String formatted = phoneMsgFmt.format(phoneNumArr);
-                return formatted;
-            } catch (Exception e){}
         }
         return str;
     }

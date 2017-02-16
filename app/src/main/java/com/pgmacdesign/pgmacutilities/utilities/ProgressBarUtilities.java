@@ -196,4 +196,16 @@ public class ProgressBarUtilities {
             }
         }, ((int)(millisecondsToEnd)));
     }
+
+    /**
+     * Quick method for determining whether or not the dialog is showing. Useful for onStop calls
+     * @return boolean, true if it is showing, false if it is not or is null.
+     */
+    public static boolean isDialogShowing(){
+        if(myDialog == null){
+            return false;
+        }
+        return myDialog.isShowing();
+    }
+
 }

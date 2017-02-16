@@ -3,6 +3,7 @@ package com.pgmacdesign.pgmacutilities.utilities;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
 import com.pgmacdesign.pgmacutilities.pojos.MasterDatabaseObject;
 
 import org.json.JSONObject;
@@ -37,9 +38,9 @@ public class DatabaseUtilities {
     private Context context;
 
     //Defaults. If no configuration is set, these will be used
-    private static final String DEFAULT_DB_NAME = "PGMacUtilities.DB";
-    private static final int DEFAULT_DB_SCHEMA = 1;
-    private static final boolean DEFAULT_DELETE_OPTION = true;
+    private static final String DEFAULT_DB_NAME = PGMacUtilitiesConstants.DB_NAME;
+    private static final int DEFAULT_DB_SCHEMA = PGMacUtilitiesConstants.DB_VERSION;
+    private static final boolean DEFAULT_DELETE_OPTION = PGMacUtilitiesConstants.DELETE_DB_IF_NEEDED;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /////Constructors - init ///////////////////////////////////////////////////////////////////////
@@ -945,6 +946,7 @@ public class DatabaseUtilities {
         if (context == null) {
             return null;
         }
+        Realm.init(context);
         if (dbName == null) {
             dbName = DEFAULT_DB_NAME;
         }

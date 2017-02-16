@@ -210,6 +210,7 @@ public class PGMacCustomProgressBar extends ProgressDialog {
         super.show();
 
         switch (whichSelected){
+            case CALIFORNIA_SVG_DIALOG:
             case SVG_DIALOG:
                 stopSVG = false;
                 startSVGAnimation();
