@@ -65,19 +65,17 @@ public class StringUtilities {
             return str;
         }
 
+        if(str.length() < 3){
+            return str;
+        }
+
         // >=3 && < 7
         if(str.length() >= 3 && str.length() < 7){
             try {
                 String phoneRawString = str;
 
-                if(str.length() < 4 ){
-                    java.text.MessageFormat phoneMsgFmt = new java.text.MessageFormat("({0})");
-                    String[] phoneNumArr = {
-                            phoneRawString.substring(0, 3)};
-
-                    String formatted = phoneMsgFmt.format(phoneNumArr);
-                    return formatted;
-                } else {
+                if(str.length() >= 4 ){
+                    //Length 4 - 7
                     java.text.MessageFormat phoneMsgFmt = new java.text.MessageFormat("({0}) {1}");
                     String[] phoneNumArr = {
                             phoneRawString.substring(0, 3),
@@ -85,6 +83,9 @@ public class StringUtilities {
 
                     String formatted = phoneMsgFmt.format(phoneNumArr);
                     return formatted;
+                } else {
+                    //Length 3
+                    return str; //This is to prevent 'stuck states' when they backspace
                 }
 
             } catch (Exception e){}
