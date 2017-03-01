@@ -9,6 +9,124 @@ import java.util.Random;
  */
 public class NumberUtilities {
 
+    /**
+     * Convert Inches to feet
+     * @param i
+     * @return
+     */
+    public static double convertInchesToFeet(double i){
+        double dbl = i * 0.08333333;
+        return dbl;
+    }
+
+    /**
+     * Convert Feet into Inches
+     * @param f
+     * @return
+     */
+    public static double convertFeetToInches(double f){
+        double dbl = f / 0.08333333;
+        return dbl;
+    }
+
+    /**
+     * Convert Miles to Kilometers
+     * @param m
+     * @return
+     */
+    public static double convertMilesToKilometers(double m){
+        double dbl = (m * 1.609344);
+        return dbl;
+    }
+
+    /**
+     * Convert Kilometers to miles
+     * @param k
+     * @return
+     */
+    public static double convertKilometersToMiles(double k){
+        double dbl = (k * 0.621371);
+        return dbl;
+    }
+
+    /**
+     * Convert feet to meters
+     * @param f
+     * @return
+     */
+    public static double convertFeetToMeters(double f){
+        double dbl = f * 0.3048;
+        return dbl;
+    }
+
+    /**
+     * Convert meters to feet
+     * @param m
+     * @return
+     */
+    public static double convertMetersToFeet(double m){
+        double dbl = m / 0.3048;
+        return dbl;
+    }
+
+    /**
+     * Convert feet to miles
+     * @param f
+     * @return
+     */
+    public static double convertFeetToMiles(double f){
+        double dbl = (f * 0.00019);
+        return dbl;
+    }
+
+    /**
+     * Convert miles to feet
+     * @param m
+     * @return
+     */
+    public static double convertMilesToFeet(double m){
+        double dbl = (m / 0.00019);
+        return dbl;
+    }
+
+    /**
+     * Convert Celsius to Fahrenheit
+     * @param c
+     * @return
+     */
+    public static double convertCelsiusToFahrenheit(double c){
+        double dbl = ((c * 9) / 5) + 32;
+        return dbl;
+    }
+
+    /**
+     * Convert Fahrenheit to Celsius
+     * @param f
+     * @return
+     */
+    public static double convertFahrenheitToCelsius(double f){
+        double dbl = ((f - 32) * 5) / 9;
+        return dbl;
+    }
+    /**
+     * Checks if a string passed in is a number (IE, "12345" would return true)
+     * @param str String to check
+     * @return true if number, false if not
+     */
+    public static boolean isNumber(String str){
+        if(StringUtilities.isNullOrEmpty(str)){
+            return false;
+        }
+
+        str = str.trim();
+        for(int i = 0; i < str.length(); i++){
+            boolean bool = Character.isDigit(str.charAt(i));
+            if(!bool){
+                return false;
+            }
+        }
+        return true;
+    }
 
     /**
      * Rounds a double via passed in amount and places

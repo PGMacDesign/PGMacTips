@@ -18,7 +18,6 @@ import retrofit2.Retrofit;
 /**
  * Created by pmacdowell on 11/7/2016.
  */
-
 public class CustomConverterFactory extends Converter.Factory  {
 
     private static final Type TYPE_BOOLEAN = Boolean.TYPE;
@@ -27,8 +26,8 @@ public class CustomConverterFactory extends Converter.Factory  {
     private static final Type TYPE_STRING = new TypeToken<String>(){}.getType();
 
     //How to make custom type converters
-    private static final Type TYPE_EVENT = new TypeToken<TESTINGPOJO>(){}.getType();
-    private static final Type TYPE_LIST_OF_EVENTS = new TypeToken<ArrayList<TESTINGPOJO>>(){}.getType();
+    private static final Type TYPE_TESTINGPOJO = new TypeToken<TESTINGPOJO>(){}.getType();
+    private static final Type TYPE_LIST_OF_TESTINGPOJO = new TypeToken<ArrayList<TESTINGPOJO>>(){}.getType();
 
 
     public CustomConverterFactory() {
@@ -99,13 +98,22 @@ public class CustomConverterFactory extends Converter.Factory  {
             return gsonConverter;
         }
 
-        //Else
-        return super.responseBodyConverter(type, annotations, retrofit);
+        //If a catch gets hit
+        try {
+            Converter<ResponseBody, ?> gsonConverter = GsonConverterFactory
+                    .create().responseBodyConverter(type, annotations, retrofit);
+            return gsonConverter;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return super.responseBodyConverter(type, annotations, retrofit);
+        }
     }
 
     @Override
     public Converter<?, RequestBody> requestBodyConverter(Type type, Annotation[] parameterAnnotations, Annotation[] methodAnnotations, Retrofit retrofit) {
-        return super.requestBodyConverter(type, parameterAnnotations, methodAnnotations, retrofit);
+        Converter<?, RequestBody> gsonConverter = GsonConverterFactory
+                .create().requestBodyConverter(type, methodAnnotations, retrofit);
+        return gsonConverter;
     }
 
     @Override

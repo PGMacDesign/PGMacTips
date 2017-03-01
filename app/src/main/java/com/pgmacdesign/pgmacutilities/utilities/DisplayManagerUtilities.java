@@ -23,7 +23,7 @@ public class DisplayManagerUtilities {
     private Display mDisplay;
     private Configuration mConfig;
     private float densityRatio;
-    private float dpWidth, dpHeight;
+    private float dpWidth, dpHeight, xdpi, ydpi;
     private int pixelsWidth, pixelsHeight;
     private String totalScreenDimensionsPixels, totalScreenDimensionsDP;
 
@@ -76,13 +76,33 @@ public class DisplayManagerUtilities {
             densityRatio = api17OutMetrics.density;
             dpHeight = (float)((tempy / densityRatio) + 0.5);
             dpWidth = (float)((tempx / densityRatio) + 0.5);
+            xdpi = api17OutMetrics.xdpi;
+            ydpi = api17OutMetrics.ydpi;
         } else {
             //API 16-
             densityRatio = outMetrics.density;
             dpHeight = (float)((pixelsHeight / densityRatio) + 0.5);
             dpWidth = (float)((pixelsWidth / densityRatio) + 0.5);
+            xdpi = outMetrics.xdpi;
+            ydpi = outMetrics.ydpi;
         }
         totalScreenDimensionsDP = dpWidth + "x" + dpHeight;
+    }
+
+    /**
+     * The exact physical pixels per inch of the screen in the X dimension.
+     * @return float, width
+     */
+    public float getXdpi(){
+        return this.xdpi;
+    }
+
+    /**
+     * The exact physical pixels per inch of the screen in the Y dimension.
+     * @return float, width
+     */
+    public float getYdpi(){
+        return this.ydpi;
     }
 
     /**
@@ -129,6 +149,16 @@ public class DisplayManagerUtilities {
         float x = context.getResources().getDimension(
                 R.dimen.abc_action_bar_default_height_material);
         return (int) x;
+    }
+
+    /**
+     * Get scaled density SP for setting textviews. You would pass in a base number (IE 20)
+     * @param baseSize Base number for test size in pixels
+     * @return float adjusted text size in SP (scalable pixels)
+     */
+    public float getScalablePixelTextSize(int baseSize){
+        float x = baseSize * densityRatio;
+        return x;
     }
 
     /**

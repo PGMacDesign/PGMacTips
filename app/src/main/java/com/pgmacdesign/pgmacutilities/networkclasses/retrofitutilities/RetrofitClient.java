@@ -64,9 +64,11 @@ public class RetrofitClient {
      * This should be used after the class is initialized and the setters are all set
      * @param <T> Service Interface class
      * @return Service client for making calls. Will be directly linked to the Interface passed in
-     *         as well as to its calls. For an example, see
+     *         as well as to its calls.
+     * @throws IllegalArgumentException If the BASE_URL String does not end in a forward slash
+     *                                  (/), this will throw an illegal argument exception.
      */
-    public <T> T buildServiceClient(){
+    public <T> T buildServiceClient() throws IllegalArgumentException{
         T t = this.buildRetrofitClient();
         return t;
     }
@@ -95,17 +97,37 @@ public class RetrofitClient {
     /**
      * This builds a client that will be used for network calls
      */
-    public <T> T buildRetrofitClient(){
+    private  <T> T buildRetrofitClient(){
         //First create the interceptor, which will be used in the Retrofit call
         Interceptor interceptor = new Interceptor() {
             @Override
             public Response intercept(Interceptor.Chain chain) throws IOException {
                 Request.Builder builder = chain.request().newBuilder();
+                // TODO: 2017-02-28 This is still causing errors. Look into it
+                /*
+                The error being caused here is that the headers are ignored entirely. If I
+                add headers into the interface directly via the methods (IE with an auth token)
+                we
+                 */
                 builder.headers(buildHeaders());
                 Request newRequest = builder.build();
                 return chain.proceed(newRequest);
             }
         };
+        /*
+        todo working sample:
+        Interceptor interceptor = new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request newRequest = chain.request().newBuilder()
+                        //This is where you would add headers if need be. An example would be:
+                        .addHeader("Content-Type", "application/json")
+                        .addHeader("some-other-header", "more headers")
+                        .build(); //Finally, build it
+                return chain.proceed(newRequest);
+            }
+         };
+         */
 
         //Next, we set the logging level
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
