@@ -35,6 +35,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.provider.MediaStore;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -90,6 +91,7 @@ import java.util.Timer;
  * todo this is currently under construction and will throw null pointers when attempting to run
  * Created by pmacdowell on 8/31/2016.
  */
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 @Deprecated
 public class AutoPhotoActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "AutoPhotoActivity";
@@ -440,7 +442,11 @@ public class AutoPhotoActivity extends AppCompatActivity implements View.OnClick
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(idList[0]);
             StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             assert map != null;
-            manager.openCamera(cameraId, stateCallback, null);
+            try {
+                manager.openCamera(cameraId, stateCallback, null);
+            } catch (SecurityException se){
+                se.printStackTrace();
+            }
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }

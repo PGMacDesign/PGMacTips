@@ -17,7 +17,6 @@ import org.json.JSONObject;
 /**
  * Class for dealing with OAuth logins. It uses the Cloudrail library. Link to cloudrail below:
  * https://github.com/CloudRail/cloudrail-si-android-sdk
- * compile 'com.cloudrail:cloudrail-si-android:2.6.7' (<-- As of 2016-08-12, on version 2.6.7)
  * Created by pmacdowell on 8/12/2016.
  */
 public class OAuthUtilities {

@@ -15,6 +15,7 @@ public class PGMacUtilitiesConstants {
     public static final String FILE_NAME = "debugLoggingData.txt";
     public static final String URL_GOOGLE = "https://www.google.com";
     public static final String NO_INTERNET = "It looks like you do not have a stable internet connection. Please check for connectivity and try again";
+    public static final String ARRAY_PAGER_ADAPTER_ERROR_1 = "Error: Null fragment in passed map.";
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /////Custom Tags (There is no specific order to these numbers)//////////////////////////////////
@@ -87,8 +88,19 @@ public class PGMacUtilitiesConstants {
     public static final int TAG_TAKE_SELF_PHOTO = 4446;
     public static final int TAG_TAKE_SELF_PHOTO_SUCCESS = 4447;
     public static final int TAG_TAKE_SELF_PHOTO_FAILURE = 4448;
-    public static final int DATE_YYYY_MM_DD_T_HH_MM_SS_SSS_Z = 4449;
-    public static final int DATE_YYYY_MM_DD_T_HH_MM_SS_Z = 4450;
+    public static final int TAG_FRAGMENT_SWITCHER_ERROR = 4449;
+    public static final int TAG_FRAGMENT_SWITCHER_OBJECT = 4450;
+    public static final int TAG_FRAGMENT_SWITCHER_NO_OBJECT = 4451;
+    public static final int TAG_TBD_1 = 4452;
+    public static final int TAG_TBD_2 = 4453;
+    public static final int TAG_TBD_3 = 4454;
+    public static final int TAG_TBD_4 = 4455;
+    public static final int TAG_TBD_5 = 4456;
+    public static final int TAG_TBD_6 = 4457;
+    public static final int TAG_TBD_7 = 4458;
+    public static final int TAG_TBD_8 = 4459;
+    public static final int TAG_TBD_9 = 4460;
+
     //String Tags
     public static final String TAG_SELF_PHOTO_URI = "tag_self_photo_uri";
 
@@ -113,6 +125,9 @@ public class PGMacUtilitiesConstants {
     public static final long ONE_WEEK = (1000*60*60*24*7);
     public static final long ONE_MONTH = (1000*60*60*24*30);
     public static final long ONE_YEAR = (1000*60*60*24*365);
+
+    public static final int DATE_YYYY_MM_DD_T_HH_MM_SS_SSS_Z = -780;
+    public static final int DATE_YYYY_MM_DD_T_HH_MM_SS_Z = -781;
 
     //Default Date Format
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
@@ -205,5 +220,6 @@ public class PGMacUtilitiesConstants {
     public static final Techniques OUT_ROLL = Techniques.RollOut;
     public static final Techniques OUT_ZOOM = Techniques.ZoomOut;
     public static final Techniques IN_FLASH = Techniques.Flash; //Quick flash
+
 
 }

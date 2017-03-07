@@ -136,6 +136,7 @@ public class PGMacCustomProgressBar extends ProgressDialog {
      */
     private PGMacCustomProgressBar(Context context) {
         super(context);
+        //NOTE! If not transparent, use this: super(context, R.style.CustomTransparentDialog);
         this.localContext = context;
         whichSelected = 0;
         this.dmu = new DisplayManagerUtilities(context);
@@ -148,6 +149,7 @@ public class PGMacCustomProgressBar extends ProgressDialog {
      */
     private PGMacCustomProgressBar(Context context, int whichSelected) {
         super(context);
+        //NOTE! If not transparent, use this: super(context, R.style.CustomTransparentDialog);
         this.localContext = context;
         this.whichSelected = whichSelected;
         this.dmu = new DisplayManagerUtilities(context);

@@ -2,6 +2,7 @@ package com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities;
 
 import com.google.gson.reflect.TypeToken;
 import com.pgmacdesign.pgmacutilities.TESTINGPOJO;
+import com.pgmacdesign.pgmacutilities.utilities.L;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -93,20 +94,18 @@ public class CustomConverterFactory extends Converter.Factory  {
             }
 
         } else {
-            Converter<ResponseBody, ?> gsonConverter = GsonConverterFactory
-                    .create().responseBodyConverter(type, annotations, retrofit);
-            return gsonConverter;
+            try {
+                Converter<ResponseBody, ?> gsonConverter = GsonConverterFactory
+                        .create().responseBodyConverter(type, annotations, retrofit);
+                return gsonConverter;
+            } catch (Exception e){
+                L.m("Make sure you don't have the same '@Serialized' declaration over 2 different variables. This will cause an exception");
+                e.printStackTrace();
+            }
         }
 
         //If a catch gets hit
-        try {
-            Converter<ResponseBody, ?> gsonConverter = GsonConverterFactory
-                    .create().responseBodyConverter(type, annotations, retrofit);
-            return gsonConverter;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return super.responseBodyConverter(type, annotations, retrofit);
-        }
+        return super.responseBodyConverter(type, annotations, retrofit);
     }
 
     @Override

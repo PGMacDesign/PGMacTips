@@ -255,7 +255,6 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
             id = "";
         }
         if(id.equals("button")){
-            //testRetrofit();
             //writeDBStuff();
             testLoadingAnimation();
         }

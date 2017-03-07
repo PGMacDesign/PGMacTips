@@ -27,4 +27,6 @@ public interface ProfantiyCheckerInterface {
      */
     @GET(SERVICE_BASE_STRING + PROFANITY_BASE_STRING)
     Call<ResponseBody> checkProfanity(@Query("text") String text);
+
+
 }

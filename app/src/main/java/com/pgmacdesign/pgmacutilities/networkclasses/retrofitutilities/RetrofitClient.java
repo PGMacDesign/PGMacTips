@@ -49,7 +49,7 @@ public class RetrofitClient {
     /**
      * Constructor
      */
-    private <T> RetrofitClient(RetrofitClient.Builder builder) {
+    private RetrofitClient(RetrofitClient.Builder builder) {
         this.urlBase = builder.builder_urlBase;
         this.headers = builder.builder_headers;
         this.logLevel = builder.builder_logLevel;
@@ -103,19 +103,14 @@ public class RetrofitClient {
             @Override
             public Response intercept(Interceptor.Chain chain) throws IOException {
                 Request.Builder builder = chain.request().newBuilder();
-                // TODO: 2017-02-28 This is still causing errors. Look into it
-                /*
-                The error being caused here is that the headers are ignored entirely. If I
-                add headers into the interface directly via the methods (IE with an auth token)
-                we
-                 */
-                builder.headers(buildHeaders());
+                Headers headers = buildHeaders();
+                builder.headers(headers);
                 Request newRequest = builder.build();
                 return chain.proceed(newRequest);
             }
         };
         /*
-        todo working sample:
+        //Hard-coded sample
         Interceptor interceptor = new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
@@ -158,30 +153,11 @@ public class RetrofitClient {
         //Build the client
         OkHttpClient client = builder.build();
 
-        //Old way of adding interceptors, refactored into builder now
-        //client.interceptors().add(interceptor);
-        //client.interceptors().add(logging);
-
         //Create the retrofit object, which will use the variables/ objects we have created above
         Retrofit.Builder myBuilder = new Retrofit.Builder();
         myBuilder.baseUrl(urlBase);
         myBuilder.addConverterFactory(new CustomConverterFactory());
-        /*
-        if(isSerializableResponse){
-            //Gson object that will be used for parsing the response from the server
-            Gson gson = new GsonBuilder()
-                    .setLenient() //This is to allow the server to send back things without proper formatting
-                    .setPrettyPrinting() //Makes it easier to read in the logcat
-                    .setDateFormat(dateFormat)
-                    .create();
-            GsonConverterFactory factory = GsonConverterFactory.create(gson);
-            myBuilder.addConverterFactory(factory);
 
-        } else {
-            ToStringConverterFactory factory2 = new ToStringConverterFactory();
-            myBuilder.addConverterFactory(factory2);
-        }
-        */
         myBuilder.client(client);
         Retrofit retrofit = myBuilder.build();
 
@@ -332,7 +308,7 @@ public class RetrofitClient {
          */
         public Builder callIsJSONFormat(){
             Map<String, String> myMap = new HashMap<>();
-            myMap.put("Content-Type", "multipart/form-data");
+            myMap.put("Content-Type", "application/json");
             this.builder_headers = myMap;
             return this;
         }
