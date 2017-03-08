@@ -30,7 +30,7 @@ import java.util.Map;
  */
 public class TESTING extends AppCompatActivity implements View.OnClickListener {
 
-    // TODO: 2017-03-07 need to rewrite ripples to be within bounds 
+    // TODO: 2017-03-07 need to rewrite ripples to be within bounds
     private DatabaseUtilities dbUtilities;
     private CameraMediaUtilities cam;
     private Button button;
@@ -45,6 +45,7 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
         et.setState(MultipurposeEditText.EditTextState.FOCUSED);
         button = (Button) this.findViewById(R.id.button);
         button.setTag("button");
+        button.setTransformationMethod(null);
         button.setOnClickListener(this);
         init();
     }

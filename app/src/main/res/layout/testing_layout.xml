@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/button"
         android:id="@+id/et"
+        android:visibility="gone"
         />
 
     <Button
@@ -18,7 +19,7 @@
         android:layout_height="80dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="doStuff"
+        android:text="Ripple Button"
         android:id="@+id/button"
         android:theme="@style/ButtonTheme1"
         android:layout_marginStart="@dimen/left_right_side_margins"
