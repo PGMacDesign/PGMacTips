@@ -35,8 +35,8 @@ import com.pgmacdesign.pgmacutilities.utilities.DatabaseUtilities;
 
 public class CustomFragmentSwitcher extends FrameLayout {
 
-    private Fragment mCurrentFragment;
     private static final String TAG = "CustomFragmentSwitcher";
+    private Fragment mCurrentFragment;
     private PagerAdapter mAdapter;
     private PagerObserver mObserver;
     private int mExpectedAdapterCount;
@@ -192,11 +192,11 @@ public class CustomFragmentSwitcher extends FrameLayout {
         public void onPageChanged(int page);
     }
 
-    private Fragment addNewItem(int position) {
+    private Fragment addNewItem(int position) throws IllegalStateException {
         try {
             return (Fragment) mAdapter.instantiateItem(this, position);
         } catch (ClassCastException e) {
-            throw new RuntimeException("FragmentSwitcher's adapter must instantiate fragments", e);
+            throw new IllegalStateException("FragmentSwitcher's adapter must instantiate fragments");
         }
     }
 

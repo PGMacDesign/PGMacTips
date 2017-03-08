@@ -3,14 +3,29 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
+
+    <com.pgmacdesign.pgmacutilities.customui.MultipurposeEditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button"
+        android:id="@+id/et"
+        />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:text="doStuff"
         android:id="@+id/button"
+        android:theme="@style/ButtonTheme1"
+        android:layout_marginStart="@dimen/left_right_side_margins"
+        android:layout_marginEnd="@dimen/left_right_side_margins"
+        android:background="@drawable/multipurpose_button2"
+        android:textColor="@drawable/multipurpose_button2"
         />
+
+
 </RelativeLayout>

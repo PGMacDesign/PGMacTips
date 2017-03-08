@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <color name="colorPrimary">#0071bc</color>
+    <color name="colorPrimaryDark">#205493</color>
+    <color name="colorPrimaryDarkest">#112e51</color>
+    <color name="colorAccent">#e59393</color>
+    <color name="colorAccent2">#e31c3d</color>
+
     <color name="Semi_Transparent1">#20111111</color>
     <color name="Semi_Transparent2">#30111111</color>
     <color name="Semi_Transparent3">#40111111</color>
@@ -9,6 +16,8 @@
     <color name="Semi_Transparent7">#89111111</color>
     <color name="Semi_Transparent8">#99111111</color>
     <color name="Semi_Transparent9">#A9111111</color>
+
+    <color name="Semi_Transparent_Red">#40FF0000</color>
 
     <color name="Transparent">#00000000</color>
 
@@ -75,6 +84,7 @@
     <color name="Orchid">#DA70D6</color>
     <color name="Thistle">#D8BFD8</color>
     <color name="LightGrey">#D3D3D3</color>
+    <color name="SlightlyLightGrey">#939393</color>
     <color name="LightGreyFaded">#77D3D3D3</color>
     <color name="Tan">#D2B48C</color>
     <color name="Chocolate">#D2691E</color>

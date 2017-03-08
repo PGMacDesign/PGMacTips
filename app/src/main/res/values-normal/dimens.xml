@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text_size">16sp</dimen>
+    <dimen name="text_size_small">12sp</dimen>
+    <dimen name="text_size_large">18sp</dimen>
+    <dimen name="left_right_side_margins">30dp</dimen>
+    <dimen name="left_right_side_margins_small">12dp</dimen>
+    <dimen name="left_right_side_margins_very_small">4dp</dimen>
+    <dimen name="left_right_side_margins_large">38dp</dimen>
+    <dimen name="top_bottom_margins">12dp</dimen>
+    <dimen name="top_bottom_margins_large">30dp</dimen>
+    <dimen name="toolbar_center_tv_width">200dp</dimen>
+    <dimen name="toolbar_center_tv_height">40dp</dimen>
+    <dimen name="square_image_sizing">40dp</dimen>
+    <dimen name="toolbar_top_right_tv_size">36dp</dimen>
+    <dimen name="translationZ">4dp</dimen>
+    <dimen name="elevation">4dp</dimen>
+    <dimen name="app_bar_height">44dp</dimen>
+</resources>

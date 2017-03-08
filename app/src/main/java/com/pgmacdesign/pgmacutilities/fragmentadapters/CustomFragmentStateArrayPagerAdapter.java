@@ -31,6 +31,7 @@ public class CustomFragmentStateArrayPagerAdapter <T extends Fragment> extends F
 
     /**
      * Adds the specified fragment at the end of the array.
+     *
      * @param fragment
      */
     public void add(T fragment) {
@@ -40,6 +41,7 @@ public class CustomFragmentStateArrayPagerAdapter <T extends Fragment> extends F
 
     /**
      * Adds the specified Collection of fragments at the end of the array.
+     *
      * @param fragments
      */
     public void addAll(Collection<T> fragments) {
@@ -49,6 +51,7 @@ public class CustomFragmentStateArrayPagerAdapter <T extends Fragment> extends F
 
     /**
      * Adds the specified fragments at the end of the array.
+     *
      * @param fragments
      */
     public void addAll(T... fragments) {
@@ -68,6 +71,7 @@ public class CustomFragmentStateArrayPagerAdapter <T extends Fragment> extends F
 
     /**
      * Inserts the specified fragment at the specified index in the array.
+     *
      * @param fragment
      * @param index
      */
@@ -75,3 +79,4 @@ public class CustomFragmentStateArrayPagerAdapter <T extends Fragment> extends F
         mItems.add(index, fragment);
         notifyDataSetChanged();
     }
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Button Theme 1 -->
+    <style name="ButtonTheme1" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:layout_marginStart">@dimen/left_right_side_margins</item>
+        <item name="android:layout_marginEnd">@dimen/left_right_side_margins</item>
+        <item name="android:translationZ">@dimen/translationZ</item>
+        <item name="android:elevation">@dimen/elevation</item>
+    </style>
+
+
+</resources>

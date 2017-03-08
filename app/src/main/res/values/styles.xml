@@ -3,13 +3,18 @@
     <!-- Base application theme. -->
     <style name="MainTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/Navy</item>
+        <item name="colorPrimary">@color/Blue</item>
         <item name="colorPrimaryDark">@color/Navy</item>
         <item name="colorAccent">@color/Red</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
+    <!-- Button Theme 1 -->
+    <style name="ButtonTheme1" parent="MainTheme">
+        <item name="android:layout_marginStart">@dimen/left_right_side_margins</item>
+        <item name="android:layout_marginEnd">@dimen/left_right_side_margins</item>
+    </style>
 
     <!-- For a transparent dialog. May be needed for {@link PGMacCustomProgressBar}  -->
     <style name="CustomTransparentDialog" parent="AppTheme">

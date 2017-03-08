@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
+import com.pgmacdesign.pgmacutilities.customui.MultipurposeEditText;
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacCustomProgressBar;
 import com.pgmacdesign.pgmacutilities.pojos.MasterDatabaseObject;
 import com.pgmacdesign.pgmacutilities.utilities.CameraMediaUtilities;
@@ -29,15 +30,19 @@ import java.util.Map;
  */
 public class TESTING extends AppCompatActivity implements View.OnClickListener {
 
+    // TODO: 2017-03-07 need to rewrite ripples to be within bounds 
     private DatabaseUtilities dbUtilities;
     private CameraMediaUtilities cam;
     private Button button;
+    private MultipurposeEditText et;
     private static final String CUSTOM_STRING = "-PAT";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.testing_layout);
+        et = (MultipurposeEditText) this.findViewById(R.id.et);
+        et.setState(MultipurposeEditText.EditTextState.FOCUSED);
         button = (Button) this.findViewById(R.id.button);
         button.setTag("button");
         button.setOnClickListener(this);
@@ -256,7 +261,7 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
         }
         if(id.equals("button")){
             //writeDBStuff();
-            testLoadingAnimation();
+            //testLoadingAnimation();
         }
     }
 }
