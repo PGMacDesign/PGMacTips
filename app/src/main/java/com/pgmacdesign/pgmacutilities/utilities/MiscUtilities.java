@@ -53,6 +53,21 @@ public class MiscUtilities {
             return true;
         }
     }
+    /**
+     * Checks a list for either being empty or containing objects within it
+     * @param myArray array to check
+     * @param <T> T extends object
+     * @return boolean, true if it is null or empty, false it if is not
+     */
+    public static <T extends Object> boolean isArrayNullOrEmpty(T[] myArray){
+        if(myArray == null){
+            return true;
+        }
+        if(myArray.length <= 0){
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Checks a list for either being empty or containing objects within it

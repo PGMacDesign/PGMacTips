@@ -11,6 +11,13 @@ import android.support.annotation.NonNull;
  */
 public class ThreadUtilities {
 
+    /*
+    // http://blogs.innovationm.com/multiple-asynctask-in-android/
+    private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
+    private static final int CORE_POOL_SIZE = CPU_COUNT + 1;
+    private static final int MAXIMUM_POOL_SIZE = CPU_COUNT * 2 + 1;
+    private static final BlockingQueue<Runnable> sPoolWorkQueue = new LinkedBlockingQueue<Runnable>(128);
+    */
     /**
      * Build and returns a HandlerThread on a background thread using the passed
      * String threadname to define it.

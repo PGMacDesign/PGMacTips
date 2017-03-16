@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Converter;
-import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 /**
@@ -99,7 +99,7 @@ public class CustomConverterFactory extends Converter.Factory  {
                         .create().responseBodyConverter(type, annotations, retrofit);
                 return gsonConverter;
             } catch (Exception e){
-                L.m("Make sure you don't have the same '@Serialized' declaration over 2 different variables. This will cause an exception");
+                L.m("Make sure you don't have the same '@Serialized' string name declaration over 2 different variables. This will cause an exception");
                 e.printStackTrace();
             }
         }
@@ -109,9 +109,13 @@ public class CustomConverterFactory extends Converter.Factory  {
     }
 
     @Override
-    public Converter<?, RequestBody> requestBodyConverter(Type type, Annotation[] parameterAnnotations, Annotation[] methodAnnotations, Retrofit retrofit) {
+    public Converter<?, RequestBody> requestBodyConverter(Type type,
+                                                          Annotation[] parameterAnnotations,
+                                                          Annotation[] methodAnnotations,
+                                                          Retrofit retrofit) {
         Converter<?, RequestBody> gsonConverter = GsonConverterFactory
-                .create().requestBodyConverter(type, methodAnnotations, retrofit);
+                .create().requestBodyConverter(type, parameterAnnotations,
+                        methodAnnotations, retrofit);
         return gsonConverter;
     }
 

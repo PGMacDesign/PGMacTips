@@ -9,6 +9,7 @@ import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
 
 /**
  * Simplistic class. Used primarily for logs, toasts, and OTHER tedious things
@@ -16,7 +17,46 @@ import java.io.IOException;
  */
 public class L {
 
+    private static final String TICK_TIME_PART_1 = "Tick Time: \nActivity == ";
+    private static final String TICK_TIME_PART_2 = "\nHitting Line Number == ";
+    private static final String TICK_TIME_PART_3 = "\nTime taken up until this point == ";
     private static final String TAG = "PGMacUtilities";
+
+    private String screenName;
+    private long timeAtInit;
+    /**
+     * Constructor is used for time measurement method
+     * @param screenName Screen name to use in print statements
+     * @param timeAtInit time (in milliseconds) of init start. use Date().getTime() for long.
+     */
+    public L (String screenName, Long timeAtInit){
+        if(StringUtilities.isNullOrEmpty(screenName)){
+            this.screenName = "N/A";
+        } else {
+            this.screenName = screenName;
+        }
+        if(timeAtInit == null){
+            this.timeAtInit = new Date().getTime();
+        } else {
+            this.timeAtInit = timeAtInit;
+        }
+    }
+
+    public void tick(Integer lineNumber){
+        String lineStr;
+        if(lineNumber == null){
+            lineStr = "";
+        } else {
+            lineStr = "" + lineNumber;
+        }
+        long now = new Date().getTime();
+        L.m(    TICK_TIME_PART_1 + screenName
+                + TICK_TIME_PART_2 + lineStr
+                + TICK_TIME_PART_3 + (now - this.timeAtInit)
+        );
+
+    }
+
     /**
      * Quick println
      * @param myObject The string to print (or double, int, whatever)

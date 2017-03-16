@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmacutilities.customui.MultipurposeEditText;
@@ -43,6 +45,8 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
         setContentView(R.layout.testing_layout);
         et = (MultipurposeEditText) this.findViewById(R.id.et);
         et.setState(MultipurposeEditText.EditTextState.FOCUSED);
+        TextView tv1 = new TextView(this);
+        tv1.setTextColor(ContextCompat.getColor(this, R.color.black));
         button = (Button) this.findViewById(R.id.button);
         button.setTag("button");
         button.setTransformationMethod(null);
@@ -254,15 +258,6 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        String id = null;
-        try {
-            id = (String) view.getTag();
-        } catch (Exception e){
-            id = "";
-        }
-        if(id.equals("button")){
-            //writeDBStuff();
-            //testLoadingAnimation();
-        }
+
     }
 }

@@ -479,7 +479,6 @@ public class DatabaseUtilities {
      */
     private <T extends RealmObject> boolean deleteFromMasterDB(final Class myClass,
                                                                final String customSuffix) {
-
         if (myClass == null) {
             return false;
         }
