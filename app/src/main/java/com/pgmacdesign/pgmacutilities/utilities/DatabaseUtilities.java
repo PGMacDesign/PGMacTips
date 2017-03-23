@@ -493,8 +493,11 @@ public class DatabaseUtilities {
         //Returned object from the master search
         Object obj = this.queryDatabaseMasterSingle(myClass);
         if (obj == null) {
-            //IF it is null, it has already been deleted, return true and move on
-            return true;
+            Object obj2 = this.getPersistedObjectCustom(myClass, customSuffix);
+            if(obj2 == null) {
+                //IF it is null, it has already been deleted, return true and move on
+                return true;
+            }
         }
 
         Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
