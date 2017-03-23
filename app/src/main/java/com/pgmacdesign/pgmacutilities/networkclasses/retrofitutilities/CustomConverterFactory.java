@@ -120,7 +120,8 @@ public class CustomConverterFactory extends Converter.Factory  {
     }
 
     @Override
-    public Converter<?, String> stringConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
+    public Converter<?, String> stringConverter(Type type, Annotation[] annotations,
+                                                Retrofit retrofit) {
         return super.stringConverter(type, annotations, retrofit);
     }
 }
