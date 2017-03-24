@@ -98,7 +98,7 @@ android {
 
         //Animated SVG View (Custom, takes an SVG To work).
         //Link: https://github.com/jaredrummler/AnimatedSvgView
-        //compile 'com.jaredrummler:animated-svg-view:1.0.2'
+        //compile 'com.jaredrummler:animated-svg-view:1.0.0'
         //aar Downloaded on 2017-03-24 - animated-svg-view-1.0.2.aar
 
         //Volley. Link: https://developer.android.com/training/volley/index.html
