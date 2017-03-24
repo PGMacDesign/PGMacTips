@@ -28,7 +28,7 @@ android {
         targetSdkVersion 25
         multiDexEnabled true
         versionCode 1
-        versionName "0.0.08"
+        versionName "0.0.09"
         //resValue "string", "mapzen_string_api_key", mapzenApiKey
     }
     dexOptions {
