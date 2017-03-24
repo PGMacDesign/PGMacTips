@@ -29,7 +29,7 @@ android {
         multiDexEnabled true
         versionCode 1
         versionName "0.0.08"
-        resValue "string", "mapzen_string_api_key", mapzenApiKey
+        //resValue "string", "mapzen_string_api_key", mapzenApiKey
     }
     dexOptions {
         javaMaxHeapSize "4g"

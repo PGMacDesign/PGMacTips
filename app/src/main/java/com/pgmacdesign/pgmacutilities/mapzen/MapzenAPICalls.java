@@ -3,7 +3,6 @@ package com.pgmacdesign.pgmacutilities.mapzen;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.pgmacdesign.pgmacutilities.R;
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities.RetrofitClient;
 import com.pgmacdesign.pgmacutilities.utilities.NetworkUtilities;
@@ -41,7 +40,7 @@ public class MapzenAPICalls {
     public MapzenAPICalls(@NonNull Context context, @NonNull OnTaskCompleteListener listener) {
         this.context = context;
         this.initClient();
-        this.ApiKey = context.getResources().getString(R.string.mapzen_string_api_key);
+        this.ApiKey = "DEPRECATED"; //context.getResources().getString(R.string.mapzen_string_api_key);
         this.listener = listener;
     }
 
