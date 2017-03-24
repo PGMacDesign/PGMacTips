@@ -1,5 +1,5 @@
-apply plugin: 'com.android.application' //Remove this when pushing to git
-//apply plugin: 'com.android.library'
+//apply plugin: 'com.android.application' //Remove this when pushing to git
+apply plugin: 'com.android.library'
 apply plugin: 'realm-android'
 apply plugin: 'com.github.dcendents.android-maven'
 group='com.github.PGMacDesign'
@@ -23,12 +23,12 @@ android {
     buildToolsVersion '25.0.1'
 
     defaultConfig {
-        applicationId "com.pgmacdesign.pgmacutilities" //Remove this when pushing to git
+        //applicationId "com.pgmacdesign.pgmacutilities" //Remove this when switching to lib
         minSdkVersion 17
         targetSdkVersion 25
         multiDexEnabled true
         versionCode 1
-        versionName "1.0"
+        versionName "0.0.07"
         resValue "string", "mapzen_string_api_key", mapzenApiKey
     }
     dexOptions {
@@ -39,51 +39,89 @@ android {
     }
     dependencies {
 
+        /////////////////////////////////////////////////////
+        //AAR File downloaded, still running gradle compile//
+        /////////////////////////////////////////////////////
+
         //Secure Shared Prefs. Link: https://github.com/scottyab/secure-preferences
         compile 'com.scottyab:secure-preferences-lib:0.1.4'
+        //aar Downloaded on 2017-03-24 - libs/secure-preferences-lib-0.1.4.aar
 
         //Cloudrail. Link: https://github.com/CloudRail/cloudrail-si-android-sdk
         compile 'com.cloudrail:cloudrail-si-android:2.16.0'
+        //aar Downloaded on 2017-03-24 - cloudrail-si-android-2.16.0.aar
 
         //Progress bar animator. This one is better for longer processes, IE uploading photos.
         //Link: https://github.com/Tibolte/ElasticDownload
         compile 'com.github.tibolte:elasticdownload:1.0.4'
-        //compile 'com.github.tibolte:elasticdownload:master-SNAPSHOT'
+        //aar Downloaded on 2017-03-24 - elasticdownload-1.0.4.aar
 
         //Animated SVG View (Custom, takes an SVG To work).
         //Link: https://github.com/jaredrummler/AnimatedSvgView
         compile 'com.jaredrummler:animated-svg-view:1.0.0'
-
-        //GSON. Link https://github.com/google/gson
-        compile 'com.google.code.gson:gson:2.8.0'
-
-        //Picasso. Link: https://github.com/square/picasso
-        compile 'com.squareup.picasso:picasso:2.5.2'
-
-        //Animations. Link: https://github.com/daimajia/AndroidViewAnimations
-        compile 'com.nineoldandroids:library:2.4.0'
-        compile 'com.daimajia.easing:library:2.0@aar'
-        compile 'com.daimajia.androidanimations:library:2.2@aar'
+        //aar Downloaded on 2017-03-24 - animated-svg-view-1.0.2.aar
 
         //Image Cropper. https://github.com/Yalantis/uCrop
         compile 'com.yalantis:ucrop:2.2.0'
+        //aar Downloaded on 2017-03-24 - ucrop-2.2.0.aar
+
+        ////////////////////////////////////////////
+        //Jar File downloaded, Using jar for build//
+        ////////////////////////////////////////////
+
+        //GSON. Link https://github.com/google/gson
+        //compile 'com.google.code.gson:gson:2.8.0'
+        //Jar Downloaded on 2017-03-24
+
+        //Picasso. Link: https://github.com/square/picasso
+        //compile 'com.squareup.picasso:picasso:2.5.2'
+        //Jar Downloaded on 2017-03-24
+
+        //Animations Base. (used in Android animations)
+        //compile 'com.nineoldandroids:library:2.4.0'
+        //Jar Downloaded on 2017-03-24
 
         //Retrofit, Retrofit Converters, and OKHTTP.
         //Retrofit - http://square.github.io/retrofit/
         //OKHttp - http://square.github.io/okhttp/
-        compile 'com.squareup.retrofit2:retrofit:2.2.0'
-        compile 'com.squareup.okhttp3:okhttp:3.6.0'
-        compile 'com.squareup.okhttp3:logging-interceptor:3.6.0'
+        //compile 'com.squareup.retrofit2:retrofit:2.2.0'
+        //Jar Downloaded on 2017-03-24
+        //compile 'com.squareup.okhttp3:okhttp:3.6.0'
+        //Jar Downloaded on 2017-03-24
+        //compile 'com.squareup.okhttp3:logging-interceptor:3.6.0'
+        //Jar Downloaded on 2017-03-24
         //Type-safe HTTP client for Android and Java: https://github.com/square/retrofit
-        compile 'com.squareup.retrofit2:converter-gson:2.2.0'
-        //Other Converters for Custom JSON Serialization
-        compile 'com.squareup.retrofit2:adapter-rxjava:2.2.0'
+        //compile 'com.squareup.retrofit2:converter-gson:2.2.0'
+        //Jar Downloaded on 2017-03-24
+
+        //////////////////////////////////
+        //Currently being used as Module//
+        //////////////////////////////////
 
         //Volley. Link: https://developer.android.com/training/volley/index.html
-        compile 'com.android.volley:volley:1.0.0'
+        //compile 'com.android.volley:volley:1.0.0'
+        //Jar Downloaded on 2017-03-24
+
+        /////////////////////////////////////////
+        //No Jar / AAR available, using Compile//
+        /////////////////////////////////////////
+
+        //Part of The Android Animations collection below
+        compile 'com.daimajia.easing:library:2.0@aar'
+
+        //Android Animations. Link: https://github.com/daimajia/AndroidViewAnimations
+        compile 'com.daimajia.androidanimations:library:2.2@aar'
 
         //Text View  + Animations. Link: https://github.com/hanks-zyh/HTextView
         compile 'hanks.xyz:htextview-library:0.1.5'
+
+
+        //////////////////////////////////////
+        //Misc Dependencies (IE Google Libs)//
+        //////////////////////////////////////
+
+        //Multi-dex. For more info: https://developer.android.com/studio/build/multidex.html
+        compile 'com.android.support:multidex:1.0.1'
 
         //Google play services. Full list here - https://developers.google.com/android/guides/setup
 
@@ -96,9 +134,6 @@ android {
         //Maps
         compile 'com.google.android.gms:play-services-maps:10.2.0'
 
-        //Multi-dex. For more info: https://developer.android.com/studio/build/multidex.html
-        compile 'com.android.support:multidex:1.0.1'
-
         //Android support libs
         compile 'com.android.support:animated-vector-drawable:25.2.0'
         compile 'com.android.support:customtabs:25.2.0'
@@ -108,17 +143,6 @@ android {
         compile 'com.android.support:support-v4:25.2.0'
         compile 'com.android.support:cardview-v7:25.2.0'
         compile 'com.android.support:palette-v7:25.2.0'
-
-        //Neat looking shatter/ break animation by Yalantis. Link: https://github.com/Yalantis/StarWars.Android
-        //compile 'com.yalantis:starwarstiles:0.1.1'
-
-
-
-        //Auto-formatted Material Text Field. Link: https://github.com/florent37/MaterialTextField
-        //compile 'com.github.florent37:materialtextfield:1.0.5'
-
-        //Auto-resizing edit text. Link: https://github.com/grantland/android-autofittextview
-        //compile 'me.grantland:autofittextview:0.2.1'
 
 
     }
@@ -147,4 +171,5 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:25.0.1'
+    compile project(':volley-1.0.0')
 }

@@ -40,14 +40,16 @@
             android:supportsRtl="true"
             android:theme="@style/MainTheme">
 
-
-            <activity
-                android:name=".TESTING"
-                android:screenOrientation="portrait">
+            <!-- Make sure to remove the intent filter when switching to library
                 <intent-filter>
                     <action android:name="android.intent.action.MAIN" />
                     <category android:name="android.intent.category.LAUNCHER" />
                 </intent-filter>
+            -->
+            <activity
+                android:name=".TESTING"
+                android:screenOrientation="portrait">
+
             </activity>
 
             <activity
