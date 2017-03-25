@@ -5,6 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!--
+    This is breaking on <API 21 devices
+    android.content.res.Resources$NotFoundException: File res/drawable-v21/abc_edit_text_material.xml from drawable resource ID
     <com.pgmacdesign.pgmacutilities.customui.MultipurposeEditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -12,6 +15,7 @@
         android:id="@+id/et"
         android:visibility="visible"
         />
+    -->
 
     <Button
         android:layout_width="match_parent"

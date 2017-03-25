@@ -13,8 +13,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
-import com.pgmacdesign.pgmacutilities.customui.MultipurposeEditText;
+import com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities.serviceapiinterfaces.ProfantiyCheckerAPICalls;
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacCustomProgressBar;
+import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
 import com.pgmacdesign.pgmacutilities.pojos.MasterDatabaseObject;
 import com.pgmacdesign.pgmacutilities.utilities.CameraMediaUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.ContactUtilities;
@@ -36,15 +37,15 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
     private DatabaseUtilities dbUtilities;
     private CameraMediaUtilities cam;
     private Button button;
-    private MultipurposeEditText et;
+   // private MultipurposeEditText et;
     private static final String CUSTOM_STRING = "-PAT";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.testing_layout);
-        et = (MultipurposeEditText) this.findViewById(R.id.et);
-        et.setState(MultipurposeEditText.EditTextState.FOCUSED);
+        //et = (MultipurposeEditText) this.findViewById(R.id.et);
+        //et.setState(MultipurposeEditText.EditTextState.FOCUSED);
         TextView tv1 = new TextView(this);
         tv1.setTextColor(ContextCompat.getColor(this, R.color.black));
         button = (Button) this.findViewById(R.id.button);
@@ -249,6 +250,18 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
         progressDialog.show();
     }
 
+    private void doWebCall(){
+        ProfantiyCheckerAPICalls.checkProfanityAsynchronous(this,
+                new OnTaskCompleteListener() {
+                    @Override
+                    public void onTaskComplete(Object result, int customTag) {
+                        L.m("web call done");
+                        if(customTag == PGMacUtilitiesConstants.TAG_RETROFIT_CALL_SUCCESS_STRING){
+                            L.m("result == " + result.toString());
+                        }
+                    }
+                }, "word");
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(CameraMediaUtilities.doesCodeBelongToUtility(requestCode)){
@@ -258,6 +271,6 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-
+        doWebCall();
     }
 }
