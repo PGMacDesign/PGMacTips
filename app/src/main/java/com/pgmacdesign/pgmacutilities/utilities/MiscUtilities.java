@@ -5,9 +5,12 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Looper;
 import android.util.Base64;
 import android.util.Log;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 
 import com.pgmacdesign.pgmacutilities.BuildConfig;
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
@@ -287,6 +290,29 @@ public class MiscUtilities {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             listener.onTaskComplete(null, -1);
+        }
+    }
+
+    /**
+     * Clear cookies
+     * @param context context
+     */
+    @SuppressWarnings("deprecation")
+    public static void clearCookies(Context context)
+    {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            CookieManager.getInstance().removeAllCookies(null);
+            CookieManager.getInstance().flush();
+        } else
+        {
+            CookieSyncManager cookieSyncMngr = CookieSyncManager.createInstance(context);
+            cookieSyncMngr.startSync();
+            CookieManager cookieManager=CookieManager.getInstance();
+            cookieManager.removeAllCookie();
+            cookieManager.removeSessionCookie();
+            cookieSyncMngr.stopSync();
+            cookieSyncMngr.sync();
         }
     }
 }

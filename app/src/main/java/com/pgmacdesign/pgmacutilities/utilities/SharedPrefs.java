@@ -332,8 +332,26 @@ public class SharedPrefs {
         }
     }
 
+    public void clearPref(String[] keys){
+        if(MiscUtilities.isArrayNullOrEmpty(keys)){
+            return;
+        }
+        init();
+        for(String key : keys) {
+            if (isEncrypted) {
+                secureEdit.remove(key);
+                secureEdit.commit();
+            } else {
+                edit1.remove(key);
+                edit1.commit();
+            }
+        }
+    }
 
     public void clearPref(String key){
+        if(StringUtilities.isNullOrEmpty(key)){
+            return;
+        }
         init();
         if(isEncrypted){
             secureEdit.remove(key);
@@ -346,8 +364,13 @@ public class SharedPrefs {
 
     /**
      * Clears ALL preferences stored.
+     * @param areYouSure Confirmation boolean
+     *                   (To prevent IDE Autocomplete from using this func by accident)
      */
-    public void clearAllPrefs(){
+    public void clearAllPrefs(boolean areYouSure){
+        if(!areYouSure){
+            return;
+        }
         init();
         if(isEncrypted){
             secureEdit.clear();

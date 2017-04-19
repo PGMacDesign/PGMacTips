@@ -30,6 +30,12 @@ import io.realm.RealmResults;
  * database. See the link below for Realm and their Wiki.
  * https://realm.io/docs/java/latest/
  * Created by pmacdowell on 8/18/2016.
+ * NOTES:
+ * 1) Feel free to cast responses from getPersistedObject even if it is null as null objects
+ *    can be cast without throwing an error. I caution you against casting them to something
+ *    else without knowing the response class though. For more info --
+ *    http://stackoverflow.com/questions/18723596/no-exception-while-type-casting-with-a-null-in-java
+ * 2)
  */
 public class DatabaseUtilities {
 
@@ -495,6 +501,7 @@ public class DatabaseUtilities {
         if (obj == null) {
             Object obj2 = this.getPersistedObjectCustom(myClass, customSuffix);
             if(obj2 == null) {
+                // TODO: 2017-04-18 may need one more check on customSuffix outside of this if statement
                 //IF it is null, it has already been deleted, return true and move on
                 return true;
             }
