@@ -17,50 +17,8 @@ public class InstagramDataObject {
     private String nextMaxId;
     @SerializedName("access_token")
     private String access_token;
-    @SerializedName("user")
-    private UserData user;
     @SerializedName("mediaDataObject")
     private MediaDataObject mediaDataObject;
-
-    public MediaDataObject getMediaDataObject() {
-        return mediaDataObject;
-    }
-
-    public void setMediaDataObject(MediaDataObject mediaDataObject) {
-        this.mediaDataObject = mediaDataObject;
-    }
-
-    public String getNextMaxId() {
-        return nextMaxId;
-    }
-
-    public void setNextMaxId(String nextMaxId) {
-        this.nextMaxId = nextMaxId;
-    }
-
-    public Map<String, String> getInstagramPhotoIDUrls() {
-        return instagramPhotoIDUrls;
-    }
-
-    public void setInstagramPhotoIDUrls(Map<String, String> instagramPhotoIDUrls) {
-        this.instagramPhotoIDUrls = instagramPhotoIDUrls;
-    }
-
-    public String getAccess_token() {
-        return access_token;
-    }
-
-    public void setAccess_token(String access_token) {
-        this.access_token = access_token;
-    }
-
-    public UserData getUser() {
-        return user;
-    }
-
-    public void setUser(UserData user) {
-        this.user = user;
-    }
 
     public static class MediaDataObject{
         @SerializedName("data")
@@ -82,6 +40,42 @@ public class InstagramDataObject {
 
         public void setData(MediaData[] data) {
             this.data = data;
+        }
+    }
+
+    public static class UserRelationshipObj {
+        @SerializedName("data")
+        private RelationshipObj data;
+
+        public RelationshipObj getData() {
+            return data;
+        }
+
+        public void setData(RelationshipObj data) {
+            this.data = data;
+        }
+    }
+
+    public static class RelationshipObj {
+        @SerializedName("outgoing_status")
+        private String outgoingStatus;
+        @SerializedName("incoming_status")
+        private String incomingStatus;
+
+        public String getOutgoingStatus() {
+            return outgoingStatus;
+        }
+
+        public void setOutgoingStatus(String outgoingStatus) {
+            this.outgoingStatus = outgoingStatus;
+        }
+
+        public String getIncomingStatus() {
+            return incomingStatus;
+        }
+
+        public void setIncomingStatus(String incomingStatus) {
+            this.incomingStatus = incomingStatus;
         }
     }
 
@@ -108,11 +102,103 @@ public class InstagramDataObject {
         }
     }
 
+    public static class InstagramLocation {
+        @SerializedName("id")
+        private String id;
+        @SerializedName("latitude")
+        private Double latitude;
+        @SerializedName("longitude")
+        private Double longitude;
+        @SerializedName("name")
+        private String name;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public Double getLatitude() {
+            return latitude;
+        }
+
+        public void setLatitude(Double latitude) {
+            this.latitude = latitude;
+        }
+
+        public Double getLongitude() {
+            return longitude;
+        }
+
+        public void setLongitude(Double longitude) {
+            this.longitude = longitude;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+    public static class Comments {
+        @SerializedName("count")
+        private Integer count;
+
+        public Integer getCount() {
+            if(count == null){
+                count = 0;
+            }
+            return count;
+        }
+
+        public void setCount(Integer count) {
+            this.count = count;
+        }
+    }
+
+    public static class Likes {
+        @SerializedName("count")
+        private Integer count;
+
+        public Integer getCount() {
+            if(count == null){
+                count = 0;
+            }
+            return count;
+        }
+
+        public void setCount(Integer count) {
+            this.count = count;
+        }
+    }
+
     public static class MediaData{
         @SerializedName("link")
         private String link;
         @SerializedName("id")
         private String id;
+        @SerializedName("location")
+        private InstagramLocation location;
+        @SerializedName("comments")
+        private Comments comments;
+        @SerializedName("caption")
+        private String caption;
+        @SerializedName("likes")
+        private Likes likes;
+        @SerializedName("type")
+        private String type;
+        @SerializedName("users_in_photo")
+        private Object[] users_in_photo; //No clue what this is supposed to be
+        @SerializedName("filter")
+        private String filter;
+        @SerializedName("user")
+        private UserData user;
+
         @SerializedName("images")
         private InstagramDataObject.Images images;
         @SerializedName("videos")
@@ -163,6 +249,20 @@ public class InstagramDataObject {
             this.data = data;
         }
     }
+
+    public static class MultipleUserDataObject{
+        @SerializedName("data")
+        private UserData[] data;
+
+        public UserData[] getData() {
+            return data;
+        }
+
+        public void setData(UserData[] data) {
+            this.data = data;
+        }
+    }
+
     public static class UserData{
         @SerializedName("id")
         private String id;
@@ -334,6 +434,40 @@ public class InstagramDataObject {
             this.height = height;
         }
     }
+
+
+    public MediaDataObject getMediaDataObject() {
+        return mediaDataObject;
+    }
+
+    public void setMediaDataObject(MediaDataObject mediaDataObject) {
+        this.mediaDataObject = mediaDataObject;
+    }
+
+    public String getNextMaxId() {
+        return nextMaxId;
+    }
+
+    public void setNextMaxId(String nextMaxId) {
+        this.nextMaxId = nextMaxId;
+    }
+
+    public Map<String, String> getInstagramPhotoIDUrls() {
+        return instagramPhotoIDUrls;
+    }
+
+    public void setInstagramPhotoIDUrls(Map<String, String> instagramPhotoIDUrls) {
+        this.instagramPhotoIDUrls = instagramPhotoIDUrls;
+    }
+
+    public String getAccess_token() {
+        return access_token;
+    }
+
+    public void setAccess_token(String access_token) {
+        this.access_token = access_token;
+    }
+
 }
 
 

@@ -9,6 +9,7 @@ import com.pgmacdesign.pgmacutilities.utilities.StringUtilities;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 /**
  * Created by pmacdowell on 2017-04-19.
  */
@@ -19,22 +20,36 @@ public class InstagramApiCalls {
     private Context context;
     private String instagramAccessToken, instagramUserId;
 
+    /**
+     * Constructor
+     * @param context
+     * @param myService
+     * @param instagramAccessToken
+     */
     public InstagramApiCalls(Context context, InstagramService myService,
-                             String instagramUserId, String instagramAccessToken){
+                             String instagramAccessToken){
         this.myService = myService;
         this.context = context;
         this.instagramAccessToken = instagramAccessToken;
+    }
+
+    /**
+     * Set the userId (As this is retrieved after the fact
+     * @param instagramUserId
+     */
+    public void setUserId(String instagramUserId){
         this.instagramUserId = instagramUserId;
     }
 
+    /**
+     * Checker to make sure data is set and internet is working
+     * @return
+     */
     private boolean doIProceed() {
         if(this.myService == null || this.context == null){
             return false;
         }
         if(StringUtilities.isNullOrEmpty(this.instagramAccessToken)){
-            return false;
-        }
-        if(StringUtilities.isNullOrEmpty(this.instagramUserId)){
             return false;
         }
         return NetworkUtilities.haveNetworkConnection(context);
@@ -46,7 +61,8 @@ public class InstagramApiCalls {
      * https://www.instagram.com/developer/endpoints/users/  )
      * @param listener
      */
-    public void getRecentMedia(final OnTaskCompleteListener listener, String paginationMaxId){
+    public void getRecentMedia(final OnTaskCompleteListener listener, String paginationMaxId,
+                               String paginationMinId, String countRequested){
         if (!doIProceed()) {
             listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
                     InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
@@ -54,7 +70,61 @@ public class InstagramApiCalls {
         }
 
         Call<InstagramDataObject.MediaDataObject> call = myService.
-                getRecentMedia(instagramAccessToken, paginationMaxId);
+                getSelfRecentMedia(instagramAccessToken, paginationMaxId,
+                        paginationMinId, countRequested);
+        call.enqueue(new Callback<InstagramDataObject.MediaDataObject>() {
+            @Override
+            public void onResponse(Call<InstagramDataObject.MediaDataObject> call, Response<InstagramDataObject.MediaDataObject>
+                    response) {
+                try {
+                    InstagramDataObject.MediaDataObject returnedObject = response.body();
+                    if (returnedObject != null) {
+                        listener.onTaskComplete(returnedObject,
+                                InstagramConstants.TAG_INSTAGRAM_MEDIADATAOBJECT);
+                    } else {
+                        if(response.errorBody() != null) {
+                            listener.onTaskComplete(response.errorBody().string(),
+                                    InstagramConstants.TAG_INSTAGRAM_ERROR_STRING);
+                        } else {
+                            listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                                    InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+                        }
+                    }
+                } catch (Exception e ){
+                    e.printStackTrace();
+                    listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                            InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<InstagramDataObject.MediaDataObject> call, Throwable t) {
+                t.printStackTrace();
+                listener.onTaskComplete(t.getMessage(),
+                        InstagramConstants.TAG_INSTAGRAM_ERROR_STRING);
+            }
+        });
+    }
+
+    /**
+     * Overloaded method, gets recent media of other userId passed in
+     * @param listener
+     * @param paginationMaxId
+     * @param paginationMinId
+     * @param countRequested
+     * @param otherUserId
+     */
+    public void getRecentMedia(final OnTaskCompleteListener listener, String paginationMaxId,
+                               String paginationMinId, String countRequested, String otherUserId){
+        if (!doIProceed()) {
+            listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                    InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+            return;
+        }
+
+        Call<InstagramDataObject.MediaDataObject> call = myService.
+                getRecentMedia(otherUserId, instagramAccessToken, paginationMaxId,
+                        paginationMinId, countRequested);
         call.enqueue(new Callback<InstagramDataObject.MediaDataObject>() {
             @Override
             public void onResponse(Call<InstagramDataObject.MediaDataObject> call, Response<InstagramDataObject.MediaDataObject>
@@ -113,7 +183,7 @@ public class InstagramApiCalls {
         }
 
         Call<InstagramDataObject.UserDataObject> call = myService.
-                getUserData(instagramUserId, instagramAccessToken);
+                getSelfData(instagramAccessToken);
         call.enqueue(new Callback<InstagramDataObject.UserDataObject>() {
             @Override
             public void onResponse(Call<InstagramDataObject.UserDataObject> call, Response<InstagramDataObject.UserDataObject>
@@ -148,7 +218,408 @@ public class InstagramApiCalls {
         });
     }
 
+    /**
+     * Overloaded method, this is used for searching someone else's account
+     * @param listener
+     * @param otherUserId
+     */
+    public void getUserData(final OnTaskCompleteListener listener, String otherUserId){
+        if (!doIProceed()) {
+            listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                    InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+            return;
+        }
+
+        Call<InstagramDataObject.UserDataObject> call = myService.
+                getUserData(otherUserId, instagramAccessToken);
+        call.enqueue(new Callback<InstagramDataObject.UserDataObject>() {
+            @Override
+            public void onResponse(Call<InstagramDataObject.UserDataObject> call, Response<InstagramDataObject.UserDataObject>
+                    response) {
+                try {
+                    InstagramDataObject.UserDataObject returnedObject = response.body();
+                    if (returnedObject != null) {
+                        listener.onTaskComplete(returnedObject,
+                                InstagramConstants.TAG_INSTAGRAM_USERDATAOBJECT);
+                    } else {
+                        if(response.errorBody() != null) {
+                            listener.onTaskComplete(response.errorBody().string(),
+                                    InstagramConstants.TAG_INSTAGRAM_ERROR_STRING);
+                        } else {
+                            listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                                    InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+                        }
+                    }
+                } catch (Exception e ){
+                    e.printStackTrace();
+                    listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                            InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<InstagramDataObject.UserDataObject> call, Throwable t) {
+                t.printStackTrace();
+                listener.onTaskComplete(t.getMessage(),
+                        InstagramConstants.TAG_INSTAGRAM_ERROR_STRING);
+            }
+        });
+    }
+
+    /**
+     * Get recently liked data
+     * @param listener
+     * @param paginationMaxId
+     * @param countRequested
+     */
+    public void getLiked(final OnTaskCompleteListener listener, String paginationMaxId,
+                               String countRequested){
+        if (!doIProceed()) {
+            listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                    InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+            return;
+        }
+
+        Call<InstagramDataObject.MediaDataObject> call = myService.
+                getSelfRecentLiked(instagramAccessToken, paginationMaxId, countRequested);
+        call.enqueue(new Callback<InstagramDataObject.MediaDataObject>() {
+            @Override
+            public void onResponse(Call<InstagramDataObject.MediaDataObject> call, Response<InstagramDataObject.MediaDataObject>
+                    response) {
+                try {
+                    InstagramDataObject.MediaDataObject returnedObject = response.body();
+                    if (returnedObject != null) {
+                        listener.onTaskComplete(returnedObject,
+                                InstagramConstants.TAG_INSTAGRAM_MEDIADATAOBJECT);
+                    } else {
+                        if(response.errorBody() != null) {
+                            listener.onTaskComplete(response.errorBody().string(),
+                                    InstagramConstants.TAG_INSTAGRAM_ERROR_STRING);
+                        } else {
+                            listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                                    InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+                        }
+                    }
+                } catch (Exception e ){
+                    e.printStackTrace();
+                    listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                            InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<InstagramDataObject.MediaDataObject> call, Throwable t) {
+                t.printStackTrace();
+                listener.onTaskComplete(t.getMessage(),
+                        InstagramConstants.TAG_INSTAGRAM_ERROR_STRING);
+            }
+        });
+    }
+
+    /**
+     * Search for a user with a query
+     * @param listener
+     * @param query
+     * @param countRequested
+     */
+    public void searchUsers(final OnTaskCompleteListener listener, String query,
+                         String countRequested){
+        if (!doIProceed()) {
+            listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                    InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+            return;
+        }
+
+        Call<InstagramDataObject.MultipleUserDataObject> call = myService.
+                searchUsers(instagramAccessToken, query, countRequested);
+        call.enqueue(new Callback<InstagramDataObject.MultipleUserDataObject>() {
+            @Override
+            public void onResponse(Call<InstagramDataObject.MultipleUserDataObject> call,
+                                   Response<InstagramDataObject.MultipleUserDataObject>
+                    response) {
+                try {
+                    InstagramDataObject.MultipleUserDataObject returnedObject = response.body();
+                    if (returnedObject != null) {
+                        listener.onTaskComplete(returnedObject,
+                                InstagramConstants.TAG_INSTAGRAM_MULTIPLE_USER_DATA);
+                    } else {
+                        if(response.errorBody() != null) {
+                            listener.onTaskComplete(response.errorBody().string(),
+                                    InstagramConstants.TAG_INSTAGRAM_ERROR_STRING);
+                        } else {
+                            listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                                    InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+                        }
+                    }
+                } catch (Exception e ){
+                    e.printStackTrace();
+                    listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                            InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<InstagramDataObject.MultipleUserDataObject> call,
+                                  Throwable t) {
+                t.printStackTrace();
+                listener.onTaskComplete(t.getMessage(),
+                        InstagramConstants.TAG_INSTAGRAM_ERROR_STRING);
+            }
+        });
+    }
 
 
-    
+    /**
+     * Get a list of who the user follows
+     * @param listener
+     */
+    public void getFollows(final OnTaskCompleteListener listener){
+        if (!doIProceed()) {
+            listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                    InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+            return;
+        }
+
+        Call<InstagramDataObject.MultipleUserDataObject> call = myService.
+                getSelfFollows(instagramAccessToken);
+        call.enqueue(new Callback<InstagramDataObject.MultipleUserDataObject>() {
+            @Override
+            public void onResponse(Call<InstagramDataObject.MultipleUserDataObject> call,
+                                   Response<InstagramDataObject.MultipleUserDataObject>
+                                           response) {
+                try {
+                    InstagramDataObject.MultipleUserDataObject returnedObject = response.body();
+                    if (returnedObject != null) {
+                        listener.onTaskComplete(returnedObject,
+                                InstagramConstants.TAG_INSTAGRAM_MULTIPLE_USER_DATA);
+                    } else {
+                        if(response.errorBody() != null) {
+                            listener.onTaskComplete(response.errorBody().string(),
+                                    InstagramConstants.TAG_INSTAGRAM_ERROR_STRING);
+                        } else {
+                            listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                                    InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+                        }
+                    }
+                } catch (Exception e ){
+                    e.printStackTrace();
+                    listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                            InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<InstagramDataObject.MultipleUserDataObject> call,
+                                  Throwable t) {
+                t.printStackTrace();
+                listener.onTaskComplete(t.getMessage(),
+                        InstagramConstants.TAG_INSTAGRAM_ERROR_STRING);
+            }
+        });
+    }
+
+    /**
+     * Get a list of who follows the user
+     * @param listener
+     */
+    public void getFollowedBy(final OnTaskCompleteListener listener){
+        if (!doIProceed()) {
+            listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                    InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+            return;
+        }
+
+        Call<InstagramDataObject.MultipleUserDataObject> call = myService.
+                getSelfFollowedBy(instagramAccessToken);
+        call.enqueue(new Callback<InstagramDataObject.MultipleUserDataObject>() {
+            @Override
+            public void onResponse(Call<InstagramDataObject.MultipleUserDataObject> call,
+                                   Response<InstagramDataObject.MultipleUserDataObject>
+                                           response) {
+                try {
+                    InstagramDataObject.MultipleUserDataObject returnedObject = response.body();
+                    if (returnedObject != null) {
+                        listener.onTaskComplete(returnedObject,
+                                InstagramConstants.TAG_INSTAGRAM_MULTIPLE_USER_DATA);
+                    } else {
+                        if(response.errorBody() != null) {
+                            listener.onTaskComplete(response.errorBody().string(),
+                                    InstagramConstants.TAG_INSTAGRAM_ERROR_STRING);
+                        } else {
+                            listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                                    InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+                        }
+                    }
+                } catch (Exception e ){
+                    e.printStackTrace();
+                    listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                            InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<InstagramDataObject.MultipleUserDataObject> call,
+                                  Throwable t) {
+                t.printStackTrace();
+                listener.onTaskComplete(t.getMessage(),
+                        InstagramConstants.TAG_INSTAGRAM_ERROR_STRING);
+            }
+        });
+    }
+
+
+    /**
+     * Get a list of the users who have requested this user's permission to follow.
+     * @param listener
+     */
+    public void getRequestedBy(final OnTaskCompleteListener listener){
+        if (!doIProceed()) {
+            listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                    InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+            return;
+        }
+
+        Call<InstagramDataObject.MultipleUserDataObject> call = myService.
+                getSelfRequestedBy(instagramAccessToken);
+        call.enqueue(new Callback<InstagramDataObject.MultipleUserDataObject>() {
+            @Override
+            public void onResponse(Call<InstagramDataObject.MultipleUserDataObject> call,
+                                   Response<InstagramDataObject.MultipleUserDataObject>
+                                           response) {
+                try {
+                    InstagramDataObject.MultipleUserDataObject returnedObject = response.body();
+                    if (returnedObject != null) {
+                        listener.onTaskComplete(returnedObject,
+                                InstagramConstants.TAG_INSTAGRAM_MULTIPLE_USER_DATA);
+                    } else {
+                        if(response.errorBody() != null) {
+                            listener.onTaskComplete(response.errorBody().string(),
+                                    InstagramConstants.TAG_INSTAGRAM_ERROR_STRING);
+                        } else {
+                            listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                                    InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+                        }
+                    }
+                } catch (Exception e ){
+                    e.printStackTrace();
+                    listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                            InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<InstagramDataObject.MultipleUserDataObject> call,
+                                  Throwable t) {
+                t.printStackTrace();
+                listener.onTaskComplete(t.getMessage(),
+                        InstagramConstants.TAG_INSTAGRAM_ERROR_STRING);
+            }
+        });
+    }
+
+
+    /**
+     * Get information about a relationship to another user.
+     * Relationships are expressed using the following terms in the response:
+            1) outgoing_status: Your relationship to the user. Can be 'follows',
+               'requested', 'none'.
+            2) incoming_status: A user's relationship to you. Can be 'followed_by',
+               'requested_by', 'blocked_by_you', 'none'.
+     * @param listener
+     * @param otherUserId The other userId to compare against
+     */
+    public void getRelationships(final OnTaskCompleteListener listener, String otherUserId){
+        if (!doIProceed()) {
+            listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                    InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+            return;
+        }
+
+        Call<InstagramDataObject.UserRelationshipObj> call = myService.
+                getRelationship(otherUserId, instagramAccessToken);
+        call.enqueue(new Callback<InstagramDataObject.UserRelationshipObj>() {
+            @Override
+            public void onResponse(Call<InstagramDataObject.UserRelationshipObj> call,
+                                   Response<InstagramDataObject.UserRelationshipObj>
+                                           response) {
+                try {
+                    InstagramDataObject.UserRelationshipObj returnedObject = response.body();
+                    if (returnedObject != null) {
+                        listener.onTaskComplete(returnedObject,
+                                InstagramConstants.TAG_INSTAGRAM_USER_RELATIONSHIP);
+                    } else {
+                        if(response.errorBody() != null) {
+                            listener.onTaskComplete(response.errorBody().string(),
+                                    InstagramConstants.TAG_INSTAGRAM_ERROR_STRING);
+                        } else {
+                            listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                                    InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+                        }
+                    }
+                } catch (Exception e ){
+                    e.printStackTrace();
+                    listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                            InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<InstagramDataObject.UserRelationshipObj> call, Throwable t) {
+                t.printStackTrace();
+                listener.onTaskComplete(t.getMessage(),
+                        InstagramConstants.TAG_INSTAGRAM_ERROR_STRING);
+            }
+        });
+    }
+
+    /**
+     * Update a relationship by taking an action (See actions for more info)
+     * @param listener
+     * @param action {@link com.pgmacdesign.pgmacutilities.instagram.InstagramConstants.InstagramActions}
+     */
+    public void updateRelationships(final OnTaskCompleteListener listener,
+                                    InstagramConstants.InstagramActions action){
+        if (!doIProceed()) {
+            listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                    InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+            return;
+        }
+
+        Call<InstagramDataObject.UserRelationshipObj> call = myService.
+                setRelationship(instagramAccessToken, action.toString());
+        call.enqueue(new Callback<InstagramDataObject.UserRelationshipObj>() {
+            @Override
+            public void onResponse(Call<InstagramDataObject.UserRelationshipObj> call,
+                                   Response<InstagramDataObject.UserRelationshipObj>
+                                           response) {
+                try {
+                    InstagramDataObject.UserRelationshipObj returnedObject = response.body();
+                    if (returnedObject != null) {
+                        listener.onTaskComplete(returnedObject,
+                                InstagramConstants.TAG_INSTAGRAM_USER_RELATIONSHIP);
+                    } else {
+                        if(response.errorBody() != null) {
+                            listener.onTaskComplete(response.errorBody().string(),
+                                    InstagramConstants.TAG_INSTAGRAM_ERROR_STRING);
+                        } else {
+                            listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                                    InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+                        }
+                    }
+                } catch (Exception e ){
+                    e.printStackTrace();
+                    listener.onTaskComplete(InstagramConstants.GENERIC_INSTAGRAM_RESPONSE_STRING,
+                            InstagramConstants.TAG_INSTAGRAM_UNKNOWN_ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<InstagramDataObject.UserRelationshipObj> call, Throwable t) {
+                t.printStackTrace();
+                listener.onTaskComplete(t.getMessage(),
+                        InstagramConstants.TAG_INSTAGRAM_ERROR_STRING);
+            }
+        });
+    }
+
 }

@@ -109,7 +109,7 @@ public class InstagramUtilities {
         if(!url.startsWith(redirectUri)){
             return false;
         } else {
-            if(redirectUri.contains("#access_token=")){
+            if(url.contains("#access_token=")){
                 return true;
             } else {
                 return false;
