@@ -1069,5 +1069,38 @@ public class DatabaseUtilities {
         return success;
     }
 
+    /**
+     * Prints out the database in the logcat. Useful for checking what is happening
+     * if you are receiving weird results.
+     * @param <T>
+     */
+    public <T extends RealmObject> void printOutDatabase() {
+        L.m("Begin Printout of full Database");
+        Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
+        final RealmQuery query = RealmQuery.createQuery(realm, MasterDatabaseObject.class);
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                //Start transaction
+                RealmResults<T> results = query.findAll();
+                if (results == null) {
+                    L.m("Nothing in the Database");
+                    return;
+                }
+                for (T t : results) {
+                    if (t != null) {
+                        MasterDatabaseObject mdo = (MasterDatabaseObject) t;
+                        L.m("Object: " + mdo.getId() + ", JSON == "
+                                + mdo.getJsonString() + "\n");
+                    }
+                }
+            }
+        });
 
+        try {
+            realm.close();
+        } catch (Exception e) {
+        }
+        L.m("End Printout of full Database");
+    }
 }

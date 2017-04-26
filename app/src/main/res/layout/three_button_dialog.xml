@@ -76,7 +76,8 @@
         android:background="#ffffff"
         android:orientation="horizontal"
         android:weightSum="100"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="32dp"
+        android:paddingBottom="8dp"
         >
 
         <TextView
