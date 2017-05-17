@@ -29,12 +29,18 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.CallAdapter;
+import retrofit2.Converter;
 import retrofit2.Retrofit;
 
 /**
  * Created by pmacdowell on 8/25/2016.
  */
 public class RetrofitClient {
+
+    private static final String APPLICATION_JSON = "application/json";
+    private static final String MULTIPART_FORM_DATA = "multipart/form-data";
+    private static final String CONTENT_TYPE = "Content-Type";
 
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     public static final String DEFAULT_DATE_FORMAT_WITHOUT_MILLISECONDS = "yyyy-MM-dd'T'HH:mm:ss'Z'";
@@ -45,6 +51,8 @@ public class RetrofitClient {
     private int readTimeout, writeTimeout;
     private String dateFormat;
     private Class serviceInterface;
+    private Converter.Factory customConverterFactory;
+    private CallAdapter.Factory customCallAdapterFactory;
 
     /**
      * Constructor
@@ -57,6 +65,8 @@ public class RetrofitClient {
         this.readTimeout = builder.builder_readTimeout;
         this.writeTimeout = builder.builder_writeTimeout;
         this.serviceInterface = builder.builder_serviceInterface;
+        this.customConverterFactory = builder.customConverterFactory;
+        this.customCallAdapterFactory = builder.customCallAdapterFactory;
     }
 
     /**
@@ -156,7 +166,17 @@ public class RetrofitClient {
         //Create the retrofit object, which will use the variables/ objects we have created above
         Retrofit.Builder myBuilder = new Retrofit.Builder();
         myBuilder.baseUrl(urlBase);
-        myBuilder.addConverterFactory(new CustomConverterFactory());
+
+        if(customConverterFactory != null){
+            myBuilder.addConverterFactory(customConverterFactory);
+        } else {
+            myBuilder.addConverterFactory(new CustomConverterFactory());
+        }
+
+        if(customCallAdapterFactory != null) {
+            myBuilder.addCallAdapterFactory(customCallAdapterFactory);
+            //IE: RxJava2CallAdapterFactory.create()
+        }
 
         myBuilder.client(client);
         Retrofit retrofit = myBuilder.build();
@@ -228,6 +248,8 @@ public class RetrofitClient {
         int builder_readTimeout, builder_writeTimeout;
         String builder_dateFormat;
         static final int SIXTY_SECONDS = (int)(1000*60);
+        Converter.Factory customConverterFactory;
+        CallAdapter.Factory customCallAdapterFactory;
 
         /**
          * Constructor visible to the outside
@@ -258,6 +280,28 @@ public class RetrofitClient {
             if(logLevel != null){
                 this.builder_logLevel = logLevel;
             }
+            return this;
+        }
+
+        /**
+         * Set a custom factory in case you want to add a special one (IE RX Java)
+         * Note! If left out or not set, will default to {@link CustomConverterFactory}
+         * @param factory {@link Converter.Factory}
+         * @return this
+         */
+        public Builder setCustomConverterFactory(Converter.Factory factory){
+            this.customConverterFactory = factory;
+            return this;
+        }
+
+        /**
+         * Set a custom Adapter factory. If this is ignored or not set, this will NOT
+         * be included in the final output
+         * @param factory An example of this would be an RX Java call adapter
+         * @return this
+         */
+        public Builder setCustomAdapterFactory(CallAdapter.Factory factory){
+            this.customCallAdapterFactory = factory;
             return this;
         }
 
@@ -308,7 +352,7 @@ public class RetrofitClient {
          */
         public Builder callIsJSONFormat(){
             Map<String, String> myMap = new HashMap<>();
-            myMap.put("Content-Type", "application/json");
+            myMap.put(CONTENT_TYPE, APPLICATION_JSON);
             this.builder_headers = myMap;
             return this;
         }
@@ -321,7 +365,7 @@ public class RetrofitClient {
          */
         public Builder callIsMultipartFormat(){
             Map<String, String> myMap = new HashMap<>();
-            myMap.put("Content-Type", "multipart/form-data");
+            myMap.put(CONTENT_TYPE, MULTIPART_FORM_DATA);
             this.builder_headers = myMap;
             return this;
         }
@@ -332,7 +376,7 @@ public class RetrofitClient {
          */
         public static Map<String, String> getApplicationJSONMap(){
             Map<String, String> myMap = new HashMap<>();
-            myMap.put("Content-Type", "application/json");
+            myMap.put(CONTENT_TYPE, APPLICATION_JSON);
             return myMap;
         }
 
@@ -342,7 +386,7 @@ public class RetrofitClient {
          */
         public static Map<String, String> getMultipartFormat(){
             Map<String, String> myMap = new HashMap<>();
-            myMap.put("Content-Type", "multipart/form-data");
+            myMap.put(CONTENT_TYPE, MULTIPART_FORM_DATA);
             return myMap;
         }
 

@@ -19,6 +19,7 @@ public class UberUtilities {
 
     public static class Builder {
 
+        static final String UBER_PACKAGE = "com.ubercab";
         static final String UBER_APP_BASE_STRING = "uber://?";
         static final String UBER_WEB_BASE_STRING = "https://m.uber.com/ul/?";
 
@@ -101,7 +102,7 @@ public class UberUtilities {
             StringBuilder sb = new StringBuilder();
             try {
                 PackageManager pm = context.getPackageManager();
-                pm.getPackageInfo("com.ubercab", PackageManager.GET_ACTIVITIES);
+                pm.getPackageInfo(UBER_PACKAGE, PackageManager.GET_ACTIVITIES);
                 userHasUberApp = true;
                 sb.append(UBER_APP_BASE_STRING);
             } catch (PackageManager.NameNotFoundException e) {

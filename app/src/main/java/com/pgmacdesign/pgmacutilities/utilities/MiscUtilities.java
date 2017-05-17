@@ -315,4 +315,18 @@ public class MiscUtilities {
             cookieSyncMngr.sync();
         }
     }
+
+    /**
+     * Checks if a user has the facebook application installed on their phone
+     * @param context Context used to ge the package manager
+     * @return boolean, true if they have it installed, false if they do not
+     */
+    public static boolean doesUserHaveFacebookAppInstalled(Context context){
+        try{
+            context.getPackageManager().getApplicationInfo("com.facebook.katana", 0 );
+            return true;
+        } catch( PackageManager.NameNotFoundException e ){
+            return false;
+        }
+    }
 }
