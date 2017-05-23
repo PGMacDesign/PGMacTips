@@ -6,12 +6,14 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 /**
@@ -20,35 +22,24 @@ import java.util.List;
 
 public class MultiColorCircle extends View  {
 
-    /*
-    TO USE:
-
-        my_circle = (MultiColorCircle) this.findViewById(R.id.my_circle);
-        my_circle.setWidthOfCircleStroke(60);
-        my_circle.setWidthOfBoarderStroke(2);
-        my_circle.setColorOfBoarderStroke(ContextCompat.getColor(this, R.color.purple));
-        MultiColorCircle.CustomStrokeObject s1 = new MultiColorCircle.CustomStrokeObject(
-            50, 0, ContextCompat.getColor(this, R.color.blue)
-        );
-        MultiColorCircle.CustomStrokeObject s2 = new MultiColorCircle.CustomStrokeObject(
-            30, 50, ContextCompat.getColor(this, R.color.red)
-        );
-        MultiColorCircle.CustomStrokeObject s3 = new MultiColorCircle.CustomStrokeObject(
-            20, 80, ContextCompat.getColor(this, R.color.green)
-        );
-        List<MultiColorCircle.CustomStrokeObject> myList = new ArrayList<>();
-        myList.add(s1);
-        myList.add(s2);
-        myList.add(s3);
-
-        my_circle.setCircleStrokes(myList);
-
+    /**
+     * Frames per second options on animation. Defaults to 60
      */
+    public static enum FPS {
+        FPS_1, FPS_5, FPS_10, FPS_15, FPS_30, FPS_60, FPS_90, FPS_120, FPS_240
+    }
+
+    private static final int MAX_ANIMATION_TIME_IN_MILLISEC = (int)(1.3 * 1000);
+
+    private double numberOfAnimationRuns;
+    private FPS fps;
     private RectF rect, outerRect, innerRect;
     private Paint perimeterPaint;
-    private List<CustomStrokeObject> strokeObjects;
+    private List<CustomStrokeObject> strokeObjects, animatedStrokeObjects;
     private int widthOfCircleStroke, widthOfBoarderStroke,
             colorOfBoarderStroke, onePercentPixels;
+    private boolean animateStrokes, drawBoarderWithCircle;
+    private long totalAnimationTime;
 
     public MultiColorCircle(Context context) {
         super(context);
@@ -105,9 +96,52 @@ public class MultiColorCircle extends View  {
         this.perimeterPaint.setColor(this.colorOfBoarderStroke);
     }
 
+    /**
+     * Sets whether or not the inner and outer boarders should be drawn at the same time as
+     * the other arcs or drawn before hand. Note, this only applied if there is animation, if
+     * no animation is being used, this will be ignored.
+     * @param bool If set to true, boarder circles will draw at the same time and will not draw
+     *             beforehand (no 'empty' ring). If set to false, this will have the ring pre-
+     *             drawn when the first invalidate gets called and it will appear as though the
+     *             ring is being 'filled-in' instead.
+     *             Defaults to false.
+     */
+    public void setDrawBoarderWithCircle(boolean bool){
+        this.drawBoarderWithCircle = bool;
+    }
+
+    /**
+     * Whether or not to animate the strokes. If true, will animate, if not, will not
+     * @param bool
+     */
+    public void setAnimateStrokes(boolean bool, long timeInMilliseconds){
+        this.animateStrokes = bool;
+        if(timeInMilliseconds < 0){
+            timeInMilliseconds = 0;
+        }
+        this.totalAnimationTime = timeInMilliseconds;
+    }
+
+    /**
+     * Set the FPS for the animation. Defaults to 30 if not set
+     * @param fps Frames per second {@link FPS}
+     */
+    public void setFps(FPS fps){
+        if(fps != null){
+            this.fps = fps;
+        } else {
+            this.fps = FPS.FPS_60;
+        }
+    }
+
     private void init(){
+        this.fps = FPS.FPS_60;
+        this.drawBoarderWithCircle = false;
         this.strokeObjects = new ArrayList<>();
-        this.onePercentPixels = 0;
+        this.animatedStrokeObjects = new ArrayList<>();
+        this.animateStrokes = false; //Default
+        this.totalAnimationTime = 0; //Default
+        this.onePercentPixels = 0; //Default
         this.widthOfCircleStroke = 1; //Default
         this.widthOfBoarderStroke = 1; //Default
         this.colorOfBoarderStroke = Color.parseColor("#000000"); //Default, black
@@ -154,8 +188,12 @@ public class MultiColorCircle extends View  {
             }
             Paint paint = strokeObject.paint;
             paint.setStrokeWidth(this.widthOfCircleStroke);
-            canvas.drawArc(rect, strokeObject.percentToStartAt,
-                    strokeObject.percentOfCircle, false, paint);
+            try {
+                canvas.drawArc(rect, strokeObject.percentToStartAt,
+                        strokeObject.percentOfCircle, false, paint);
+            } catch (ConcurrentModificationException cme){
+                continue;
+            }
         }
         drawPerimeterCircle(canvas, left, top, right, bottom);
     }
@@ -177,8 +215,28 @@ public class MultiColorCircle extends View  {
                 (right - (widthOfCircleStroke / 2)),
                 (bottom - (widthOfCircleStroke / 2))
         );
-        canvas.drawArc(outerRect, 0, 360, false, perimeterPaint);
-        canvas.drawArc(innerRect, 0, 360, false, perimeterPaint);
+
+        //To allow the user to either allow or deny the ring to look pre 'filled-in'
+        if(drawBoarderWithCircle){
+            for(CustomStrokeObject strokeObject : this.strokeObjects){
+                if(strokeObject == null){
+                    continue;
+                }
+                try {
+                    canvas.drawArc(outerRect, strokeObject.percentToStartAt,
+                            strokeObject.percentOfCircle, false, perimeterPaint);
+                    canvas.drawArc(innerRect, strokeObject.percentToStartAt,
+                            strokeObject.percentOfCircle, false, perimeterPaint);
+                } catch (ConcurrentModificationException cme){
+                    continue;
+                }
+            }
+        } else {
+            canvas.drawArc(outerRect, 0, 360, false, perimeterPaint);
+            canvas.drawArc(innerRect, 0, 360, false, perimeterPaint);
+        }
+
+        this.bringToFront();
     }
 
     /**
@@ -194,10 +252,112 @@ public class MultiColorCircle extends View  {
         }
         this.strokeObjects = new ArrayList<>();
         this.strokeObjects = strokeObjects;
-        invalidate();
+        if(animateStrokes){
+            animateLines();
+        } else {
+            invalidate();
+        }
+    }
+
+    /**
+     * Animate the drawing of the lines/ arcs on the screen
+     */
+    private void animateLines(){
+
+        this.animatedStrokeObjects = this.strokeObjects;
+
+        calculateNumAnimationRuns();
+        long millisecondsPerRun;
+        //Too quick at 10 milliseconds anyway, this is just to account for user error on param passing
+        if(totalAnimationTime <= 10){
+            totalAnimationTime = MAX_ANIMATION_TIME_IN_MILLISEC;
+            millisecondsPerRun = (long)(MAX_ANIMATION_TIME_IN_MILLISEC / numberOfAnimationRuns);
+        } else {
+            millisecondsPerRun = (long)(totalAnimationTime / numberOfAnimationRuns);
+        }
+
+        CountDownTimer countDownTimer = new CountDownTimer(totalAnimationTime, millisecondsPerRun) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                animateStrokePerMillisecond(millisUntilFinished);
+            }
+
+            @Override
+            public void onFinish() {
+                animateStrokePerMillisecond(0);
+            }
+        };
+        countDownTimer.start();
     }
 
 
+    /**
+     * Send the animation 'request' by passing over the number of milliseconds until the timer
+     * is done. This is counting backwards from the total time to complete. So if zero is passed,
+     * it will be done and compelte the drawing.
+     * @param millisUntilFinished
+     */
+    private void animateStrokePerMillisecond(long millisUntilFinished){
+        //Update per tick. This will update as per # of runs
+        int listSize = animatedStrokeObjects.size();
+        strokeObjects = new ArrayList<>();
+        double percentComplete =
+                (((double)totalAnimationTime - (double)millisUntilFinished) / (double)totalAnimationTime);
+
+        for (CustomStrokeObject s : animatedStrokeObjects) {
+            double f1 = (s.percentOfCircle * percentComplete);
+            CustomStrokeObject sepObj = new CustomStrokeObject(s.paint, (float) f1,
+                    s.percentToStartAt, s.colorOfLine);
+            strokeObjects.add(sepObj);
+        }
+
+        invalidate();
+    }
+
+    /**
+     * Calculate the number of animation runs by calculating the Frames per second
+     * (FPS chosen * total animation time in seconds)
+     */
+    private void calculateNumAnimationRuns(){
+        switch (fps){
+            case FPS_1:
+                numberOfAnimationRuns = 1*((double)totalAnimationTime / 1000);
+                break;
+
+            case FPS_5:
+                numberOfAnimationRuns = 5*((double)totalAnimationTime / 1000);
+                break;
+
+            case FPS_10:
+                numberOfAnimationRuns = 10*((double)totalAnimationTime / 1000);
+                break;
+
+            case FPS_15:
+                numberOfAnimationRuns = 15*((double)totalAnimationTime / 1000);
+                break;
+
+            case FPS_30:
+                numberOfAnimationRuns = 30*((double)totalAnimationTime / 1000);
+                break;
+
+            case FPS_60:
+                numberOfAnimationRuns = 60*((double)totalAnimationTime / 1000);
+                break;
+
+            case FPS_90:
+                numberOfAnimationRuns = 90*((double)totalAnimationTime / 1000);
+                break;
+
+            case FPS_120:
+                numberOfAnimationRuns = 120*((double)totalAnimationTime / 1000);
+                break;
+
+            case FPS_240:
+                numberOfAnimationRuns = 240*((double)totalAnimationTime / 1000);
+                break;
+
+        }
+    }
 
     /**
      * Class used in drawing arcs of circle
@@ -208,6 +368,8 @@ public class MultiColorCircle extends View  {
         float percentToStartAt;
         Integer colorOfLine;
         Paint paint;
+
+
 
         /**
          * Constructor. This will also do the calculations to convert the percentages into the
@@ -232,20 +394,49 @@ public class MultiColorCircle extends View  {
             if(this.percentOfCircle < 0 || this.percentOfCircle > 100){
                 this.percentOfCircle = 100; //Default to 100%
             }
-            this.percentOfCircle = (float)((360 * (percentOfCircle + 0.1)) / 100);
+
+            this.percentOfCircle = (float)((360 * (percentOfCircle)) / 100);
             if(this.percentToStartAt < 0 || this.percentToStartAt > 100){
                 this.percentToStartAt = 0;
             }
             //-90 so it will start at top, Ex: http://www.cumulations.com/images/blog/screen1.png
-            this.percentToStartAt = (float)((360 * (percentToStartAt - 0.1)) / 100) - 90;
+            this.percentToStartAt = (float)((360 * (percentToStartAt)) / 100) - 90;
             if(this.colorOfLine == null){
                 this.colorOfLine = Color.parseColor("#000000"); //Default to black
             }
 
-            paint = new Paint();
-            paint.setColor(colorOfLine);
-            paint.setAntiAlias(true);
-            paint.setStyle(Paint.Style.STROKE);
+            this.paint = new Paint();
+            this.paint.setColor(colorOfLine);
+            this.paint.setAntiAlias(true);
+            this.paint.setStyle(Paint.Style.STROKE);
+            //If you want to change this, use overloaded constructor
+            this.paint.setStrokeCap(Paint.Cap.ROUND);
+        }
+
+        /**
+         * Overloaded method. Allows for items to be passed in that already have calculations
+         * done for conversion.
+         */
+        public CustomStrokeObject(Paint paint, float percentOfCircle,
+                                  float percentToStartAt, Integer colorOfLine){
+            this.percentOfCircle = percentOfCircle;
+            this.percentToStartAt = percentToStartAt;
+            this.colorOfLine = colorOfLine;
+            if(this.colorOfLine == null){
+                this.colorOfLine = Color.parseColor("#000000"); //Default to black
+            }
+            this.paint = paint;
+        }
+
+        /**
+         * Custom overloaded constructor. Allows for duplicating objects within foreach loops
+         * @param obj
+         */
+        public CustomStrokeObject(CustomStrokeObject obj){
+            this.percentOfCircle = obj.percentOfCircle;
+            this.percentToStartAt = obj.percentToStartAt;
+            this.colorOfLine = obj.colorOfLine;
+            this.paint = obj.paint;
         }
 
         /**
