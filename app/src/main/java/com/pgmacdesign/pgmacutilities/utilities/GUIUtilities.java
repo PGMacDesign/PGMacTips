@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
@@ -58,6 +59,18 @@ public class GUIUtilities {
             inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
         } catch (Exception e){
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Send a view to the back
+     * @param child
+     */
+    public static void sendViewToBack(final View child) {
+        final ViewGroup parent = (ViewGroup)child.getParent();
+        if (null != parent) {
+            parent.removeView(child);
+            parent.addView(child, 0);
         }
     }
 
