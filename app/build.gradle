@@ -1,5 +1,5 @@
-//apply plugin: 'com.android.application' //Remove this when switching from app to lib
-apply plugin: 'com.android.library'
+apply plugin: 'com.android.application' //Remove this when switching from app to lib
+//apply plugin: 'com.android.library'
 apply plugin: 'realm-android'
 apply plugin: 'com.github.dcendents.android-maven'
 group='com.github.PGMacDesign'

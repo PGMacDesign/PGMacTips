@@ -52,6 +52,7 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
         button.setTag("button");
         button.setTransformationMethod(null);
         button.setOnClickListener(this);
+
         init();
     }
 
@@ -271,6 +272,7 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        doWebCall();
+        //doWebCall();
+
     }
 }
