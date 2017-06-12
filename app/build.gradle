@@ -1,5 +1,5 @@
-//apply plugin: 'com.android.application' //Remove this when switching from app to lib
-apply plugin: 'com.android.library'
+apply plugin: 'com.android.application' //Remove this when switching from app to lib
+//apply plugin: 'com.android.library'
 apply plugin: 'realm-android'
 apply plugin: 'com.github.dcendents.android-maven'
 group='com.github.PGMacDesign'
@@ -28,7 +28,7 @@ android {
         targetSdkVersion 25
         multiDexEnabled true
         versionCode 1
-        versionName "0.0.09"
+        versionName "0.0.11"
         //resValue "string", "mapzen_string_api_key", mapzenApiKey
     }
     dexOptions {
@@ -82,17 +82,17 @@ android {
 
         //Animations Base. (used in Android animations)
         //compile 'com.nineoldandroids:library:2.4.0'
-        //Jar Downloaded on 2017-03-24
+        //Jar Removed on 2017-06-12 due to duplication, included with other lib
 
         //Retrofit, Retrofit Converters, and OKHTTP.
         //Retrofit - http://square.github.io/retrofit/
         //OKHttp - http://square.github.io/okhttp/
         //compile 'com.squareup.retrofit2:retrofit:2.2.0'
         //Jar Downloaded on 2017-03-24
-        //compile 'com.squareup.okhttp3:okhttp:3.6.0'
-        //Jar Downloaded on 2017-03-24
-        //compile 'com.squareup.okhttp3:logging-interceptor:3.6.0'
-        //Jar Downloaded on 2017-03-24
+        //compile 'com.squareup.okhttp3:okhttp:3.8.0'
+        //Jar Downloaded on 2017-06-12
+        //compile 'com.squareup.okhttp3:logging-interceptor:3.8.0'
+        //Jar Downloaded on 2017-06-12
         //Type-safe HTTP client for Android and Java: https://github.com/square/retrofit
         //compile 'com.squareup.retrofit2:converter-gson:2.2.0'
         //Jar Downloaded on 2017-03-24

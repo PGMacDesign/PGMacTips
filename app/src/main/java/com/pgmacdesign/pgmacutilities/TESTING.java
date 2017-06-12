@@ -23,6 +23,7 @@ import com.pgmacdesign.pgmacutilities.utilities.DatabaseUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.L;
 import com.pgmacdesign.pgmacutilities.utilities.MiscUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.PermissionUtilities;
+import com.pgmacdesign.pgmacutilities.utilities.TimerUtilities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -273,6 +274,13 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         //doWebCall();
+        TimerUtilities.startTimer(new OnTaskCompleteListener() {
+            @Override
+            public void onTaskComplete(Object result, int customTag) {
+                L.m("result received from timerutilities");
+                testLoadingAnimation();
+            }
+        });
 
     }
 }
