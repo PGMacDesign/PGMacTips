@@ -144,6 +144,27 @@ public class StringUtilities {
     }
 
     /**
+     * Convert String to title case. Sample:
+     * "Bob went to the store" --> "Bob Went To The Store"
+     * @param str String to convert
+     * @return Converted String. If null or empty passed, passes back same
+     */
+    public static String toTitleCase(String str){
+        if(isNullOrEmpty(str)){
+            return str;
+        }
+
+        String[] arr = str.split(" ");
+        StringBuffer sb = new StringBuffer();
+
+        for (int i = 0; i < arr.length; i++) {
+            sb.append(Character.toUpperCase(arr[i].charAt(0)))
+                    .append(arr[i].substring(1)).append(" ");
+        }
+        return sb.toString().trim();
+    }
+
+    /**
      * Takes in a String and converts it to a number matching a phone number type. Example would be
      * you send int "ABC", it will return "222" as on a phone dial screen, ABC are all on the 2 key.
      * @param str String to parse
