@@ -21,9 +21,9 @@ import com.pgmacdesign.pgmacutilities.utilities.CameraMediaUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.ContactUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.DatabaseUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.L;
+import com.pgmacdesign.pgmacutilities.utilities.MalwareUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.MiscUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.PermissionUtilities;
-import com.pgmacdesign.pgmacutilities.utilities.TimerUtilities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -274,6 +274,7 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         //doWebCall();
+        /*
         TimerUtilities.startTimer(new OnTaskCompleteListener() {
             @Override
             public void onTaskComplete(Object result, int customTag) {
@@ -281,6 +282,10 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
                 testLoadingAnimation();
             }
         });
+        */
+        List<String> mylist = MalwareUtilities.checkForMalware(this);
+        L.m("Number of infections: " + mylist.size());
+        L.Toast(this, "Number of infections: " + mylist.size());
 
     }
 }

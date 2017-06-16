@@ -16,4 +16,8 @@
     <dimen name="translationZ">7dp</dimen>
     <dimen name="elevation">7dp</dimen>
     <dimen name="app_bar_height">48dp</dimen>
+    <dimen name="screen_max_height_dp">640dp</dimen>
+    <dimen name="half_screen_max_height_dp">320dp</dimen>
+    <dimen name="screen_max_width_dp">480dp</dimen>
+    <dimen name="half_screen_max_width_dp">240dp</dimen>
 </resources>
