@@ -11,6 +11,8 @@ import android.view.WindowManager;
 
 import com.pgmacdesign.pgmacutilities.R;
 
+import static android.util.TypedValue.COMPLEX_UNIT_DIP;
+
 /**
  * This class helps to determine the screen height and width in Density Pixels (DP)
  * Created by pmacdowell on 8/15/2016.
@@ -22,7 +24,7 @@ public class DisplayManagerUtilities {
     private WindowManager windowManager;
     private Display mDisplay;
     private Configuration mConfig;
-    private float densityRatio;
+    private float densityRatio, scaledDensity;
     private float dpWidth, dpHeight, xdpi, ydpi;
     private int pixelsWidth, pixelsHeight;
     private String totalScreenDimensionsPixels, totalScreenDimensionsDP;
@@ -74,6 +76,7 @@ public class DisplayManagerUtilities {
         if(tempx > 0 && tempy >  0){
             //API 17+
             densityRatio = api17OutMetrics.density;
+            scaledDensity = api17OutMetrics.scaledDensity;
             dpHeight = (float)((tempy / densityRatio) + 0.5);
             dpWidth = (float)((tempx / densityRatio) + 0.5);
             xdpi = api17OutMetrics.xdpi;
@@ -81,6 +84,7 @@ public class DisplayManagerUtilities {
         } else {
             //API 16-
             densityRatio = outMetrics.density;
+            scaledDensity = outMetrics.scaledDensity;
             dpHeight = (float)((pixelsHeight / densityRatio) + 0.5);
             dpWidth = (float)((pixelsWidth / densityRatio) + 0.5);
             xdpi = outMetrics.xdpi;
@@ -141,6 +145,10 @@ public class DisplayManagerUtilities {
         return densityRatio;
     }
 
+    public float getScaledDensity() {
+        return scaledDensity;
+    }
+
     /**
      * This returns the size of the navigation bar height
      * @return an int (in pixels);
@@ -170,9 +178,9 @@ public class DisplayManagerUtilities {
     public float convertPixelsToDp(float px){
         float dp;
         if(Build.VERSION.SDK_INT >= 17) {
-            dp = (float) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, px, api17OutMetrics);
+            dp = (float) TypedValue.applyDimension(COMPLEX_UNIT_DIP, px, api17OutMetrics);
         } else {
-            dp = (float) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, px, outMetrics);
+            dp = (float) TypedValue.applyDimension(COMPLEX_UNIT_DIP, px, outMetrics);
         }
         return dp;
     }
@@ -223,5 +231,40 @@ public class DisplayManagerUtilities {
             result = context.getResources().getDimensionPixelSize(resourceId);
         }
         return result;
+    }
+
+    public static enum ComplexUnits {
+        COMPLEX_UNIT_PX (0),
+        COMPLEX_UNIT_DIP (1),
+        COMPLEX_UNIT_SP (2),
+        COMPLEX_UNIT_PT (3),
+        COMPLEX_UNIT_IN (4),
+        COMPLEX_UNIT_MM (5);
+
+        private int unitNum;
+        ComplexUnits (int x){
+            this.unitNum = x;
+        }
+    }
+
+    /**
+     * Get a pixels value for the dimension passed.
+     * @param unit Unit of measurement:
+     *             COMPLEX_UNIT_PX = 5; == Raw Pixels
+     *             COMPLEX_UNIT_DIP = 1; == Device Independent Pixel (DP)
+     *             COMPLEX_UNIT_SP = 2; == Scaled Pixels
+     *             COMPLEX_UNIT_PT = 3; == Points
+     *             COMPLEX_UNIT_IN = 4; == Inches
+     *             COMPLEX_UNIT_MM = 5; == Millimeters
+     *             {@link TypedValue#TYPE_DIMENSION}
+     * @param value Value to convert
+     * @return float, in pixels, of converted value
+     */
+    public float convertToPixels(int unit, float value) {
+        if(Build.VERSION.SDK_INT >= 17){
+            return TypedValue.applyDimension(unit, value, api17OutMetrics);
+        } else {
+            return TypedValue.applyDimension(unit, value, outMetrics);
+        }
     }
 }
