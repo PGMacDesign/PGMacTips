@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
+import com.pgmacdesign.pgmacutilities.customui.MultiColorLine;
 import com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities.serviceapiinterfaces.ProfantiyCheckerAPICalls;
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacCustomProgressBar;
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
@@ -271,6 +272,11 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
+    private void checkMalware(){
+        List<String> mylist = MalwareUtilities.checkForMalware(this);
+        L.m("Number of infections: " + mylist.size());
+        L.Toast(this, "Number of infections: " + mylist.size());
+    }
     @Override
     public void onClick(View view) {
         //doWebCall();
@@ -283,9 +289,26 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
             }
         });
         */
-        List<String> mylist = MalwareUtilities.checkForMalware(this);
-        L.m("Number of infections: " + mylist.size());
-        L.Toast(this, "Number of infections: " + mylist.size());
+        MultiColorLine line = (MultiColorLine) this.findViewById(R.id.multi_color_line);
+        line.setAnimateStrokes(true, 1000);
+        line.setDrawAsSingleLine(true);
+        line.setDrawBoarderWithLine(false);
+        line.setDrawDiagonally(false);
+        line.setFps(MultiColorLine.FPS.FPS_90);
+        line.setWidthOfLineStroke(40);
+        line.setWidthOfBoarderStroke(8);
+        line.setColorOfBoarderStroke(ContextCompat.getColor(this, R.color.aqua));
+        List<MultiColorLine.CustomStrokeObject> strokes = new ArrayList<>();
+
+        MultiColorLine.CustomStrokeObject l1 = new MultiColorLine.CustomStrokeObject(
+            50, 0, ContextCompat.getColor(this, R.color.Red)
+        );
+        MultiColorLine.CustomStrokeObject l2 = new MultiColorLine.CustomStrokeObject(
+                50, 50, ContextCompat.getColor(this, R.color.Blue)
+        );
+        strokes.add(l1);
+        strokes.add(l2);
+        line.setLineStrokes(strokes);
 
     }
 }

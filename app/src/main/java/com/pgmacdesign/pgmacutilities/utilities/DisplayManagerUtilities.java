@@ -11,7 +11,7 @@ import android.view.WindowManager;
 
 import com.pgmacdesign.pgmacutilities.R;
 
-import static android.util.TypedValue.COMPLEX_UNIT_DIP;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * This class helps to determine the screen height and width in Density Pixels (DP)
@@ -151,9 +151,13 @@ public class DisplayManagerUtilities {
 
     /**
      * This returns the size of the navigation bar height
+     * @Deprecated this was deprecated when it was shown that screens without a visible
+     * action bar will still return values. See link here for details:
+     * https://stackoverflow.com/questions/20264268/how-to-get-height-and-width-of-navigation-bar-programmatically
      * @return an int (in pixels);
      */
-    public int getNavigationBarSize(){
+    @Deprecated
+    public int getNavigationBarSizeOld(){
         float x = context.getResources().getDimension(
                 R.dimen.abc_action_bar_default_height_material);
         return (int) x;
@@ -178,9 +182,11 @@ public class DisplayManagerUtilities {
     public float convertPixelsToDp(float px){
         float dp;
         if(Build.VERSION.SDK_INT >= 17) {
-            dp = (float) TypedValue.applyDimension(COMPLEX_UNIT_DIP, px, api17OutMetrics);
+            dp = (float) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                    px, api17OutMetrics);
         } else {
-            dp = (float) TypedValue.applyDimension(COMPLEX_UNIT_DIP, px, outMetrics);
+            dp = (float) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                    px, outMetrics);
         }
         return dp;
     }
@@ -192,7 +198,7 @@ public class DisplayManagerUtilities {
      * @return A float value to represent px equivalent to dp depending on device densityRatio
      */
     public float convertDpToPixel(float dp){
-        float px = (float)(dp * densityRatio);
+        float px = (float)(convertToPixels(ComplexUnits.COMPLEX_UNIT_DIP, dp));
         return px;
     }
 
@@ -201,6 +207,7 @@ public class DisplayManagerUtilities {
      * If you want to make this smaller, simply divide it by X%
      * @return
      */
+
     public float getWidthRadius(){
         return (pixelsWidth / 2);
     }
@@ -226,9 +233,14 @@ public class DisplayManagerUtilities {
      */
     public static int getStatusBarHeight(Context context) {
         int result = 0;
-        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = context.getResources().getDimensionPixelSize(resourceId);
+        try {
+            int resourceId = context.getResources().getIdentifier(
+                    "status_bar_height", "dimen", "android");
+            if (resourceId > 0) {
+                result = context.getResources().getDimensionPixelSize(resourceId);
+            }
+        } catch (Exception e){
+            //Unable to find Identifier!
         }
         return result;
     }
@@ -250,7 +262,7 @@ public class DisplayManagerUtilities {
     /**
      * Get a pixels value for the dimension passed.
      * @param unit Unit of measurement:
-     *             COMPLEX_UNIT_PX = 5; == Raw Pixels
+     *             COMPLEX_UNIT_PX = 0; == Raw Pixels
      *             COMPLEX_UNIT_DIP = 1; == Device Independent Pixel (DP)
      *             COMPLEX_UNIT_SP = 2; == Scaled Pixels
      *             COMPLEX_UNIT_PT = 3; == Points
@@ -260,11 +272,67 @@ public class DisplayManagerUtilities {
      * @param value Value to convert
      * @return float, in pixels, of converted value
      */
-    public float convertToPixels(int unit, float value) {
-        if(Build.VERSION.SDK_INT >= 17){
-            return TypedValue.applyDimension(unit, value, api17OutMetrics);
+    public float convertToPixels(ComplexUnits unit, float value) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1){ //17
+            return TypedValue.applyDimension(unit.unitNum, value, api17OutMetrics);
         } else {
-            return TypedValue.applyDimension(unit, value, outMetrics);
+            return TypedValue.applyDimension(unit.unitNum, value, outMetrics);
         }
     }
+
+    /**
+     * Gets the size of the navigation bar (bar at the bottom with the back, home, menu options)
+     * @return {@link Point} X is the width, Y is the height
+     */
+    public Point getNavigationBarSize() {
+        Point appUsableSize = getAppUsableScreenSize();
+        Point realScreenSize = getRealScreenSize();
+
+        // navigation bar on the right
+        if (appUsableSize.x < realScreenSize.x) {
+            return new Point(realScreenSize.x - appUsableSize.x, appUsableSize.y);
+        }
+
+        // navigation bar at the bottom
+        if (appUsableSize.y < realScreenSize.y) {
+            return new Point(appUsableSize.x, realScreenSize.y - appUsableSize.y);
+        }
+
+        // navigation bar is not present
+        return new Point();
+    }
+
+    /**
+     * Gets the useable screen size. This would be applicable if there were an action bar
+     * covering an area, which reduces usable screen size
+     * @return {@link Point} X is the width, Y is the height
+     */
+    public Point getAppUsableScreenSize() {
+        Display display = windowManager.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        return size;
+    }
+
+    /**
+     * Get the real screen size
+     * @return {@link Point} X is the width, Y is the height
+     */
+    public Point getRealScreenSize() {
+        Display display = windowManager.getDefaultDisplay();
+        Point size = new Point();
+        if (Build.VERSION.SDK_INT >= 17) {
+            display.getRealSize(size);
+        } else if (Build.VERSION.SDK_INT >= 14) {
+            try {
+                size.x = (Integer) Display.class.getMethod("getRawWidth").invoke(display);
+                size.y = (Integer) Display.class.getMethod("getRawHeight").invoke(display);
+            } catch (IllegalAccessException e) {
+            } catch (InvocationTargetException e) {
+            } catch (NoSuchMethodException e) {}
+        }
+
+        return size;
+    }
+
 }

@@ -31,6 +31,11 @@
         android:textColor="@drawable/multipurpose_button2"
         />
 
+    <com.pgmacdesign.pgmacutilities.customui.MultiColorLine
+        android:id="@+id/multi_color_line"
+        android:layout_width="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_height="50dp" />
 
 
 </RelativeLayout>
