@@ -19,6 +19,10 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class DisplayManagerUtilities {
 
+    public static enum ScreenLayoutSizes {
+        ldpi, mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi
+    }
+
     //Display display;
     private DisplayMetrics outMetrics, api17OutMetrics; //The latter is for APIs 17 or higher
     private WindowManager windowManager;
@@ -171,6 +175,30 @@ public class DisplayManagerUtilities {
     public float getScalablePixelTextSize(int baseSize){
         float x = baseSize * densityRatio;
         return x;
+    }
+
+    /**
+     * Pulling the screen size.
+     * {@link Configuration#resourceQualifierString}
+     * @return ScreenLayouts {@link DisplayManagerUtilities#ScreenLayoutSizes}
+     */
+    public ScreenLayoutSizes getScreenSize(){
+        int x = mConfig.densityDpi;
+        switch (x){
+            case 120:
+                return ScreenLayoutSizes.ldpi;
+            case 160:
+                return ScreenLayoutSizes.mdpi;
+            case 240:
+                return ScreenLayoutSizes.hdpi;
+            case 320:
+                return ScreenLayoutSizes.xhdpi;
+            case 480:
+                return ScreenLayoutSizes.xxhdpi;
+            case 640:
+                return ScreenLayoutSizes.xxxhdpi;
+        }
+        return null;
     }
 
     /**
