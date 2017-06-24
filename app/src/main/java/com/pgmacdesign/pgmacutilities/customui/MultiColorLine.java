@@ -240,7 +240,8 @@ public class MultiColorLine  extends View {
                     //Put this line in if you want it to animate diagonally
                     //
 
-                    canvas.drawRect(xleft, xtop, xright, xbottom, paint);
+                    int center = ((xtop + xbottom) / 2);
+                    canvas.drawLine(xleft, center, xright, center, paint);
                 } catch (ConcurrentModificationException cme) {
                     cme.printStackTrace();
                     continue;
@@ -271,7 +272,8 @@ public class MultiColorLine  extends View {
                     } else {
                         xbottom = (bottom);
                     }
-                    canvas.drawRect(xleft, xtop, xright, xbottom, paint);
+                    int center = ((xtop + xbottom) / 2);
+                    canvas.drawLine(xleft, center, xright, center, paint);
                 } catch (ConcurrentModificationException cme) {
                     continue;
                 }
