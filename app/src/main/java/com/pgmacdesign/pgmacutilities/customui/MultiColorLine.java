@@ -200,6 +200,11 @@ public class MultiColorLine  extends View {
         top = top + widthOfLineStroke;
         right = right - widthOfLineStroke;
         bottom = bottom;
+        //Check if top and bottom are too small to view, if so, resize
+        if(bottom == top || (bottom >= (top - 2)) || (top <= (bottom + 2))){
+            bottom = (int)(bottom + (widthOfLineStroke * 0.3));
+            top = (int)(top - (widthOfLineStroke * 0.3));
+        }
         drawLine(canvas, left, top, right, bottom);
     }
 
