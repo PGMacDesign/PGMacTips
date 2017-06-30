@@ -19,6 +19,10 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class DisplayManagerUtilities {
 
+    public static enum ScreenLayoutSizes {
+        ldpi, mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi
+    }
+
     //Display display;
     private DisplayMetrics outMetrics, api17OutMetrics; //The latter is for APIs 17 or higher
     private WindowManager windowManager;
@@ -91,6 +95,33 @@ public class DisplayManagerUtilities {
             ydpi = outMetrics.ydpi;
         }
         totalScreenDimensionsDP = dpWidth + "x" + dpHeight;
+    }
+
+    /**
+     * Pulling the screen size.
+     * {@link Configuration}
+     * @return ScreenLayouts {@link DisplayManagerUtilities.ScreenLayoutSizes}
+     */
+    public ScreenLayoutSizes getScreenSize(){
+        try {
+            int x = mConfig.densityDpi;
+            if(x <= 120){
+                return ScreenLayoutSizes.ldpi;
+            } else if(x > 120 && x <= 160){
+                return ScreenLayoutSizes.mdpi;
+            } else if(x > 160 && x <= 240){
+                return ScreenLayoutSizes.hdpi;
+            } else if(x > 240 && x <= 320){
+                return ScreenLayoutSizes.xhdpi;
+            } else if(x > 320 && x <= 480){
+                return ScreenLayoutSizes.xxhdpi;
+            } else if(x > 480 && x <= 640){
+                return ScreenLayoutSizes.xxxhdpi;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return ScreenLayoutSizes.xhdpi;
     }
 
     /**
