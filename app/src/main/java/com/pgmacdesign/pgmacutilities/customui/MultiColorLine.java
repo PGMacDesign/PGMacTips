@@ -200,6 +200,11 @@ public class MultiColorLine  extends View {
         top = top + widthOfLineStroke;
         right = right - widthOfLineStroke;
         bottom = bottom;
+        //Check if top and bottom are too small to view, if so, resize
+        if(bottom == top || (bottom >= (top - 2)) || (top <= (bottom + 2))){
+            bottom = (int)(bottom + (widthOfLineStroke * 0.3));
+            top = (int)(top - (widthOfLineStroke * 0.3));
+        }
         drawLine(canvas, left, top, right, bottom);
     }
 
@@ -235,7 +240,8 @@ public class MultiColorLine  extends View {
                     //Put this line in if you want it to animate diagonally
                     //
 
-                    canvas.drawRect(xleft, xtop, xright, xbottom, paint);
+                    int center = ((xtop + xbottom) / 2);
+                    canvas.drawLine(xleft, center, xright, center, paint);
                 } catch (ConcurrentModificationException cme) {
                     cme.printStackTrace();
                     continue;
@@ -266,7 +272,8 @@ public class MultiColorLine  extends View {
                     } else {
                         xbottom = (bottom);
                     }
-                    canvas.drawRect(xleft, xtop, xright, xbottom, paint);
+                    int center = ((xtop + xbottom) / 2);
+                    canvas.drawLine(xleft, center, xright, center, paint);
                 } catch (ConcurrentModificationException cme) {
                     continue;
                 }

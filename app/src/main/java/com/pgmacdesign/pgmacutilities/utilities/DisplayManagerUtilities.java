@@ -205,6 +205,30 @@ public class DisplayManagerUtilities {
     }
 
     /**
+     * Pulling the screen size.
+     * {@link Configuration#resourceQualifierString}
+     * @return ScreenLayouts {@link DisplayManagerUtilities#ScreenLayoutSizes}
+     */
+    public ScreenLayoutSizes getScreenSize(){
+        int x = mConfig.densityDpi;
+        switch (x){
+            case 120:
+                return ScreenLayoutSizes.ldpi;
+            case 160:
+                return ScreenLayoutSizes.mdpi;
+            case 240:
+                return ScreenLayoutSizes.hdpi;
+            case 320:
+                return ScreenLayoutSizes.xhdpi;
+            case 480:
+                return ScreenLayoutSizes.xxhdpi;
+            case 640:
+                return ScreenLayoutSizes.xxxhdpi;
+        }
+        return null;
+    }
+
+    /**
      * This method converts device specific pixels to densityRatio independent pixels.
      *
      * @param px A value in px (pixels) unit. Which we need to convert into db
