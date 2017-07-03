@@ -67,7 +67,7 @@ public class AnimationUtilities {
      * @return Techniques (From Animation library)
      */
     private static Techniques getRandomEnterAnimation(){
-        int x = NumberUtilities.getRandomInt(0, ENTER_ANIMATIONS.length);
+        int x = NumberUtilities.getRandomInt(0, (ENTER_ANIMATIONS.length - 1));
         try {
             return ENTER_ANIMATIONS[x];
         } catch (ArrayIndexOutOfBoundsException e){
@@ -80,7 +80,7 @@ public class AnimationUtilities {
      * @return Techniques (From Animation library)
      */
     private static Techniques getRandomExitAnimation(){
-        int x = NumberUtilities.getRandomInt(0, EXIT_ANIMATIONS.length);
+        int x = NumberUtilities.getRandomInt(0, (EXIT_ANIMATIONS.length - 1));
         try {
             return EXIT_ANIMATIONS[x];
         } catch (ArrayIndexOutOfBoundsException e){
@@ -124,11 +124,11 @@ public class AnimationUtilities {
         if(holder == null){
             return;
         }
-        if(duration == null){
-            duration = 500;
-        }
         if(techniques == null){
             return;
+        }
+        if(duration == null){
+            duration = 500;
         }
         if(duration < 100 || duration > 10000){
             duration = 100;

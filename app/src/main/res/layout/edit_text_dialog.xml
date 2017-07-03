@@ -4,7 +4,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/Transparent"
     >
 
     <RelativeLayout
@@ -13,16 +12,16 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_alignParentStart="true"
-        android:background="@color/Transparent"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="@color/Semi_Transparent4"
         >
 
         <RelativeLayout
             android:id="@+id/edit_text_dialog_sub_layout_2"
-            android:background="@color/Black"
+            android:background="@color/Transparent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginEnd="32dp"
             android:gravity="center"
             android:padding="4dp"
             >
@@ -31,7 +30,7 @@
                 android:id="@+id/edit_text_dialog_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="dddddd"
+                android:text=""
                 android:padding="4dp"
                 android:gravity="center"
                 android:textColor="@color/White"
@@ -47,13 +46,14 @@
             android:layout_marginEnd="32dp"
             android:gravity="center"
             android:padding="4dp"
-            android:background="@color/white"
+            android:background="@color/Transparent"
             >
 
             <EditText
                 android:id="@+id/edit_text_dialog_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/Transparent"
                 android:padding="4dp"
                 />
 
@@ -61,28 +61,27 @@
                 android:id="@+id/edit_text_dialog_buttons_layout"
                 android:layout_below="@+id/edit_text_dialog_et"
                 android:orientation="horizontal"
-                android:weightSum="101"
+                android:weightSum="100"
+                android:padding="2dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <Button
                     android:id="@+id/edit_text_dialog_cancel_button"
                     android:layout_width="0dp"
+                    android:layout_margin="2dp"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/multipurpose_button2"
                     android:layout_weight="50"
                     android:text="Cancel"
-                    />
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="@color/Gray"
                     />
 
                 <Button
                     android:id="@+id/edit_text_dialog_confirm_button"
                     android:layout_width="0dp"
+                    android:layout_margin="2dp"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/multipurpose_button2"
                     android:layout_weight="50"
                     android:text="Confirm"
                     />

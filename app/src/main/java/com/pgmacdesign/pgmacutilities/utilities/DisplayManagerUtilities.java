@@ -97,32 +97,6 @@ public class DisplayManagerUtilities {
         totalScreenDimensionsDP = dpWidth + "x" + dpHeight;
     }
 
-    /**
-     * Pulling the screen size.
-     * {@link Configuration}
-     * @return ScreenLayouts {@link DisplayManagerUtilities.ScreenLayoutSizes}
-     */
-    public ScreenLayoutSizes getScreenSize(){
-        try {
-            int x = mConfig.densityDpi;
-            if(x <= 120){
-                return ScreenLayoutSizes.ldpi;
-            } else if(x > 120 && x <= 160){
-                return ScreenLayoutSizes.mdpi;
-            } else if(x > 160 && x <= 240){
-                return ScreenLayoutSizes.hdpi;
-            } else if(x > 240 && x <= 320){
-                return ScreenLayoutSizes.xhdpi;
-            } else if(x > 320 && x <= 480){
-                return ScreenLayoutSizes.xxhdpi;
-            } else if(x > 480 && x <= 640){
-                return ScreenLayoutSizes.xxxhdpi;
-            }
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-        return ScreenLayoutSizes.xhdpi;
-    }
 
     /**
      * The exact physical pixels per inch of the screen in the X dimension.
@@ -189,10 +163,48 @@ public class DisplayManagerUtilities {
      */
     @Deprecated
     public int getNavigationBarSizeOld(){
-        float x = context.getResources().getDimension(
-                R.dimen.abc_action_bar_default_height_material);
-        return (int) x;
+        try {
+            float x = context.getResources().getDimension(
+                    R.dimen.abc_action_bar_default_height_material);
+            return (int) x;
+        } catch (Exception e){
+            try {
+                return (getNavigationBarSize().y);
+            } catch (Exception e1){
+                e.printStackTrace();
+                return 0;
+            }
+        }
     }
+
+    /**
+     * Pulling the screen size.
+     * {@link Configuration}
+     * @return ScreenLayouts {@link DisplayManagerUtilities.ScreenLayoutSizes}
+     */
+    public ScreenLayoutSizes getScreenSize(){
+        try {
+            int x = mConfig.densityDpi;
+            if(x <= 120){
+                return ScreenLayoutSizes.ldpi;
+            } else if(x > 120 && x <= 160){
+                return ScreenLayoutSizes.mdpi;
+            } else if(x > 160 && x <= 240){
+                return ScreenLayoutSizes.hdpi;
+            } else if(x > 240 && x <= 320){
+                return ScreenLayoutSizes.xhdpi;
+            } else if(x > 320 && x <= 480){
+                return ScreenLayoutSizes.xxhdpi;
+            } else if(x > 480 && x <= 640){
+                return ScreenLayoutSizes.xxxhdpi;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        //Default
+        return ScreenLayoutSizes.xhdpi;
+    }
+
 
     /**
      * Get scaled density SP for setting textviews. You would pass in a base number (IE 20)
@@ -205,30 +217,6 @@ public class DisplayManagerUtilities {
     }
 
     /**
-     * Pulling the screen size.
-     * {@link Configuration#resourceQualifierString}
-     * @return ScreenLayouts {@link DisplayManagerUtilities#ScreenLayoutSizes}
-     */
-    public ScreenLayoutSizes getScreenSize(){
-        int x = mConfig.densityDpi;
-        switch (x){
-            case 120:
-                return ScreenLayoutSizes.ldpi;
-            case 160:
-                return ScreenLayoutSizes.mdpi;
-            case 240:
-                return ScreenLayoutSizes.hdpi;
-            case 320:
-                return ScreenLayoutSizes.xhdpi;
-            case 480:
-                return ScreenLayoutSizes.xxhdpi;
-            case 640:
-                return ScreenLayoutSizes.xxxhdpi;
-        }
-        return null;
-    }
-
-    /**
      * This method converts device specific pixels to densityRatio independent pixels.
      *
      * @param px A value in px (pixels) unit. Which we need to convert into db
@@ -237,11 +225,11 @@ public class DisplayManagerUtilities {
     public float convertPixelsToDp(float px){
         float dp;
         if(Build.VERSION.SDK_INT >= 17) {
-            dp = (float) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                    px, api17OutMetrics);
+            dp = (float) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, px, api17OutMetrics);
         } else {
-            dp = (float) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                    px, outMetrics);
+            dp = (float) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, px, outMetrics);
         }
         return dp;
     }

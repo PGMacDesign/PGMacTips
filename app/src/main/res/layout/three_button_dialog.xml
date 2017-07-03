@@ -53,6 +53,7 @@
             android:paddingStart="16dp"
             android:textSize="18sp"
             android:textColor="#4a4a4a"
+            android:lineSpacingMultiplier="1.5"
             />
 
     </ScrollView>
@@ -77,52 +78,46 @@
         android:orientation="horizontal"
         android:weightSum="100"
         android:layout_marginBottom="32dp"
-        android:paddingBottom="8dp"
+        android:padding="2dp"
         >
 
-        <TextView
+        <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/three_button_dialog_option_never"
             android:text="Never"
+            android:layout_margin="1dp"
+            android:background="@drawable/multipurpose_button2"
             android:maxLines="3"
-            android:gravity="center|bottom"
+            android:gravity="center"
             android:textSize="13sp"
             android:textColor="@color/Black"
             android:layout_weight="33"
             />
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@color/gray"
-            />
-
-        <TextView
+        <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/three_button_dialog_option_later"
             android:text="Later"
+            android:layout_margin="1dp"
+            android:background="@drawable/multipurpose_button2"
             android:maxLines="3"
-            android:gravity="center|bottom"
+            android:gravity="center"
             android:textSize="13sp"
             android:textColor="@color/Black"
             android:layout_weight="33"
             />
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@color/gray"
-            />
-
-        <TextView
+        <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/three_button_dialog_option_yes"
             android:text="Sure!"
+            android:layout_margin="1dp"
             android:maxLines="3"
-            android:gravity="center|bottom"
+            android:background="@drawable/multipurpose_button2"
+            android:gravity="center"
             android:textSize="13sp"
             android:textColor="@color/Black"
             android:layout_weight="33"

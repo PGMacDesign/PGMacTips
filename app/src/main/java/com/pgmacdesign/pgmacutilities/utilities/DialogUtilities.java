@@ -4,6 +4,8 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -22,6 +24,7 @@ import android.widget.TextView;
 import com.pgmacdesign.pgmacutilities.R;
 
 import java.util.Calendar;
+import java.util.TimeZone;
 
 /**
  * Created by Patrick MacDowell (PGMacDesign) on 2016-11-17.
@@ -38,23 +41,41 @@ public class DialogUtilities {
         public void dialogFinished(Object object, int tag);
     }
 
+    /**
+     * Set the dialog transparency
+     * @param dialog Dialog to alter
+     * @param percentOutOf100 Percent of Transparency. if 0 is passed, not transparent
+     *                        at all. If 100 is passed, completely transparent.
+     *                        Pass values from 0 - 100.
+     * @return
+     */
+    public static Dialog setDialogTransparency(Dialog dialog, float percentOutOf100){
+        try {
+            ColorDrawable cd = new ColorDrawable(Color.TRANSPARENT);
+            if(percentOutOf100 < 0){
+                percentOutOf100 = 0;
+            }
+            if(percentOutOf100 > 100){
+                percentOutOf100 = 100;
+            }
+            float outOf255 = percentOutOf100 / 100 * 255;
+            cd.setAlpha((int)outOf255);
+            Window window = dialog.getWindow();
+            window.setBackgroundDrawable(cd);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return dialog;
+    }
     public static  Dialog dimDialog(Dialog dialog){
         try {
             Window window = dialog.getWindow();
             WindowManager.LayoutParams wlp = window.getAttributes();
             wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
             window.setAttributes(wlp);
-        } catch (Exception e){}
-        return dialog;
-    }
-
-    public static AlertDialog dimDialog(AlertDialog dialog){
-        try {
-            Window window = dialog.getWindow();
-            WindowManager.LayoutParams wlp = window.getAttributes();
-            wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-            window.setAttributes(wlp);
-        } catch (Exception e){}
+        } catch (Exception e){
+            e.printStackTrace();
+        }
         return dialog;
     }
 
@@ -69,7 +90,18 @@ public class DialogUtilities {
     public static DatePickerDialog buildDatePickerDialog(final Context context,
                                                          final DialogFinishedListener listener){
 
-        final Calendar rightNow = Calendar.getInstance();
+        TimeZone tz = null;
+        try {
+            tz = TimeZone.getDefault();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        Calendar rightNow;
+        try {
+            rightNow = Calendar.getInstance(tz);
+        } catch (Exception e){
+            rightNow = Calendar.getInstance();
+        }
         DatePickerDialog mDialog = new DatePickerDialog(context,
                 new DatePickerDialog.OnDateSetListener() {
 
@@ -191,6 +223,7 @@ public class DialogUtilities {
         ThreeButtonDialog dialog = new ThreeButtonDialog(
                 context, listener, yesText, laterText, neverText, message, title
         );
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         return dialog;
     }
 
@@ -211,6 +244,7 @@ public class DialogUtilities {
         EditTextDialog dialog = new EditTextDialog(
                 context, listener, doneText, cancelText, title, editTextHint, textInputType
         );
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         return dialog;
 
     }
@@ -219,8 +253,8 @@ public class DialogUtilities {
     private static class ThreeButtonDialog extends Dialog implements View.OnClickListener {
 
         private LinearLayout three_button_dialog_buttons_layout;
-        private TextView three_button_dialog_title, three_button_dialog_body,
-                three_button_dialog_option_never, three_button_dialog_option_later,
+        private TextView three_button_dialog_title, three_button_dialog_body;
+        private Button three_button_dialog_option_never, three_button_dialog_option_later,
                 three_button_dialog_option_yes;
 
         private String yesText, laterText, neverText, title, bodyText;
@@ -278,16 +312,20 @@ public class DialogUtilities {
                     R.id.three_button_dialog_title);
             three_button_dialog_body = (TextView) this.findViewById(
                     R.id.three_button_dialog_body);
-            three_button_dialog_option_never = (TextView) this.findViewById(
+            three_button_dialog_option_never = (Button) this.findViewById(
                     R.id.three_button_dialog_option_never);
-            three_button_dialog_option_later = (TextView) this.findViewById(
+            three_button_dialog_option_later = (Button) this.findViewById(
                     R.id.three_button_dialog_option_later);
-            three_button_dialog_option_yes = (TextView) this.findViewById(
+            three_button_dialog_option_yes = (Button) this.findViewById(
                     R.id.three_button_dialog_option_yes);
 
             three_button_dialog_option_yes.setTag("yes");
             three_button_dialog_option_later.setTag("later");
             three_button_dialog_option_never.setTag("never");
+
+            three_button_dialog_option_yes.setTransformationMethod(null);
+            three_button_dialog_option_later.setTransformationMethod(null);
+            three_button_dialog_option_never.setTransformationMethod(null);
 
             three_button_dialog_option_yes.setOnClickListener(this);
             three_button_dialog_option_later.setOnClickListener(this);
@@ -431,6 +469,10 @@ public class DialogUtilities {
 
             edit_text_dialog_cancel_button.setTag("cancel");
             edit_text_dialog_confirm_button.setTag("confirm");
+
+            edit_text_dialog_cancel_button.setTransformationMethod(null);
+            edit_text_dialog_confirm_button.setTransformationMethod(null);
+
             edit_text_dialog_cancel_button.setOnClickListener(this);
             edit_text_dialog_confirm_button.setOnClickListener(this);
 
