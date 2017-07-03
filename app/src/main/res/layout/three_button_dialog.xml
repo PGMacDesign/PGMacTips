@@ -93,6 +93,7 @@
             android:textSize="13sp"
             android:textColor="@color/Black"
             android:layout_weight="33"
+            android:foreground="?android:attr/selectableItemBackground"
             />
 
         <Button
@@ -107,6 +108,7 @@
             android:textSize="13sp"
             android:textColor="@color/Black"
             android:layout_weight="33"
+            android:foreground="?android:attr/selectableItemBackground"
             />
 
         <Button
@@ -121,6 +123,7 @@
             android:textSize="13sp"
             android:textColor="@color/Black"
             android:layout_weight="33"
+            android:foreground="?android:attr/selectableItemBackground"
             />
 
     </LinearLayout>

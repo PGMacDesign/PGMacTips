@@ -1,5 +1,6 @@
 package com.pgmacdesign.pgmacutilities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.ImageFormat;
@@ -26,7 +27,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
@@ -54,7 +54,7 @@ import java.util.List;
 /**
  * Created by pmacdowell on 9/19/2016.
  */
-public class TESTING2 extends AppCompatActivity implements View.OnClickListener, TextureView.SurfaceTextureListener {
+public class TESTING2 extends Activity implements View.OnClickListener, TextureView.SurfaceTextureListener {
 
     //Library Objects
     private DatabaseUtilities dbUtilities;

@@ -74,6 +74,7 @@
                     android:background="@drawable/multipurpose_button2"
                     android:layout_weight="50"
                     android:text="Cancel"
+                    android:foreground="?android:attr/selectableItemBackground"
                     />
 
                 <Button
@@ -84,6 +85,7 @@
                     android:background="@drawable/multipurpose_button2"
                     android:layout_weight="50"
                     android:text="Confirm"
+                    android:foreground="?android:attr/selectableItemBackground"
                     />
 
             </LinearLayout>

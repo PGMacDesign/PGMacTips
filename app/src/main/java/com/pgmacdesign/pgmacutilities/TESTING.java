@@ -1,13 +1,12 @@
 package com.pgmacdesign.pgmacutilities;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -33,7 +32,7 @@ import java.util.Map;
 /**
  * Created by pmacdowell on 8/12/2016.
  */
-public class TESTING extends AppCompatActivity implements View.OnClickListener {
+public class TESTING extends Activity implements View.OnClickListener {
 
     // TODO: 2017-03-07 need to rewrite ripples to be within bounds
     private DatabaseUtilities dbUtilities;
@@ -49,7 +48,7 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
         //et = (MultipurposeEditText) this.findViewById(R.id.et);
         //et.setState(MultipurposeEditText.EditTextState.FOCUSED);
         TextView tv1 = new TextView(this);
-        tv1.setTextColor(ContextCompat.getColor(this, R.color.black));
+        tv1.setTextColor(getResources().getColor(R.color.black));
         button = (Button) this.findViewById(R.id.button);
         button.setTag("button");
         button.setTransformationMethod(null);
@@ -297,14 +296,14 @@ public class TESTING extends AppCompatActivity implements View.OnClickListener {
         line.setFps(MultiColorLine.FPS.FPS_90);
         line.setWidthOfLineStroke(40);
         line.setWidthOfBoarderStroke(8);
-        line.setColorOfBoarderStroke(ContextCompat.getColor(this, R.color.aqua));
+        line.setColorOfBoarderStroke(getResources().getColor(R.color.aqua));
         List<MultiColorLine.CustomStrokeObject> strokes = new ArrayList<>();
 
         MultiColorLine.CustomStrokeObject l1 = new MultiColorLine.CustomStrokeObject(
-            50, 0, ContextCompat.getColor(this, R.color.Red)
+            50, 0, getResources().getColor(R.color.red)
         );
         MultiColorLine.CustomStrokeObject l2 = new MultiColorLine.CustomStrokeObject(
-                50, 50, ContextCompat.getColor(this, R.color.Blue)
+                50, 50, getResources().getColor(R.color.blue)
         );
         strokes.add(l1);
         strokes.add(l2);
