@@ -1,7 +1,6 @@
 package com.pgmacdesign.pgmacutilities;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -14,7 +13,6 @@ import android.widget.TextView;
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmacutilities.customui.MultiColorLine;
 import com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities.serviceapiinterfaces.ProfantiyCheckerAPICalls;
-import com.pgmacdesign.pgmacutilities.nonutilities.PGMacCustomProgressBar;
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
 import com.pgmacdesign.pgmacutilities.pojos.MasterDatabaseObject;
 import com.pgmacdesign.pgmacutilities.utilities.CameraMediaUtilities;
@@ -248,8 +246,9 @@ public class TESTING extends Activity implements View.OnClickListener {
     }
 
     private void testLoadingAnimation(){
-        Dialog progressDialog = PGMacCustomProgressBar.buildCaliforniaSVGDialog(this, true);
-        progressDialog.show();
+        //Removed on 2017-07-05 Due to problems with compiling
+        //Dialog progressDialog = PGMacCustomProgressBar.buildCaliforniaSVGDialog(this, true);
+        //progressDialog.show();
     }
 
     private void doWebCall(){

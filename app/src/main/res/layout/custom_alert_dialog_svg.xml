@@ -7,24 +7,6 @@
     android:background="@color/Transparent"
     >
 
-    <com.jrummyapps.android.widget.AnimatedSvgView
-        android:background="@color/Transparent"
-        android:id="@+id/animated_svg_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:foregroundGravity="center|center_horizontal|center_vertical"
-        lib:animatedSvgFillStart="1000"
-        lib:animatedSvgFillTime="2000"
-        lib:animatedSvgTraceTime="2000"
-        lib:animatedSvgTraceTimePerGlyph="2000"
-        lib:animatedSvgImageSizeX="140"
-        lib:animatedSvgImageSizeY="172"
-        lib:animatedSvgGlyphStrings="@array/artboard_1_copy_2_svg_array"
-        lib:animatedSvgTraceColors="@array/artboard_1_copy_2_trace_color_array"
-        lib:animatedSvgFillColors="@array/artboard_1_copy_2_fill_color_array"
-        />
 
     <!--
     WORKING VERSION BELOW
@@ -60,5 +42,27 @@
         lib:animatedSvgImageSizeY="212"
         lib:animatedSvgImageSizeX="258"
         lib:animatedSvgImageSizeY="200"
+    -->
+
+    <!--
+
+    <com.jrummyapps.android.widget.AnimatedSvgView
+        android:background="@color/Transparent"
+        android:id="@+id/animated_svg_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:foregroundGravity="center|center_horizontal|center_vertical"
+        lib:animatedSvgFillStart="1000"
+        lib:animatedSvgFillTime="2000"
+        lib:animatedSvgTraceTime="2000"
+        lib:animatedSvgTraceTimePerGlyph="2000"
+        lib:animatedSvgImageSizeX="140"
+        lib:animatedSvgImageSizeY="172"
+        lib:animatedSvgGlyphStrings="@array/artboard_1_copy_2_svg_array"
+        lib:animatedSvgTraceColors="@array/artboard_1_copy_2_trace_color_array"
+        lib:animatedSvgFillColors="@array/artboard_1_copy_2_fill_color_array"
+        />
     -->
 </RelativeLayout>

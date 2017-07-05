@@ -64,8 +64,10 @@ public class ProgressBarUtilities {
         mContext = context;
         try {
             if (myDialog == null) {
-                myDialog = PGMacCustomProgressBar.buildSVGDialog(context, dismissible,
-                        imageSizeX, imageSizeY, svgArray, svgColors, svgTraceColors);
+                //Removed on 2017-07-05 Due to problems with compiling
+                //myDialog = PGMacCustomProgressBar.buildSVGDialog(context, dismissible,
+                        //imageSizeX, imageSizeY, svgArray, svgColors, svgTraceColors);
+                myDialog = new Dialog(context);
                 myDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                     @Override
                     public void onCancel(DialogInterface dialog) {
@@ -79,7 +81,9 @@ public class ProgressBarUtilities {
         } catch (Exception ex) {
             setupTimeoutTimer();
             try {
-                myDialog = PGMacCustomProgressBar.buildSVGDialog(mContext);
+                //Removed on 2017-07-05 Due to problems with compiling
+                //myDialog = PGMacCustomProgressBar.buildSVGDialog(mContext);
+                myDialog = new Dialog(context);
                 myDialog.show();
             } catch (Exception e2){
                 e2.printStackTrace();
@@ -101,7 +105,9 @@ public class ProgressBarUtilities {
         mContext = context;
         try {
             if (myDialog == null) {
-                myDialog = PGMacCustomProgressBar.buildElasticDialog(context, dismissable);
+                //Removed on 2017-07-05 Due to problems with compiling
+                //myDialog = PGMacCustomProgressBar.buildElasticDialog(context, dismissable);
+                myDialog = new Dialog(context);
                 myDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                     @Override
                     public void onCancel(DialogInterface dialog) {
@@ -115,7 +121,9 @@ public class ProgressBarUtilities {
         } catch (Exception ex) {
             setupTimeoutTimer();
             try {
-                myDialog = PGMacCustomProgressBar.buildSVGDialog(mContext);
+                myDialog = new Dialog(context);
+                //Removed on 2017-07-05 Due to problems with compiling
+                //myDialog = PGMacCustomProgressBar.buildSVGDialog(mContext);
                 myDialog.show();
             } catch (Exception e2){
                 e2.printStackTrace();

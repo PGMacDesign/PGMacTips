@@ -1,39 +1,24 @@
 package com.pgmacdesign.pgmacutilities.nonutilities;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.view.Window;
-import android.view.WindowManager;
-
-import com.jrummyapps.android.widget.AnimatedSvgView;
-import com.pgmacdesign.pgmacutilities.R;
-import com.pgmacdesign.pgmacutilities.utilities.DisplayManagerUtilities;
-
-import java.util.Timer;
-import java.util.TimerTask;
-
-import is.arontibo.library.ElasticDownloadView;
 
 /**
  * Created by pmacdowell on 8/12/2016.
  */
 public class PGMacCustomProgressBar extends ProgressDialog {
 
-    private boolean stopSVG = false;
-    private Timer timer;
-    private com.jrummyapps.android.widget.AnimatedSvgView animated_svg_view;
-    private is.arontibo.library.ElasticDownloadView elastic_download_view;
 
-    private DisplayManagerUtilities dmu;
-    public static final int SVG_DIALOG = 0;
-    public static final int ELASTIC_DIALOG = 1;
-    public static final int CALIFORNIA_SVG_DIALOG = 2;
-    private int whichSelected;
-    private Context localContext;
+    /*
+    Getting errors with uploads. Removing entirely for now
+     */
+
+
+
+    public PGMacCustomProgressBar(Context context) {
+        super(context);
+    }
+
 
     /**
      * Builder for the Custom Progress bar
@@ -48,7 +33,7 @@ public class PGMacCustomProgressBar extends ProgressDialog {
      *                       THE ARRAY OF SVG STRINGS!
      * @return ProgressDialog
      * todo come back and refactor this in
-     */
+    ----/
     public static Dialog buildSVGDialog(Context context, boolean cancelable,
                                                 Integer imageSizeX, Integer imageSizeY,
                                                 String[] svgArray,
@@ -71,11 +56,24 @@ public class PGMacCustomProgressBar extends ProgressDialog {
         return customAlertDialog;
     }
 
+
+    private boolean stopSVG = false;
+    private Timer timer;
+    private com.jrummyapps.android.widget.AnimatedSvgView animated_svg_view;
+    private is.arontibo.library.ElasticDownloadView elastic_download_view;
+
+    private DisplayManagerUtilities dmu;
+    public static final int SVG_DIALOG = 0;
+    public static final int ELASTIC_DIALOG = 1;
+    public static final int CALIFORNIA_SVG_DIALOG = 2;
+    private int whichSelected;
+    private Context localContext;
+
     /**
      * Overloaded method, excludes boolean in case it is not added
      * @param context
      * @return
-     */
+     ----/
     public static Dialog buildSVGDialog(Context context){
         return (PGMacCustomProgressBar.buildSVGDialog(context, false, 40, 40, null, null, null));
     }
@@ -103,7 +101,7 @@ public class PGMacCustomProgressBar extends ProgressDialog {
      * @param context Context
      * @param cancelable Cancelable or not; defaults to false
      * @return
-     */
+     ----/
     public static ProgressDialog buildElasticDialog(Context context, boolean cancelable){
         PGMacCustomProgressBar customAlertDialog = new PGMacCustomProgressBar(
                 context, ELASTIC_DIALOG);
@@ -125,7 +123,7 @@ public class PGMacCustomProgressBar extends ProgressDialog {
      * Overloaded method, excludes boolean in case it is not added
      * @param context
      * @return
-     */
+    ----/
     public static ProgressDialog buildElasticDialog(Context context){
         return (buildElasticDialog(context, false));
     }
@@ -133,7 +131,7 @@ public class PGMacCustomProgressBar extends ProgressDialog {
     /**
      * Alert dialog constructor
      * @param context
-     */
+    ----/
     private PGMacCustomProgressBar(Context context) {
         super(context);
         //NOTE! If not transparent, use this: super(context, R.style.CustomTransparentDialog);
@@ -146,7 +144,7 @@ public class PGMacCustomProgressBar extends ProgressDialog {
      * Overloaded for secondary alert popup
      * @param context
      * @param whichSelected
-     */
+    ----/
     private PGMacCustomProgressBar(Context context, int whichSelected) {
         super(context);
         //NOTE! If not transparent, use this: super(context, R.style.CustomTransparentDialog);
@@ -176,7 +174,7 @@ public class PGMacCustomProgressBar extends ProgressDialog {
                 min = (int)(min * 0.25);
                 animated_svg_view.setViewportSize(animated_svg_view.getWidth(),
                         animated_svg_view.getHeight());
-                */
+    ----/
                 break;
 
             case ELASTIC_DIALOG:
@@ -271,7 +269,7 @@ public class PGMacCustomProgressBar extends ProgressDialog {
     /**
      * Set the progress. Send either float or int
      * @param progress Progress of download
-     */
+    ----/
     public void setElasticProgress(float progress){
 
     }
@@ -288,5 +286,7 @@ public class PGMacCustomProgressBar extends ProgressDialog {
         } catch (Exception e){}
         super.onStop();
     }
+
+    */
 
 }

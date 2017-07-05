@@ -282,7 +282,9 @@ public class CameraMediaUtilities {
             this.shouldUploadPhoto = false;
             this.shouldDeletePhotoAfter = false;
             this.useDefaultToFrontFacingCamera = false;
-            this.alertDialog = PGMacCustomProgressBar.buildSVGDialog(context);
+            //Removed on 2017-07-05 Due to problems with compiling
+            //this.alertDialog = PGMacCustomProgressBar.buildSVGDialog(context);
+            this.alertDialog = new AlertDialog.Builder(context).create();
             this.webImageUrlToDownload = null;
             this.videoExtension = SupportedVideoFileExtensions.MP4;
             this.photoExtension = SupportedPhotoFileExtensions.PNG;

@@ -20,7 +20,6 @@ import android.widget.ImageView;
 
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmacutilities.nonutilities.CircleTransform;
-import com.pgmacdesign.pgmacutilities.nonutilities.PGMacCustomProgressBar;
 import com.pgmacdesign.pgmacutilities.nonutilities.PGMacUtilitiesConstants;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.LruCache;
@@ -536,7 +535,9 @@ public class ImageUtilities {
             this.listener = listener;
             this.dialog = dialog;
             if(this.dialog == null){
-                this.dialog = PGMacCustomProgressBar.buildElasticDialog(context);
+                //Removed on 2017-07-05 Due to problems with compiling
+                //this.dialog = PGMacCustomProgressBar.buildElasticDialog(context);
+                this.dialog = new ProgressDialog(context);
             }
             if(lengthOfTimeToDelay == null){
                 lengthOfTimeToDelay = (long)(PGMacUtilitiesConstants.ONE_SECOND * 2.6);
