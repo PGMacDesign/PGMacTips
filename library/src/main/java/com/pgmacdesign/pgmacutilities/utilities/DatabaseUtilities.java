@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -956,7 +957,16 @@ public class DatabaseUtilities {
         }
         Realm.init(context);
         if (dbName == null) {
-            dbName = DEFAULT_DB_NAME;
+            try {
+                String packageName = MiscUtilities.getPackageName(context);
+                if(!StringUtilities.isNullOrEmpty(packageName)){
+                    dbName = packageName + ".db";
+                } else {
+                    dbName = DEFAULT_DB_NAME;
+                }
+            } catch (Exception e) {
+                dbName = DEFAULT_DB_NAME;
+            }
         }
         if (schemaVersion == null) {
             schemaVersion = DEFAULT_DB_SCHEMA;
@@ -1013,6 +1023,62 @@ public class DatabaseUtilities {
         } else {
             return true;
         }
+    }
+
+    /**
+     * In case you want to know the name of your db file, this will print the
+     * file name in the logcat
+     */
+    public void printDatabaseName(){
+        Realm realm;
+        if(realmConfiguration != null) {
+            realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
+        } else {
+            realm = buildRealm(context);
+        }
+        String str = realm.getConfiguration().getRealmFileName();
+        if(!StringUtilities.isNullOrEmpty(str)){
+            L.m("Database Name: " + str);
+        }
+    }
+
+    /**
+     * Simple getter for the realm configuration being used. If it does not exist, it will
+     * build it.
+     * @return
+     */
+    public RealmConfiguration getRealmConfiguration(){
+        try {
+            if (this.realmConfiguration == null) {
+                this.realmConfiguration = DatabaseUtilities
+                        .buildRealmConfig(context, null, null, null);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return this.realmConfiguration;
+    }
+
+    /**
+     * Returns a set of the classes (that extends RealmModel) that make up the current table
+     * with the realmConfiguration. If the realmconfig is null, it will build one.
+     * @return
+     */
+    public Set<Class<? extends  RealmModel>> getDBTableTypes(){
+        try {
+            if (this.realmConfiguration == null) {
+                this.realmConfiguration = DatabaseUtilities
+                        .buildRealmConfig(context, null, null, null);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        if(realmConfiguration == null){
+            return null;
+        }
+        return realmConfiguration.getRealmObjectClasses();
     }
 
     /**

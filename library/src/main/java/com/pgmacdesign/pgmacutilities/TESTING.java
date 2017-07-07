@@ -12,8 +12,8 @@ import android.widget.TextView;
 
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmacutilities.customui.MultiColorLine;
-import com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities.serviceapiinterfaces.ProfantiyCheckerAPICalls;
 import com.pgmacdesign.pgmacutilities.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities.serviceapiinterfaces.ProfantiyCheckerAPICalls;
 import com.pgmacdesign.pgmacutilities.pojos.MasterDatabaseObject;
 import com.pgmacdesign.pgmacutilities.utilities.CameraMediaUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.ContactUtilities;
@@ -22,6 +22,7 @@ import com.pgmacdesign.pgmacutilities.utilities.L;
 import com.pgmacdesign.pgmacutilities.utilities.MalwareUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.MiscUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.PermissionUtilities;
+import com.pgmacdesign.pgmacutilities.utilities.ProgressBarUtilities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -287,6 +288,12 @@ public class TESTING extends Activity implements View.OnClickListener {
             }
         });
         */
+
+        showGIFLoader();
+
+    }
+
+    private void makeMultiColorLine() {
         MultiColorLine line = (MultiColorLine) this.findViewById(R.id.multi_color_line);
         line.setAnimateStrokes(true, 1000);
         line.setDrawAsSingleLine(true);
@@ -299,7 +306,7 @@ public class TESTING extends Activity implements View.OnClickListener {
         List<MultiColorLine.CustomStrokeObject> strokes = new ArrayList<>();
 
         MultiColorLine.CustomStrokeObject l1 = new MultiColorLine.CustomStrokeObject(
-            50, 0, getResources().getColor(R.color.red)
+                50, 0, getResources().getColor(R.color.red)
         );
         MultiColorLine.CustomStrokeObject l2 = new MultiColorLine.CustomStrokeObject(
                 50, 50, getResources().getColor(R.color.blue)
@@ -307,6 +314,9 @@ public class TESTING extends Activity implements View.OnClickListener {
         strokes.add(l1);
         strokes.add(l2);
         line.setLineStrokes(strokes);
+    }
 
+    private void showGIFLoader(){
+        ProgressBarUtilities.showGIFProgressDialog(this, R.drawable.got_fighttex_house_stark);
     }
 }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 
+import com.pgmacdesign.pgmacutilities.progressbars.GIFProgressBar;
 import com.pgmacdesign.pgmacutilities.progressbars.PGMacCustomProgressBar;
 import com.pgmacdesign.pgmacutilities.misc.PGMacUtilitiesConstants;
 
@@ -19,6 +20,26 @@ public class ProgressBarUtilities {
     private static Dialog myDialog;
     private static Timer timeoutTimer;
     private static Context mContext;
+
+
+    ////////////////////////
+    //SVG Progress Dialog//
+    ///////////////////////
+
+    public static void showGIFProgressDialog(Context context, String imageResourceURIPath){
+        if(myDialog == null){
+            myDialog = GIFProgressBar.buildGIFDialog(context, imageResourceURIPath);
+        }
+        myDialog.show();
+    }
+
+    public static void showGIFProgressDialog(Context context, int imageResourceId){
+        if(myDialog == null){
+            myDialog = GIFProgressBar.buildGIFDialog(context, imageResourceId);
+        }
+        myDialog.show();
+    }
+
 
     ////////////////////////
     //SVG Progress Dialog//
