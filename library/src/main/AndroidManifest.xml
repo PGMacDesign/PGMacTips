@@ -39,10 +39,12 @@
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:supportsRtl="true"
-            android:theme="@style/MainTheme">
-
-            <!-- Make sure to remove the intent filter when switching to library
-
+            android:hardwareAccelerated="false"
+            >
+            <!--
+            may need to remove
+            android:hardwareAccelerated="false"
+            http://android-er.blogspot.com/2014/03/play-animated-gif-with.html
             -->
             <activity
                 android:name=".TESTING"

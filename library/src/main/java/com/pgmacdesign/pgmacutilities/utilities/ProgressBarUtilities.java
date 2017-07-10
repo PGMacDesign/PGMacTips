@@ -5,9 +5,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 
+import com.pgmacdesign.pgmacutilities.misc.PGMacUtilitiesConstants;
 import com.pgmacdesign.pgmacutilities.progressbars.GIFProgressBar;
 import com.pgmacdesign.pgmacutilities.progressbars.PGMacCustomProgressBar;
-import com.pgmacdesign.pgmacutilities.misc.PGMacUtilitiesConstants;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -18,6 +18,7 @@ import java.util.TimerTask;
 public class ProgressBarUtilities {
 
     private static Dialog myDialog;
+    private static GIFProgressBar myDialog2;
     private static Timer timeoutTimer;
     private static Context mContext;
 
@@ -28,19 +29,59 @@ public class ProgressBarUtilities {
 
     public static void showGIFProgressDialog(Context context, String imageResourceURIPath){
         if(myDialog == null){
-            myDialog = GIFProgressBar.buildGIFDialog(context, imageResourceURIPath);
+            myDialog = GIFProgressBar.buildGIFDialog(context, imageResourceURIPath, 0);
         }
-        myDialog.show();
+        try {
+            myDialog.show();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
+
+    /*
+    public static void showGIFProgressDialog(Context context, String imageResourceURIPath,
+                                             int customWidthTranslate, int customHeightTranslate){
+        if(myDialog == null){
+            myDialog = GIFProgressBar.buildGIFDialog(context, imageResourceURIPath, 0,
+                    customWidthTranslate, customHeightTranslate);
+        }
+        try {
+            myDialog.show();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    */
 
     public static void showGIFProgressDialog(Context context, int imageResourceId){
         if(myDialog == null){
-            myDialog = GIFProgressBar.buildGIFDialog(context, imageResourceId);
+            myDialog = GIFProgressBar.buildGIFDialog(context, null, imageResourceId);
         }
-        myDialog.show();
+        try {
+            myDialog.show();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
+    /*
+    public static void showGIFProgressDialog(Context context, int imageResourceId,
+                                             int customWidthTranslate, int customHeightTranslate){
+        if(myDialog == null){
+            myDialog = GIFProgressBar.buildGIFDialog(context, null, imageResourceId,
+                    customWidthTranslate, customHeightTranslate);
+        }
+        try {
+            myDialog.show();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    */
 
+    private static void show(){
+
+    }
     ////////////////////////
     //SVG Progress Dialog//
     ///////////////////////

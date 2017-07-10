@@ -324,6 +324,26 @@ public class DisplayManagerUtilities {
     }
 
     /**
+     * Overloaded method.
+     * @param unit {@link TypedValue}
+     * @param value Value to convert
+     * @return float, in pixels, of converted value
+     */
+    public float convertToPixels(int unit, float value) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1){ //17
+            return TypedValue.applyDimension(unit, value, api17OutMetrics);
+        } else {
+            return TypedValue.applyDimension(unit, value, outMetrics);
+        }
+    }
+
+    public Point getCenterXYCoordinates(){
+        int width = getPixelsWidth();
+        int height = getPixelsHeight();
+        return new Point((int)(width / 2) , (int)(height / 2));
+    }
+
+    /**
      * Gets the size of the navigation bar (bar at the bottom with the back, home, menu options)
      * @return {@link Point} X is the width, Y is the height
      */
