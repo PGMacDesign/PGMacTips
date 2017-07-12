@@ -337,6 +337,18 @@ public class DisplayManagerUtilities {
         }
     }
 
+    /**
+     * Return the displayMetrics
+     * @return {@link DisplayMetrics}
+     */
+    public DisplayMetrics getDisplayMetrics(){
+        if(Build.VERSION.SDK_INT >= 17) {
+            return api17OutMetrics; //API 17 or higher
+        } else {
+            return outMetrics;
+        }
+    }
+
     public Point getCenterXYCoordinates(){
         int width = getPixelsWidth();
         int height = getPixelsHeight();
