@@ -36,6 +36,8 @@ public class SystemUtilities {
         LOLLIPOP_MR1(22, "LOLLIPOP_MR1", ""),
         M(23, "M", "MarshMallow"),
         N(24, "N", "Nougat"),
+        N_MR1(25, "N", "Nougat"),
+        O(26, "O", ""),
         CUR_DEVELOPMENT(10000, "NA", "NA");
 
         //The build name within the source code itself

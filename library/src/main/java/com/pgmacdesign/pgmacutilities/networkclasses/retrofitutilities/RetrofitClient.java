@@ -1,9 +1,8 @@
 package com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
-import com.pgmacdesign.pgmacutilities.BuildConfig;
-import com.pgmacdesign.pgmacutilities.utilities.L;
 import com.pgmacdesign.pgmacutilities.utilities.MiscUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.StringUtilities;
 
@@ -187,7 +186,7 @@ public class RetrofitClient {
         try {
             serviceClient = (T) obj;
         } catch (ClassCastException e){
-            L.m("If you are getting back null here, make sure your interface class passed in matches" +
+            Log.d("RetrofitClient Error:" ,"If you are getting back null here, make sure your interface class passed in matches" +
                     "the style outlined in the Retrofit documentation. See this class' documentation" +
                     "for a link to a sample.");
         }
@@ -234,8 +233,9 @@ public class RetrofitClient {
         return builder;
     }
 
-    public <T> Builder newBuilder(@NonNull final Class<T> serviceInterface, @NonNull String urlBase){
-        return new Builder(serviceInterface, urlBase);
+    public <T> Builder newBuilder(@NonNull final Class<T> serviceInterface,
+                                  @NonNull String urlBase, boolean isDebugBuild){
+        return new Builder(serviceInterface, urlBase, isDebugBuild);
     }
 
     //Builder class below
@@ -257,12 +257,14 @@ public class RetrofitClient {
          *                         https://guides.codepath.com/android/Consuming-APIs-with-Retrofit#define-the-endpoints
          * @param urlBase String url base to use, IE, http://www.myapi.com
          *                This excludes any paths and any versioning here (IE /V1 and no /users/...)
+         * @param isDebugBuild If true, logging will be set to Body, else, set to none.
          */
-        public Builder(@NonNull final Class<T> serviceInterface, @NonNull String urlBase){
+        public Builder(@NonNull final Class<T> serviceInterface,
+                       @NonNull String urlBase, boolean isDebugBuild){
             this.builder_urlBase = urlBase;
             this.builder_serviceInterface = serviceInterface;
             this.builder_headers = null;
-            if(BuildConfig.DEBUG) {
+            if(isDebugBuild) {
                 this.setLogLevel(HttpLoggingInterceptor.Level.BODY);
             } else {
                 this.setLogLevel(HttpLoggingInterceptor.Level.NONE);
