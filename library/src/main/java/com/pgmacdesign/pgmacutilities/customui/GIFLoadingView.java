@@ -86,6 +86,7 @@ public class GIFLoadingView extends View {
         if(dmu != null) {
             viewHeight = dmu.getPixelsHeight();
             viewWidth = dmu.getPixelsWidth();
+
             ViewUtilities.PGMViewObject obj = ViewUtilities.scaleGIFTo(
                     mMovie.width(), mMovie.height(), viewWidth,
                     viewHeight, true);
@@ -138,7 +139,7 @@ public class GIFLoadingView extends View {
             mHeight = mMovie.height();
         }
         //requestLayout();
-        setMeasuredDimension(mWidth, mHeight);
+        //setMeasuredDimension(mWidth, mHeight);
     }
 
     /*
@@ -182,6 +183,7 @@ public class GIFLoadingView extends View {
             invalidate();
         }
     }
+
 
 
     public void setGifImageResource(int id) {

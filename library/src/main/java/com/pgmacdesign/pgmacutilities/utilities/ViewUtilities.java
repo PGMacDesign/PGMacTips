@@ -1,6 +1,7 @@
 package com.pgmacdesign.pgmacutilities.utilities;
 
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
@@ -43,7 +44,7 @@ public class ViewUtilities {
         obj.maintainedRatio = maintainRatio;
         if(maintainRatio){
             float multiplier, newWidth, newHeight, widthTranslatePixels, heightTranslatePixels;
-            L.m("RATIO WITHIN VIEW UTILITIES == " + currentGifRatio);
+            L.m("Current gif ratio == " + currentGifRatio);
             L.m("View ratio == " + layoutParamsRatio);
             if(layoutParamsRatio < 1){
                 //View is Portrait mode; height > width ; width is lowest #
@@ -165,4 +166,21 @@ public class ViewUtilities {
             return maintainedRatio;
         }
     }
+
+    public static void setViewMargins (View view, int left, int top, int right, int bottom) {
+        if(view == null){
+            return;
+        }
+        try {
+            if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+                ViewGroup.MarginLayoutParams p =
+                        (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+                p.setMargins(left, top, right, bottom);
+                view.requestLayout();
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 }

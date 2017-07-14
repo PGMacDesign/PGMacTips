@@ -29,4 +29,10 @@
         <item name="android:background">@color/Transparent</item>
     </style>
 
+    <!-- Custom full screen dialog theme -->
+    <style name="FullScreenDialog" parent="MainTheme" >
+        <item name="android:windowBackground">@null</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
 </resources>

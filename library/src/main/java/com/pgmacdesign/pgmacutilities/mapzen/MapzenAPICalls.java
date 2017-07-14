@@ -50,7 +50,7 @@ public class MapzenAPICalls {
     private void initClient() {
         if (retrofitClient == null) {
             RetrofitClient.Builder builder = new RetrofitClient.Builder(
-                    MapzenInterface.class, URL_BASE);
+                    MapzenInterface.class, URL_BASE, true);
             builder.callIsJSONFormat();
             retrofitClient = builder.build();
         }

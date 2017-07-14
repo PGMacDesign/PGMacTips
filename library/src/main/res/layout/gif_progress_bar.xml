@@ -18,5 +18,8 @@
         android:background="@color/Transparent"
         android:foregroundGravity="center|center_vertical|center_horizontal"
         android:visibility="visible"
+        style="@style/FullScreenDialog"
         />
+
+
 </RelativeLayout>

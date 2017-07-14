@@ -1,10 +1,11 @@
 package com.pgmacdesign.pgmacutilities.progressbars;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.pgmacdesign.pgmacutilities.R;
 import com.pgmacdesign.pgmacutilities.customui.GIFLoadingView;
@@ -15,7 +16,7 @@ import com.pgmacdesign.pgmacutilities.utilities.StringUtilities;
  * Created by pmacdowell on 2017-07-07.
  */
 
-public class GIFProgressBar extends ProgressDialog {
+public class GIFProgressBar extends Dialog {
 
     private static final String PASS_VALID_DATA =
             "GIF resourceId and GIF resourceURIPath were null, please make sure to pass a valid GIF";
@@ -31,6 +32,13 @@ public class GIFProgressBar extends ProgressDialog {
         this.context = context;
         this.resourceURIPath = resourceURIPath;
         this.resourceId = resourceId;
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        try {
+            getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.MATCH_PARENT);
+        } catch (NullPointerException npe){
+            npe.printStackTrace();
+        }
 //        this.customWidthTranslate = 0;
 //        this.customHeightTranslate = 0;
     }
@@ -41,6 +49,13 @@ public class GIFProgressBar extends ProgressDialog {
         this.context = context;
         this.resourceURIPath = resourceURIPath;
         this.resourceId = resourceId;
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        try {
+            getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.MATCH_PARENT);
+        } catch (NullPointerException npe){
+            npe.printStackTrace();
+        }
 //        this.customWidthTranslate = customWidthTranslate;
 //        this.customHeightTranslate = customHeightTranslate;
     }
