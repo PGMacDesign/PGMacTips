@@ -97,7 +97,7 @@ public class PGMacUtilitiesConstants {
     public static final int TAG_SMS_RECEIVED_BROADCAST_RECEIVER_EMPTY = 4455;
     public static final int VIEW_PARAMS_LOADED = 4456;
     public static final int VIEW_PARAMS_LOADING_FAILED = 4457;
-    public static final int TAG_TBD_7 = 4458;
+    public static final int VIEW_FINISHED_DRAWING = 4458;
     public static final int TAG_TBD_8 = 4459;
     public static final int TAG_TBD_9 = 4460;
 

@@ -1,8 +1,9 @@
 package com.pgmacdesign.pgmacutilities.utilities;
 
+import android.graphics.Point;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmacutilities.misc.PGMacUtilitiesConstants;
@@ -17,10 +18,12 @@ public class ViewUtilities {
             PGMacUtilitiesConstants.VIEW_PARAMS_LOADED;
     public static final int VIEW_PARAMS_LOADING_FAILED =
             PGMacUtilitiesConstants.VIEW_PARAMS_LOADING_FAILED;
+    public static final int VIEW_FINISHED_DRAWING =
+            PGMacUtilitiesConstants.VIEW_FINISHED_DRAWING;
 
-    public static PGMViewObject scaleGIFTo(float gifWidth, float gifHeight,
-                                           float maxAvailableWidth, float maxAvailableHeight,
-                                           Boolean maintainRatio){
+    public static ResizingViewObject scaleGIFTo(float gifWidth, float gifHeight,
+                                                float maxAvailableWidth, float maxAvailableHeight,
+                                                Boolean maintainRatio){
         //Check incorrect data first
         if(gifHeight == 0 && gifWidth == 0){
             return null;
@@ -40,12 +43,10 @@ public class ViewUtilities {
             return null;
         }
 
-        PGMViewObject obj = new PGMViewObject();
+        ResizingViewObject obj = new ResizingViewObject();
         obj.maintainedRatio = maintainRatio;
         if(maintainRatio){
             float multiplier, newWidth, newHeight, widthTranslatePixels, heightTranslatePixels;
-            L.m("Current gif ratio == " + currentGifRatio);
-            L.m("View ratio == " + layoutParamsRatio);
             if(layoutParamsRatio < 1){
                 //View is Portrait mode; height > width ; width is lowest #
                 if(currentGifRatio < 1){
@@ -57,7 +58,6 @@ public class ViewUtilities {
                 }
                 newWidth = gifWidth * multiplier;
                 newHeight = gifHeight * multiplier;
-                // TODO: 2017-07-10 something is inherently wrong with Y (width) translation. Fix it!
                 widthTranslatePixels = (((((float)maxAvailableWidth) - ((float)newWidth)) / 2F) / ((float)multiplier));
                 heightTranslatePixels = (((((float)maxAvailableHeight) - ((float)newHeight)) / 2F) / ((float)multiplier));
             } else {
@@ -71,7 +71,6 @@ public class ViewUtilities {
                 }
                 newWidth = gifWidth * multiplier;
                 newHeight = gifHeight * multiplier;
-                // TODO: 2017-07-10 something is inherently wrong with Y (width) translation. Fix it!
                 widthTranslatePixels = (((((float)maxAvailableWidth) - ((float)newWidth)) / 2F) / ((float)multiplier));
                 heightTranslatePixels = (((((float)maxAvailableHeight) - ((float)newHeight)) / 2F) / ((float)multiplier));
             }
@@ -95,41 +94,11 @@ public class ViewUtilities {
     }
 
     /**
-     * Class to load the view height and width after it has loaded. Follow this thread for info:
-     * https://stackoverflow.com/questions/9575706/android-get-height-of-a-view-before-it%C2%B4s-drawn
-     * @param view
-     * @param listener
+     * Object used for resizing views returns
      */
-    public static void getViewParamsAfterLoading(final View view,
-                                                 final OnTaskCompleteListener listener){
-        if(view == null){
-            return;
-        }
-        if(listener == null){
-            return;
-        }
-        try {
-            view.getViewTreeObserver().addOnGlobalLayoutListener(
-                    new ViewTreeObserver.OnGlobalLayoutListener() {
-                        @Override
-                        public void onGlobalLayout() {
-                            int width = view.getWidth();
-                            int height = view.getHeight();
-                            PGMViewObject o = new PGMViewObject();
-                            o.newWidth = width;
-                            o.newHeight = height;
-                            view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                            listener.onTaskComplete(o, VIEW_PARAMS_LOADED);
-                        }
-                    }
-            );
-        } catch (Exception e){
-            e.printStackTrace();
-            listener.onTaskComplete(null, VIEW_PARAMS_LOADING_FAILED);
-        }
-    }
+    public static class ResizingViewObject {
 
-    public static class PGMViewObject {
+        //All used in translating objects
         private float newWidth;
         private float newHeight;
         private boolean maintainedRatio;
@@ -167,6 +136,14 @@ public class ViewUtilities {
         }
     }
 
+    /**
+     * Set the view margins and attempt to redraw
+     * @param view View to alter
+     * @param left   margins - left side
+     * @param top    margins - top side
+     * @param right  margins - right side
+     * @param bottom margins - bottom side
+     */
     public static void setViewMargins (View view, int left, int top, int right, int bottom) {
         if(view == null){
             return;
@@ -183,4 +160,172 @@ public class ViewUtilities {
         }
     }
 
+    /**
+     * Returns view margins in same order as setting (left, top, right, bottom)
+     * @param view View to check
+     * @return int array (always size 3) where all 4 elements match same order
+     *         as setting (left, top, right, bottom). If margins are unable to
+     *         be retrieved, will return array full of zeros
+     */
+    public static int[] getViewMargins(View view){
+        int[] toReturn = {0, 0, 0, 0};
+        if(view == null){
+            return toReturn;
+        }
+        try {
+            if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+                ViewGroup.MarginLayoutParams p =
+                        (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+                toReturn[0] = p.leftMargin;
+                toReturn[1] = p.topMargin;
+                toReturn[2] = p.rightMargin;
+                toReturn[3] = p.bottomMargin;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return toReturn;
+    }
+
+    /**
+     * Used to get a view after it has been drawn. If you are attempting to get view bounds
+     * or sizing and are noticing you are always getting 0 for everything, it is because you
+     * need to wait for it to be drawn before you can obtain these results. Use this method
+     * to get the fully-drawn view and use it however.
+     * @param listener Listener to pass back view on
+     * @param view View that will be returned when loaded
+     */
+    public static void getDrawnView(@NonNull final OnTaskCompleteListener listener,
+                                     @NonNull final View view){
+        view.post(new Runnable() {
+            @Override
+            public void run() {
+                listener.onTaskComplete(view, VIEW_FINISHED_DRAWING);
+            }
+        });
+    }
+
+    /**
+     * Used when returning a view bounds (top left, top right, bottom left, bottom right)
+     */
+    public static class ViewBoundsObject {
+        private Point topLeft;
+        private Point topRight;
+        private Point bottomLeft;
+        private Point bottomRight;
+
+        public Point getTopLeft() {
+            return topLeft;
+        }
+
+        public Point getTopRight() {
+            return topRight;
+        }
+
+        public Point getBottomLeft() {
+            return bottomLeft;
+        }
+
+        public Point getBottomRight() {
+            return bottomRight;
+        }
+    }
+
+    /**
+     * Get view bounds. Note! This will account for margins! If you do not want to account
+     * for Margins, please use the overloaded method:
+     * todo refactor in padding?
+     * @param view View to be checked
+     * @return {@link ViewBoundsObject}
+     */
+    public static ViewBoundsObject getViewCoordinates(@NonNull View view){
+        int[] topLeftCoord = new int[2];
+        view.getLocationOnScreen(topLeftCoord);
+        return getViewBounds(view, topLeftCoord);
+    }
+
+    /**
+     * get view bounds
+     * @param view view View to be checked
+     * @param isADialog For passing in additional option. Dialogs are measured slightly
+     *                  differently and should be measured differently than normal views.
+     * @param useRelativeToParent If this is set to true, it will override isADialog (if that is
+     *                            set to true). This gets params in respect to parent view.
+     * @return {@link ViewBoundsObject}
+     */
+    public static ViewBoundsObject getViewCoordinates(@NonNull View view,
+                                                      boolean isADialog,
+                                                      boolean useRelativeToParent){
+        int[] topLeftCoord = new int[2];
+        if(isADialog){
+            view.getLocationInWindow(topLeftCoord);
+        } else {
+            view.getLocationOnScreen(topLeftCoord);
+        }
+        if(useRelativeToParent){
+            topLeftCoord[0] = view.getLeft();
+            topLeftCoord[1] = view.getTop();
+        }
+        return getViewBounds(view, topLeftCoord);
+    }
+
+    private static ViewBoundsObject getViewBounds(@NonNull View view, int[] topLeftCoord){
+
+        ViewBoundsObject o = new ViewBoundsObject();
+        int viewWidth = view.getWidth();
+        int viewHeight = view.getHeight();
+
+        //Top Left
+        int x0 = topLeftCoord[0];
+        int y0 = topLeftCoord[1];
+        //Top Right
+        int x1 = x0 + viewWidth;
+        int y1 = y0;
+        //Bottom Left
+        int x2 = x0;
+        int y2 = y0 + viewHeight;
+        //Bottom Right
+        int x3 = x0 + viewWidth;
+        int y3 = y0 + viewHeight;
+
+        /*
+        To my understanding, this is already done with the calls
+        if(accountForMargins) {
+            if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+                ViewGroup.MarginLayoutParams params =
+                        (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+
+                int bottomMargin = params.bottomMargin;
+                int rightMargin = params.rightMargin;
+                int leftMargin = params.leftMargin;
+                int topMargin = params.topMargin;
+
+                //Top Left
+                x0 += leftMargin;
+                y0 += topMargin;
+                //Top Right
+                x1 -= rightMargin;
+                y1 += topMargin;
+                //Bottom Left
+                x2 += leftMargin;
+                y2 -= bottomMargin;
+                //Bottom Right
+                x3 -= rightMargin;
+                y3 -= bottomMargin;
+            }
+        }
+        */
+
+        Point topLeft = new Point(x0, y0);
+        Point topRight = new Point(x1, y1);
+        Point bottomLeft = new Point(x2, y2);
+        Point bottomRight = new Point(x3, y3);
+
+        o.topLeft = topLeft;
+        o.topRight = topRight;
+        o.bottomLeft = bottomLeft;
+        o.bottomRight = bottomRight;
+
+        return o;
+    }
 }
