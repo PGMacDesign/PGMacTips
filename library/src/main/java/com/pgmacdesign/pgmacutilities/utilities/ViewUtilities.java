@@ -2,8 +2,12 @@ package com.pgmacdesign.pgmacutilities.utilities;
 
 import android.graphics.Point;
 import android.support.annotation.NonNull;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmacutilities.misc.PGMacUtilitiesConstants;
@@ -185,6 +189,98 @@ public class ViewUtilities {
             e.printStackTrace();
         }
         return toReturn;
+    }
+
+    /**
+     * Resize a view to a square by taking lowest width or height and resizing to that
+     * @param view View to alter && return
+     * @return If successful, altered view. If not successful, passed view
+     */
+    public static <T extends View> T resizeViewToSquare(@NonNull T view){
+        return resizeViewToSquare(view, false, false);
+    }
+
+    /**
+     * Resize a view to a square by taking lowest width or height and resizing to that.
+     * Overloaded, takes in 2 new params to allow for centering and margin removal
+     * @param view View to alter && return
+     * @param centerView Should the view be centered? If so, will attempt to center view
+     *                   within layout params capabilities
+     * @param removeMargins Should remove the margins? This is useful if trying to resize
+     *                      something and want it to go to the edges. Note, will not remove
+     *                      the padding if that exists. If true, this will set all the set
+     *                      margins to zero.
+     * @return If successful, altered view. If not successful, passed view
+     */
+    public static <T extends View> T resizeViewToSquare(@NonNull T view,
+                                                         boolean centerView, boolean removeMargins){
+        if(view == null){
+            return view;
+        }
+
+        int width = view.getWidth();
+        int height = view.getHeight();
+        int lowestOfTwo;
+        //Portraint vs landscape
+        if(width < height){
+            lowestOfTwo = width;
+        } else {
+            lowestOfTwo = height;
+        }
+
+        try {
+            if (view.getLayoutParams() instanceof LinearLayout.LayoutParams) {
+                LinearLayout.LayoutParams p = (LinearLayout.LayoutParams)
+                        view.getLayoutParams();
+                p.width = lowestOfTwo;
+                p.height = lowestOfTwo;
+                if (removeMargins) {
+                    p.setMargins(0, 0, 0, 0);
+                }
+                if (centerView) {
+                    p.gravity = Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL;
+                }
+
+            } else if (view.getLayoutParams() instanceof RelativeLayout.LayoutParams) {
+                RelativeLayout.LayoutParams p = (RelativeLayout.LayoutParams)
+                        view.getLayoutParams();
+                p.width = lowestOfTwo;
+                p.height = lowestOfTwo;
+                if (removeMargins) {
+                    p.setMargins(0, 0, 0, 0);
+                }
+                if (centerView) {
+                    p.addRule(RelativeLayout.CENTER_IN_PARENT);
+                    p.addRule(RelativeLayout.CENTER_HORIZONTAL);
+                    p.addRule(RelativeLayout.CENTER_VERTICAL);
+                }
+
+            } else if (view.getLayoutParams() instanceof FrameLayout.LayoutParams) {
+                FrameLayout.LayoutParams p = (FrameLayout.LayoutParams)
+                        view.getLayoutParams();
+                p.width = lowestOfTwo;
+                p.height = lowestOfTwo;
+                if (removeMargins) {
+                    p.setMargins(0, 0, 0, 0);
+                }
+                if (centerView) {
+                    p.gravity = Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL;
+                }
+            } else if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+                ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams)
+                        view.getLayoutParams();
+
+                p.width = lowestOfTwo;
+                p.height = lowestOfTwo;
+                if (removeMargins) {
+                    p.setMargins(0, 0, 0, 0);
+                }
+
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return view;
     }
 
     /**

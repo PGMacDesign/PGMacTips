@@ -117,6 +117,44 @@ public class MiscUtilities {
     }
 
     /**
+     * Print out a list of objects
+     * @param myList
+     */
+    public static void printOutList(List<?> myList){
+        if(isListNullOrEmpty(myList)){
+            return;
+        }
+        int x = 0;
+        for(Object item : myList){
+            try {
+                L.m(item.toString());
+            } catch (Exception e){
+                L.m("Could not print position " + x);
+            }
+            x++;
+        }
+    }
+
+    /**
+     * Print out an array of objects
+     * @param myArray Array of objects
+     */
+    public static void printOutArray(Object[] myArray){
+        if(isArrayNullOrEmpty(myArray)){
+            return;
+        }
+        int x = 0;
+        for(Object item : myArray){
+            try {
+                L.m(item.toString());
+            } catch (Exception e){
+                L.m("Could not print position " + x);
+            }
+            x++;
+        }
+    }
+
+    /**
      * Print out a hashmap
      * @param myMap Map of type String, ?
      */
