@@ -217,7 +217,7 @@ public class ViewUtilities {
         if(view == null){
             return view;
         }
- 
+
         int width = view.getWidth();
         int height = view.getHeight();
         int lowestOfTwo;
