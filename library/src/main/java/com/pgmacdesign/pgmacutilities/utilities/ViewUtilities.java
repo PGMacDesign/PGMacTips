@@ -336,7 +336,8 @@ public class ViewUtilities {
      */
     public static ViewBoundsObject getViewCoordinates(@NonNull View view){
         int[] topLeftCoord = new int[2];
-        view.getLocationOnScreen(topLeftCoord);
+        topLeftCoord[0] = view.getLeft();
+        topLeftCoord[1] = view.getTop();
         return getViewBounds(view, topLeftCoord);
     }
 
@@ -356,7 +357,9 @@ public class ViewUtilities {
         if(isADialog){
             view.getLocationInWindow(topLeftCoord);
         } else {
-            view.getLocationOnScreen(topLeftCoord);
+            //view.getLocationOnScreen(topLeftCoord); //changed, not working accurately
+            topLeftCoord[0] = view.getLeft();
+            topLeftCoord[1] = view.getTop();
         }
         if(useRelativeToParent){
             topLeftCoord[0] = view.getLeft();
