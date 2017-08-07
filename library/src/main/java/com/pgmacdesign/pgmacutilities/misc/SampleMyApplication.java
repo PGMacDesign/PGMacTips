@@ -88,9 +88,6 @@ public class SampleMyApplication extends MultiDexApplication {
 
     /**
      * Build and return a shared prefs instance state.
-     * NOTE! Although I have code in here for secured, encrypted shared prefs, I did
-     * not include it in the final CA Prototype code. I did leave it in however as it
-     * is very useful to have at the ready.
      * @return {@link SharedPrefs}
      */
     public static synchronized SharedPrefs getSharedPrefsInstance(){
