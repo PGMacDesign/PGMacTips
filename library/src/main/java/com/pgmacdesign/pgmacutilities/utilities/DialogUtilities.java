@@ -244,7 +244,9 @@ public class DialogUtilities {
         EditTextDialog dialog = new EditTextDialog(
                 context, listener, doneText, cancelText, title, editTextHint, textInputType
         );
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        if(StringUtilities.isNullOrEmpty(title)){
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        }
         return dialog;
 
     }

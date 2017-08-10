@@ -112,8 +112,12 @@ public class RetrofitClient {
             @Override
             public Response intercept(Interceptor.Chain chain) throws IOException {
                 Request.Builder builder = chain.request().newBuilder();
-                Headers headers = buildHeaders();
-                builder.headers(headers);
+                if(headers != null){
+                    if(headers.size() > 0){
+                        Headers headers = buildHeaders();
+                        builder.headers(headers);
+                    }
+                }
                 Request newRequest = builder.build();
                 return chain.proceed(newRequest);
             }
