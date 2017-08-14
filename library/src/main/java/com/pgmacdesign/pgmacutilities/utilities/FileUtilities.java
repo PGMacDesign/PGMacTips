@@ -3,6 +3,8 @@ package com.pgmacdesign.pgmacutilities.utilities;
 import android.annotation.TargetApi;
 import android.content.ContentUris;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -10,6 +12,7 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.util.Base64;
 
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmacutilities.misc.PGMacUtilitiesConstants;
@@ -17,6 +20,7 @@ import com.pgmacdesign.pgmacutilities.misc.PGMacUtilitiesConstants;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -565,6 +569,43 @@ public class FileUtilities {
         }
 
         return null;
+
+    }
+
+    /**
+     * Encode a Bitmap to a base 64 String
+     * @param bm
+     * @return
+     */
+    private String encodeImage(Bitmap bm) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG,100,baos);
+        byte[] b = baos.toByteArray();
+        String encImage = Base64.encodeToString(b, Base64.DEFAULT);
+
+        return encImage;
+    }
+
+    /**
+     * Encode an image to a base 64 String
+     * @param path
+     * @return
+     */
+    private String encodeImage(String path) {
+        File imagefile = new File(path);
+        FileInputStream fis = null;
+        try{
+            fis = new FileInputStream(imagefile);
+        }catch(FileNotFoundException e){
+            e.printStackTrace();
+        }
+        Bitmap bm = BitmapFactory.decodeStream(fis);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG,100,baos);
+        byte[] b = baos.toByteArray();
+        String encImage = Base64.encodeToString(b, Base64.DEFAULT);
+        //Base64.de
+        return encImage;
 
     }
 }
