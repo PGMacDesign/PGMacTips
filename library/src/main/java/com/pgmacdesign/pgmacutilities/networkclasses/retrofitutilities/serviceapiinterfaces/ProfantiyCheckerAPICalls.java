@@ -156,7 +156,7 @@ public class ProfantiyCheckerAPICalls {
     private static void init(){
         if(serviceInterface == null) {
             RetrofitClient.Builder builder = new RetrofitClient.Builder(
-                    ProfantiyCheckerInterface.class, BASE_URL, true);
+                    ProfantiyCheckerInterface.class, BASE_URL);
             builder.callIsJSONFormat();
             RetrofitClient retrofitClient = builder.build();
             serviceInterface = retrofitClient.buildServiceClient();
