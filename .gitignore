@@ -2,8 +2,6 @@
 *.iml
 .gradle
 .idea
-gradlew
-gradlew.bat
 /.idea/workspace.xml
 /.idea/libraries
 .DS_Store

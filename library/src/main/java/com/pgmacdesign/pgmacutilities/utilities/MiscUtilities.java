@@ -1,8 +1,10 @@
 package com.pgmacdesign.pgmacutilities.utilities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.pm.Signature;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -366,5 +368,51 @@ public class MiscUtilities {
         } catch( PackageManager.NameNotFoundException e ){
             return false;
         }
+    }
+
+    /**
+     * Grab a list of all apps the user has installed and return them
+     * @param context context
+     * @param printResults Overloaded boolean, if true, will print out results in logcat
+     * @return {@link ResolveInfo}
+     */
+    public static List<ResolveInfo> getAllInstalledApps(Context context, boolean printResults){
+        try {
+            Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
+            mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+            List<ResolveInfo> pkgAppsList = context.getPackageManager()
+                    .queryIntentActivities( mainIntent, 0);
+            if(printResults){
+                L.m("\nPrinting list of all installed apps:\n");
+                for(ResolveInfo r : pkgAppsList){
+                    if(r != null) {
+                        L.m(r.toString());
+                    }
+                }
+                L.m("\nFinished Printing list of all installed apps:\n");
+            }
+            return pkgAppsList;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Grab a list of all apps the user has installed and return them
+     * @param context context
+     * @return {@link ResolveInfo}
+     */
+    public static List<ResolveInfo> getAllInstalledApps(Context context){
+        try {
+            Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
+            mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+            List<ResolveInfo> pkgAppsList = context.getPackageManager()
+                    .queryIntentActivities( mainIntent, 0);
+            return pkgAppsList;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
