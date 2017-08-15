@@ -1,94 +1,77 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.pgmacdesign.pgmacutilities">
 
-    <!-- Permissions used in this library -->
+    <!--
+
+    <!- Permissions used in this library
 
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- Used to determine connectivity before making a call-->
+    <!- Used to determine connectivity before making a call
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!-- Used to Utilitze the camera-->
+    <!- Used to Utilitze the camera
     <uses-permission android:name="android.permission.CAMERA" />
-    <!-- Used to Crop and save photos in order to use them-->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <!-- Used to read from the gallery and select photos-->
+    <!- Used to Crop and save photos in order to use them
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!- Used to read from the gallery and select photos
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <!-- Used for location based utilities like getting latitude and longitude -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <!-- Used for location based utilities like getting latitude and longitude-->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <!-- Used in Selecting contacts from the internal SQLite DB of contacts
+    <!- Used for location based utilities like getting latitude and longitude
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!- Used for location based utilities like getting latitude and longitude
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!- Used in Selecting contacts from the internal SQLite DB of contacts
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
-    -->
 
-    <!--
+
     <application
-        >
+        android:allowBackup="true"
+        android:hardwareAccelerated="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true">
+        <!-
+        may need to remove
+        android:hardwareAccelerated="false"
+        http://android-er.blogspot.com/2014/03/play-animated-gif-with.html
+
+        <activity
+            android:name=".TESTING"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".TESTING2"
+            android:screenOrientation="portrait"></activity>
+
+        <activity
+            android:name=".enhancedphotoclasses.TakePhotoActivityAPI21"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+
+        <activity
+            android:name=".enhancedphotoclasses.TakePhotoActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+
+        <activity
+            android:name=".enhancedphotoclasses.AutoPhotoActivity"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/MainTheme"
-            />
-
-
-    </application>
-    -->
-
-        <application
-            android:allowBackup="true"
-            android:icon="@mipmap/ic_launcher"
-            android:label="@string/app_name"
-            android:supportsRtl="true"
-            android:hardwareAccelerated="false"
-            >
-            <!--
-            may need to remove
-            android:hardwareAccelerated="false"
-            http://android-er.blogspot.com/2014/03/play-animated-gif-with.html
-            -->
-            <activity
-                android:name=".TESTING"
-                android:screenOrientation="portrait">
-                <intent-filter>
-                    <action android:name="android.intent.action.MAIN" />
-                    <category android:name="android.intent.category.LAUNCHER" />
-                </intent-filter>
-            </activity>
-
-            <activity
-                android:name=".TESTING2"
-                android:screenOrientation="portrait">
-            </activity>
-
-            <activity
-                android:name=".enhancedphotoclasses.TakePhotoActivityAPI21"
-                android:screenOrientation="portrait"
-                android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-                >
-            </activity>
-
-            <activity
-                android:name=".enhancedphotoclasses.TakePhotoActivity"
-                android:screenOrientation="portrait"
-                android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-                >
-            </activity>
-
-            <activity
-                android:name=".enhancedphotoclasses.AutoPhotoActivity"
-                android:screenOrientation="portrait"
-                />
-
-            <activity
-                android:name="com.yalantis.ucrop.UCropActivity"
-                android:screenOrientation="portrait"
-                android:theme="@style/MainTheme"
-                />
+            android:theme="@style/MainTheme" />
 
         <service
             android:name=".services.ServiceFlash"
-            android:exported="false"/>
+            android:exported="false" />
 
     </application>
+
+    -->
 
 </manifest>

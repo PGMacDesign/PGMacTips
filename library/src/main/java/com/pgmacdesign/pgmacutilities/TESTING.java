@@ -317,8 +317,8 @@ public class TESTING extends Activity implements View.OnClickListener {
     }
 
     private void showGIFLoader(){
-        //ProgressBarUtilities.showGIFProgressDialog(this, R.drawable.got_fighttex_house_stark);
-        ProgressBarUtilities.showGIFProgressDialog(this, R.drawable.but_why_gif);
+        ProgressBarUtilities.showGIFProgressDialog(this, R.drawable.got_fighttex_house_stark);
+        //ProgressBarUtilities.showGIFProgressDialog(this, R.drawable.but_why_gif);
     }
 
 }
