@@ -6,19 +6,15 @@ import android.support.annotation.NonNull;
 
 import com.pgmacdesign.pgmacutilities.utilities.StringUtilities;
 
-import java.io.Serializable;
-
 import static com.pgmacdesign.pgmacutilities.utilities.StringUtilities.isNullOrEmpty;
-import static com.pgmacdesign.pgmacutilities.utilities.StringUtilities.keepLettersOnly;
-import static com.pgmacdesign.pgmacutilities.utilities.StringUtilities.toUpperCase;
 
 /**
  * Parses and represents the cardholder's name.
  */
-public class Name extends BaseTempData implements Serializable {
+public class Name extends BaseTempData {
 
-    private final String firstName;
-    private final String lastName;
+    private transient final TempString firstName;
+    private transient final TempString lastName;
 
     /**
      * Empty constructor
@@ -33,9 +29,10 @@ public class Name extends BaseTempData implements Serializable {
      */
     public Name(String rawName) {
         super(rawName);
-        final String[] splitName = StringUtilities.removeSpaces(rawName).split("/");
-        firstName = name(splitName, 1);
-        lastName = name(splitName, 0);
+        final String[] splitName = rawName.split("/");
+        //final String[] splitName = StringUtilities.removeSpaces(rawName).split("/");
+        firstName = new TempString(name(splitName, 1));
+        lastName = new TempString(name(splitName, 0));
     }
 
     /**
@@ -45,8 +42,8 @@ public class Name extends BaseTempData implements Serializable {
      */
     public Name(String firstName, String lastName) {
         super(null);
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.firstName = new TempString(firstName);
+        this.lastName = new TempString(lastName);
     }
 
     @Override
@@ -62,33 +59,23 @@ public class Name extends BaseTempData implements Serializable {
     public String getFullName() {
         StringBuilder sb = new StringBuilder();
         if (!isNullOrEmpty(firstName)) {
-            sb.append(StringUtilities.removeSpaces(firstName));
+            sb.append(firstName.getTempStringData());
         }
-        if ((!isNullOrEmpty(firstName)) && (!(isNullOrEmpty(lastName)))) {
+        if ((!isNullOrEmpty(firstName.getTempStringData()))
+                && (!(isNullOrEmpty(lastName.getTempStringData())))) {
             sb.append(" ");
         }
         if (!isNullOrEmpty(lastName)) {
-            sb.append(StringUtilities.removeSpaces(lastName));
+            sb.append(lastName.getTempStringData());
         }
         return sb.toString();
     }
 
-    @Override
-    public int hashCode() {
-
-
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (firstName == null ? 0 : firstName.hashCode());
-        result = prime * result + (lastName == null ? 0 : lastName.hashCode());
-        return result;
-    }
-
     public boolean objectHasName() {
-        if (!isNullOrEmpty(firstName)) {
+        if (!isNullOrEmpty(firstName.getTempStringData())) {
             return true;
         }
-        if (!isNullOrEmpty(lastName)) {
+        if (!isNullOrEmpty(lastName.getTempStringData())) {
             return true;
         }
         return false;
@@ -100,25 +87,21 @@ public class Name extends BaseTempData implements Serializable {
     }
 
     private String name(@NonNull String[] splitName, final int position) {
-        String name;
+        String name = null;
         StringBuilder sb = new StringBuilder();
-        // TODO: 2017-08-03 look  back into if the name order is reversed
-        int counter = 0;
         if (splitName.length < 1) {
             return null;
         }
-        for (String str : splitName) {
-            if (!isNullOrEmpty(str)) {
-                if (counter > 0 && counter < (splitName.length - 1)) {
-                    sb.append(" ");
-                }
-                sb.append(str);
+        if(splitName.length > position){
+            try {
+                name = splitName[position];
+                name = StringUtilities.keepLettersOnly(name);
+                name = StringUtilities.toUpperCase(name);
+                return name;
+            } catch (Exception e){
+                e.printStackTrace();
             }
-            counter++;
         }
-        name = sb.toString();
-        name = keepLettersOnly(name);
-        name = toUpperCase(name);
 
         if (name == null) {
             name = "";
@@ -127,4 +110,17 @@ public class Name extends BaseTempData implements Serializable {
         return name;
     }
 
+    public String getFirstName() {
+        if(firstName != null){
+            return firstName.getTempStringData();
+        }
+        return null;
+    }
+
+    public String getLastName() {
+        if(lastName != null){
+            return lastName.getTempStringData();
+        }
+        return null;
+    }
 }

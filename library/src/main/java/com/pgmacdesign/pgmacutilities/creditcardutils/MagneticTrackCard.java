@@ -15,10 +15,35 @@ public class MagneticTrackCard extends CardTrackBase {
         this.track3Credit = track3Credit;
     }
 
+    public static MagneticTrackCard parse(String track1String, String track2String, String track3String) {
+        Track1Credit track1Credit = null;
+        Track2Credit track2Credit = null;
+        Track3Credit track3Credit = null;
+        try {
+            track1Credit = Track1Credit.parse(track1String);
+        } catch (Exception e){}
+        try {
+            track2Credit = Track2Credit.parse(track2String);
+        } catch (Exception e){}
+        try {
+            track3Credit = Track3Credit.parse(track3String);
+        } catch (Exception e) {}
+        return new MagneticTrackCard("", track1Credit, track2Credit, track3Credit);
+    }
+
     public static MagneticTrackCard parse(final String rawTrackData) {
-        final Track1Credit track1Credit = Track1Credit.parse(rawTrackData);
-        final Track2Credit track2Credit = Track2Credit.parse(rawTrackData);
-        final Track3Credit track3Credit = Track3Credit.parse(rawTrackData);
+        Track1Credit track1Credit = null;
+        Track2Credit track2Credit = null;
+        Track3Credit track3Credit = null;
+        try {
+            track1Credit = Track1Credit.parse(rawTrackData);
+        } catch (Exception e){}
+        try {
+            track2Credit = Track2Credit.parse(rawTrackData);
+        } catch (Exception e){}
+        try {
+            track3Credit = Track3Credit.parse(rawTrackData);
+        } catch (Exception e) {}
         return new MagneticTrackCard(rawTrackData, track1Credit, track2Credit, track3Credit);
     }
 
@@ -40,32 +65,66 @@ public class MagneticTrackCard extends CardTrackBase {
 
     public CreditCardObject convertToCreditCard() {
 
-        AccountNumber accountNumber;
-        if (this.track1Credit.hasAccountNumber()) {
-            accountNumber = this.track1Credit.getAccountNumber();
-        } else {
-            accountNumber = this.track2Credit.getAccountNumber();
+
+        AccountNumber accountNumber = null;
+        if(track1Credit != null){
+            if(track1Credit.hasAccountNumber()){
+                accountNumber = track1Credit.getAccountNumber();
+            }
+        }
+        if(accountNumber == null){
+            if(track2Credit != null){
+                if(track2Credit.hasAccountNumber()){
+                    accountNumber = track2Credit.getAccountNumber();
+                }
+            }
+        }
+        if(accountNumber == null){
+            accountNumber = new AccountNumber();
         }
 
-        Name name;
-        if (this.track1Credit.hasName()) {
-            name = this.track1Credit.getName();
-        } else {
+        Name name = null;
+        if(track1Credit != null){
+            if(track1Credit.hasName()){
+                name = track1Credit.getName();
+            }
+        }
+        if(name == null){
             name = new Name();
         }
 
-        ExpirationDateObject expirationDateObject;
-        if (this.track1Credit.hasExpirationDate()) {
-            expirationDateObject = this.track1Credit.getExpirationDateObject();
-        } else {
-            expirationDateObject = this.track2Credit.getExpirationDateObject();
+        ExpirationDateObject expirationDateObject = null;
+        if(track1Credit != null){
+            if(track1Credit.hasExpirationDate()){
+                expirationDateObject = track1Credit.getExpirationDateObject();
+            }
+        }
+        if(expirationDateObject == null){
+            if(track2Credit != null){
+                if(track2Credit.hasExpirationDate()){
+                    expirationDateObject = track2Credit.getExpirationDateObject();
+                }
+            }
+        }
+        if(expirationDateObject == null){
+            expirationDateObject = new ExpirationDateObject();
         }
 
-        ServiceCode serviceCode;
-        if (this.track1Credit.hasServiceCode()) {
-            serviceCode = this.track1Credit.getServiceCode();
-        } else {
-            serviceCode = this.track2Credit.getServiceCode();
+        ServiceCode serviceCode = null;
+        if(track1Credit != null){
+            if(track1Credit.hasServiceCode()){
+                serviceCode = track1Credit.getServiceCode();
+            }
+        }
+        if(serviceCode == null){
+            if(track2Credit != null){
+                if(track2Credit.hasServiceCode()){
+                    serviceCode = track2Credit.getServiceCode();
+                }
+            }
+        }
+        if(serviceCode == null){
+            serviceCode = new ServiceCode();
         }
 
         CreditCardObject cardInfo = new CreditCardObject(accountNumber,
@@ -75,9 +134,15 @@ public class MagneticTrackCard extends CardTrackBase {
 
     @Override
     public boolean tempStringTooLong() {
-        return (this.track1Credit.exceedsMaximumLength()
-                || this.track2Credit.exceedsMaximumLength()
-                || this.track3Credit.exceedsMaximumLength()
-        );
+        if(track1Credit != null){
+            return this.track1Credit.exceedsMaximumLength();
+        }
+        if(track2Credit != null){
+            return this.track2Credit.exceedsMaximumLength();
+        }
+        if(track3Credit != null){
+            return this.track3Credit.exceedsMaximumLength();
+        }
+        return false;
     }
 }

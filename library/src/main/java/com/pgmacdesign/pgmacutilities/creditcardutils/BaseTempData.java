@@ -7,7 +7,7 @@ package com.pgmacdesign.pgmacutilities.creditcardutils;
  */
 public abstract class BaseTempData implements TempStringInterface {
 
-    private final TempString tempString;
+    private transient final TempString tempString;
 
     protected BaseTempData(final String tempString) {
         if (tempString != null) {

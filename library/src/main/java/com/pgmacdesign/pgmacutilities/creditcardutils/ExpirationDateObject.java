@@ -13,7 +13,7 @@ import static com.pgmacdesign.pgmacutilities.utilities.StringUtilities.keepNumbe
 public final class ExpirationDateObject implements TempStringInterface{
 
 
-    private TempString expirationYearMonth;
+    private transient TempString expirationYearMonth;
 
     public ExpirationDateObject() {
         this.expirationYearMonth = new TempString(null);
@@ -44,7 +44,23 @@ public final class ExpirationDateObject implements TempStringInterface{
      * @param rawExpirationDate
      */
     public ExpirationDateObject(final String rawExpirationDate) {
-        //todo Pull and parse here
+
+        if(StringUtilities.isNullOrEmpty(rawExpirationDate)){
+            this.expirationYearMonth = new TempString("");
+            return;
+        }
+        char[] characters = rawExpirationDate.toCharArray();
+        if(characters == null){
+            this.expirationYearMonth = new TempString("");
+            return;
+        }
+        if(characters.length != 4){
+            this.expirationYearMonth = new TempString("");
+            return;
+        }
+        String month = (characters[2] + "") + (characters[3] + "");
+        String year = (characters[0] + "") + (characters[1] + "");
+        this.expirationYearMonth = new TempString(year + "/" + month);
     }
 
     /**
@@ -101,6 +117,9 @@ public final class ExpirationDateObject implements TempStringInterface{
             return null;
         }
         String str = this.expirationYearMonth.getTempStringData();
+        if(StringUtilities.isNullOrEmpty(str)){
+            return null;
+        }
         String[] exp = str.split("/");
         if(exp == null){
             return null;
@@ -112,8 +131,9 @@ public final class ExpirationDateObject implements TempStringInterface{
         try {
             calendar.set(
                     Integer.parseInt("20" + exp[0]),
-                    (Integer.parseInt(exp[1]) - 1),
-                    0, 0, 0, 0);
+                    (Integer.parseInt(exp[1])),
+                    0, 23, 59, 59);
+            //Remember that setting 0 as the day defaults it to the end of the month
         } catch (Exception e){
             e.printStackTrace();
             return null;

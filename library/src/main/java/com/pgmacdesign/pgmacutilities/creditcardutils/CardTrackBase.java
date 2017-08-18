@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 
 abstract class CardTrackBase extends BaseTempData implements TempStringInterface {
 
-    private TempString tempString;
+    private transient TempString tempString;
 
     protected CardTrackBase(final String rawTrackData, final String tempString) {
         super(rawTrackData);

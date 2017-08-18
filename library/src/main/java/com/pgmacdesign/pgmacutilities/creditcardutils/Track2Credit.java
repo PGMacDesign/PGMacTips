@@ -8,7 +8,8 @@ import java.util.regex.Matcher;
 public class Track2Credit extends CreditCardCardTrackBase {
 
     public static Track2Credit parse(final String rawTrackData) {
-        Matcher matcher = CardConstants.TRACK_2_PATTERN.matcher(StringUtilities.removeSpaces(rawTrackData));
+        Matcher matcher = CardConstants.TRACK_2_PATTERN.matcher(
+                StringUtilities.removeSpaces(rawTrackData));
         ExpirationDateObject expirationDateObject;
         AccountNumber accountNumber;
         String discretionaryData;

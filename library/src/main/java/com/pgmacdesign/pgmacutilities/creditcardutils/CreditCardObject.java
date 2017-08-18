@@ -2,8 +2,6 @@
 package com.pgmacdesign.pgmacutilities.creditcardutils;
 
 
-import com.pgmacdesign.pgmacutilities.utilities.StringUtilities;
-
 import java.util.Date;
 
 /**
@@ -11,23 +9,20 @@ import java.util.Date;
  */
 public class CreditCardObject {
 
-    private final AccountNumber accountNumber;
-    private final Name name;
-    private final ExpirationDateObject expirationDateObject;
-    private final ServiceCode serviceCode;
-    private CardConstants.CardMisc cardInfo;
-    private String firstName, lastName;
+    private transient AccountNumber accountNumber;
+    private transient Name name;
+    private transient ExpirationDateObject expirationDateObject;
+    private transient ServiceCode serviceCode;
+    private transient CardConstants.CardMisc cardInfo;
 
     public void parseRawName(String rawName) {
-        String[] fullName = StringUtilities.removeSpaces(rawName).split("/");
+        String[] fullName = rawName.split("/");
         if (fullName.length >= 2) {
-            firstName = fullName[1];
-            lastName = fullName[0];
+            name = new Name(fullName[1], fullName[0]);
         } else {
             //Error parsing
         }
     }
-
 
 
     public CreditCardObject() {
@@ -79,33 +74,43 @@ public class CreditCardObject {
     public String getAccountNumber() {
         return accountNumber.getAccountNumber();
     }
+
     public String getCardHolderName() {
         return name.getFullName();
     }
+
     public ExpirationDateObject getExpirationDateObject() {
         return expirationDateObject;
     }
+
     public Date getExpirationDateAsDate() {
         return expirationDateObject.getExpirationDateAsDate();
     }
+
     public Name getName() {
         return name;
     }
+
     public AccountNumber getPrimaryAccountNumber() {
         return accountNumber;
     }
+
     public ServiceCode getServiceCode() {
         return serviceCode;
     }
+
     public boolean hasExpirationDate() {
         return expirationDateObject != null && expirationDateObject.hasExpirationDate();
     }
+
     public boolean hasPrimaryAccountNumber() {
         return accountNumber != null && accountNumber.hasAccountNumber();
     }
+
     public boolean hasServiceCode() {
         return serviceCode != null && serviceCode.hasServiceCode();
     }
+
     public boolean isExpired() {
         return expirationDateObject.isExpired();
     }
@@ -118,19 +123,4 @@ public class CreditCardObject {
         this.cardInfo = cardInfo;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
 }

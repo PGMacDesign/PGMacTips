@@ -8,7 +8,7 @@ import java.util.Arrays;
  */
 public class TempString implements CharSequence{
 
-    private final char[] tempStringData;
+    private transient final char[] tempStringData;
 
     public TempString(String tempStringData) {
         if (tempStringData != null) {
