@@ -29,6 +29,11 @@ public class Name extends BaseTempData {
      */
     public Name(String rawName) {
         super(rawName);
+        if(StringUtilities.isNullOrEmpty(rawName)){
+            firstName = new TempString("");
+            lastName = new TempString("");
+            return;
+        }
         final String[] splitName = rawName.split("/");
         //final String[] splitName = StringUtilities.removeSpaces(rawName).split("/");
         firstName = new TempString(name(splitName, 1));
@@ -59,10 +64,10 @@ public class Name extends BaseTempData {
     public String getFullName() {
         StringBuilder sb = new StringBuilder();
         if (!isNullOrEmpty(firstName)) {
-            sb.append(firstName.getTempStringData());
+            sb.append(firstName.getTempStringData().trim());
         }
         if ((!isNullOrEmpty(firstName.getTempStringData()))
-                && (!(isNullOrEmpty(lastName.getTempStringData())))) {
+                && (!(isNullOrEmpty(lastName.getTempStringData().trim())))) {
             sb.append(" ");
         }
         if (!isNullOrEmpty(lastName)) {
@@ -95,7 +100,7 @@ public class Name extends BaseTempData {
         if(splitName.length > position){
             try {
                 name = splitName[position];
-                name = StringUtilities.keepLettersOnly(name);
+                name = name.trim();
                 name = StringUtilities.toUpperCase(name);
                 return name;
             } catch (Exception e){
@@ -112,14 +117,14 @@ public class Name extends BaseTempData {
 
     public String getFirstName() {
         if(firstName != null){
-            return firstName.getTempStringData();
+            return firstName.getTempStringData().trim();
         }
         return null;
     }
 
     public String getLastName() {
         if(lastName != null){
-            return lastName.getTempStringData();
+            return lastName.getTempStringData().trim();
         }
         return null;
     }

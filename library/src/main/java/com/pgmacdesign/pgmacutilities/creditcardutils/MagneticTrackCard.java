@@ -67,28 +67,32 @@ public class MagneticTrackCard extends CardTrackBase {
 
 
         AccountNumber accountNumber = null;
-        if(track1Credit != null){
-            if(track1Credit.hasAccountNumber()){
-                accountNumber = track1Credit.getAccountNumber();
-            }
-        }
-        if(accountNumber == null){
-            if(track2Credit != null){
-                if(track2Credit.hasAccountNumber()){
-                    accountNumber = track2Credit.getAccountNumber();
+        try {
+            if (track1Credit != null) {
+                if (track1Credit.hasAccountNumber()) {
+                    accountNumber = track1Credit.getAccountNumber();
                 }
             }
-        }
+            if (accountNumber == null) {
+                if (track2Credit != null) {
+                    if (track2Credit.hasAccountNumber()) {
+                        accountNumber = track2Credit.getAccountNumber();
+                    }
+                }
+            }
+        } catch (Exception e){}
         if(accountNumber == null){
             accountNumber = new AccountNumber();
         }
 
         Name name = null;
-        if(track1Credit != null){
-            if(track1Credit.hasName()){
-                name = track1Credit.getName();
+        try {
+            if (track1Credit != null) {
+                if (track1Credit.hasName()) {
+                    name = track1Credit.getName();
+                }
             }
-        }
+        } catch (Exception e){}
         if(name == null){
             name = new Name();
         }
@@ -99,30 +103,34 @@ public class MagneticTrackCard extends CardTrackBase {
                 expirationDateObject = track1Credit.getExpirationDateObject();
             }
         }
-        if(expirationDateObject == null){
-            if(track2Credit != null){
-                if(track2Credit.hasExpirationDate()){
-                    expirationDateObject = track2Credit.getExpirationDateObject();
+        try {
+            if (expirationDateObject == null) {
+                if (track2Credit != null) {
+                    if (track2Credit.hasExpirationDate()) {
+                        expirationDateObject = track2Credit.getExpirationDateObject();
+                    }
                 }
             }
-        }
+        } catch (Exception e){}
         if(expirationDateObject == null){
             expirationDateObject = new ExpirationDateObject();
         }
 
         ServiceCode serviceCode = null;
-        if(track1Credit != null){
-            if(track1Credit.hasServiceCode()){
-                serviceCode = track1Credit.getServiceCode();
-            }
-        }
-        if(serviceCode == null){
-            if(track2Credit != null){
-                if(track2Credit.hasServiceCode()){
-                    serviceCode = track2Credit.getServiceCode();
+        try {
+            if (track1Credit != null) {
+                if (track1Credit.hasServiceCode()) {
+                    serviceCode = track1Credit.getServiceCode();
                 }
             }
-        }
+            if (serviceCode == null) {
+                if (track2Credit != null) {
+                    if (track2Credit.hasServiceCode()) {
+                        serviceCode = track2Credit.getServiceCode();
+                    }
+                }
+            }
+        } catch (Exception e){}
         if(serviceCode == null){
             serviceCode = new ServiceCode();
         }
