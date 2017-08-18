@@ -11,6 +11,8 @@ import com.pgmacdesign.pgmacutilities.misc.PGMacUtilitiesConstants;
 import java.util.regex.Pattern;
 
 /**
+ * Simple credit card utilities class. For more detailed usage, please see the
+ * Credit Card Utils package
  * Created by pmacdowell on 8/15/2016.
  */
 public class CreditCardUtilities {

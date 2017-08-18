@@ -52,6 +52,14 @@ public class StringUtilities {
         }
     }
 
+    public static String keepLettersOnly(CharSequence s) {
+        try {
+            return s.toString().replaceAll("[^A-Z]", "");
+        } catch (Exception e){
+            return null;
+        }
+    }
+
     /**
      * This will format a String passed in (7145551234) and convert it into standard US phone
      * number formatting ((714) 555-1234)
@@ -733,6 +741,17 @@ public class StringUtilities {
             return true;
         }
         return false;
+    }
+
+    public static String toUpperCase(String str){
+        if(str == null){
+            return str;
+        }
+        if(str.length() <= 0){
+            return str;
+        }
+        str = str.toUpperCase();
+        return str;
     }
 
     /**
