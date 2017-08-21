@@ -1,17 +1,17 @@
 
-package com.pgmacdesign.pgmacutilities.creditcardutils;
+package com.pgmacdesign.pgmacutilities.magreaderutils;
 
 
-abstract class CreditCardCardTrackBase extends CardTrackBase {
+abstract class MagReaderMagReaderTrackBase extends MagReaderTrackBase {
 
 
     private final AccountNumber accountNumber;
     private final ExpirationDateObject expirationDateObject;
     private final ServiceCode serviceCode;
 
-    protected CreditCardCardTrackBase(String rawTrackData, AccountNumber accountNumber,
-                                      ExpirationDateObject expirationDateObject,
-                                      ServiceCode serviceCode, String discretionaryData) {
+    protected MagReaderMagReaderTrackBase(String rawTrackData, AccountNumber accountNumber,
+                                          ExpirationDateObject expirationDateObject,
+                                          ServiceCode serviceCode, String discretionaryData) {
         super(rawTrackData, discretionaryData);
         this.accountNumber = accountNumber;
         this.expirationDateObject = expirationDateObject;
@@ -48,7 +48,7 @@ abstract class CreditCardCardTrackBase extends CardTrackBase {
         );
     }
 
-    public boolean sharesSimilaritiesTo(final CreditCardCardTrackBase other) {
+    public boolean sharesSimilaritiesTo(final MagReaderMagReaderTrackBase other) {
         if (other == null) {
             return false;
         }

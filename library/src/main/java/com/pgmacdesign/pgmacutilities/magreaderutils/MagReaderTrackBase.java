@@ -1,14 +1,14 @@
 
-package com.pgmacdesign.pgmacutilities.creditcardutils;
+package com.pgmacdesign.pgmacutilities.magreaderutils;
 
 
 import java.util.regex.Matcher;
 
-abstract class CardTrackBase extends BaseTempData implements TempStringInterface {
+abstract class MagReaderTrackBase extends BaseTempData implements TempStringInterface {
 
     private transient TempString tempString;
 
-    protected CardTrackBase(final String rawTrackData, final String tempString) {
+    protected MagReaderTrackBase(final String rawTrackData, final String tempString) {
         super(rawTrackData);
         this.tempString = new TempString(tempString);
     }
@@ -22,7 +22,7 @@ abstract class CardTrackBase extends BaseTempData implements TempStringInterface
         }
     }
 
-    protected CardTrackBase(String tempString) {
+    protected MagReaderTrackBase(String tempString) {
         super(tempString);
         this.tempString = new TempString(tempString);
     }

@@ -1,5 +1,5 @@
 
-package com.pgmacdesign.pgmacutilities.creditcardutils;
+package com.pgmacdesign.pgmacutilities.magreaderutils;
 
 
 import android.support.annotation.NonNull;
@@ -117,14 +117,20 @@ public class Name extends BaseTempData {
 
     public String getFirstName() {
         if(firstName != null){
-            return firstName.getTempStringData().trim();
+            String str = firstName.getTempStringData();
+            if(!isNullOrEmpty(str)){
+                return str.trim();
+            }
         }
         return null;
     }
 
     public String getLastName() {
         if(lastName != null){
-            return lastName.getTempStringData().trim();
+            String str = lastName.getTempStringData();
+            if(!isNullOrEmpty(str)){
+                return str.trim();
+            }
         }
         return null;
     }

@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmacutilities.creditcardutils;
+package com.pgmacdesign.pgmacutilities.magreaderutils;
 
 /**
  * Created by pmacdowell on 2017-08-02.

@@ -1,21 +1,21 @@
 
-package com.pgmacdesign.pgmacutilities.creditcardutils;
+package com.pgmacdesign.pgmacutilities.magreaderutils;
 
-public class MagneticTrackCard extends CardTrackBase {
+public class MagneticTrackMagReader extends MagReaderTrackBase {
 
     private final Track1Credit track1Credit;
     private final Track2Credit track2Credit;
     private final Track3Credit track3Credit;
 
-    private MagneticTrackCard(String rawTrackData, Track1Credit track1Credit,
-                              Track2Credit track2Credit, Track3Credit track3Credit) {
+    private MagneticTrackMagReader(String rawTrackData, Track1Credit track1Credit,
+                                   Track2Credit track2Credit, Track3Credit track3Credit) {
         super(rawTrackData, "");
         this.track1Credit = track1Credit;
         this.track2Credit = track2Credit;
         this.track3Credit = track3Credit;
     }
 
-    public static MagneticTrackCard parse(String track1String, String track2String, String track3String) {
+    public static MagneticTrackMagReader parse(String track1String, String track2String, String track3String) {
         Track1Credit track1Credit = null;
         Track2Credit track2Credit = null;
         Track3Credit track3Credit = null;
@@ -28,23 +28,31 @@ public class MagneticTrackCard extends CardTrackBase {
         try {
             track3Credit = Track3Credit.parse(track3String);
         } catch (Exception e) {}
-        return new MagneticTrackCard("", track1Credit, track2Credit, track3Credit);
+        return new MagneticTrackMagReader("", track1Credit, track2Credit, track3Credit);
     }
 
-    public static MagneticTrackCard parse(final String rawTrackData) {
+    public static MagneticTrackMagReader parse(final String rawTrackData) {
         Track1Credit track1Credit = null;
         Track2Credit track2Credit = null;
         Track3Credit track3Credit = null;
         try {
-            track1Credit = Track1Credit.parse(rawTrackData);
-        } catch (Exception e){}
+            track1Credit = (Track1Credit) Track1Credit.parse(rawTrackData, true);
+        } catch (Exception e){
+            try {
+                track1Credit = (Track1Credit) Track2Credit.parse(rawTrackData, true);
+            } catch (Exception e1){}
+        }
         try {
             track2Credit = Track2Credit.parse(rawTrackData);
-        } catch (Exception e){}
+        } catch (Exception e){
+            try {
+                track2Credit = (Track2Credit) Track1Credit.parse(rawTrackData, true);
+            } catch (Exception e1){}
+        }
         try {
             track3Credit = Track3Credit.parse(rawTrackData);
         } catch (Exception e) {}
-        return new MagneticTrackCard(rawTrackData, track1Credit, track2Credit, track3Credit);
+        return new MagneticTrackMagReader(rawTrackData, track1Credit, track2Credit, track3Credit);
     }
 
     public Track1Credit getTrack1Credit() {
@@ -63,7 +71,7 @@ public class MagneticTrackCard extends CardTrackBase {
         return this.track1Credit.sharesSimilaritiesTo(this.track2Credit);
     }
 
-    public CreditCardObject convertToCreditCard() {
+    public MagReaderCardObject convertToCreditCard() {
 
 
         AccountNumber accountNumber = null;
@@ -135,7 +143,7 @@ public class MagneticTrackCard extends CardTrackBase {
             serviceCode = new ServiceCode();
         }
 
-        CreditCardObject cardInfo = new CreditCardObject(accountNumber,
+        MagReaderCardObject cardInfo = new MagReaderCardObject(accountNumber,
                 expirationDateObject, name, serviceCode);
         return cardInfo;
     }

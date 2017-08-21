@@ -1,5 +1,5 @@
 
-package com.pgmacdesign.pgmacutilities.creditcardutils;
+package com.pgmacdesign.pgmacutilities.magreaderutils;
 
 
 import com.pgmacdesign.pgmacutilities.utilities.StringUtilities;
@@ -158,15 +158,19 @@ public final class ExpirationDateObject implements TempStringInterface{
         if (!hasExpirationDate()) {
             return true;
         } else {
-            Date exp = getExpirationDateAsDate();
-            if(exp == null){
+            try {
+                Date exp = getExpirationDateAsDate();
+                if (exp == null) {
+                    return true;
+                }
+                Date now = new Date();
+                if (exp.before(now)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (Exception e){
                 return true;
-            }
-            Date now = new Date();
-            if(exp.before(now)){
-                return true;
-            } else {
-                return false;
             }
         }
     }

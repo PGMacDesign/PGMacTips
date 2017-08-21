@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmacutilities.creditcardutils;
+package com.pgmacdesign.pgmacutilities.magreaderutils;
 
 /**
  * Interface for linking with the {@link TempString} class

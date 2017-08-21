@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmacutilities.creditcardutils;
+package com.pgmacdesign.pgmacutilities.magreaderutils;
 
 import java.util.regex.Pattern;
 

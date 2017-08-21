@@ -1,5 +1,5 @@
 
-package com.pgmacdesign.pgmacutilities.creditcardutils;
+package com.pgmacdesign.pgmacutilities.magreaderutils;
 
 
 import com.pgmacdesign.pgmacutilities.utilities.StringUtilities;
@@ -20,10 +20,21 @@ public class AccountNumber extends BaseTempData implements TempStringInterface {
 
     public AccountNumber(String rawAccountNumber) {
         super(rawAccountNumber);
+        accountNumber = new TempString(null);
+        lastFourDigits = new TempString(null);
+        accountInfo = null;
+        if(isNullOrEmpty(rawAccountNumber)){
+            return;
+        }
         String accountNumberString = parseAccountNumber(StringUtilities.removeSpaces(rawAccountNumber));
         accountNumber = new TempString(accountNumberString);
-        lastFourDigits = new TempString(accountNumberString.substring(
-                (accountNumberString.length() - 4)));
+        if(!isNullOrEmpty(accountNumberString)) {
+            return;
+        }
+        if (accountNumberString.length() >= 4) {
+            lastFourDigits = new TempString(accountNumberString.substring(
+                    (accountNumberString.length() - 4)));
+        }
 
         boolean passesLuhnCheck = luhnCheck();
         CardConstants.IndustryIdentifier majorIndustryIdentifier =

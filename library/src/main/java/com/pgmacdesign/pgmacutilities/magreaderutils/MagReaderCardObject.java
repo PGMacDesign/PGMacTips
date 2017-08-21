@@ -1,5 +1,5 @@
 
-package com.pgmacdesign.pgmacutilities.creditcardutils;
+package com.pgmacdesign.pgmacutilities.magreaderutils;
 
 
 import java.util.Date;
@@ -7,7 +7,7 @@ import java.util.Date;
 /**
  * Represents a card (IE Credit, Debit) and contains information about the card
  */
-public class CreditCardObject {
+public class MagReaderCardObject {
 
     private transient AccountNumber accountNumber;
     private transient Name name;
@@ -25,27 +25,27 @@ public class CreditCardObject {
     }
 
 
-    public CreditCardObject() {
+    public MagReaderCardObject() {
         this(null);
     }
 
-    public CreditCardObject(final AccountNumber accountNumber) {
+    public MagReaderCardObject(final AccountNumber accountNumber) {
         this(accountNumber, null);
     }
 
-    public CreditCardObject(AccountNumber accountNumber, ExpirationDateObject expirationDateObject) {
+    public MagReaderCardObject(AccountNumber accountNumber, ExpirationDateObject expirationDateObject) {
         this(accountNumber, expirationDateObject, null);
     }
 
-    public CreditCardObject(AccountNumber accountNumber,
-                            ExpirationDateObject expirationDateObject, Name name) {
+    public MagReaderCardObject(AccountNumber accountNumber,
+                               ExpirationDateObject expirationDateObject, Name name) {
         this(accountNumber, expirationDateObject, name, null);
     }
 
 
-    public CreditCardObject(AccountNumber accountNumber,
-                            ExpirationDateObject expirationDateObject, Name name,
-                            ServiceCode serviceCode) {
+    public MagReaderCardObject(AccountNumber accountNumber,
+                               ExpirationDateObject expirationDateObject, Name name,
+                               ServiceCode serviceCode) {
         if (accountNumber != null) {
             this.accountNumber = accountNumber;
         } else {
