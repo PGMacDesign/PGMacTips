@@ -2,6 +2,7 @@ package com.pgmacdesign.pgmacutilities.utilities;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.Random;
 
 /**
@@ -170,6 +171,37 @@ public class NumberUtilities {
         return bd.doubleValue();
     }
 
+    /**
+     * Simple formatter to add in commas for formatting. Obtained from:
+     * https://stackoverflow.com/questions/3672731/how-can-i-format-a-string-number-to-have-commas-and-round
+     * @param number number to round. If unparseable, will return number
+     * @return Formatted String. IE, 44234 would return as 44,234
+     */
+    public static String formatNumberAddCommas(long number){
+        DecimalFormat formatter = new DecimalFormat("#,###");
+        try {
+            return formatter.format(number);
+        } catch (Exception e){
+            e.printStackTrace();
+            return number + "";
+        }
+    }
+
+    /**
+     * Simple formatter to add in commas for formatting. Obtained from:
+     * https://stackoverflow.com/questions/3672731/how-can-i-format-a-string-number-to-have-commas-and-round
+     * @param number number to round. If unparseable, will return number
+     * @return Formatted String. IE, 44234 would return as 44,234
+     */
+    public static String formatNumberAddCommas(double number){
+        DecimalFormat formatter = new DecimalFormat("#,###.00");
+        try {
+            return formatter.format(number);
+        } catch (Exception e){
+            e.printStackTrace();
+            return number + "";
+        }
+    }
 
     /**
      * This used when a double ends in 0 (IE 100.0) and you want to remove the significant figures
