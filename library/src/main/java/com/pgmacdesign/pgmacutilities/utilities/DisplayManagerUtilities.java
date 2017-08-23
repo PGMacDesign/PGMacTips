@@ -410,4 +410,31 @@ public class DisplayManagerUtilities {
         return size;
     }
 
+    /**
+     * Print out all of the display metrics available in the logcat
+     */
+    public void printOutAllDisplayMetrics(){
+        if(this.windowManager == null){
+            return;
+        }
+        L.m("\nPrinting All Display Metrics: \n");
+        L.m("Screen width in pixels == " + getPixelsWidth());
+        L.m("Screen height in pixels == " + getPixelsHeight());
+        if(getAppUsableScreenSize() != null){
+            L.m("Useable width in pixels == " + getAppUsableScreenSize().x);
+            L.m("Useable height in pixels == " + getAppUsableScreenSize().y);
+        }
+        if(getCenterXYCoordinates() != null) {
+            L.m("Center X,Y Coordinates == " + getCenterXYCoordinates().x
+                    + "," + getCenterXYCoordinates().y);
+        }
+        L.m("Density Ratio == " + getDensityRatio());
+        L.m("Scaled Density == " +  getScaledDensity());
+        L.m("Screen width in DP == " + getScreenWidthDP());
+        L.m("Screen height in DP == " + getScreenHeightDP());
+        L.m("Navigation Bar Size in pixels == " + getNavigationBarSize());
+        L.m("xdpi == " + getXdpi());
+        L.m("ydpi == " + getYdpi());
+        L.m("\nFinished Printing All Display Metrics: \n");
+    }
 }
