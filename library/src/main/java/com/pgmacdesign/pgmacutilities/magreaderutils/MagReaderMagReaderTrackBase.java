@@ -8,6 +8,7 @@ abstract class MagReaderMagReaderTrackBase extends MagReaderTrackBase {
     private final AccountNumber accountNumber;
     private final ExpirationDateObject expirationDateObject;
     private final ServiceCode serviceCode;
+    private final BirthDateObject birthDateObject;
 
     protected MagReaderMagReaderTrackBase(String rawTrackData, AccountNumber accountNumber,
                                           ExpirationDateObject expirationDateObject,
@@ -16,6 +17,18 @@ abstract class MagReaderMagReaderTrackBase extends MagReaderTrackBase {
         this.accountNumber = accountNumber;
         this.expirationDateObject = expirationDateObject;
         this.serviceCode = serviceCode;
+        this.birthDateObject = null;
+    }
+
+    protected MagReaderMagReaderTrackBase(String rawTrackData, AccountNumber accountNumber,
+                                          ExpirationDateObject expirationDateObject,
+                                          ServiceCode serviceCode, String discretionaryData,
+                                          String birthYear, String birthMonth, String birthDay) {
+        super(rawTrackData, discretionaryData);
+        this.accountNumber = accountNumber;
+        this.expirationDateObject = expirationDateObject;
+        this.serviceCode = serviceCode;
+        this.birthDateObject = new BirthDateObject(birthYear, birthMonth, birthDay);
     }
 
     public AccountNumber getAccountNumber() {
@@ -79,4 +92,7 @@ abstract class MagReaderMagReaderTrackBase extends MagReaderTrackBase {
         return shareSimilarities;
     }
 
+    public BirthDateObject getBirthDateObject() {
+        return birthDateObject;
+    }
 }

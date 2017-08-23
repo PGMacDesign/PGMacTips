@@ -14,6 +14,7 @@ public class MagReaderCardObject {
     private transient ExpirationDateObject expirationDateObject;
     private transient ServiceCode serviceCode;
     private transient CardConstants.CardMisc cardInfo;
+    private transient BirthDateObject birthDateObject;
 
     public void parseRawName(String rawName) {
         String[] fullName = rawName.split("/");
@@ -42,7 +43,6 @@ public class MagReaderCardObject {
         this(accountNumber, expirationDateObject, name, null);
     }
 
-
     public MagReaderCardObject(AccountNumber accountNumber,
                                ExpirationDateObject expirationDateObject, Name name,
                                ServiceCode serviceCode) {
@@ -68,6 +68,40 @@ public class MagReaderCardObject {
             this.serviceCode = serviceCode;
         } else {
             this.serviceCode = new ServiceCode();
+        }
+    }
+
+    public MagReaderCardObject(AccountNumber accountNumber,
+                               ExpirationDateObject expirationDateObject, Name name,
+                               ServiceCode serviceCode, BirthDateObject birthDateObject) {
+        if (accountNumber != null) {
+            this.accountNumber = accountNumber;
+        } else {
+            this.accountNumber = new AccountNumber(null);
+        }
+
+        if (name != null) {
+            this.name = name;
+        } else {
+            this.name = new Name();
+        }
+
+        if (expirationDateObject != null) {
+            this.expirationDateObject = expirationDateObject;
+        } else {
+            this.expirationDateObject = new ExpirationDateObject();
+        }
+
+        if (serviceCode != null) {
+            this.serviceCode = serviceCode;
+        } else {
+            this.serviceCode = new ServiceCode();
+        }
+
+        if(birthDateObject != null) {
+            this.birthDateObject = birthDateObject;
+        } else {
+            this.birthDateObject = null;
         }
     }
 
@@ -123,4 +157,11 @@ public class MagReaderCardObject {
         this.cardInfo = cardInfo;
     }
 
+    public BirthDateObject getBirthDateObject() {
+        return birthDateObject;
+    }
+
+    public void setBirthDateObject(BirthDateObject birthDateObject) {
+        this.birthDateObject = birthDateObject;
+    }
 }

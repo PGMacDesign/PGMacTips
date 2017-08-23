@@ -15,6 +15,7 @@ public class CardConstants {
     public static final String NO_NUMBERS_REGEX = "[^0-9]";
     public static final String TRACK_1_REGEX = "(%?([A-Z])([0-9]{1,19})\\^([^\\^]{2,26})\\^([0-9]{4}|\\^)([0-9]{3}|\\^)?([^\\?]+)?\\??)[\t\n\r ]{0,2}.*";
     public static final String TRACK_2_REGEX = ".*[\\t\\n\\r ]?(;([0-9]{1,19})=([0-9]{4})([0-9]{3})(.*)\\?).*";
+    public static final String TRACK_2_REGEX_DL = ".*[\\t\\n\\r ]?(;([0-9]{1,19})=([0-9]{4})([0-9]{4})([0-9]{2})([0-9]{2})(.*)\\?).*";
     public static final String TRACK_3_REGEX = ".*?[\t\n\r ]{0,2}(\\+(.*)\\?)";
     public static final String CREDIT_CARD_VISA = "^4[0-9]{6,}$";
     public static final String CREDIT_CARD_MASTERCARD = "^5[1-5][0-9]{5,}$|^(222[1-9]|2[3-6][0-9][0-9]|27[0-1][0-9]|2720)[0-9]{12}$";
@@ -29,6 +30,7 @@ public class CardConstants {
     public static Pattern NO_NUMBERS = Pattern.compile(NO_NUMBERS_REGEX);
     public static final Pattern TRACK_1_PATTERN = Pattern.compile(CardConstants.TRACK_1_REGEX);
     public static final Pattern TRACK_2_PATTERN = Pattern.compile(CardConstants.TRACK_2_REGEX);
+    public static final Pattern TRACK_2_PATTERN_DL = Pattern.compile(CardConstants.TRACK_2_REGEX_DL);
     public static final Pattern TRACK_3_PATTERN = Pattern.compile(CardConstants.TRACK_3_REGEX);
     public static final Pattern PATTERN_CREDIT_CARD_VISA = Pattern.compile(CREDIT_CARD_VISA);
     public static final Pattern PATTERN_CREDIT_CARD_MASTERCARD = Pattern.compile(CREDIT_CARD_MASTERCARD);

@@ -2,6 +2,8 @@ package com.pgmacdesign.pgmacutilities.magreaderutils;
 
 import java.util.Arrays;
 
+import static com.pgmacdesign.pgmacutilities.utilities.StringUtilities.isNullOrEmpty;
+
 /**
  * Temp String class used for Strings being wiped and not stored in memory.
  * Created by pmacdowell on 2017-08-03.
@@ -124,5 +126,18 @@ public class TempString implements CharSequence{
         } else {
             return "";
         }
+    }
+
+    public static boolean isTempStringEmptyOrNull(TempString tempString){
+        if(tempString == null){
+            return true;
+        }
+        if(isNullOrEmpty(tempString.getTempStringData())){
+            return true;
+        }
+        if(tempString.getTempStringData().isEmpty()){
+            return true;
+        }
+        return false;
     }
 }

@@ -21,10 +21,18 @@ public class MagneticTrackMagReader extends MagReaderTrackBase {
         Track3Credit track3Credit = null;
         try {
             track1Credit = Track1Credit.parse(track1String);
-        } catch (Exception e){}
+        } catch (Exception e){
+            try {
+                track1Credit = (Track1Credit) Track2Credit.parse(track1String, true);
+            } catch (Exception e1){}
+        }
         try {
-            track2Credit = Track2Credit.parse(track2String);
-        } catch (Exception e){}
+            track2Credit = (Track2Credit) Track2Credit.parse(track2String, true);
+        } catch (Exception e){
+            try {
+                track2Credit = Track2Credit.parse(track2String);
+            } catch (Exception e1){}
+        }
         try {
             track3Credit = Track3Credit.parse(track3String);
         } catch (Exception e) {}
@@ -43,10 +51,10 @@ public class MagneticTrackMagReader extends MagReaderTrackBase {
             } catch (Exception e1){}
         }
         try {
-            track2Credit = Track2Credit.parse(rawTrackData);
+            track2Credit = (Track2Credit) Track2Credit.parse(rawTrackData, true);
         } catch (Exception e){
             try {
-                track2Credit = (Track2Credit) Track1Credit.parse(rawTrackData, true);
+                track2Credit = Track2Credit.parse(rawTrackData);
             } catch (Exception e1){}
         }
         try {
@@ -143,8 +151,21 @@ public class MagneticTrackMagReader extends MagReaderTrackBase {
             serviceCode = new ServiceCode();
         }
 
-        MagReaderCardObject cardInfo = new MagReaderCardObject(accountNumber,
-                expirationDateObject, name, serviceCode);
+        BirthDateObject bdo = null;
+        if(track2Credit != null){
+            if(track2Credit.getBirthDateObject() != null){
+                bdo = track2Credit.getBirthDateObject();
+            }
+        }
+
+        MagReaderCardObject cardInfo = null;
+        if(bdo == null){
+            cardInfo = new MagReaderCardObject(accountNumber,
+                    expirationDateObject, name, serviceCode);
+        } else {
+            cardInfo = new MagReaderCardObject(accountNumber,
+                    expirationDateObject, name, serviceCode, bdo);
+        }
         return cardInfo;
     }
 

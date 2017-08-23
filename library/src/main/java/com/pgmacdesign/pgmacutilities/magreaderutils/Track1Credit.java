@@ -2,6 +2,8 @@
 package com.pgmacdesign.pgmacutilities.magreaderutils;
 
 
+import com.pgmacdesign.pgmacutilities.utilities.L;
+
 import java.util.regex.Matcher;
 
 import static com.pgmacdesign.pgmacutilities.utilities.StringUtilities.isNullOrEmpty;
@@ -73,24 +75,31 @@ public class Track1Credit extends MagReaderMagReaderTrackBase {
                 switch (i){
                     case 1:
                         rawTrack1Data = getGroup(matcher, 1);
+                        L.m("rawTrack1Data == " + rawTrack1Data);
                         break;
                     case 2:
                         formatCode = getGroup(matcher, 2);
+                        L.m("formatCode == " + formatCode);
                         break;
                     case 3:
                         accountNumber = new AccountNumber(getGroup(matcher, 3));
+                        L.m("accountNumber == " + accountNumber);
                         break;
                     case 4:
                         name = new Name(getGroup(matcher, 4));
+                        L.m("name == " + name);
                         break;
                     case 5:
                         expirationDateObject = new ExpirationDateObject(getGroup(matcher, 5));
+                        L.m("expirationDateObject == " + getGroup(matcher, 5));
                         break;
                     case 6:
                         serviceCode = new ServiceCode(getGroup(matcher, 6));
+                        L.m("serviceCode == " + serviceCode);
                         break;
                     case 7:
                         discretionaryData = getGroup(matcher, 7);
+                        L.m("discretionaryData == " + discretionaryData);
                         break;
                 }
             }
