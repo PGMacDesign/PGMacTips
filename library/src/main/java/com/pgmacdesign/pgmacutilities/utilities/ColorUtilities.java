@@ -1,11 +1,74 @@
 package com.pgmacdesign.pgmacutilities.utilities;
 
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.support.annotation.NonNull;
 
 /**
  * Created by pmacdowell on 8/12/2016.
  */
 public class ColorUtilities {
+
+    /**
+     * Determine if color is light or dark. Values pulled from these links:
+     * 1) https://en.wikipedia.org/wiki/Luma_%28video%29
+     * 2) https://stackoverflow.com/a/24261119/2480714
+     * @param color color to parse
+     * @return boolean, if true, color is dark, if false, it's a light color
+     */
+    public static boolean isColorDark(int color){
+        double darkness = 1-(0.299*Color.red(color)
+                + 0.587*Color.green(color)
+                + 0.114*Color.blue(color))/255;
+        if(darkness < 0.5){
+            return false; // It's a light color
+        }else{
+            return true; // It's a dark color
+        }
+    }
+
+    /**
+     * Build and return a Gradient Drawable
+     * @param colorDirection Direction of gradient. If null, will default to left --> right
+     *                      {@link android.graphics.drawable.GradientDrawable.Orientation}
+     * @param colors Array of color ints. Cannot be null or empty
+     * @return {@link GradientDrawable}
+     */
+    public static GradientDrawable buildGradientDrawable(GradientDrawable.Orientation colorDirection,
+                                                         @NonNull int[] colors){
+        if(colors.length <= 0){
+            return null;
+        }
+        if(colorDirection == null){
+            colorDirection = GradientDrawable.Orientation.LEFT_RIGHT;
+        }
+        GradientDrawable gradient = new GradientDrawable (
+                colorDirection, colors);
+        return gradient;
+    }
+
+    /**
+     * Build and return a Gradient Drawable
+     * Overloaded to allow for hex values to be passed
+     * @param colorDirection Direction of gradient. If null, will default to left --> right
+     *                      {@link android.graphics.drawable.GradientDrawable.Orientation}
+     * @param colors Array of String color Hex values . Cannot be null or empty
+     * @return {@link GradientDrawable}
+     */
+    public static GradientDrawable buildGradientDrawable(GradientDrawable.Orientation colorDirection,
+                                                         @NonNull String[] colors){
+        if(colors.length <= 0){
+            return null;
+        }
+        if(colorDirection == null){
+            colorDirection = GradientDrawable.Orientation.LEFT_RIGHT;
+        }
+        int[] arr = new int[colors.length];
+        for(int i = 0; i<colors.length; i++){
+            arr[i] = parseMyColor(colors[i]);
+        }
+        return buildGradientDrawable(colorDirection, arr);
+    }
 
     /**
      * Parse a color (Handles the parsing errors)

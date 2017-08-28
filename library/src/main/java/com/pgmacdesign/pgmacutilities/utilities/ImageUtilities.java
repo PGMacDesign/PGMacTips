@@ -44,8 +44,121 @@ import java.util.List;
  */
 public class ImageUtilities {
 
-
+    /**
+     * Set a circular image into a view and set caching.
+     * @param urlThumbnail URL String to use
+     * @param viewToSet View to set it into
+     * @param backupImageResourceId Backup resource id in case the String url fails parsing
+     * @param context Context
+     * @param percentMaxCache Percent max cache to use (float, <1 && >0, IE, 0.45  == 45% of max
+     *                        cache. Note that Picasso defaults to 14.3% of max cache if null sent
+     * @param <T> {T extends View}
+     */
     public static <T extends ImageView> void setCircularImageWithPicasso(String urlThumbnail,
+                                                                         final T viewToSet,
+                                                                         final int backupImageResourceId,
+                                                                         Context context,
+                                                                         final Float percentMaxCache){
+        if(context == null){
+            context = viewToSet.getContext();
+        }
+        final boolean useCustomCachePercent;
+        if(percentMaxCache == null){
+            useCustomCachePercent = false;
+        } else {
+            if(percentMaxCache < 0 || percentMaxCache > 1){
+                useCustomCachePercent = false;
+            } else {
+                useCustomCachePercent = true;
+            }
+        }
+        final Context fContext = context;
+
+
+        if(StringUtilities.isNullOrEmpty(urlThumbnail)){
+            try {
+                Picasso.with(fContext).load(backupImageResourceId).
+                        transform(new CircleTransform()).into(viewToSet);
+
+            } catch (Exception e){}
+        } else {
+
+            final String innerUrlThumbnail = urlThumbnail;
+
+            try {
+                Picasso.with(fContext)
+                        .load(innerUrlThumbnail)
+                        .networkPolicy(NetworkPolicy.OFFLINE)
+                        .transform(new CircleTransform())
+                        .into(viewToSet, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                //Load the image into cache for next time
+                                try {
+                                    List<String> toCache = new ArrayList<String>();
+                                    toCache.add(innerUrlThumbnail);
+                                    float flt = 0;
+                                    if(useCustomCachePercent){
+                                        flt = percentMaxCache;
+                                    }
+                                    ImageUtilities.LoadImagesIntoPicassoCache async = new
+                                            ImageUtilities.LoadImagesIntoPicassoCache(toCache, fContext, flt);
+                                    async.execute();
+                                } catch (Exception e2){}
+                            }
+                            @Override
+                            public void onError() {
+                                Picasso.with(fContext).load(innerUrlThumbnail)
+                                        .transform(new CircleTransform())
+                                        .into(viewToSet);
+                                //Load the image into cache for next time
+                                try {
+                                    float flt = 0;
+                                    if(useCustomCachePercent){
+                                        flt = percentMaxCache;
+                                    }
+                                    List<String> toCache = new ArrayList<String>();
+                                    toCache.add(innerUrlThumbnail);
+                                    ImageUtilities.LoadImagesIntoPicassoCache async = new
+                                            ImageUtilities.LoadImagesIntoPicassoCache(toCache, fContext, flt);
+                                    async.execute();
+                                } catch (Exception e2){}
+                            }
+                        });
+            } catch (Exception e){
+                try {
+                    Picasso.with(fContext).load(backupImageResourceId).
+                            transform(new CircleTransform()).into(viewToSet);
+                } catch (Exception e1){}
+            }
+        }
+    }
+    /**
+     * Set a circular image into a view and set caching. Overloaded to allow for excluding
+     * max cache size float
+     * @param urlThumbnail URL String to use
+     * @param viewToSet View to set it into
+     * @param backupImageResourceId Backup resource id in case the String url fails parsing
+     * @param context Context
+     * @param <T> {T extends View}
+     */
+    public static <T extends ImageView> void setCircularImageWithPicasso(String urlThumbnail,
+                                                                         final T viewToSet,
+                                                                         final int backupImageResourceId,
+                                                                         Context context){
+        ImageUtilities.setCircularImageWithPicasso(urlThumbnail, viewToSet, backupImageResourceId, context, null);
+    }
+
+    /**
+     * Set a circular image into a view and set caching. Overloaded to allow for excluding
+     * max cache size float
+     * @param urlThumbnail URL String to use
+     * @param viewToSet View to set it into
+     * @param backupImageResourceId Backup resource id in case the String url fails parsing
+     * @param context Context
+     * @param <T> {T extends View}
+     */
+    public static <T extends ImageView> void setCircularImageWithPicassoNoCache(String urlThumbnail,
                                                                          final T viewToSet,
                                                                          final int backupImageResourceId,
                                                                          Context context){
@@ -53,6 +166,7 @@ public class ImageUtilities {
             context = viewToSet.getContext();
         }
         final Context fContext = context;
+
 
         if(StringUtilities.isNullOrEmpty(urlThumbnail)){
             try {
@@ -68,33 +182,7 @@ public class ImageUtilities {
                 Picasso.with(fContext)
                         .load(innerUrlThumbnail)
                         .transform(new CircleTransform())
-                        .into(viewToSet, new Callback() {
-                            @Override
-                            public void onSuccess() {
-                                //Load the image into cache for next time
-                                try {
-                                    List<String> toCache = new ArrayList<String>();
-                                    toCache.add(innerUrlThumbnail);
-                                    ImageUtilities.LoadImagesIntoPicassoCache async = new
-                                            ImageUtilities.LoadImagesIntoPicassoCache(toCache, fContext);
-                                    async.execute();
-                                } catch (Exception e2){}
-                            }
-                            @Override
-                            public void onError() {
-                                Picasso.with(fContext).load(innerUrlThumbnail)
-                                        .transform(new CircleTransform())
-                                        .into(viewToSet);
-                                //Load the image into cache for next time
-                                try {
-                                    List<String> toCache = new ArrayList<String>();
-                                    toCache.add(innerUrlThumbnail);
-                                    ImageUtilities.LoadImagesIntoPicassoCache async = new
-                                            ImageUtilities.LoadImagesIntoPicassoCache(toCache, fContext);
-                                    async.execute();
-                                } catch (Exception e2){}
-                            }
-                        });
+                        .into(viewToSet);
             } catch (Exception e){
                 try {
                     Picasso.with(fContext).load(backupImageResourceId).
@@ -103,38 +191,60 @@ public class ImageUtilities {
             }
         }
     }
-    /**
-     * Set a circular image using picasso. Will cache and try to use cache if available
-     * @param urlThumbnail
-     * @param viewToSet
-     * @param backupImageResourceId
-     * @param <T>
-     */
-    public static <T extends ImageView> void setCircularImageWithPicasso(String urlThumbnail,
-                                                                         final T viewToSet,
-                                                                         final int backupImageResourceId){
-        ImageUtilities.setCircularImageWithPicasso(urlThumbnail, viewToSet, backupImageResourceId, null);
-    }
 
     /**
-     * Set an image Using picasso. Will start to cache if possible and will reuse said cache if stored
-     * @param urlThumbnail
-     * @param viewToSet
-     * @param backupImageResourceId
-     * @param <T>
+     * Set an image into a view and set caching. Overloaded to allow for excluding
+     * max cache size float
+     * @param urlThumbnail URL String to use
+     * @param viewToSet View to set it into
+     * @param backupImageResourceId Backup resource id in case the String url fails parsing
+     * @param context Context
+     * @param <T> {T extends View}
      */
     public static <T extends ImageView> void setImageWithPicasso(String urlThumbnail,
                                                                  final T viewToSet,
-                                                                 final int backupImageResourceId){
+                                                                 final int backupImageResourceId,
+                                                                 Context context){
+        ImageUtilities.setImageWithPicasso(urlThumbnail, viewToSet, backupImageResourceId, context, null);
+    }
+
+    /**
+     * Set an image into a view and set caching.
+     * @param urlThumbnail URL String to use
+     * @param viewToSet View to set it into
+     * @param backupImageResourceId Backup resource id in case the String url fails parsing
+     * @param context Context
+     * @param percentMaxCache Percent max cache to use (float, <1 && >0, IE, 0.45  == 45% of max
+     *                        cache. Note that Picasso defaults to 14.3% of max cache if null sent
+     * @param <T> {T extends View}
+     */
+    public static <T extends ImageView> void setImageWithPicasso(String urlThumbnail,
+                                                                 final T viewToSet,
+                                                                 final int backupImageResourceId,
+                                                                 Context context,
+                                                                 final Float percentMaxCache){
         if(urlThumbnail == null){
             urlThumbnail = "";
         }
-
+        final boolean useCustomCachePercent;
+        if(percentMaxCache == null){
+            useCustomCachePercent = false;
+        } else {
+            if(percentMaxCache < 0 || percentMaxCache > 1){
+                useCustomCachePercent = false;
+            } else {
+                useCustomCachePercent = true;
+            }
+        }
         if(urlThumbnail.isEmpty() || urlThumbnail.equalsIgnoreCase("")){
             viewToSet.setImageResource(backupImageResourceId);
         } else {
-            final Context context1 = viewToSet.getContext();
-
+            final Context context1;
+            if(context != null){
+                context1 = context;
+            } else {
+                context1 = viewToSet.getContext();
+            }
             final String innerUrlThumbnail = urlThumbnail;
             final Context innerContext1 = context1;
 
@@ -156,12 +266,56 @@ public class ImageUtilities {
                                 try {
                                     List<String> toCache = new ArrayList<String>();
                                     toCache.add(innerUrlThumbnail);
+                                    float flt = 0;
+                                    if(useCustomCachePercent){
+                                        flt = percentMaxCache;
+                                    }
                                     ImageUtilities.LoadImagesIntoPicassoCache async = new
-                                            ImageUtilities.LoadImagesIntoPicassoCache(toCache, context1);
+                                            ImageUtilities.LoadImagesIntoPicassoCache(toCache, context1, flt);
                                     async.execute();
                                 } catch (Exception e2){}
                             }
                         });
+            } catch (Exception e){
+                //L.m("catch caught in picasso setImageWithPicasso call");
+                viewToSet.setImageResource(backupImageResourceId);
+            }
+
+        }
+    }
+
+    /**
+     * Set an image into a view and set caching. Overloaded to allow for excluding
+     * max cache size float
+     * @param urlThumbnail URL String to use
+     * @param viewToSet View to set it into
+     * @param backupImageResourceId Backup resource id in case the String url fails parsing
+     * @param context Context
+     * @param <T> {T extends View}
+     */
+    public static <T extends ImageView> void setImageWithPicassoNoCache(String urlThumbnail,
+                                                                 final T viewToSet,
+                                                                 final int backupImageResourceId,
+                                                                 Context context){
+        if(urlThumbnail == null){
+            urlThumbnail = "";
+        }
+        if(urlThumbnail.isEmpty() || urlThumbnail.equalsIgnoreCase("")){
+            viewToSet.setImageResource(backupImageResourceId);
+        } else {
+            final Context context1;
+            if(context != null){
+                context1 = context;
+            } else {
+                context1 = viewToSet.getContext();
+            }
+            final String innerUrlThumbnail = urlThumbnail;
+            final Context innerContext1 = context1;
+
+            try {
+                Picasso.with(context1)
+                        .load(urlThumbnail)
+                        .into(viewToSet);
             } catch (Exception e){
                 //L.m("catch caught in picasso setImageWithPicasso call");
                 viewToSet.setImageResource(backupImageResourceId);
@@ -177,7 +331,7 @@ public class ImageUtilities {
     public static class LoadImagesIntoPicassoCache extends AsyncTask <Void, Void, Void>{
         private List<String> imageURLs;
         private Context context;
-        private int cacheSizeMax;
+        private float cacheSizeMaxPercent;
 
         /**
          * Load Images into cache constructor
@@ -187,23 +341,24 @@ public class ImageUtilities {
         public LoadImagesIntoPicassoCache(List<String> imageURLs, Context context){
             this.imageURLs = imageURLs;
             this.context = context;
-            this.cacheSizeMax = 0;
+            this.cacheSizeMaxPercent = 0;
         }
         /**
          * Overloaded Constructor
          * @param imageURLs A list of the image URLs to set
          * @param context Context
-         * @param cacheSizeMax Int for max cache size. If left out or set to null, it will default
-         *                     to the auto generated max (which is about 1/7 available ram)
-         *                     Link: http://stackoverflow.com/questions/20090265/android-picasso-configure-lrucache-size
+         * @param cacheSizeMaxPercent float % for max cache size. If left out or set to null,
+         *                            it will default to the auto generated max (which is
+         *                            about 1/7 available ram) Link:
+         *                            http://stackoverflow.com/questions/20090265/android-picasso-configure-lrucache-size
          */
-        public LoadImagesIntoPicassoCache(List<String> imageURLs, Context context, Integer cacheSizeMax){
+        public LoadImagesIntoPicassoCache(List<String> imageURLs, Context context, Float cacheSizeMaxPercent){
             this.imageURLs = imageURLs;
             this.context = context;
-            if(cacheSizeMax == null){
-                this.cacheSizeMax = 0;
+            if(cacheSizeMaxPercent == null){
+                this.cacheSizeMaxPercent = 0;
             } else {
-                this.cacheSizeMax = cacheSizeMax;
+                this.cacheSizeMaxPercent = cacheSizeMaxPercent;
             }
         }
 
@@ -212,9 +367,10 @@ public class ImageUtilities {
 
             Picasso p;
 
-            if(cacheSizeMax > 0) {
+            if(cacheSizeMaxPercent > 0 && cacheSizeMaxPercent < 1) {
                 p = new Picasso.Builder(context)
-                        .memoryCache(new LruCache(cacheSizeMax))
+                        .memoryCache(new LruCache((int)(
+                                cacheSizeMaxPercent * ImageUtilities.getMaxCacheSize())))
                         .build();
             } else {
                 p = new Picasso.Builder(context)
@@ -640,5 +796,20 @@ public class ImageUtilities {
 
     public static void zoomAView(){
         //https://developer.android.com/training/animation/zoom.html
+    }
+
+    /**
+     * Get the maximum system cache size for the app.Designed after this answer:
+     * https://stackoverflow.com/a/15763477/2480714
+     * Note! DO NOT USE THE ENTIRE 100%! Use a fraction of it. (IE, 1/8th)
+     * @return long maximum cache size. (If an error occurs, return 0)
+     */
+    public static long getMaxCacheSize(){
+        try {
+            return (long)((Runtime.getRuntime().maxMemory()) / (1024));
+        } catch (Exception e){
+            e.printStackTrace();
+            return 0;
+        }
     }
 }
