@@ -1,5 +1,6 @@
 package com.pgmacdesign.pgmacutilities.utilities;
 
+import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
@@ -92,12 +93,12 @@ public class TextFieldUtilities {
      * @param stringToSet The string to set
      * @param <T> T extends TextView
      */
-    public static <T extends TextView> void setTextWithHtml(T viewToSet, String stringToSet){
+    public static <T extends TextView> void setTextWithHtml(@NonNull T viewToSet, String stringToSet){
         TextFieldUtilities.setTextWithHtml(viewToSet, stringToSet, null);
     }
     /**
      * Set the textview with HTML style text IE, <b>Words</b> or
-     * "<i><small><font color=\"#c5c5c5\">" + "Words Go Here" + "</font></small></i>"
+     * "<i><small><font color='#c5c5c5'>" + "Words Go Here" + "</font></small></i>"
      * @param viewToSet The view to set
      * @param stringToSet The string to set
      * @param hasUrlLinks Boolean, if true, will set the individual URL links to web clickable
@@ -115,7 +116,7 @@ public class TextFieldUtilities {
                           if desired.
      * @param <T> T extends TextView
      */
-    public static <T extends TextView> void setTextWithHtml(T viewToSet, String stringToSet,
+    public static <T extends TextView> void setTextWithHtml(@NonNull T viewToSet, String stringToSet,
                                                             Boolean hasUrlLinks){
         if(hasUrlLinks == null){
             hasUrlLinks = false;
@@ -142,7 +143,7 @@ public class TextFieldUtilities {
      * @param et2
      * @return
      */
-    public static boolean doFieldsMatch(EditText et1, EditText et2){
+    public static boolean doFieldsMatch(@NonNull EditText et1, @NonNull EditText et2){
         String str1 = getFromEditText(et1);
         String str2 = getFromEditText(et2);
         if(str1.equalsIgnoreCase(str2)){

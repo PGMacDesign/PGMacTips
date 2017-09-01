@@ -23,6 +23,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by pmacdowell on 8/15/2016.
@@ -414,5 +415,18 @@ public class MiscUtilities {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Simple method to allow for less null checks in code
+     * @param atomicInteger {@link AtomicInteger}
+     * @return int. -1 if Atomic Integer is null, actual int else.
+     */
+    public static int getInt(AtomicInteger atomicInteger){
+        if(atomicInteger == null){
+            return -1;
+        } else {
+            return atomicInteger.get();
+        }
     }
 }
