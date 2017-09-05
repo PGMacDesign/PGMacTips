@@ -138,7 +138,8 @@ public class TextFieldUtilities {
     }
 
     /**
-     * Checks if String in fields match one another. Does NOT compare case
+     * Checks if String in fields match one another. Does NOT compare case.
+     * Note, will return false if either is null or empty
      * @param et1
      * @param et2
      * @return
@@ -146,17 +147,18 @@ public class TextFieldUtilities {
     public static boolean doFieldsMatch(@NonNull EditText et1, @NonNull EditText et2){
         String str1 = getFromEditText(et1);
         String str2 = getFromEditText(et2);
+        if(StringUtilities.isNullOrEmpty(str1) || StringUtilities.isNullOrEmpty(str2)){
+            return false;
+        }
         if(str1.equalsIgnoreCase(str2)){
             return true;
-        }
-        if(str1 == null && str2 == null){
-            return false;
         }
         return false;
     }
 
     /**
      * Checks if String in fields match one another. Does compare case
+     * Note, will return false if either is null or empty
      * @param et1
      * @param et2
      * @return
@@ -164,11 +166,11 @@ public class TextFieldUtilities {
     public static boolean doFieldsMatchWithCase(EditText et1, EditText et2){
         String str1 = getFromEditText(et1);
         String str2 = getFromEditText(et2);
+        if(StringUtilities.isNullOrEmpty(str1) || StringUtilities.isNullOrEmpty(str2)){
+            return false;
+        }
         if(str1.equals(str2)){
             return true;
-        }
-        if(str1 == null && str2 == null){
-            return false;
         }
         return false;
     }
@@ -204,8 +206,7 @@ public class TextFieldUtilities {
      * @return
      */
     public static <T extends EditText> String handlePhoneNumberFormattingReturn(
-            TextWatcher textWatcher,
-            Editable s, T et){
+            TextWatcher textWatcher, Editable s, T et){
         if(s == null || textWatcher == null || et == null){
             return null;
         }
