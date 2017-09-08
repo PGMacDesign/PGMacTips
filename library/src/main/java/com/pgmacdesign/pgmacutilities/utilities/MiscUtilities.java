@@ -30,14 +30,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class MiscUtilities {
 
+    private static final String SHA = "SHA";
 
     public static void printOutMyHashKey(Context context, String packageName){
         try {
             PackageInfo info = context.getPackageManager().getPackageInfo(
-                    packageName,
-                    PackageManager.GET_SIGNATURES);
+                    packageName, PackageManager.GET_SIGNATURES);
             for (Signature signature : info.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
+                MessageDigest md = MessageDigest.getInstance(SHA);
                 md.update(signature.toByteArray());
                 Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
             }
