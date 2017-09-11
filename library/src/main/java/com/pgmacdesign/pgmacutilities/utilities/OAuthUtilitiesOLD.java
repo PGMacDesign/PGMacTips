@@ -21,7 +21,6 @@ import org.json.JSONObject;
  * Created by pmacdowell on 8/12/2016.
  * (2017-07-18) This class has since been deprecated as cloudrail is beginning to be not
  * reliable. Will update with custom functions at a later date.
- * Note! This class will be deleted in 30ish days!
  */
 @Deprecated
 public class OAuthUtilitiesOLD {

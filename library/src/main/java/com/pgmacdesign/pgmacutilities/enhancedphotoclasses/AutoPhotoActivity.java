@@ -358,7 +358,7 @@ public class AutoPhotoActivity extends AppCompatActivity implements View.OnClick
 
     }
 
-    //TESTING.//////////////////////////////////////
+    //MyTestActivity.//////////////////////////////////////
     /*
     private Handler backgroundHandler;
     private HandlerThread backgroundThread;
@@ -544,7 +544,7 @@ public class AutoPhotoActivity extends AppCompatActivity implements View.OnClick
             } catch (Exception e){
                 e.printStackTrace();
             }
-            //TESTING
+            //MyTestActivity
 
         } else {
             //User has API <21, use old Camera class

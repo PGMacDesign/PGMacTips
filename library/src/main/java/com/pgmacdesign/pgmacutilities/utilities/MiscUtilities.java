@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class MiscUtilities {
 
+    // https://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html#MessageDigest
     private static final String SHA = "SHA";
 
     public static void printOutMyHashKey(Context context, String packageName){

@@ -35,7 +35,7 @@
         http://android-er.blogspot.com/2014/03/play-animated-gif-with.html
 
         <activity
-            android:name=".TESTING"
+            android:name=".MyTestActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -74,4 +74,5 @@
 
     -->
 
+    <uses-permission android:name="android.permission.CAMERA" />
 </manifest>

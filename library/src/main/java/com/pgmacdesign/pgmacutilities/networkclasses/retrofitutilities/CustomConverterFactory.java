@@ -1,7 +1,7 @@
 package com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities;
 
 import com.google.gson.reflect.TypeToken;
-import com.pgmacdesign.pgmacutilities.TESTINGPOJO;
+import com.pgmacdesign.pgmacutilities.SamplePojo;
 import com.pgmacdesign.pgmacutilities.utilities.L;
 
 import java.io.IOException;
@@ -27,8 +27,8 @@ public class CustomConverterFactory extends Converter.Factory  {
     private static final Type TYPE_STRING = new TypeToken<String>(){}.getType();
 
     //How to make custom type converters
-    private static final Type TYPE_TESTINGPOJO = new TypeToken<TESTINGPOJO>(){}.getType();
-    private static final Type TYPE_LIST_OF_TESTINGPOJO = new TypeToken<ArrayList<TESTINGPOJO>>(){}.getType();
+    private static final Type TYPE_TESTINGPOJO = new TypeToken<SamplePojo>(){}.getType();
+    private static final Type TYPE_LIST_OF_TESTINGPOJO = new TypeToken<ArrayList<SamplePojo>>(){}.getType();
 
 
     public CustomConverterFactory() {

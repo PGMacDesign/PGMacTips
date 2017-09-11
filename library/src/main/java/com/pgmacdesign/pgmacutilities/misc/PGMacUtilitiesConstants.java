@@ -35,6 +35,16 @@ public class PGMacUtilitiesConstants {
     public static final int TAG_PERMISSIONS_ACCESS_FINE_LOCATION = 4408;
     public static final int TAG_PERMISSIONS_ACCESS_COARSE_LOCATION = 4409;
     public static final int TAG_PERMISSIONS_RECEIVE_BOOT_COMPLETED = 4410;
+    public static final int TAG_PARSE_ERROR = 4411;
+    public static final int TAG_TBD1 = 4412;
+    public static final int TAG_TBD2 = 4413;
+    public static final int TAG_TBD3 = 4414;
+    public static final int TAG_TBD4 = 4415;
+    public static final int TAG_TBD5 = 4416;
+    public static final int TAG_TBD6 = 4417;
+    public static final int TAG_TBD7 = 4418;
+    public static final int TAG_TBD8 = 4419;
+    public static final int TAG_TBD9 = 4420;
 
     //File Creation Tags
     public static final int TAG_TXT_FILE_CREATION = 4404;

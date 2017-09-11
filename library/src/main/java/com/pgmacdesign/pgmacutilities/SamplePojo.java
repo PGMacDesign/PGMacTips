@@ -3,7 +3,7 @@ package com.pgmacdesign.pgmacutilities;
 /**
  * Created by pmacdowell on 8/18/2016.
  */
-public class TESTINGPOJO {
+public class SamplePojo {
 
     private long id;
     private String name;
