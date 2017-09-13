@@ -90,6 +90,60 @@ public class DatabaseUtilities {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
+
+     * Standard Database Insertion method with an object.
+     * @param objectToWrite Object to write. Note, the class must extend RealmObject and
+     *                      must also have a valid, designated Primary key declared.
+     * @param appendToObject Boolean, if true, this will call 'updateOrWrite'. If it is false,
+     *                       it will call 'write'. The idea being that if you want the object
+     *                       already existing in the db to be overwritten entirely, set this
+     *                       to false, else, set it to true.
+     * @param <T> T extends {@link RealmObject}
+     * @return Boolean. True if the insert succeeded, false if it did not
+     */
+    public <T extends  RealmObject> boolean executeInsertIntoDB(final T objectToWrite,
+                                       final Boolean appendToObject) {
+        if (objectToWrite == null) {
+            return false;
+        }
+        Class myClass = objectToWrite.getClass();
+        if(myClass == null){
+            return false;
+        }
+        if (!isValidWrite(myClass)) {
+            return false;
+        }
+        Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
+        try {
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    if (MiscUtilities.isBooleanNullTrueFalse(appendToObject)) {
+                        realm.copyToRealmOrUpdate(objectToWrite);
+                    } else {
+                        realm.copyToRealm(objectToWrite);
+                    }
+                }
+            });
+            realm.close();
+            return true;
+        } catch (IllegalArgumentException e1) {
+            e1.printStackTrace();
+            L.m("A RealmObject with no PrimaryKey cannot be updated. Does " + myClass.getName() +
+                    "have a @PrimaryKey designation over something?");
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if(!realm.isClosed()) {
+                    realm.close();
+                }
+            } catch (Exception e) {}
+        }
+        return false;
+    }
+
+    /**
      * Standard Database Insertion method.
      *
      * @param myClass        Class will serve as the 'table' in the database
@@ -1013,16 +1067,26 @@ public class DatabaseUtilities {
      * @return boolean. False if it invalid and should be aborted, true if it is ok to write
      */
     private static boolean isValidWrite(Class myClass) {
+        if(myClass == null){
+            L.m("Class used to write to the DB was null, please check passed params");
+            return false;
+        }
         String className = myClass.getName();
         String masterDBObjectName = MasterDatabaseObject.class.getName();
-        if (masterDBObjectName.equalsIgnoreCase(className)) {
-            L.m("You cannot modify this table from that method. If you want to access the " +
-                    "MasterDatabaseObject table, please use the persistObject / dePersistObject /" +
-                    " getPersistedObject / getAllPersistedObjects method calls.");
-            return false;
-        } else {
+        if(!StringUtilities.isNullOrEmpty(className) &&
+                !StringUtilities.isNullOrEmpty(masterDBObjectName)) {
+            if (masterDBObjectName.equalsIgnoreCase(className)) {
+                L.m("You cannot modify this table from that method. If you want to access the " +
+                        "MasterDatabaseObject table, please use the persistObject / dePersistObject /" +
+                        " getPersistedObject / getAllPersistedObjects method calls.");
+                return false;
+            }
+        }
+        if(myClass == RealmObject.class) {
             return true;
         }
+        return myClass.isAssignableFrom(RealmObject.class);
+
     }
 
     /**
