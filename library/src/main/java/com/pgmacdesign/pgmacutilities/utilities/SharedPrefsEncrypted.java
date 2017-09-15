@@ -33,10 +33,21 @@ public class SharedPrefsEncrypted {
      * @return Shared Prefs (encrypted) object
      */
     public static SharedPrefsEncrypted getEncryptedSharedPrefsInstance(@NonNull Context context,
-                                                              @NonNull String sharedPrefsName,
+                                                              String sharedPrefsName,
                                                               String encryptionPassword){
+        String str;
+        if(StringUtilities.isNullOrEmpty(sharedPrefsName)){
+            String packageName = MiscUtilities.getPackageName(context);
+            if(!StringUtilities.isNullOrEmpty(packageName)){
+                str = packageName + ".sp";
+            } else {
+                str = context.getPackageName() + ".sp";
+            }
+        } else {
+            str = sharedPrefsName;
+        }
         SharedPrefsEncrypted sp = new SharedPrefsEncrypted(
-                context, sharedPrefsName, encryptionPassword);
+                context, str, encryptionPassword);
         return sp;
     }
 

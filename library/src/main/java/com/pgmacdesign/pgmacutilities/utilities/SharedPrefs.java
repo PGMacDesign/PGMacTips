@@ -40,9 +40,20 @@ public class SharedPrefs {
      * @param sharedPrefsName shared prefs name
      * @return SharedPrefs Object
      */
-    public static SharedPrefs getSharedPrefsInstance(
-            @NonNull Context context, @NonNull String sharedPrefsName){
-        SharedPrefs sp = new SharedPrefs(context, sharedPrefsName);
+    public static SharedPrefs getSharedPrefsInstance(@NonNull Context context,
+                                                     String sharedPrefsName){
+        String str;
+        if(StringUtilities.isNullOrEmpty(sharedPrefsName)){
+            String packageName = MiscUtilities.getPackageName(context);
+            if(!StringUtilities.isNullOrEmpty(packageName)){
+                str = packageName + ".sp";
+            } else {
+                str = context.getPackageName() + ".sp";
+            }
+        } else {
+            str = sharedPrefsName;
+        }
+        SharedPrefs sp = new SharedPrefs(context, str);
         return sp;
     }
 

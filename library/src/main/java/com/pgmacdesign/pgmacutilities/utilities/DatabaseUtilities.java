@@ -49,9 +49,9 @@ public class DatabaseUtilities {
     private static final int DEFAULT_DB_SCHEMA = PGMacUtilitiesConstants.DB_VERSION;
     private static final boolean DEFAULT_DELETE_OPTION = PGMacUtilitiesConstants.DELETE_DB_IF_NEEDED;
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    /////Constructors - init ///////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////
+    //Constructors - init //
+    ////////////////////////
 
     /**
      * Constructor
@@ -85,19 +85,18 @@ public class DatabaseUtilities {
         Realm.init(context);
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    /////Insert Methods/////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////
+    //Insert Methods//
+    //////////////////
 
     /**
-
      * Standard Database Insertion method with an object.
      * @param objectToWrite Object to write. Note, the class must extend RealmObject and
      *                      must also have a valid, designated Primary key declared.
      * @param appendToObject Boolean, if true, this will call 'updateOrWrite'. If it is false,
      *                       it will call 'write'. The idea being that if you want the object
-     *                       already existing in the db to be overwritten entirely, set this
-     *                       to false, else, set it to true.
+     *                       already existing in the db to be update, set this
+     *                       to true, else, set it to false for an overwrite.
      * @param <T> T extends {@link RealmObject}
      * @return Boolean. True if the insert succeeded, false if it did not
      */
@@ -150,8 +149,8 @@ public class DatabaseUtilities {
      * @param jsonString     The json String (Standard JSON format) to put into the db.
      * @param appendToObject Boolean, if true, this will call 'updateOrWrite'. If it is false,
      *                       it will call 'write'. The idea being that if you want the object
-     *                       already existing in the db to be overwritten entirely, set this
-     *                       to false, else, set it to true.
+     *                       already existing in the db to be update, set this
+     *                       to true, else, set it to false for an overwrite.
      * @return Boolean. True if the insert succeeded, false if it did not
      */
     public boolean executeInsertIntoDB(final Class myClass,
@@ -202,8 +201,8 @@ public class DatabaseUtilities {
      * @param is             The InputStream (IS) to put into the db. Useful for fileWriting from a buffer.
      * @param appendToObject Boolean, if true, this will call 'updateOrWrite'. If it is false,
      *                       it will call 'write'. The idea being that if you want the object
-     *                       already existing in the db to be overwritten entirely, set this
-     *                       to false, else, set it to true.
+     *                       already existing in the db to be update, set this
+     *                       to true, else, set it to false for an overwrite.
      * @return Boolean. True if the insert succeeded, false if it did not
      */
     public  boolean executeInsertIntoDB(final Class myClass,
@@ -265,8 +264,8 @@ public class DatabaseUtilities {
      * @param jsonObject     The json Object (Standard JSONObject format) to put into the db.
      * @param appendToObject Boolean, if true, this will call 'updateOrWrite'. If it is false,
      *                       it will call 'write'. The idea being that if you want the object
-     *                       already existing in the db to be overwritten entirely, set this
-     *                       to false, else, set it to true.
+     *                       already existing in the db to be update, set this
+     *                       to true, else, set it to false for an overwrite.
      * @return Boolean. True if the insert succeeded, false if it did not
      */
     public boolean executeInsertIntoDB(final Class myClass,
@@ -476,9 +475,9 @@ public class DatabaseUtilities {
         return false;
 
     }
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    /////Delete Methods/////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////
+    //Delete Methods//
+    //////////////////
 
     /**
      * Delete an object from the Master Table. For deleting persisted objects
@@ -734,9 +733,9 @@ public class DatabaseUtilities {
         }
         return false;
     }
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    /////Query Methods//////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////
+    //Query Methods//
+    /////////////////
 
     /**
      * Query the master table in the database
@@ -946,9 +945,9 @@ public class DatabaseUtilities {
         return objects;
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    /////Realm Object, Configuration, and Query Utilities///////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////
+    //Realm Object, Configuration, and Query Utilities//
+    ////////////////////////////////////////////////////
 
     /**
      * This method will build the Realm object using pre-programmed hard-coded info for the
@@ -1056,9 +1055,9 @@ public class DatabaseUtilities {
     }
 
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    /////Misc Utilities/////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////
+    //Misc Utilities//
+    //////////////////
 
     /**
      * For checking on valid write / update / delete
