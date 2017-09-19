@@ -7,6 +7,8 @@ allprojects {
     repositories {
         jcenter()
         maven { url "https://jitpack.io" }
+        //Don't forget this line if you are using the AppCompat Libs
+        maven { url "https://maven.google.com" }
     }
 }
 buildscript{
