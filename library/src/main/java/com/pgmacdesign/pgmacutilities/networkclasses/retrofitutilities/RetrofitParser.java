@@ -130,16 +130,30 @@ public class RetrofitParser {
                     }
 
                     if (serverCanReturn200Error) {
-                        Object oo = RetrofitParser.checkForError(
-                                response, errorClassDataModel);
-                        if (oo != null) {
-                            listener.onTaskComplete(oo, failCallbackTag);
-                            return;
+
+                        if(response.body() != null){
+                            Object o = RetrofitParser.convert(
+                                    response.body(), successClassDataModel);
+                            if(o != null){
+                                listener.onTaskComplete(o, successCallbackTag);
+                                return;
+                            }
+                            Object oo = RetrofitParser.checkForError(
+                                    response, errorClassDataModel);
+                            if (oo != null) {
+                                listener.onTaskComplete(oo, failCallbackTag);
+                                return;
+                            }
                         } else {
-                            listener.onTaskComplete(RetrofitParser.convert(
-                                    response.body(), successClassDataModel), successCallbackTag);
-                            return;
+                            Object oo = RetrofitParser.checkForError(
+                                    response, errorClassDataModel);
+                            if (oo != null) {
+                                listener.onTaskComplete(oo, failCallbackTag);
+                                return;
+                            }
                         }
+                        listener.onTaskComplete(null, failCallbackTag);
+                        return;
                     } else {
                         if (!response.isSuccessful()) {
                             ResponseBody responseError = response.errorBody();
