@@ -1,25 +1,91 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.pgmacdesign.pgmacutilities">
 
+    <application>
+        <provider
+            android:authorities="${applicationId}.pgmaccontextprovider"
+            android:exported="false"
+            android:enabled="true"
+            android:name=".misc.PGMacInitProvider" />
+
+
+        <!-- Gson -->
+        <uses-library
+            android:name="com.google.code.gson"
+            android:required="false"
+            />
+        <!-- Retrofit 2 -->
+        <uses-library
+            android:name="com.squareup.retrofit2"
+            android:required="false"
+            />
+        <!-- OkHttp -->
+        <uses-library
+            android:name="com.squareup.okhttp3"
+            android:required="false"
+            />
+        <!-- Secure Prefs -->
+        <uses-library
+            android:name="com.securepreferences"
+            android:required="false"
+            />
+        <!-- ElasticDownload -->
+        <uses-library
+            android:name="is.arontibo.library"
+            android:required="false"
+            />
+        <!-- UCrop -->
+        <uses-library
+            android:name="com.yalantis.ucrop"
+            android:required="false"
+            />
+        <!-- Animated SVG View -->
+        <uses-library
+            android:name="com.jaredrummler.android.animatedsvgview"
+            android:required="false"
+            />
+        <!-- Volley -->
+        <uses-library
+            android:name="com.android.volley"
+            android:required="false"
+            />
+        <!-- Picasso -->
+        <uses-library
+            android:name="com.squareup.picasso"
+            android:required="false"
+            />
+        <!-- Nine Old Androids -->
+        <uses-library
+            android:name="com.nineoldandroids"
+            android:required="false"
+            />
+        <!-- Okio -->
+        <uses-library
+            android:name="com.squareup.okio"
+            android:required="false"
+            />
+        <!-- Android Animations -->
+        <uses-library
+            android:name="com.daimajia.androidanimations.library"
+            android:required="false"
+            />
+        <!-- Part of Android Animations -->
+        <uses-library
+            android:name="com.daimajia.easing"
+            android:required="false"
+            />
+
+    </application>
     <!--
 
-    <!- Permissions used in this library
-
     <uses-permission android:name="android.permission.INTERNET" />
-
-    <!- Used to determine connectivity before making a call
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!- Used to Utilitze the camera
     <uses-permission android:name="android.permission.CAMERA" />
-    <!- Used to Crop and save photos in order to use them
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!- Used to read from the gallery and select photos
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <!- Used for location based utilities like getting latitude and longitude
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!- Used for location based utilities like getting latitude and longitude
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!- Used in Selecting contacts from the internal SQLite DB of contacts
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
 
@@ -29,11 +95,6 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true">
-        <!-
-        may need to remove
-        android:hardwareAccelerated="false"
-        http://android-er.blogspot.com/2014/03/play-animated-gif-with.html
-
         <activity
             android:name=".MyTestActivity"
             android:screenOrientation="portrait">
@@ -43,23 +104,16 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".TESTING2"
-            android:screenOrientation="portrait"></activity>
 
         <activity
             android:name=".enhancedphotoclasses.TakePhotoActivityAPI21"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
         <activity
             android:name=".enhancedphotoclasses.TakePhotoActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
-
-        <activity
-            android:name=".enhancedphotoclasses.AutoPhotoActivity"
-            android:screenOrientation="portrait" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
@@ -71,8 +125,6 @@
             android:exported="false" />
 
     </application>
-
     -->
 
-    <uses-permission android:name="android.permission.CAMERA" />
 </manifest>

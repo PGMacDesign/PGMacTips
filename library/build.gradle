@@ -14,13 +14,10 @@ buildscript{
         jcenter()
         mavenCentral()
     }
-    dependencies {
-        //Database Management Library. Link: https://realm.io/docs/java/latest
-    }
 }
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.1'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.1'
 
     defaultConfig {
         //applicationId "com.pgmacdesign.pgmacutilities" //Remove this when switching to lib
@@ -28,14 +25,21 @@ android {
         targetSdkVersion 25
         multiDexEnabled true
         versionCode 1
-        versionName "0.0.16"
+        versionName "0.0.24"
         //resValue "string", "mapzen_string_api_key", mapzenApiKey
     }
     dexOptions {
         javaMaxHeapSize "4g"
     }
-    repositories {
-        //
+    configurations.all {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            def requested = details.requested
+            if (requested.group == 'com.android.support') {
+                if (!requested.name.startsWith("multidex")) {
+                    details.useVersion '26.0.1'
+                }
+            }
+        }
     }
     dependencies {
 
@@ -45,57 +49,43 @@ android {
 
         //Secure Shared Prefs. Link: https://github.com/scottyab/secure-preferences
         compile 'com.scottyab:secure-preferences-lib:0.1.4'
-        //aar Downloaded on 2017-03-24 - libs/secure-preferences-lib-0.1.4.aar
 
         //Cloudrail. Link: https://github.com/CloudRail/cloudrail-si-android-sdk
         compile 'com.cloudrail:cloudrail-si-android:2.16.0'
-        //aar Downloaded on 2017-03-24 - cloudrail-si-android-2.16.0.aar
 
         //Progress bar animator. This one is better for longer processes, IE uploading photos.
         //Link: https://github.com/Tibolte/ElasticDownload
         compile 'com.github.tibolte:elasticdownload:1.0.4'
-        //aar Downloaded on 2017-03-24 - elasticdownload-1.0.4.aar
 
         //Image Cropper. https://github.com/Yalantis/uCrop
         compile 'com.yalantis:ucrop:2.2.0'
-        //aar Downloaded on 2017-03-24 - ucrop-2.2.0.aar
 
         //Animated SVG View (Custom, takes an SVG To work).
         //Link: https://github.com/jaredrummler/AnimatedSvgView
-        //compile 'com.jaredrummler:animated-svg-view:1.0.0'
-        //aar Downloaded on 2017-03-24 - animated-svg-view-1.0.4.aar
+        compile 'com.jaredrummler:animated-svg-view:1.0.5'
 
-        //Volley. Link: https://developer.android.com/training/volley/index.html
+        //Volley. Link: https://github.com/google/volley
         compile 'com.android.volley:volley:1.0.0'
 
-        ////////////////////////////////////////////
-        //Jar File downloaded, Using jar for build//
-        ////////////////////////////////////////////
-
         //GSON. Link https://github.com/google/gson
-        //compile 'com.google.code.gson:gson:2.8.0'
-        //Jar Downloaded on 2017-03-24
+        compile 'com.google.code.gson:gson:2.8.1'
 
         //Picasso. Link: https://github.com/square/picasso
-        //compile 'com.squareup.picasso:picasso:2.5.2'
-        //Jar Downloaded on 2017-03-24
+        compile 'com.squareup.picasso:picasso:2.5.2'
 
-        //Animations Base. (used in Android animations)
-        //compile 'com.nineoldandroids:library:2.4.0'
-        //Jar Removed on 2017-06-12 due to duplication, included with other lib
+        //Animations Base. Link: https://github.com/JakeWharton/NineOldAndroids
+        compile 'com.nineoldandroids:library:2.4.0'
 
         //Retrofit, Retrofit Converters, and OKHTTP.
-        //Retrofit - http://square.github.io/retrofit/
-        //OKHttp - http://square.github.io/okhttp/
-        //compile 'com.squareup.retrofit2:retrofit:2.2.0'
-        //Jar Downloaded on 2017-03-24
-        //compile 'com.squareup.okhttp3:okhttp:3.8.0'
-        //Jar Downloaded on 2017-06-12
-        //compile 'com.squareup.okhttp3:logging-interceptor:3.8.0'
-        //Jar Downloaded on 2017-06-12
+        //Retrofit - https://github.com/square/retrofit
+        //OKHttp - https://github.com/square/okhttp
+        compile 'com.squareup.retrofit2:retrofit:2.3.0'
+        compile 'com.squareup.okhttp3:okhttp:3.9.0'
+        compile 'com.squareup.okhttp3:logging-interceptor:3.9.0'
         //Type-safe HTTP client for Android and Java: https://github.com/square/retrofit
-        //compile 'com.squareup.retrofit2:converter-gson:2.2.0'
-        //Jar Downloaded on 2017-03-24
+        compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+        //OKIO. Link: https://github.com/square/okio
+        compile 'com.squareup.okio:okio:1.13.0'
 
 
         //////////////////////////////////
@@ -108,7 +98,6 @@ android {
 
         //Part of The Android Animations collection below
         compile 'com.daimajia.easing:library:2.0@aar'
-
         //Android Animations. Link: https://github.com/daimajia/AndroidViewAnimations
         compile 'com.daimajia.androidanimations:library:2.2@aar'
 
@@ -135,14 +124,15 @@ android {
         compile 'com.google.android.gms:play-services-maps:10.2.0'
 
         //Android support libs
-//        compile 'com.android.support:animated-vector-drawable:25.3.1'
-//        compile 'com.android.support:customtabs:25.3.1'
-          compile 'com.android.support:design:25.3.1'
-//        compile 'com.android.support:appcompat-v7:25.3.1'
-//        compile 'com.android.support:recyclerview-v7:25.3.1'
-//        compile 'com.android.support:support-v4:25.3.1'
-//        compile 'com.android.support:cardview-v7:25.3.1'
-//        compile 'com.android.support:palette-v7:25.3.1'
+//        compile 'com.android.support:animated-vector-drawable:26.0.1'
+//        compile 'com.android.support:customtabs:26.0.1'
+        compile 'com.android.support:support-compat:26.0.1'
+        compile 'com.android.support:support-v4:26.0.1'
+        compile 'com.android.support:appcompat-v7:26.0.1'
+        compile 'com.android.support:design:26.0.1'
+//        compile 'com.android.support:recyclerview-v7:26.0.1'
+//        compile 'com.android.support:cardview-v7:26.0.1'
+//        compile 'com.android.support:palette-v7:26.0.1'
 
 
     }
@@ -170,5 +160,4 @@ if( android.productFlavors.size() > 0 ) {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:25.0.1'
 }

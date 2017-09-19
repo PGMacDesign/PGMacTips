@@ -13,6 +13,7 @@ import com.pgmacdesign.pgmacutilities.utilities.NetworkUtilities;
 import java.io.IOException;
 
 import okhttp3.ResponseBody;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -155,11 +156,12 @@ public class ProfantiyCheckerAPICalls {
      */
     private static void init(){
         if(serviceInterface == null) {
-            RetrofitClient.Builder builder = new RetrofitClient.Builder(
-                    ProfantiyCheckerInterface.class, BASE_URL);
-            builder.callIsJSONFormat();
-            RetrofitClient retrofitClient = builder.build();
-            serviceInterface = retrofitClient.buildServiceClient();
+
+            serviceInterface = new RetrofitClient.Builder(
+                    ProfantiyCheckerInterface.class, BASE_URL)
+                    .setTimeouts(60000,60000)
+                    .setLogLevel(HttpLoggingInterceptor.Level.BODY)
+                    .build().buildServiceClient();
         }
         return;
     }

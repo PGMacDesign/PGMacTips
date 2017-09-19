@@ -161,6 +161,8 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
                         L.m("web call done");
                         if(customTag == PGMacUtilitiesConstants.TAG_RETROFIT_CALL_SUCCESS_STRING){
                             L.m("result == " + result.toString());
+                        } else if(customTag == PGMacUtilitiesConstants.TAG_RETROFIT_CALL_SUCCESS_BOOLEAN){
+                            L.m("result == " + ((Boolean)result).toString());
                         }
                     }
                 }, "word");
@@ -189,8 +191,8 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
             }
         });
         */
-
-        showGIFLoader();
+        doWebCall();
+        //showGIFLoader();
 
     }
 

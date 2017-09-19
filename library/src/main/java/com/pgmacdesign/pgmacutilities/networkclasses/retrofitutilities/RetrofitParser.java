@@ -218,14 +218,10 @@ public class RetrofitParser {
             if (!StringUtilities.isNullOrEmpty(str)) {
                 return new Gson().fromJson(str, errorClassDataModel);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) {}
         try {
             return errorClassDataModel.cast(((T) response.body()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) {}
         return null;
     }
 
@@ -248,9 +244,7 @@ public class RetrofitParser {
                 return new Gson().fromJson(str, errorClassDataModel);
             }
             //Error
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) {}
         return null;
     }
 
