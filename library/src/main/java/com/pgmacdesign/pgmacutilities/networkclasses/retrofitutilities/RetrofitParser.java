@@ -7,6 +7,8 @@ import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListene
 import com.pgmacdesign.pgmacutilities.misc.PGMacUtilitiesConstants;
 import com.pgmacdesign.pgmacutilities.utilities.StringUtilities;
 
+import java.lang.reflect.Type;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -15,10 +17,18 @@ import retrofit2.Response;
 /**
  * Master Response Parser that is used for parsing calls via enqueue.
  * Created by pmacdowell on 2017-09-11.
+ *
+ * Note: If you want to send in a Type {@link Type} for these overloaded methods, use one of
+ * the examples shown in {@link CustomConverterFactory} at the top of the class
  */
 public class RetrofitParser {
 
     public static final int TAG_PARSE_ERROR = PGMacUtilitiesConstants.TAG_PARSE_ERROR;
+
+
+    ///////////////////////
+    //Synchronous Parsers//
+    ///////////////////////
 
     /**
      * Parse a {@link Call}. This will run the call and attempt to parse the response
@@ -75,6 +85,40 @@ public class RetrofitParser {
     }
 
     /**
+     * Overloaded to allow for Type {@link Type} to be sent in as data models
+     */
+    public static <T> Object parse(@NonNull final retrofit2.Call<T> call,
+                                   @NonNull final Type successClassDataModel,
+                                   @NonNull final Type errorClassDataModel,
+                                   final boolean serverCanReturn200Error) {
+        try {
+            Response response = call.execute();
+            if (serverCanReturn200Error) {
+                Object oo = RetrofitParser.checkForError(
+                        response, errorClassDataModel);
+                if (oo != null) {
+                    return oo;
+                } else {
+                    return RetrofitParser.convert(
+                            response.body(), successClassDataModel);
+                }
+            } else {
+                if (!response.isSuccessful()) {
+                    ResponseBody responseError = response.errorBody();
+                    return RetrofitParser.checkForError(
+                            responseError, errorClassDataModel);
+                } else {
+                    return RetrofitParser.convert(
+                            response.body(), successClassDataModel);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return e;
+        }
+    }
+
+    /**
      * Overloaded method to allow for excluding last boolean. See
      * {@link RetrofitParser#parse(Call, Class, Class, boolean)}
      * For full documentation
@@ -84,6 +128,19 @@ public class RetrofitParser {
                                  @NonNull final Class errorClassDataModel) {
         RetrofitParser.parse(call, successClassDataModel, errorClassDataModel, false);
     }
+
+    /**
+     * Overloaded to allow for type {@link Type} entry
+     */
+    public static <T> void parse(@NonNull final retrofit2.Call<T> call,
+                                 @NonNull final Type successClassDataModel,
+                                 @NonNull final Type errorClassDataModel) {
+        RetrofitParser.parse(call, successClassDataModel, errorClassDataModel, false);
+    }
+
+    ////////////////////////
+    //Asynchronous Parsers//
+    ////////////////////////
 
     /**
      * Parse a {@link Call}. This will run the call and attempt to parse the response
@@ -182,6 +239,78 @@ public class RetrofitParser {
     }
 
     /**
+     * Overloaded to allow for Type {@link Type} entry
+     */
+    public static <T> void parse(@NonNull final OnTaskCompleteListener listener,
+                                 @NonNull final retrofit2.Call<T> call,
+                                 @NonNull final Type successClassDataModel,
+                                 @NonNull final Type errorClassDataModel,
+                                 final Integer successCallbackTag,
+                                 final Integer failCallbackTag,
+                                 final boolean serverCanReturn200Error) {
+        try {
+            call.enqueue(new Callback<T>() {
+                @Override
+                public void onResponse(@NonNull Call<T> call, @NonNull Response<T> response) {
+                    if (response == null) {
+                        //Response was null, bail out
+                        listener.onTaskComplete(null, failCallbackTag);
+                        return;
+                    }
+
+                    if (serverCanReturn200Error) {
+
+                        if(response.body() != null){
+                            Object o = RetrofitParser.convert(
+                                    response.body(), successClassDataModel);
+                            if(o != null){
+                                listener.onTaskComplete(o, successCallbackTag);
+                                return;
+                            }
+                            Object oo = RetrofitParser.checkForError(
+                                    response, errorClassDataModel);
+                            if (oo != null) {
+                                listener.onTaskComplete(oo, failCallbackTag);
+                                return;
+                            }
+                        } else {
+                            Object oo = RetrofitParser.checkForError(
+                                    response, errorClassDataModel);
+                            if (oo != null) {
+                                listener.onTaskComplete(oo, failCallbackTag);
+                                return;
+                            }
+                        }
+                        listener.onTaskComplete(null, failCallbackTag);
+                        return;
+                    } else {
+                        if (!response.isSuccessful()) {
+                            ResponseBody responseError = response.errorBody();
+                            listener.onTaskComplete(RetrofitParser.checkForError(
+                                    responseError, errorClassDataModel), failCallbackTag);
+                            return;
+                        } else {
+                            listener.onTaskComplete(RetrofitParser.convert(
+                                    response.body(), successClassDataModel), successCallbackTag);
+                            return;
+                        }
+                    }
+
+                    //Add more logging here if need be
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<T> call, @NonNull Throwable throwable) {
+                    listener.onTaskComplete(throwable.getMessage(), failCallbackTag);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            listener.onTaskComplete(e.getMessage(), TAG_PARSE_ERROR);
+        }
+    }
+
+    /**
      * Overloaded method to allow for excluding last boolean. See
      * {@link RetrofitParser#parse(OnTaskCompleteListener, Call, Class, Class, Integer, Integer, boolean)}
      * For full documentation
@@ -197,6 +326,24 @@ public class RetrofitParser {
     }
 
     /**
+     * Overloaded to allow for Type {@link Type} entry
+     */
+    public static <T> void parse(@NonNull final OnTaskCompleteListener listener,
+                                 @NonNull final retrofit2.Call<T> call,
+                                 @NonNull final Type successClassDataModel,
+                                 @NonNull final Type errorClassDataModel,
+                                 final Integer successCallbackTag,
+                                 final Integer failCallbackTag) {
+        RetrofitParser.parse(listener, call, successClassDataModel,
+                errorClassDataModel, successCallbackTag, failCallbackTag, false);
+    }
+
+
+    /////////////////////////////
+    //Private Utility Functions//
+    /////////////////////////////
+
+    /**
      * Convert a response object into the success class data model
      *
      * @param responseObject        Response body from the {@link Call} response
@@ -208,6 +355,26 @@ public class RetrofitParser {
                                       @NonNull final Class successClassDataModel) {
         try {
             return successClassDataModel.cast(responseObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Convert a response object into the success type data model
+     *
+     * @param responseObject        Response body from the {@link Call} response
+     * @param type The {@link Type} Java model. This is primarily used for casting things
+     *             into odd things like lists or arrays, which are more problematic
+     *             to convert using a class
+     * @param <T>
+     * @return Object. It will need to be cast into the success data model once completed
+     */
+    private static <T> Object convert(T responseObject,
+                                      @NonNull final Type type) {
+        try {
+            return type.getClass().cast(responseObject);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -249,6 +416,54 @@ public class RetrofitParser {
      */
     private static <T> Object checkForError(ResponseBody responseError,
                                             @NonNull final Class errorClassDataModel) {
+        if (responseError == null) {
+            return null;
+        }
+        try {
+            String str = responseError.string();
+            if (!StringUtilities.isNullOrEmpty(str)) {
+                return new Gson().fromJson(str, errorClassDataModel);
+            }
+            //Error
+        } catch (Exception e) {}
+        return null;
+    }
+
+    /**
+     * Checks for errors
+     *
+     * @param response            {@link Response}
+     * @param errorClassDataModel Type error data model to try to convert into. {@link Type}
+     * @param <T>
+     * @return Object, will need to be case back once compelted
+     */
+    private static <T> Object checkForError(retrofit2.Response<T> response,
+                                            @NonNull final Type errorClassDataModel) {
+        if (response == null) {
+            return null;
+        }
+        try {
+            String str = response.errorBody().string();
+            if (!StringUtilities.isNullOrEmpty(str)) {
+                return new Gson().fromJson(str, errorClassDataModel);
+            }
+        } catch (Exception e) {}
+        try {
+            return errorClassDataModel.getClass().cast(((T) response.body()));
+        } catch (Exception e) {}
+        return null;
+    }
+
+    /**
+     * Checks for errors
+     *
+     * @param responseError       {@link ResponseBody}
+     * @param errorClassDataModel Type error data model to try to convert into. {@link Type}
+     * @param <T>
+     * @return Object, will need to be case back once compelted
+     */
+    private static <T> Object checkForError(ResponseBody responseError,
+                                            @NonNull final Type errorClassDataModel) {
         if (responseError == null) {
             return null;
         }
