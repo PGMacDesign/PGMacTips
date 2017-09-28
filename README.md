@@ -79,9 +79,9 @@ This library utilizes many others within it. Below is a listing of all of the ne
         compile 'hanks.xyz:htextview-library:0.1.5'
 
 
-        //////////////////////////////////////
-        //Misc Dependencies (IE Google Libs)//
-        //////////////////////////////////////
+        //////////////////////////////////////////////////////
+        //Recommended to use if utilizing multiple libraries//
+        //////////////////////////////////////////////////////
 
         //Multi-dex. For more info: https://developer.android.com/studio/build/multidex.html
         compile 'com.android.support:multidex:1.0.1'
