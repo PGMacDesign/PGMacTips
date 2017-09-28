@@ -88,8 +88,33 @@ This library utilizes many others within it. Below is a listing of all of the ne
 
 ```
 
+## Known Issues
 
-## Issues
+Depending on your version of Google's Libraries, you may run into this error:
+
+```java
+Error:Execution failed for task ':app:processDebugManifest'.
+> Manifest merger failed : Attribute meta-data#android.support.VERSION@value value=(26.0.1) from [com.android.support:design:26.0.1] AndroidManifest.xml:28:13-35
+	is also present at [com.android.support:appcompat-v7:26.1.0] AndroidManifest.xml:28:13-35 value=(26.1.0).
+	Suggestion: add 'tools:replace="android:value"' to <meta-data> element at AndroidManifest.xml:26:9-28:38 to override.
+```
+
+Or something along those lines. If you do, simply add this line of code to your build.gradle file underneath the Android Tag
+
+```java
+    configurations.all {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            def requested = details.requested
+            if (requested.group == 'com.android.support') { //Replace String here with whichever error is thrown
+                if (!requested.name.startsWith("multidex")) {
+                    details.useVersion '26.0.1' //Replace version here with whatever you are using
+                }
+            }
+        }
+    }
+```	
+
+## New Issues
 
 If you run into any compatability issues or bugs, please open a ticket ASAP so I can take a look at it. 
 
