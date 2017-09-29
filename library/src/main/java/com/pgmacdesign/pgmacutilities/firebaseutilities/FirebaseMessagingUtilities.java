@@ -19,18 +19,23 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 
 /**
+ * This class is designed to be used with Firebase messaging.
  * Created by pmacdowell on 2017-09-29.
  */
-
 public class FirebaseMessagingUtilities {
 
+    //Base URL
     private static final String FIREBASE_BASE_URL = "https://fcm.googleapis.com";
+    //Map <String, Object> type token
     private static final Type TYPE_MAP_OBJECT = new TypeToken<Map<String, Object>>() {
     }.getType();
-
+    //Service interface
     private static FirebaseEndpoints service;
 
-    private static void init(@NonNull String firebaseApiKey) {
+    /**
+     * Init function
+     */
+    private static void init() {
         if (service == null) {
             // TODO: 2017-09-29 write in link here for universal setter / base class for logging
             service = new RetrofitClient.Builder(FirebaseEndpoints.class, FIREBASE_BASE_URL)
@@ -42,6 +47,11 @@ public class FirebaseMessagingUtilities {
         }
     }
 
+    /**
+     * Check on internet access before call
+     * @param context
+     * @return
+     */
     private static boolean doIProceed(Context context) {
         if (!NetworkUtilities.haveNetworkConnection(context)) {
             return false;
@@ -51,6 +61,11 @@ public class FirebaseMessagingUtilities {
         return true;
     }
 
+    /**
+     * Send a push notification for Android to read and parse in the background.
+     * For more info, see
+     * {@link FirebaseMessagingUtilities#sendPushNotification(Context, OnTaskCompleteListener, String, PushNotificationsPojo)}
+     */
     public static void sendAndroidPushNotification(@NonNull Context context,
                                                    @NonNull final OnTaskCompleteListener listener,
                                                    @NonNull String firebaseApiKey,
@@ -62,6 +77,11 @@ public class FirebaseMessagingUtilities {
         FirebaseMessagingUtilities.sendPushNotification(context, listener, firebaseApiKey, pojo);
     }
 
+    /**
+     * Send a push notification for IOS to read.
+     * For more info, see
+     * {@link FirebaseMessagingUtilities#sendPushNotification(Context, OnTaskCompleteListener, String, PushNotificationsPojo)}
+     */
     public static void sendIOSPushNotification(@NonNull Context context,
                                                @NonNull final OnTaskCompleteListener listener,
                                                @NonNull String firebaseApiKey,
@@ -76,7 +96,7 @@ public class FirebaseMessagingUtilities {
     /**
      * Send a push notification through firebase.
      *
-     * @param context        Context
+     * @param context        {@link Context}
      * @param listener       {@link OnTaskCompleteListener}
      * @param firebaseApiKey Firebase Messaging API Key. NOTE! If receiving 401 unauthorized errors,
      *                       make sure to get the correct, longer server key. See this answer for details:
@@ -88,7 +108,8 @@ public class FirebaseMessagingUtilities {
      *                       Also, it will trigger the onMessageReceived() function even if the
      *                       app is closed.
      *                       For IOS: This will not be read by default and user will not receive notification.
-     *                       (Can be changed by altering the {DDDDDD} function.
+     *                       (Can be changed by altering the {didReceiveRemoteNotification}
+     *                       function. See the code at the bottom of the screen for sample.
      *                         2) JSON with "data" not included and "notification" included.
      *                       For Android: This will be read in both foreground and background,
      *                       but will not trigger the onMessageReceived() function so nothing can be
@@ -123,7 +144,7 @@ public class FirebaseMessagingUtilities {
                     PGMacUtilitiesConstants.TAG_NO_INTERNET);
             return;
         }
-        init(firebaseApiKey);
+        init();
         Call<Map<String, Object>> call = service.sendPushNotification("key=" + firebaseApiKey, pojo);
         RetrofitParser.parse(new OnTaskCompleteListener() {
             @Override
@@ -136,5 +157,18 @@ public class FirebaseMessagingUtilities {
                 }
             }
         }, call, TYPE_MAP_OBJECT, TYPE_MAP_OBJECT, 1, 0, false);
+
     }
+
+
+    /*
+    IOS Sample code for obtaining from "data" field:
+        func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+            if let messageID = userInfo[“gcm.message_id”] {
+                print(“message id is \(messageID)“)
+            }
+            Messaging.messaging().appDidReceiveMessage(userInfo)
+            completionHandler(.newData)
+        }
+     */
 }

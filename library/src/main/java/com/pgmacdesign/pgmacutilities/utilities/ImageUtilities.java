@@ -15,12 +15,14 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.util.Base64;
 import android.widget.ImageView;
 
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
-import com.pgmacdesign.pgmacutilities.transformations.CircleTransform;
 import com.pgmacdesign.pgmacutilities.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmacutilities.transformations.CircleTransform;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.LruCache;
 import com.squareup.picasso.NetworkPolicy;
@@ -29,6 +31,7 @@ import com.squareup.picasso.Picasso;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -799,7 +802,7 @@ public class ImageUtilities {
     }
 
     /**
-     * Get the maximum system cache size for the app.Designed after this answer:
+     * Get the maximum system cache size for the app. Designed after this answer:
      * https://stackoverflow.com/a/15763477/2480714
      * Note! DO NOT USE THE ENTIRE 100%! Use a fraction of it. (IE, 1/8th)
      * @return long maximum cache size. (If an error occurs, return 0)
@@ -812,4 +815,227 @@ public class ImageUtilities {
             return 0;
         }
     }
+
+    ///////////////////////////////////////////
+    //Base64 String Image --> String Encoding//
+    ///////////////////////////////////////////
+
+    /**
+     * Encode a Bitmap to a base 64 String
+     *
+     * @param bm The Bitmap to convert
+     * @return Base 64 Encoded String
+     */
+    private static String encodeImage(Bitmap bm) {
+        if (bm == null) {
+            return null;
+        }
+
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] b = baos.toByteArray();
+            String encImage = Base64.encodeToString(b, Base64.DEFAULT);
+            return encImage;
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Encode an image on a background thread
+     * @param listener {@link OnTaskCompleteListener}
+     * @param bm Bitmap to convert
+     */
+    private static void encodeImage(@NonNull final OnTaskCompleteListener listener,
+                                    final Bitmap bm) {
+        if (bm == null) {
+            listener.onTaskComplete(null, PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_FAIL);
+            return;
+        }
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                try {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                    byte[] b = baos.toByteArray();
+                    String encImage = Base64.encodeToString(b, Base64.DEFAULT);
+                    return encImage;
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(String str) {
+                if(!StringUtilities.isNullOrEmpty(str)){
+                    listener.onTaskComplete(str,
+                            PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_SUCCESS);
+                } else {
+                    listener.onTaskComplete(null,
+                            PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_FAIL);
+                }
+            }
+        }.execute();
+    }
+
+    /**
+     * Encode an image to a base 64 String
+     *
+     * @param file The image File to convert
+     * @return Base 64 Encoded String
+     */
+    private static String encodeImage(File file) {
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Bitmap bm = BitmapFactory.decodeStream(fis);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            if (bm == null) {
+                return null;
+            }
+            bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] b = baos.toByteArray();
+            String encImage = Base64.encodeToString(b, Base64.DEFAULT);
+            //Base64.de
+            return encImage;
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+
+    }
+
+    /**
+     * Encode an image to a base64 String on a background thread
+     * @param listener {@link OnTaskCompleteListener}
+     * @param file The File to convert
+     */
+    private static void encodeImage(@NonNull final OnTaskCompleteListener listener,
+                                    final File file) {
+        if (file == null) {
+            listener.onTaskComplete(null, PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_FAIL);
+            return;
+        }
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                FileInputStream fis = null;
+                try {
+                    fis = new FileInputStream(file);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    Bitmap bm = BitmapFactory.decodeStream(fis);
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    if (bm == null) {
+                        return null;
+                    }
+                    bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                    byte[] b = baos.toByteArray();
+                    String encImage = Base64.encodeToString(b, Base64.DEFAULT);
+                    //Base64.de
+                    return encImage;
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(String str) {
+                if(!StringUtilities.isNullOrEmpty(str)){
+                    listener.onTaskComplete(str,
+                            PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_SUCCESS);
+                } else {
+                    listener.onTaskComplete(null,
+                            PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_FAIL);
+                }
+            }
+        }.execute();
+    }
+
+    /**
+     * Encode an image to a base 64 String
+     *
+     * @param path The path String to the image file
+     * @return Base 64 Encoded String
+     */
+    private static String encodeImage(String path) {
+        File imagefile = new File(path);
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(imagefile);
+            Bitmap bm = BitmapFactory.decodeStream(fis);
+            if (bm == null) {
+                return null;
+            }
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] b = baos.toByteArray();
+            String encImage = Base64.encodeToString(b, Base64.DEFAULT);
+            return encImage;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+
+    }
+
+    /**
+     * Encode an image to a base 64 String on a background thread
+     * @param listener {@link OnTaskCompleteListener}
+     * @param path The Path String to the image
+     */
+    private static void encodeImage(@NonNull final OnTaskCompleteListener listener,
+                                    final String path) {
+        if (StringUtilities.isNullOrEmpty(path)) {
+            listener.onTaskComplete(null, PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_FAIL);
+            return;
+        }
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                File imagefile = new File(path);
+                FileInputStream fis = null;
+                try {
+                    fis = new FileInputStream(imagefile);
+                    Bitmap bm = BitmapFactory.decodeStream(fis);
+                    if (bm == null) {
+                        return null;
+                    }
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                    byte[] b = baos.toByteArray();
+                    String encImage = Base64.encodeToString(b, Base64.DEFAULT);
+                    return encImage;
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(String str) {
+                if(!StringUtilities.isNullOrEmpty(str)){
+                    listener.onTaskComplete(str,
+                            PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_SUCCESS);
+                } else {
+                    listener.onTaskComplete(null,
+                            PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_FAIL);
+                }
+            }
+        }.execute();
+    }
+
 }

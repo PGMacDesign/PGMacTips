@@ -111,8 +111,10 @@ public class PGMacUtilitiesConstants {
     public static final int TAG_FCM_SUCCESS_RESPONSE = 4459;
     public static final int TAG_FCM_FAIL_RESPONSE = 4460;
     public static final int TAG_NO_INTERNET = 4461;
-    public static final int TAG_TBD_8 = 4462;
-    public static final int TAG_TBD_9 = 4463;
+    public static final int TAG_BASE64_IMAGE_ENCODE_SUCCESS = 4462;
+    public static final int TAG_BASE64_IMAGE_ENCODE_FAIL = 4463;
+    public static final int TAG_TBD_8 = 4464;
+    public static final int TAG_TBD_9 = 4465;
 
     //String Tags
     public static final String TAG_SELF_PHOTO_URI = "tag_self_photo_uri";
