@@ -16,7 +16,7 @@ allprojects {
 
 ```
 
-And include this underneath your dependencies section:
+And include this in your dependencies section:
 
 ```java
 
