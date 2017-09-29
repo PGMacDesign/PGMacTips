@@ -14,7 +14,7 @@ public class PGMacUtilitiesConstants {
     public static final String PHONE_URI_TO_WRITE_TO = "/storage/emulated/0/Download/";
     public static final String FILE_NAME = "debugLoggingData.txt";
     public static final String URL_GOOGLE = "https://www.google.com";
-    public static final String NO_INTERNET = "It looks like you do not have a stable internet connection. Please check for connectivity and try again";
+    public static final String NO_INTERNET_STRING = "It looks like you do not have a stable internet connection. Please check for connectivity and try again";
     public static final String ARRAY_PAGER_ADAPTER_ERROR_1 = "Error: Null fragment in passed map.";
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -105,11 +105,14 @@ public class PGMacUtilitiesConstants {
     public static final int TAG_TIMER_UTILITIES_FINISHED_WITH_DATA = 4453;
     public static final int TAG_SMS_RECEIVED_BROADCAST_RECEIVER = 4454;
     public static final int TAG_SMS_RECEIVED_BROADCAST_RECEIVER_EMPTY = 4455;
-    public static final int VIEW_PARAMS_LOADED = 4456;
-    public static final int VIEW_PARAMS_LOADING_FAILED = 4457;
-    public static final int VIEW_FINISHED_DRAWING = 4458;
-    public static final int TAG_TBD_8 = 4459;
-    public static final int TAG_TBD_9 = 4460;
+    public static final int TAG_VIEW_PARAMS_LOADED = 4456;
+    public static final int TAG_VIEW_PARAMS_LOADING_FAILED = 4457;
+    public static final int TAG_VIEW_FINISHED_DRAWING = 4458;
+    public static final int TAG_FCM_SUCCESS_RESPONSE = 4459;
+    public static final int TAG_FCM_FAIL_RESPONSE = 4460;
+    public static final int TAG_NO_INTERNET = 4461;
+    public static final int TAG_TBD_8 = 4462;
+    public static final int TAG_TBD_9 = 4463;
 
     //String Tags
     public static final String TAG_SELF_PHOTO_URI = "tag_self_photo_uri";

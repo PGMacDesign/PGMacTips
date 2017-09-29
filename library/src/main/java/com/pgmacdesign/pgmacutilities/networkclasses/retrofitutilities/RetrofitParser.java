@@ -3,6 +3,7 @@ package com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities;
 import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmacutilities.misc.PGMacUtilitiesConstants;
 import com.pgmacdesign.pgmacutilities.utilities.StringUtilities;
@@ -355,8 +356,12 @@ public class RetrofitParser {
                                       @NonNull final Class successClassDataModel) {
         try {
             return successClassDataModel.cast(responseObject);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception e) {}
+        if(responseObject != null){
+            try {
+                JsonElement jsonElement = new Gson().toJsonTree(responseObject);
+                return new Gson().fromJson(jsonElement, successClassDataModel);
+            } catch (Exception e){}
         }
         return null;
     }
@@ -373,10 +378,15 @@ public class RetrofitParser {
      */
     private static <T> Object convert(T responseObject,
                                       @NonNull final Type type) {
+
         try {
             return type.getClass().cast(responseObject);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception e) {}
+        if(responseObject != null){
+            try {
+                JsonElement jsonElement = new Gson().toJsonTree(responseObject);
+                return new Gson().fromJson(jsonElement, type);
+            } catch (Exception e){}
         }
         return null;
     }
@@ -403,6 +413,10 @@ public class RetrofitParser {
         try {
             return errorClassDataModel.cast(((T) response.body()));
         } catch (Exception e) {}
+        try {
+            JsonElement jsonElement = new Gson().toJsonTree(response.body());
+            return new Gson().fromJson(jsonElement, errorClassDataModel);
+        } catch (Exception e){}
         return null;
     }
 
@@ -426,6 +440,10 @@ public class RetrofitParser {
             }
             //Error
         } catch (Exception e) {}
+        try {
+            JsonElement jsonElement = new Gson().toJsonTree(responseError);
+            return new Gson().fromJson(jsonElement, errorClassDataModel);
+        } catch (Exception e){}
         return null;
     }
 
@@ -451,6 +469,10 @@ public class RetrofitParser {
         try {
             return errorClassDataModel.getClass().cast(((T) response.body()));
         } catch (Exception e) {}
+        try {
+            JsonElement jsonElement = new Gson().toJsonTree(response.body());
+            return new Gson().fromJson(jsonElement, errorClassDataModel);
+        } catch (Exception e){}
         return null;
     }
 
@@ -474,6 +496,10 @@ public class RetrofitParser {
             }
             //Error
         } catch (Exception e) {}
+        try {
+            JsonElement jsonElement = new Gson().toJsonTree(responseError);
+            return new Gson().fromJson(jsonElement, errorClassDataModel);
+        } catch (Exception e){}
         return null;
     }
 

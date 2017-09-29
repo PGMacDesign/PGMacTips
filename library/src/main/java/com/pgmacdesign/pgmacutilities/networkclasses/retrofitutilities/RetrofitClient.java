@@ -47,7 +47,7 @@ public class RetrofitClient {
     private String urlBase;
     private Map<String, String> headers;
     private HttpLoggingInterceptor.Level logLevel;
-    private int readTimeout, writeTimeout;
+    private long readTimeout, writeTimeout;
     private String dateFormat;
     private Class serviceInterface;
     private Converter.Factory customConverterFactory;
@@ -252,7 +252,7 @@ public class RetrofitClient {
         Class<T> builder_serviceInterface;
         Map<String, String> builder_headers;
         HttpLoggingInterceptor.Level builder_logLevel;
-        int builder_readTimeout, builder_writeTimeout;
+        long builder_readTimeout, builder_writeTimeout;
         String builder_dateFormat;
         static final int SIXTY_SECONDS = (int)(1000*60);
         Converter.Factory customConverterFactory;
@@ -311,6 +311,7 @@ public class RetrofitClient {
         }
 
         /**
+         * todo note! this is breaking something where using this ignores the headers listed within the interface method!
          * Set the headers. This would be where you would send in a map with header Strings.
          * Samples would be a map containing types like these:
          * <"Authentication", "password123">
@@ -330,7 +331,7 @@ public class RetrofitClient {
          * @param readTimeoutInMilliseconds Read timeout (60000 == 1 minute). Pass 0 for no timeout
          * @param writeTimeoutInMilliseconds Write timeout (60000 == 1 minute). Pass 0 for no timeout
          */
-        public Builder setTimeouts(int readTimeoutInMilliseconds, int writeTimeoutInMilliseconds){
+        public Builder setTimeouts(long readTimeoutInMilliseconds, long writeTimeoutInMilliseconds){
             builder_readTimeout = readTimeoutInMilliseconds;
             builder_writeTimeout = writeTimeoutInMilliseconds;
             return this;
@@ -350,6 +351,7 @@ public class RetrofitClient {
         }
 
         /**
+         * todo note! this is breaking something where using this ignores the headers listed within the interface method!
          * Simple setter method for those who are too lazy to make a hashmap containing
          * "Content-Type", "application/json" as headers. Just call this and it will set it.
          * Keep in mind this will replace other headers you have in place so call this before
@@ -363,6 +365,7 @@ public class RetrofitClient {
         }
 
         /**
+         * todo note! this is breaking something where using this ignores the headers listed within the interface method!
          * Simple setter method for those who are too lazy to make a hashmap containing
          * "Content-Type", "multipart/form-data" as headers. Just call this and it will set it.
          * Keep in mind this will replace other headers you have in place so call this before

@@ -19,11 +19,11 @@ import com.pgmacdesign.pgmacutilities.misc.PGMacUtilitiesConstants;
 public class ViewUtilities {
 
     public static final int VIEW_PARAMS_LOADED =
-            PGMacUtilitiesConstants.VIEW_PARAMS_LOADED;
+            PGMacUtilitiesConstants.TAG_VIEW_PARAMS_LOADED;
     public static final int VIEW_PARAMS_LOADING_FAILED =
-            PGMacUtilitiesConstants.VIEW_PARAMS_LOADING_FAILED;
+            PGMacUtilitiesConstants.TAG_VIEW_PARAMS_LOADING_FAILED;
     public static final int VIEW_FINISHED_DRAWING =
-            PGMacUtilitiesConstants.VIEW_FINISHED_DRAWING;
+            PGMacUtilitiesConstants.TAG_VIEW_FINISHED_DRAWING;
 
     public static ResizingViewObject scaleGIFTo(float gifWidth, float gifHeight,
                                                 float maxAvailableWidth, float maxAvailableHeight,
