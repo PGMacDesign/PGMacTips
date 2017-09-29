@@ -20,7 +20,7 @@ And include this underneath your dependencies section:
 
 ```java
 
-compile ('com.github.PGMacDesign:PGMacUtilities:0.0.26')
+compile ('com.github.PGMacDesign:PGMacUtilities:0.0.27')
 
 ```
 
