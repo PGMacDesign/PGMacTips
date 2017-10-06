@@ -146,6 +146,7 @@ public class RetrofitParser {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            // TODO: 2017-10-06 change? 
             return e;
         }
     }
@@ -508,8 +509,7 @@ public class RetrofitParser {
                     }
                 }
             }
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {}
         try {
             Object toReturn = null;
             ResponseBody responseErrorBody = response.errorBody();
@@ -520,8 +520,7 @@ public class RetrofitParser {
                     return toReturn;
                 }
             }
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {}
         try {
             Object toReturn = null;
             String str = response.body().toString();
@@ -531,17 +530,13 @@ public class RetrofitParser {
                     return toReturn;
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) {}
         try {
             return errorClassDataModel.cast(response.errorBody());
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {}
         try {
             return errorClassDataModel.cast(response.body());
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {}
         return null;
     }
 
@@ -685,17 +680,13 @@ public class RetrofitParser {
                     return toReturn;
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) {}
         try {
             return errorClassDataModel.getClass().cast(response.errorBody());
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {}
         try {
             return errorClassDataModel.getClass().cast(response.body());
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {}
         return null;
     }
 
