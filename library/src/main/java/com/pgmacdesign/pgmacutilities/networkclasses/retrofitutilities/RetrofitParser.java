@@ -146,7 +146,7 @@ public class RetrofitParser {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            // TODO: 2017-10-06 change? 
+            // TODO: 2017-10-06 change?
             return e;
         }
     }
