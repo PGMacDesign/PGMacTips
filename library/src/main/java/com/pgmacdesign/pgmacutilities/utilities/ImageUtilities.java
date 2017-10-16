@@ -826,7 +826,7 @@ public class ImageUtilities {
      * @param bm The Bitmap to convert
      * @return Base 64 Encoded String
      */
-    private static String encodeImage(Bitmap bm) {
+    public static String encodeImage(Bitmap bm) {
         if (bm == null) {
             return null;
         }
@@ -848,7 +848,7 @@ public class ImageUtilities {
      * @param listener {@link OnTaskCompleteListener}
      * @param bm Bitmap to convert
      */
-    private static void encodeImage(@NonNull final OnTaskCompleteListener listener,
+    public static void encodeImage(@NonNull final OnTaskCompleteListener listener,
                                     final Bitmap bm) {
         if (bm == null) {
             listener.onTaskComplete(null, PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_FAIL);
@@ -888,7 +888,7 @@ public class ImageUtilities {
      * @param file The image File to convert
      * @return Base 64 Encoded String
      */
-    private static String encodeImage(File file) {
+    public static String encodeImage(File file) {
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(file);
@@ -919,7 +919,7 @@ public class ImageUtilities {
      * @param listener {@link OnTaskCompleteListener}
      * @param file The File to convert
      */
-    private static void encodeImage(@NonNull final OnTaskCompleteListener listener,
+    public static void encodeImage(@NonNull final OnTaskCompleteListener listener,
                                     final File file) {
         if (file == null) {
             listener.onTaskComplete(null, PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_FAIL);
@@ -971,7 +971,7 @@ public class ImageUtilities {
      * @param path The path String to the image file
      * @return Base 64 Encoded String
      */
-    private static String encodeImage(String path) {
+    public static String encodeImage(String path) {
         File imagefile = new File(path);
         FileInputStream fis = null;
         try {
@@ -997,7 +997,7 @@ public class ImageUtilities {
      * @param listener {@link OnTaskCompleteListener}
      * @param path The Path String to the image
      */
-    private static void encodeImage(@NonNull final OnTaskCompleteListener listener,
+    public static void encodeImage(@NonNull final OnTaskCompleteListener listener,
                                     final String path) {
         if (StringUtilities.isNullOrEmpty(path)) {
             listener.onTaskComplete(null, PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_FAIL);

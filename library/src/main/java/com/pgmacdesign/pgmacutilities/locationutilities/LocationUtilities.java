@@ -1,8 +1,6 @@
-package com.pgmacdesign.pgmacutilities.utilities;
+package com.pgmacdesign.pgmacutilities.locationutilities;
 
-import android.content.Context;
 import android.location.Location;
-import android.location.LocationManager;
 
 /**
  * This class works with the location API to
@@ -45,24 +43,4 @@ public class LocationUtilities {
         return distance;
     }
 
-    /**
-     * Listener to start listening for location updates. This assumes that permission has already
-     * been granted. Make sure to request it before making this static call
-     * @param context Context
-     * @param listener Listener to send data back on {@link android.location.LocationListener}
-     */
-    public static void startListeningForLocation(Context context, long timeGapBetweenUpdates,
-                                                 float minimumDistanceBetweenUpdates,
-                                                 android.location.LocationListener listener){
-
-        LocationManager locationManager = (LocationManager) context
-                .getSystemService(Context.LOCATION_SERVICE);
-        try {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                    timeGapBetweenUpdates, minimumDistanceBetweenUpdates, listener);
-        } catch (SecurityException se){
-            se.printStackTrace();
-            // TODO: 2017-07-19 update here
-        }
-    }
 }
