@@ -86,6 +86,7 @@ public class DialogUtilities {
         public int monthOfYear;
         public int dayOfMonth;
     }
+
     //Date Picker Dialog
     public static DatePickerDialog buildDatePickerDialog(final Context context,
                                                          final DialogFinishedListener listener){
@@ -123,6 +124,44 @@ public class DialogUtilities {
         return mDialog;
     }
 
+    //Date Picker Dialog  // TODO: 2017-10-18  
+//    public static DatePickerDialog buildNumberPickerDialog(final Context context,
+//                                                           final DialogFinishedListener listener,
+//                                                           final long minimumNum,
+//                                                           final long maximumNum){
+//
+//        TimeZone tz = null;
+//        try {
+//            tz = TimeZone.getDefault();
+//        } catch (Exception e){
+//            e.printStackTrace();
+//        }
+//        Calendar rightNow;
+//        try {
+//            rightNow = Calendar.getInstance(tz);
+//        } catch (Exception e){
+//            rightNow = Calendar.getInstance();
+//        }
+//        DatePickerDialog mDialog = new DatePickerDialog(context,
+//                new DatePickerDialog.OnDateSetListener() {
+//
+//                    @Override
+//                    public void onDateSet(android.widget.DatePicker view,
+//                                          int year, int monthOfYear, int dayOfMonth) {
+//
+//                        SimpleDateObject sdo = new SimpleDateObject();
+//                        sdo.dayOfMonth = dayOfMonth;
+//                        sdo.monthOfYear = monthOfYear;
+//                        sdo.year = year;
+//                        listener.dialogFinished(sdo, SUCCESS_RESPONSE);
+//                        return;
+//                    }
+//
+//                }, rightNow.get(Calendar.YEAR),
+//                rightNow.get(Calendar.MONTH), rightNow.get(Calendar.DAY_OF_MONTH));
+//
+//        return mDialog;
+//    }
 
     //Simple Alert Dialog
     public static AlertDialog buildSimpleOkDialog(final Context context,

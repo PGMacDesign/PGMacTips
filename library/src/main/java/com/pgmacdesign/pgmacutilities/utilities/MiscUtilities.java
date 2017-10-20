@@ -23,6 +23,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -86,6 +87,22 @@ public class MiscUtilities {
             return true;
         }
         if(myList.size() <= 0){
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * Checks a set for either being empty or containing objects within it
+     * @param mySet set to check
+     * @return Boolean, true if it is null or empty, false it if is not
+     */
+    public static boolean isSetNullOrEmpty(Set<?> mySet){
+        if(mySet == null){
+            return true;
+        }
+        if(mySet.size() <= 0){
             return true;
         }
         return false;
