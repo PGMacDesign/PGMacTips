@@ -1,6 +1,9 @@
 package com.pgmacdesign.pgmacutilities.utilities;
 
 import android.graphics.Point;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.view.Gravity;
 import android.view.View;
@@ -11,6 +14,9 @@ import android.widget.RelativeLayout;
 
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmacutilities.misc.PGMacUtilitiesConstants;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Class for managing views in various ways
@@ -24,6 +30,26 @@ public class ViewUtilities {
             PGMacUtilitiesConstants.TAG_VIEW_PARAMS_LOADING_FAILED;
     public static final int VIEW_FINISHED_DRAWING =
             PGMacUtilitiesConstants.TAG_VIEW_FINISHED_DRAWING;
+
+    public static void alterViewVisibility(@NonNull final View view,
+                                           final int visibility,
+                                           long millisecondsToWait) {
+        final Handler handler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                try {
+                    view.setVisibility(visibility);
+                } catch (Exception e){}
+            }
+        };
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                handler.sendMessage(new Message());
+            }
+        }, millisecondsToWait);
+    }
 
     public static ResizingViewObject scaleGIFTo(float gifWidth, float gifHeight,
                                                 float maxAvailableWidth, float maxAvailableHeight,
