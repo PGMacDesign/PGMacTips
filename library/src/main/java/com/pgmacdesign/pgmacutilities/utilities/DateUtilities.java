@@ -5,8 +5,10 @@ import com.pgmacdesign.pgmacutilities.misc.PGMacUtilitiesConstants;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -442,6 +444,122 @@ public class DateUtilities {
     }
 
     /**
+     * Get the day of the week from a calendar instance int
+     * @param calendarDayOfWeek {@link Calendar#DAY_OF_WEEK}
+     * @return String, day of the week
+     */
+    public static String getDayOfWeek(int calendarDayOfWeek){
+        String dayOfWeek;
+        switch (calendarDayOfWeek){
+            case Calendar.MONDAY:
+                dayOfWeek = "Monday";
+                break;
+            case Calendar.TUESDAY:
+                dayOfWeek = "Tuesday";
+                break;
+            case Calendar.WEDNESDAY:
+                dayOfWeek = "Wednesday";
+                break;
+            case Calendar.THURSDAY:
+                dayOfWeek = "Thursday";
+                break;
+            case Calendar.FRIDAY:
+                dayOfWeek = "Friday";
+                break;
+            case Calendar.SATURDAY:
+                dayOfWeek = "Saturday";
+                break;
+            case Calendar.SUNDAY:
+                dayOfWeek = "Sunday";
+                break;
+            default:
+                dayOfWeek = "Unknown";
+        }
+        return dayOfWeek;
+    }
+
+    /**
+     * Get the month of the year from a calendar instance int
+     * @param calendarMonth {@link Calendar#MONTH}
+     * @return String, month of the year
+     */
+    public static String getMonthOfYear(int calendarMonth){
+        String monthOfTheYear;
+        switch (calendarMonth){
+            case Calendar.JANUARY:
+                monthOfTheYear = "January";
+                break;
+            case Calendar.FEBRUARY:
+                monthOfTheYear = "February";
+                break;
+            case Calendar.MARCH:
+                monthOfTheYear = "March";
+                break;
+            case Calendar.APRIL:
+                monthOfTheYear = "April";
+                break;
+            case Calendar.MAY:
+                monthOfTheYear = "May";
+                break;
+            case Calendar.JUNE:
+                monthOfTheYear = "June";
+                break;
+            case Calendar.JULY:
+                monthOfTheYear = "July";
+                break;
+            case Calendar.AUGUST:
+                monthOfTheYear = "August";
+                break;
+            case Calendar.SEPTEMBER:
+                monthOfTheYear = "September";
+                break;
+            case Calendar.OCTOBER:
+                monthOfTheYear = "October";
+                break;
+            case Calendar.NOVEMBER:
+                monthOfTheYear = "November";
+                break;
+            case Calendar.DECEMBER:
+                monthOfTheYear = "December";
+                break;
+            default:
+                monthOfTheYear = "Unknown";
+                break;
+        }
+        return monthOfTheYear;
+    }
+
+    /**
+     * Builds list of Strings like this: "Tuesday October 25" and increment to the next
+     * one of "Wednesday October 26".
+     * @param cal Calendar to use for incrementing. If left null, it will
+     *                 create a new calendar instance at the time of this call
+     * @param numberOfDaysToIncrement Number of times / days to increment
+     * @return
+     */
+    public static List<String> buildSequentialDateStrings(Calendar cal,
+                                                          int numberOfDaysToIncrement){
+        if(numberOfDaysToIncrement <= 0){
+            return null;
+        }
+        List<String> toReturn = new ArrayList<>();
+        if(cal == null) {
+            cal = Calendar.getInstance();
+        }
+        for(int i = 0; i < numberOfDaysToIncrement; i++){
+            int dayOfWeekInt = cal.get(Calendar.DAY_OF_WEEK);
+            int dayOfMonthInt = cal.get(Calendar.DAY_OF_MONTH);
+            int monthOfYearInt = cal.get(Calendar.MONTH);
+            String monthOfYear = getMonthOfYear(monthOfYearInt);
+            String dayOfWeek = getDayOfWeek(dayOfWeekInt);
+            String str = dayOfWeek + " " + monthOfYear + " " + dayOfMonthInt;
+            toReturn.add(str);
+            cal.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        return toReturn;
+    }
+
+    /**
      * For when I need a quick date in the year 1985. Don't judge me, I get lazy and don't
      * want to type my birthday multiple times.
      *
@@ -450,8 +568,7 @@ public class DateUtilities {
     public static Date get1985() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(1985, 10, 8, 11, 11, 11);
-        Date date = calendar.getTime();
-        return date;
+        return calendar.getTime();
     }
 
     /**
@@ -462,8 +579,7 @@ public class DateUtilities {
     public static Date getLiamsBirthday() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(2016, 7, 4, 12, 29, 30);
-        Date date = calendar.getTime();
-        return date;
+        return calendar.getTime();
     }
 
     /**
@@ -493,4 +609,43 @@ public class DateUtilities {
 
         return before(startDate, endDate);
     }
+
+    public static String convert24HourTo12Hour(int hour, int minute){
+        return convert24HourTo12Hour(hour + "", minute + "");
+    }
+
+    public static String convert12HourTo24Hour(int hour, int minute, boolean isAm){
+        return convert12HourTo24Hour(hour + "", minute + "", isAm);
+    }
+
+    public static String convert24HourTo12Hour(String hour, String minute){
+        String str = hour + ":" + minute;
+        SimpleDateFormat time24 = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat time12 = new SimpleDateFormat("hh:mm a");
+        try {
+            Date date = time24.parse(str);
+            return time12.format(date);
+        } catch (Exception e){
+            return null;
+        }
+    }
+
+    public static String convert12HourTo24Hour(String hour, String minute, boolean isAm){
+        String ampm;
+        if(isAm){
+            ampm = "AM";
+        } else {
+            ampm = "PM";
+        }
+        String str = hour + ":" + minute + " " + ampm;
+        SimpleDateFormat time24 = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat time12 = new SimpleDateFormat("hh:mm a");
+        try {
+            Date date = time12.parse(str);
+            return time24.format(date);
+        } catch (Exception e){
+            return null;
+        }
+    }
+
 }
