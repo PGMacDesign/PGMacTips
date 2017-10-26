@@ -9,6 +9,7 @@ import android.content.pm.Signature;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Looper;
+import android.text.format.DateFormat;
 import android.util.Base64;
 import android.util.Log;
 import android.webkit.CookieManager;
@@ -92,6 +93,18 @@ public class MiscUtilities {
         return false;
     }
 
+    /**
+     * Checks system preferences for if user has 24 hour (18:04 == 6:04 pm) in their settings
+     * @param context {@link Context}
+     * @return boolean, true if they prefer 24 hour, false if they prefer 12 hour
+     */
+    public static boolean userPrefers24HourTimeFormat(Context context){
+        try {
+            return DateFormat.is24HourFormat(context);
+        } catch (Exception e){
+            return false;
+        }
+    }
 
     /**
      * Checks a set for either being empty or containing objects within it

@@ -423,9 +423,11 @@ public class DatabaseUtilities {
         }
         if (obj == null) {
             //This means they want to delete the item from the DB. Remove then leave
-            return (this.deleteFromMasterDB(myClass));
+            return (this.deleteFromMasterDB(myClass, customSuffix));
         }
-
+        if (!isValidWrite(myClass, customSuffix)) {
+            return false;
+        }
         Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
         String className = myClass.getName();
         String jsonString = null;
@@ -542,7 +544,7 @@ public class DatabaseUtilities {
         if (myClass == null) {
             return false;
         }
-        if (!DatabaseUtilities.isValidWrite(myClass)) {
+        if (!DatabaseUtilities.isValidWrite(myClass, customSuffix)) {
             L.m("If you want to clear all stored / persisted data, please call " +
                     "deleteAllPersistedObjects(true, false)");
             return false;
@@ -693,9 +695,6 @@ public class DatabaseUtilities {
     public <T extends RealmObject> boolean executeDeleteFromDB(RealmQuery query,
                                                                final Class myClass) {
         if (myClass == null) {
-            return false;
-        }
-        if (!isValidWrite(myClass)) {
             return false;
         }
         if (!isValidWrite(myClass)) {
@@ -1071,6 +1070,38 @@ public class DatabaseUtilities {
             return false;
         }
         String className = myClass.getName();
+        String masterDBObjectName = MasterDatabaseObject.class.getName();
+        if(!StringUtilities.isNullOrEmpty(className) &&
+                !StringUtilities.isNullOrEmpty(masterDBObjectName)) {
+            if (masterDBObjectName.equalsIgnoreCase(className)) {
+                L.m("You cannot modify this table from that method. If you want to access the " +
+                        "MasterDatabaseObject table, please use the persistObject / dePersistObject /" +
+                        " getPersistedObject / getAllPersistedObjects method calls.");
+                return false;
+            }
+        }
+        if(myClass == RealmObject.class) {
+            return true;
+        }
+        return myClass.isAssignableFrom(RealmObject.class);
+
+    }
+
+    /**
+     * For checking on valid write / update / delete
+     *
+     * @param myClass Class Class object being used
+     * @return boolean. False if it invalid and should be aborted, true if it is ok to write
+     */
+    private static boolean isValidWrite(Class myClass, String customSuffix) {
+        if(myClass == null){
+            L.m("Class used to write to the DB was null, please check passed params");
+            return false;
+        }
+        String className = myClass.getName();
+        if(customSuffix != null){
+            className = className + customSuffix;
+        }
         String masterDBObjectName = MasterDatabaseObject.class.getName();
         if(!StringUtilities.isNullOrEmpty(className) &&
                 !StringUtilities.isNullOrEmpty(masterDBObjectName)) {

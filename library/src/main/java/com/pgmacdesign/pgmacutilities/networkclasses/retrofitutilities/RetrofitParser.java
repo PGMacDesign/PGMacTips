@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmacutilities.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmacutilities.utilities.L;
 import com.pgmacdesign.pgmacutilities.utilities.StringUtilities;
 
 import java.lang.reflect.Type;
@@ -55,7 +56,7 @@ public class RetrofitParser {
      *                                will attempt to parse the 'fail' response from both the
      *                                response body as well as the response error body.
      */
-    public static <T> Object parse(@NonNull final Call<T> call,
+    public static Object parse(@NonNull final Call<ResponseBody> call,
                                    final Class successClassDataModel,
                                    final Class errorClassDataModel,
                                    final boolean serverCanReturn200Error) {
@@ -64,6 +65,9 @@ public class RetrofitParser {
             if (response == null) {
                 return null;
             }
+
+            //Consumed as of now
+            ResponseBody rb = response.body();
 
             if (serverCanReturn200Error) {
                 Object o1 = RetrofitParser.checkForError(response, errorClassDataModel);
@@ -104,7 +108,7 @@ public class RetrofitParser {
     /**
      * Overloaded to allow for Type {@link Type} to be sent in as data models
      */
-    public static <T> Object parse(@NonNull final Call<T> call,
+    public static  Object parse(@NonNull final Call<ResponseBody> call,
                                    @NonNull final Type successClassDataModel,
                                    @NonNull final Type errorClassDataModel,
                                    final boolean serverCanReturn200Error) {
@@ -156,7 +160,7 @@ public class RetrofitParser {
      * {@link RetrofitParser#parse(Call, Class, Class, boolean)}
      * For full documentation
      */
-    public static <T> void parse(@NonNull final Call<T> call,
+    public static void parse(@NonNull final Call<ResponseBody> call,
                                  final Class successClassDataModel,
                                  final Class errorClassDataModel) {
         RetrofitParser.parse(call, successClassDataModel, errorClassDataModel, false);
@@ -165,7 +169,7 @@ public class RetrofitParser {
     /**
      * Overloaded to allow for type {@link Type} entry
      */
-    public static <T> void parse(@NonNull final Call<T> call,
+    public static void parse(@NonNull final Call<ResponseBody> call,
                                  @NonNull final Type successClassDataModel,
                                  @NonNull final Type errorClassDataModel) {
         RetrofitParser.parse(call, successClassDataModel, errorClassDataModel, false);
@@ -202,22 +206,25 @@ public class RetrofitParser {
      *                                are unsure as to wether this applies to you, start by
      *                                sending false and check the responses.
      */
-    public static <T> void parse(@NonNull final OnTaskCompleteListener listener,
-                                 @NonNull final Call<T> call,
+    public static void parse(@NonNull final OnTaskCompleteListener listener,
+                                 @NonNull final Call<ResponseBody> call,
                                  final Class successClassDataModel,
                                  final Class errorClassDataModel,
                                  final Integer successCallbackTag,
                                  final Integer failCallbackTag,
                                  final boolean serverCanReturn200Error) {
         try {
-            call.enqueue(new Callback<T>() {
+            call.enqueue(new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(@NonNull Call<T> call, @NonNull Response<T> response) {
+                public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                     if (response == null) {
                         //Response was null, bail out
                         listener.onTaskComplete(null, failCallbackTag);
                         return;
                     }
+
+                    //Consumed as of now
+                    ResponseBody rb = response.body();
 
                     if (serverCanReturn200Error) {
                         Object o1 = RetrofitParser.checkForError(response, errorClassDataModel);
@@ -258,7 +265,7 @@ public class RetrofitParser {
                 }
 
                 @Override
-                public void onFailure(@NonNull Call<T> call, @NonNull Throwable throwable) {
+                public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable throwable) {
                     listener.onTaskComplete(throwable.getMessage(), failCallbackTag);
                 }
             });
@@ -271,17 +278,17 @@ public class RetrofitParser {
     /**
      * Overloaded to allow for Type {@link Type} entry
      */
-    public static <T> void parse(@NonNull final OnTaskCompleteListener listener,
-                                 @NonNull final Call<T> call,
+    public static void parse(@NonNull final OnTaskCompleteListener listener,
+                                 @NonNull final Call<ResponseBody> call,
                                  @NonNull final Type successClassDataModel,
                                  @NonNull final Type errorClassDataModel,
                                  final Integer successCallbackTag,
                                  final Integer failCallbackTag,
                                  final boolean serverCanReturn200Error) {
         try {
-            call.enqueue(new Callback<T>() {
+            call.enqueue(new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(@NonNull Call<T> call, @NonNull Response<T> response) {
+                public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                     if (response == null) {
                         //Response was null, bail out
                         listener.onTaskComplete(null, failCallbackTag);
@@ -327,7 +334,7 @@ public class RetrofitParser {
                 }
 
                 @Override
-                public void onFailure(@NonNull Call<T> call, @NonNull Throwable throwable) {
+                public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable throwable) {
                     listener.onTaskComplete(throwable.getMessage(), failCallbackTag);
                 }
             });
@@ -342,8 +349,8 @@ public class RetrofitParser {
      * {@link RetrofitParser#parse(OnTaskCompleteListener, Call, Class, Class, Integer, Integer, boolean)}
      * For full documentation
      */
-    public static <T> void parse(@NonNull final OnTaskCompleteListener listener,
-                                 @NonNull final Call<T> call,
+    public static void parse(@NonNull final OnTaskCompleteListener listener,
+                                 @NonNull final Call<ResponseBody> call,
                                  final Class successClassDataModel,
                                  final Class errorClassDataModel,
                                  final Integer successCallbackTag,
@@ -355,8 +362,8 @@ public class RetrofitParser {
     /**
      * Overloaded to allow for Type {@link Type} entry
      */
-    public static <T> void parse(@NonNull final OnTaskCompleteListener listener,
-                                 @NonNull final Call<T> call,
+    public static void parse(@NonNull final OnTaskCompleteListener listener,
+                                 @NonNull final Call<ResponseBody> call,
                                  @NonNull final Type successClassDataModel,
                                  @NonNull final Type errorClassDataModel,
                                  final Integer successCallbackTag,
@@ -379,13 +386,13 @@ public class RetrofitParser {
      *                              empty object, this function will return an empty object, else,
      *                              it will return an object that has been cast successfully into
      *                              the one passed.
-     * @param <T>
+     * 
      * @return Object. It will need to be cast into the success data model
      * once completed. If null is returned, it means the object
      * did not parse correctly into the success data model
      */
-    private static <T> Object convert(T responseObject,
-                                      final Class successClassDataModel) {
+    private static  Object convert(ResponseBody responseObject,
+                                   final Class successClassDataModel) {
         try {
             JsonElement jsonElement = new Gson().toJsonTree(responseObject);
             if (jsonElement != null) {
@@ -420,10 +427,10 @@ public class RetrofitParser {
      *                       empty object, this function will return an empty object, else,
      *                       it will return an object that has been cast successfully into
      *                       the one passed.
-     * @param <T>
+     * 
      * @return Object. It will need to be cast into the success data model once completed
      */
-    private static <T> Object convert(T responseObject,
+    private static  Object convert(ResponseBody responseObject,
                                       final Type type) {
         try {
             JsonElement jsonElement = new Gson().toJsonTree(responseObject);
@@ -450,6 +457,91 @@ public class RetrofitParser {
         return null;
     }
 
+    private static Object checkForError(ResponseBody responseBody,
+                                        String responseBodyString,
+                                        @NonNull final String errorJSONKey) {
+        responseBody.string();
+    }
+
+    private static  Object checkForError(ResponseBody responseBody,
+                                         ResponseBody responseErrorBody,
+                                         String responseBodyString,
+                                         String responseErrorBodyString,
+                                         @NonNull final String errorJSONKey) {
+        if (responseBody == null) {
+            return null;
+        }
+        try {
+            Object toReturn = null;
+            if (responseErrorBody != null) {
+                JsonElement jsonElement = new Gson().toJsonTree(responseErrorBody);
+                if (jsonElement != null) {
+                    if (!jsonElement.isJsonNull()) {
+                        L.m("JSON ELEMENT TO STRING == " + jsonElement.toString());
+                        if (jsonElement.toString().equalsIgnoreCase(EMPTY_JSON_RESPONSE)) {
+                            if (errorClassDataModel == null) {
+                                return new Object(); //Empty / Null object
+                            } else {
+                                return null;
+                            }
+                        } else {
+                            toReturn = new Gson().fromJson(jsonElement, errorClassDataModel);
+                            if (toReturn != null) {
+                                return toReturn;
+                            }
+                        }
+                    }
+                }
+            }
+            if (responseBody != null) {
+                JsonElement jsonElement2 = new Gson().toJsonTree(responseBody);
+                if (jsonElement2 != null) {
+                    if (!jsonElement2.isJsonNull()) {
+                        if (jsonElement2.toString().equalsIgnoreCase(EMPTY_JSON_RESPONSE)) {
+                            if (errorClassDataModel == null) {
+                                return new Object(); //Empty / Null object
+                            } else {
+                                return null;
+                            }
+                        } else {
+                            toReturn = new Gson().fromJson(jsonElement2, errorClassDataModel);
+                            if (toReturn != null) {
+                                return toReturn;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {}
+        try {
+            Object toReturn = null;
+            ResponseBody responseErrorBody = response.errorBody();
+            String error1 = responseErrorBody.string();
+            if (!StringUtilities.isNullOrEmpty(error1)) {
+                toReturn = new Gson().fromJson(error1, errorClassDataModel);
+                if (toReturn != null) {
+                    return toReturn;
+                }
+            }
+        } catch (Exception e) {}
+        try {
+            Object toReturn = null;
+            String str = response.body().toString();
+            if (!StringUtilities.isNullOrEmpty(str)) {
+                toReturn = new Gson().fromJson(str, errorClassDataModel);
+                if (toReturn != null) {
+                    return toReturn;
+                }
+            }
+        } catch (Exception e) {}
+        try {
+            return errorClassDataModel.cast(response.errorBody());
+        } catch (Exception e) {}
+        try {
+            return errorClassDataModel.cast(response.body());
+        } catch (Exception e) {}
+        return null;
+    }
     /**
      * Checks for errors
      *
@@ -459,10 +551,10 @@ public class RetrofitParser {
      *                            empty object, this function will return an empty object, else,
      *                            it will return an object that has been cast successfully into
      *                            the one passed.
-     * @param <T>
+     * 
      * @return Object, will need to be case back once completed
      */
-    private static <T> Object checkForError(Response<T> response,
+    private static Object checkForError(ResponseBody responseBody,
                                             final Class errorClassDataModel) {
         if (response == null) {
             return null;
@@ -470,7 +562,7 @@ public class RetrofitParser {
         try {
             Object toReturn = null;
             ResponseBody responseErrorBody = response.errorBody();
-            T responseBody = response.body();
+            ResponseBody responseBody = response.body();
             if (responseErrorBody != null) {
                 JsonElement jsonElement = new Gson().toJsonTree(responseErrorBody);
                 if (jsonElement != null) {
@@ -549,10 +641,10 @@ public class RetrofitParser {
      *                            empty object, this function will return an empty object, else,
      *                            it will return an object that has been cast successfully into
      *                            the one passed.
-     * @param <T>
+     * 
      * @return Object, will need to be case back once compelted
      */
-    private static <T> Object checkForError(ResponseBody responseError,
+    private static  Object checkForError(Response responseError,
                                             final Class errorClassDataModel) {
         if (responseError == null) {
             return null;
@@ -607,10 +699,10 @@ public class RetrofitParser {
      *                            empty object, this function will return an empty object, else,
      *                            it will return an object that has been cast successfully into
      *                            the one passed.
-     * @param <T>
+     * 
      * @return Object, will need to be case back once compelted
      */
-    private static <T> Object checkForError(Response<T> response,
+    private static  Object checkForError(Response<ResponseBody> response,
                                             final Type errorClassDataModel) {
         if (response == null) {
             return null;
@@ -618,7 +710,7 @@ public class RetrofitParser {
         try {
             Object toReturn = null;
             ResponseBody responseErrorBody = response.errorBody();
-            T responseBody = response.body();
+            ResponseBody responseBody = response.body();
             if (responseErrorBody != null) {
                 JsonElement jsonElement = new Gson().toJsonTree(responseErrorBody);
                 if (jsonElement != null) {
@@ -699,10 +791,9 @@ public class RetrofitParser {
      *                            empty object, this function will return an empty object, else,
      *                            it will return an object that has been cast successfully into
      *                            the one passed.
-     * @param <T>
      * @return Object, will need to be case back once compelted
      */
-    private static <T> Object checkForError(ResponseBody responseError,
+    private static Object checkForError(ResponseBody responseError,
                                             final Type errorClassDataModel) {
         if (responseError == null) {
             return null;
