@@ -35,8 +35,8 @@ public class PGMacUtilitiesConstants {
     public static final int TAG_PERMISSIONS_ACCESS_FINE_LOCATION = 4408;
     public static final int TAG_PERMISSIONS_ACCESS_COARSE_LOCATION = 4409;
     public static final int TAG_PERMISSIONS_RECEIVE_BOOT_COMPLETED = 4410;
-    public static final int TAG_PARSE_ERROR = 4411;
-    public static final int TAG_TBD1 = 4412;
+    public static final int TAG_RETROFIT_PARSE_ERROR = 4411;
+    public static final int TAG_RETROFIT_CALL_ERROR = 4412;
     public static final int TAG_TBD2 = 4413;
     public static final int TAG_TBD3 = 4414;
     public static final int TAG_TBD4 = 4415;
