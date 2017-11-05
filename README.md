@@ -33,9 +33,6 @@ This library utilizes many others within it. Below is a listing of all of the ne
         //Secure Shared Prefs. Link: https://github.com/scottyab/secure-preferences
         compile 'com.scottyab:secure-preferences-lib:0.1.4'
 
-        //Cloudrail. Link: https://github.com/CloudRail/cloudrail-si-android-sdk
-        compile 'com.cloudrail:cloudrail-si-android:2.16.0'
-
         //Progress bar animator. This one is better for longer processes, IE uploading photos.
         //Link: https://github.com/Tibolte/ElasticDownload
         compile 'com.github.tibolte:elasticdownload:1.0.4'

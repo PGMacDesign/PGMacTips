@@ -37,10 +37,11 @@ public class MapzenAPICalls {
     public static final int TAG_MAPZEN_TBD_2 = 795;
 
 
-    public MapzenAPICalls(@NonNull Context context, @NonNull OnTaskCompleteListener listener) {
+    public MapzenAPICalls(@NonNull Context context, @NonNull OnTaskCompleteListener listener,
+                          @NonNull final String mapzenAPIKey) {
         this.context = context;
         this.initClient();
-        this.ApiKey = "DEPRECATED"; //context.getResources().getString(R.string.mapzen_string_api_key);
+        this.ApiKey = mapzenAPIKey;
         this.listener = listener;
     }
 
