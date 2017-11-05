@@ -2,14 +2,16 @@ package com.pgmacdesign.pgmacutilities.customui;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.SearchView;
+import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SearchView;
 
 import com.pgmacdesign.pgmacutilities.utilities.StringUtilities;
 
@@ -34,6 +36,7 @@ public class CustomSearchView extends SearchView {
         init();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public CustomSearchView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
@@ -41,8 +44,7 @@ public class CustomSearchView extends SearchView {
     }
 
     private void init(){
-        this.inflater = LayoutInflater.from(context); //Needed?
-
+        this.inflater = LayoutInflater.from(context);
         //Automatically auto expand the Searchbar
         this.setIconified(false);
         this.clearFocus(); // TODO: 2017-10-17 if this triggers on touch, remove and add interim

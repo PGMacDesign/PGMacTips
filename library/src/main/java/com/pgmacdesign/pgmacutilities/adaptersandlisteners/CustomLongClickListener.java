@@ -21,8 +21,6 @@ public class CustomLongClickListener implements View.OnLongClickListener {
 
     /**
      * Constructor (overloaded). See description below
-     * @param link
-     * @param customTag
      */
     public CustomLongClickListener(@NonNull CustomLongClickCallbackLink link, Integer customTag){
         this.link = link;
@@ -33,9 +31,6 @@ public class CustomLongClickListener implements View.OnLongClickListener {
 
     /**
      * Constructor (overloaded). See description below
-     * @param link
-     * @param customTag
-     * @param obj
      */
     public CustomLongClickListener(@NonNull CustomLongClickCallbackLink link, Integer customTag, Object obj){
         this.link = link;

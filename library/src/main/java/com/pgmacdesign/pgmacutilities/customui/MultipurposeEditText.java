@@ -1,9 +1,10 @@
 package com.pgmacdesign.pgmacutilities.customui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.AppCompatEditText;
 import android.util.AttributeSet;
+import android.widget.EditText;
 
 import com.pgmacdesign.pgmacutilities.R;
 
@@ -11,7 +12,8 @@ import com.pgmacdesign.pgmacutilities.R;
  * Custom EditText that allows for state changes to alert users to errors as well as focus
  * Created by pmacdowell on 2017-03-07.
  */
-public class MultipurposeEditText extends AppCompatEditText{
+@SuppressLint("AppCompatCustomView")
+public class MultipurposeEditText extends EditText { //AppCompatEditText
 
     private Context context;
 

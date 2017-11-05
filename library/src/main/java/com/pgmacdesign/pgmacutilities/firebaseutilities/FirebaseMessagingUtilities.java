@@ -15,6 +15,7 @@ import com.pgmacdesign.pgmacutilities.utilities.StringUtilities;
 import java.lang.reflect.Type;
 import java.util.Map;
 
+import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 
@@ -145,13 +146,13 @@ public class FirebaseMessagingUtilities {
             return;
         }
         init();
-        Call<Map<String, Object>> call = service.sendPushNotification("key=" + firebaseApiKey, pojo);
+        Call<ResponseBody> call = service.sendPushNotification("key=" + firebaseApiKey, pojo);
         RetrofitParser.parse(new OnTaskCompleteListener() {
             @Override
             public void onTaskComplete(Object result, int customTag) {
                 if (customTag == 1) {
-                    Map<String, Object> response = (Map<String, Object>) result;
-                    listener.onTaskComplete(response, PGMacUtilitiesConstants.TAG_FCM_SUCCESS_RESPONSE);
+	                Map<String, Object> res = (Map<String, Object>) result;
+                    listener.onTaskComplete(res, PGMacUtilitiesConstants.TAG_FCM_SUCCESS_RESPONSE);
                 } else {
                     listener.onTaskComplete(null, PGMacUtilitiesConstants.TAG_FCM_FAIL_RESPONSE);
                 }

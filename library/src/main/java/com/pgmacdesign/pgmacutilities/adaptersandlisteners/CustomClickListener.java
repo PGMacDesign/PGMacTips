@@ -21,8 +21,6 @@ public class CustomClickListener  implements View.OnClickListener{
 
     /**
      * Constructor (overloaded). See description below
-     * @param link
-     * @param customTag
      */
     public CustomClickListener(@NonNull CustomClickCallbackLink link, Integer customTag){
         this.link = link;
@@ -33,9 +31,6 @@ public class CustomClickListener  implements View.OnClickListener{
 
     /**
      * Constructor (overloaded). See description below
-     * @param link
-     * @param customTag
-     * @param obj
      */
     public CustomClickListener(@NonNull CustomClickCallbackLink link, Integer customTag, Object obj){
         this.link = link;

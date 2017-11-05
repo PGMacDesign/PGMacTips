@@ -3,8 +3,8 @@ package com.pgmacdesign.pgmacutilities.utilities;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.pgmacdesign.pgmacutilities.datamodels.MasterDatabaseObject;
 import com.pgmacdesign.pgmacutilities.misc.PGMacUtilitiesConstants;
-import com.pgmacdesign.pgmacutilities.pojos.MasterDatabaseObject;
 
 import org.json.JSONObject;
 

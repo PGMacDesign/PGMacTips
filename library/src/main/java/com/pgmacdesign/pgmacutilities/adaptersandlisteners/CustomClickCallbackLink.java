@@ -1,5 +1,7 @@
 package com.pgmacdesign.pgmacutilities.adaptersandlisteners;
 
+import android.support.annotation.Nullable;
+
 /**
  * Created by pmacdowell on 8/16/2016.
  */
@@ -15,5 +17,7 @@ public interface CustomClickCallbackLink {
      *                            position can be helpful. If this is not set, it will send back
      *                            null instead.
      */
-    public void itemClicked(Object object, Integer customTag, Integer positionIfAvailable);
+    public void itemClicked(@Nullable Object object,
+                            @Nullable Integer customTag,
+                            @Nullable Integer positionIfAvailable);
 }

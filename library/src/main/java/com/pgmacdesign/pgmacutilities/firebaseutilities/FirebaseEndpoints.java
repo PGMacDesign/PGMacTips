@@ -1,7 +1,6 @@
 package com.pgmacdesign.pgmacutilities.firebaseutilities;
 
-import java.util.Map;
-
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Header;
@@ -25,6 +24,6 @@ public interface FirebaseEndpoints {
      * @return Map<String, Object>> response data
      */
     @POST(API_ENDPOINT + VERSION + "/send")
-    Call<Map<String, Object>> sendPushNotification(@Header("Authorization") String key,
-                                                   @Body PushNotificationsPojo pojo);
+    Call<ResponseBody> sendPushNotification(@Header("Authorization") String key,
+                                            @Body PushNotificationsPojo pojo);
 }

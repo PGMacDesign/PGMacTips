@@ -27,8 +27,8 @@
         android:theme="@style/ButtonTheme1"
         android:layout_marginStart="@dimen/left_right_side_margins"
         android:layout_marginEnd="@dimen/left_right_side_margins"
-        android:background="@drawable/multipurpose_button2"
-        android:textColor="@drawable/multipurpose_button2"
+        android:background="@drawable/pgmac_multipurpose_button2"
+        android:textColor="@drawable/pgmac_multipurpose_button2"
         />
 
     <com.pgmacdesign.pgmacutilities.customui.MultiColorLine

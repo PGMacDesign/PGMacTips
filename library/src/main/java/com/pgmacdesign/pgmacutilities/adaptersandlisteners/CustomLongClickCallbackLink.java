@@ -1,5 +1,7 @@
 package com.pgmacdesign.pgmacutilities.adaptersandlisteners;
 
+import android.support.annotation.Nullable;
+
 /**
  * This class serves as an interface link between long click events and an activity/ fragment.
  * Created by pmacdowell on 8/16/2016.
@@ -17,5 +19,7 @@ public interface CustomLongClickCallbackLink {
      *                            position can be helpful. If this is not set, it will send back
      *                            null instead.
      */
-    public void itemLongClicked(Object object, Integer customTag, Integer positionIfAvailable);
+    public void itemLongClicked(@Nullable Object object,
+                                @Nullable Integer customTag,
+                                @Nullable Integer positionIfAvailable);
 }

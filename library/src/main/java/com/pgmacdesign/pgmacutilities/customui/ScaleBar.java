@@ -1,5 +1,6 @@
 package com.pgmacdesign.pgmacutilities.customui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -7,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.location.Location;
+import android.widget.ImageView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.Projection;
@@ -19,8 +21,9 @@ import com.pgmacdesign.pgmacutilities.utilities.StringUtilities;
  * Created by pmacdowell on 2017-02-21.
  * From: http://stackoverflow.com/a/29076258/2480714
  */
-public class ScaleBar extends android.support.v7.widget.AppCompatImageView {
-    private float mXOffset = 10;
+@SuppressLint("AppCompatCustomView")
+public class ScaleBar extends ImageView { //public class ScaleBar extends ImageView { android.support.v7.widget.AppCompatImageView {
+	private float mXOffset = 10;
     private float mYOffset = 10;
     private float mLineWidth = 3;
 

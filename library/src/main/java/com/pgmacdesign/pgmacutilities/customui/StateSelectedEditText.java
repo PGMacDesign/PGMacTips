@@ -1,13 +1,16 @@
 package com.pgmacdesign.pgmacutilities.customui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.widget.EditText;
 
 /**
  * Created by pmacdowell on 2017-02-16.
  */
 
-public class StateSelectedEditText extends android.support.v7.widget.AppCompatEditText {
+@SuppressLint("AppCompatCustomView")
+public class StateSelectedEditText extends EditText { //android.support.v7.widget.AppCompatEditText {
 
     public static enum EditTextState {
         FOCUSED, NOT_FOCUSED, ERROR, VALIDATED

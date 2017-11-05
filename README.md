@@ -107,7 +107,7 @@ Or something along those lines. If you do, simply add this line of code to your 
             def requested = details.requested
             if (requested.group == 'com.android.support') { //Replace String here with whichever error is thrown
                 if (!requested.name.startsWith("multidex")) {
-                    details.useVersion '26.0.1' //Replace version here with whatever you are using
+                    details.useVersion '26.0.2' //Replace version here with whatever you are using
                 }
             }
         }

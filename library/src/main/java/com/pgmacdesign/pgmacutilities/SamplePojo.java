@@ -1,13 +1,19 @@
 package com.pgmacdesign.pgmacutilities;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by pmacdowell on 8/18/2016.
  */
 public class SamplePojo {
-
+	
+	@SerializedName("id")
     private long id;
+	@SerializedName("name")
     private String name;
+	@SerializedName("age")
     private int age;
+    @SerializedName("gender")
     private String gender;
 
     public long getId() {

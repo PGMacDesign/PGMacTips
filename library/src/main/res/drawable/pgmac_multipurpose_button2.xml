@@ -4,8 +4,8 @@
     <!--
     When changing the text color here, make sure to add both the text color and
     background in the xml. IE:
-        android:background="@drawable/multipurpose_button2"
-        android:textColor="@drawable/multipurpose_button2"
+        android:background="@drawapgmac_multipurpose_button2ton2"
+        android:textColor="@drawapgmac_multipurpose_button2ton2"
     This will adjust both the background dynamically and the text color as well
     -->
 

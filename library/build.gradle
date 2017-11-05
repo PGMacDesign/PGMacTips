@@ -1,5 +1,6 @@
-//apply plugin: 'com.android.application' //Remove this when switching from app to lib
-apply plugin: 'com.android.library'
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android' //Remove this when switching from app to lib
+//apply plugin: 'com.android.library' //Remove this when switching from lib to app
 apply plugin: 'realm-android'
 apply plugin: 'com.github.dcendents.android-maven'
 group='com.github.PGMacDesign'
@@ -19,10 +20,10 @@ buildscript{
 }
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.1'
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
-        //applicationId "com.pgmacdesign.pgmacutilities" //Remove this when switching to lib
+        //applicationId "com.pgmacdesign.pgmacutilities" //Remove this when switching from lib to app
         minSdkVersion 17
         targetSdkVersion 25
         multiDexEnabled true
@@ -34,14 +35,15 @@ android {
         javaMaxHeapSize "4g"
     }
     configurations.all {
-        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-            def requested = details.requested
-            if (requested.group == 'com.android.support') {
-                if (!requested.name.startsWith("multidex")) {
-                    details.useVersion '26.0.1'
-                }
-            }
-        }
+        //Use this if you want a different support library version than the one here
+//        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+//            def requested = details.requested
+//            if (requested.group == 'com.android.support') {
+//                if (!requested.name.startsWith("multidex")) {
+//                    details.useVersion '26.0.2'
+//                }
+//            }
+//        }
     }
     dependencies {
 
@@ -123,15 +125,15 @@ android {
         compile 'com.google.android.gms:play-services-maps:10.2.0'
 
         //Android support libs
-//        compile 'com.android.support:animated-vector-drawable:26.0.1'
-//        compile 'com.android.support:customtabs:26.0.1'
-        compile 'com.android.support:support-compat:26.0.1'
-        compile 'com.android.support:support-v4:26.0.1'
-        compile 'com.android.support:appcompat-v7:26.0.1'
-        compile 'com.android.support:design:26.0.1'
-//        compile 'com.android.support:recyclerview-v7:26.0.1'
-//        compile 'com.android.support:cardview-v7:26.0.1'
-//        compile 'com.android.support:palette-v7:26.0.1'
+//        compile 'com.android.support:animated-vector-drawable:26.0.2'
+//        compile 'com.android.support:customtabs:26.0.2'
+        //compile 'com.android.support:support-compat:26.0.2' /////
+        //compile 'com.android.support:support-v4:26.0.2' ////
+        //compile 'com.android.support:appcompat-v7:26.0.2' ///
+        compile 'com.android.support:design:26.0.2'//
+//        compile 'com.android.support:recyclerview-v7:26.0.2'
+//        compile 'com.android.support:cardview-v7:26.0.2'
+//        compile 'com.android.support:palette-v7:26.0.2'
 
 
     }
@@ -159,4 +161,8 @@ if( android.productFlavors.size() > 0 ) {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+}
+repositories {
+    mavenCentral()
 }

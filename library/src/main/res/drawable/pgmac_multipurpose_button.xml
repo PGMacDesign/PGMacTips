@@ -4,8 +4,8 @@
     <!--
     When changing the text color here, make sure to add both the text color and
     background in the xml. IE:
-        android:background="@drawable/multipurpose_button2"
-        android:textColor="@drawable/multipurpose_button2"
+        android:background="@drawapgmac_multipurpose_buttontton"
+        android:textColor="@drawapgmac_multipurpose_buttontton"
     This will adjust both the background dynamically and the text color as well
     -->
 
@@ -37,15 +37,7 @@
     <item
         android:state_enabled="true"
         android:state_pressed="true"
-        android:drawable="@drawable/custom_background_primary_back_black_edges"
+        android:drawable="@drawable/custom_background_grey_back_black_edges"
         android:color="@color/White"
         />
-    <!--
-    Currently unused, check this here for more details:
-    http://trickyandroid.com/simple-ripple-reveal-elevation-tutorial/
-    -->
-
-    <!--
-
-    -->
 </selector>

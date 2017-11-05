@@ -113,8 +113,13 @@ public class PGMacUtilitiesConstants {
     public static final int TAG_NO_INTERNET = 4461;
     public static final int TAG_BASE64_IMAGE_ENCODE_SUCCESS = 4462;
     public static final int TAG_BASE64_IMAGE_ENCODE_FAIL = 4463;
-    public static final int TAG_TBD_8 = 4464;
-    public static final int TAG_TBD_9 = 4465;
+    public static final int TAG_MULTIPURPOSE_CHOICE_CLICK_ADAPTER = 4464;
+    public static final int TAG_MULTIPURPOSE_CHOICE_LONG_CLICK_ADAPTER = 4465;
+	public static final int TAG_MAP_STRING_INTEGER = 4466;
+	public static final int TAG_STRING = 4467;
+	public static final int TBD3 = 4468;
+	public static final int TBD4 = 4469;
+	public static final int TBD5 = 4470;
 
     //String Tags
     public static final String TAG_SELF_PHOTO_URI = "tag_self_photo_uri";
