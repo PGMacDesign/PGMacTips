@@ -14,6 +14,8 @@ import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListene
 import com.pgmacdesign.pgmacutilities.customui.MultiColorLine;
 import com.pgmacdesign.pgmacutilities.misc.PGMacUtilitiesConstants;
 import com.pgmacdesign.pgmacutilities.networkclasses.retrofitutilities.serviceapiinterfaces.ProfantiyCheckerAPICalls;
+import com.pgmacdesign.pgmacutilities.stackmanagement.StackManager;
+import com.pgmacdesign.pgmacutilities.stackmanagement.StackManagerException;
 import com.pgmacdesign.pgmacutilities.utilities.CameraMediaUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.ContactUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.DatabaseUtilities;
@@ -24,7 +26,9 @@ import com.pgmacdesign.pgmacutilities.utilities.PermissionUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.ProgressBarUtilities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by pmacdowell on 8/12/2016.
@@ -54,7 +58,7 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
         init();
     }
 
-    private void init(){
+    private <E extends Enum<E>> void  init(){
 
         //contactQuery();
         //temp();
@@ -72,9 +76,52 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
         //deleteCustom();
         //deleteAll();
         //superDeleteEverything();
+	
+	    List<Enum> testEnum1s = new ArrayList<>();
+	    testEnum1s.add(TestEnum1.ONE);
+	    testEnum1s.add(TestEnum1.TWO);
+	    testEnum1s.add(TestEnum1.THREE);
+	    testEnum1s.add(TestEnum1.FOUR);
+	    testEnum1s.add(TestEnum1.FIVE);
+	    List<Enum> testEnum2s = new ArrayList<>();
+	    testEnum2s.add(TestEnum2.A);
+	    testEnum2s.add(TestEnum2.B);
+	    testEnum2s.add(TestEnum2.C);
+	    testEnum2s.add(TestEnum2.D);
+	    List<Enum> testEnum3s = new ArrayList<>();
+	    testEnum3s.add(TestEnum3.Pat);
+	    testEnum3s.add(TestEnum3.Mac);
+	    
+	    Map<Integer, List<Enum>> myEnums = new HashMap<>();
+	    myEnums.put(1, testEnum1s);
+	    myEnums.put(2, testEnum2s);
+	    myEnums.put(3, testEnum3s);
+	
+	    Map<Integer, Enum> myInitialEnums = new HashMap<>();
+	    myInitialEnums.put(1, TestEnum1.ONE);
+	    myInitialEnums.put(2, TestEnum2.A);
+	    myInitialEnums.put(3, TestEnum3.Pat);
+	    try {
+		    StackManager s = new StackManager(myEnums, myInitialEnums);
+		    s.appendToStack(1, TestEnum1.THREE);
+		    
+	    } catch (StackManagerException e1){
+	    	L.m("e1 == " + e1.toString());
+	    }
     }
 
-    private void moveDBFile(){
+    public static enum TestEnum1 {
+        ONE, TWO, THREE, FOUR, FIVE
+    }
+	public static enum TestEnum2 {
+		A, B, C, D
+	}
+	public static enum TestEnum3 {
+		Pat, Mac
+	}
+	
+	
+	private void moveDBFile(){
         //Check camera permissions
         PermissionUtilities perm = PermissionUtilities.getInstance(this);
         if(perm.startPermissionsRequest(new PermissionUtilities.permissionsEnum[]{
