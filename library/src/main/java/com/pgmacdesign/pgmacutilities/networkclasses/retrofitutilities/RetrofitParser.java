@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.google.gson.Gson;
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmacutilities.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmacutilities.utilities.L;
 import com.pgmacdesign.pgmacutilities.utilities.StringUtilities;
 
 import java.lang.reflect.Type;
@@ -297,6 +298,7 @@ public class RetrofitParser {
             try {
                 return new Gson().fromJson(responseBodyString, successClassDataModel);
             } catch (Exception e) {
+                L.m("Error converting response: " + e.getMessage());
             }
         }
         return null;
@@ -330,6 +332,7 @@ public class RetrofitParser {
             try {
                 return new Gson().fromJson(responseBodyString, successClassDataType);
             } catch (Exception e) {
+                L.m("Error converting response: " + e.getMessage());
             }
         }
         return null;

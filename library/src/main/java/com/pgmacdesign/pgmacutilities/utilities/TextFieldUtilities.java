@@ -18,6 +18,14 @@ import android.widget.TextView;
  */
 public class TextFieldUtilities {
 
+    public static <T extends TextView>  void setShadow(@NonNull T textView,
+                                                       float translationZ, float elevation){
+        try {
+            textView.setTranslationZ(translationZ);
+            textView.setElevation(elevation);
+        } catch (Exception e){}//Can trigger on apis < 21
+    }
+
     /**
      * Gets text from an editText, checks if it is valid, trims it, and if it is not = null,
      * returns a boolean of true/ false
@@ -25,16 +33,13 @@ public class TextFieldUtilities {
      * @return
      */
     public static boolean isFieldValid(EditText et){
-        String str = et.getText().toString();
-        if (!str.equals(null)){
-            str = str.trim();
-            if(!str.equalsIgnoreCase("")){
-                if(!str.isEmpty()) {
-                    return true;
-                }
-            }
+        if(et == null){
+            return false;
         }
-        return false;
+        if(et.getText() == null){
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -48,7 +53,7 @@ public class TextFieldUtilities {
         }
 
         String str = et.getText().toString();
-        if (!str.equals(null)) {
+        if (!StringUtilities.isNullOrEmpty(str)) {
             str = str.trim();
             return str;
         }
