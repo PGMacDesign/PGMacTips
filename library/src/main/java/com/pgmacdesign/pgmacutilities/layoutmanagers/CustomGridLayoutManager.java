@@ -2,10 +2,9 @@ package com.pgmacdesign.pgmacutilities.layoutmanagers;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
 /**
@@ -14,127 +13,81 @@ import android.util.TypedValue;
 
 public class CustomGridLayoutManager extends GridLayoutManager {
 
-    private int columnWidthPx;
-    private int[] mMeasuredDimension = new int[2];
+    private int mColumnWidth, mSpanCount;
+    private boolean mColumnWidthChanged = true;
 
     public CustomGridLayoutManager(Context context, int orientation,
                                    boolean reverseLayout, int columnWidthUnit,
                                    float columnWidth) {
         super(context, 1, orientation, reverseLayout);
-        Resources r;
-        if (context == null) {
-            r = Resources.getSystem();
-        } else {
-            r = context.getResources();
-        }
-
-        float colWidthPx = TypedValue.applyDimension(columnWidthUnit,
-                columnWidth, r.getDisplayMetrics());
-
-        this.columnWidthPx = Math.round(colWidthPx);
+        this.mColumnWidth = 0;
+        this.mSpanCount = 1;
+        int xx = checkedColumnWidth(context, columnWidthUnit, columnWidth);
+        setColumnWidth(xx);
     }
 
-    public CustomGridLayoutManager(Context context, AttributeSet attrs,
-                                   int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        int[] requestedValues = {
-                android.R.attr.columnWidth,
-        };
+    private int checkedColumnWidth(Context context,
+                                   int columnWidthUnit, float columnWidth) {
+        try {
+            DisplayMetrics displayMetrics = (context == null) ? Resources.getSystem()
+                    .getDisplayMetrics() : context.getResources().getDisplayMetrics();
+            float xx = (TypedValue.applyDimension(columnWidthUnit, columnWidth, displayMetrics));
+            return (int) xx;
+        } catch (Exception e){
+            return mColumnWidth;
+        }
+    }
 
-        TypedArray a = context.obtainStyledAttributes(attrs, requestedValues);
-        this.columnWidthPx = a.getDimensionPixelSize(0, -1);
-        a.recycle();
+    public void setColumnWidth(int newColumnWidth) {
+        if (newColumnWidth > 0 && newColumnWidth != mColumnWidth) {
+            mColumnWidth = newColumnWidth;
+            mColumnWidthChanged = true;
+        }
     }
 
     @Override
-    public void onLayoutChildren(RecyclerView.Recycler recycler,
-                                 RecyclerView.State state) {
-        updateSpanCount();
+    public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+        int width = this.getWidth();
+        int height = this.getHeight();
+        if (mColumnWidthChanged && (mColumnWidth > 0) && (width > 0) && (height > 0)) {
+            int totalSpace;
+            if (getOrientation() == VERTICAL) {
+                try {
+                    totalSpace = width - getPaddingEnd() - getPaddingStart();
+                } catch (Exception e){
+                    //Will trigger if SDK level < 17 && android:supportsRtl="false"
+                    totalSpace = width - getPaddingRight() - getPaddingLeft();
+                }
+            } else {
+                totalSpace = height - getPaddingTop() - getPaddingBottom();
+            }
+            int spanCount = Math.max(1, (totalSpace / mColumnWidth));
+            mSpanCount = spanCount;
+            setSpanCount(spanCount);
+            mColumnWidthChanged = false;
+        }
         super.onLayoutChildren(recycler, state);
     }
 
-    private void updateSpanCount() {
-        int width = super.getWidth();
-        if (columnWidthPx > 0) {
-            this.setSpanCount((int)Math.floor(width / this.columnWidthPx));
-        }
+    public int getCustomSpanCount() {
+        return mSpanCount;
     }
 
-    /*
-
-    @Override
-    public void onMeasure(RecyclerView.Recycler recycler, RecyclerView.State state,
-                          int widthSpec, int heightSpec) {
-        final int widthMode = View.MeasureSpec.getMode(widthSpec);
-        final int heightMode = View.MeasureSpec.getMode(heightSpec);
-        final int widthSize = View.MeasureSpec.getSize(widthSpec);
-        final int heightSize = View.MeasureSpec.getSize(heightSpec);
-        int width = 0;
-        int height = 0;
-        for (int i = 0; i < getItemCount(); i++) {
-
-
-            if (getOrientation() == HORIZONTAL) {
-
-                measureScrapChild(recycler, i,
-                        View.MeasureSpec.makeMeasureSpec(i, View.MeasureSpec.UNSPECIFIED),
-                        heightSpec, mMeasuredDimension);
-
-                width = width + mMeasuredDimension[0];
-                if (i == 0) {
-                    height = mMeasuredDimension[1];
-                }
-            } else {
-                measureScrapChild(recycler, i,
-                        widthSpec,
-                        View.MeasureSpec.makeMeasureSpec(i, View.MeasureSpec.UNSPECIFIED),
-                        mMeasuredDimension);
-                height = height + mMeasuredDimension[1];
-                if (i == 0) {
-                    width = mMeasuredDimension[0];
-                }
-            }
-        }
-        switch (widthMode) {
-            case View.MeasureSpec.EXACTLY:
-                width = widthSize;
-            case View.MeasureSpec.AT_MOST:
-            case View.MeasureSpec.UNSPECIFIED:
-        }
-
-        switch (heightMode) {
-            case View.MeasureSpec.EXACTLY:
-                height = heightSize;
-            case View.MeasureSpec.AT_MOST:
-            case View.MeasureSpec.UNSPECIFIED:
-        }
-
-        setMeasuredDimension(width, height);
-    }
-
-
-    private void measureScrapChild(RecyclerView.Recycler recycler, int position, int widthSpec,
-                                   int heightSpec, int[] measuredDimension) {
-        View view = null;
-        try {
-            view = recycler.getViewForPosition(position);
-        } catch (Exception e){}
-        if(view != null) {
-            recycler.bindViewToPosition(view, position);
-        }
-        if (view != null) {
-            RecyclerView.LayoutParams p = (RecyclerView.LayoutParams) view.getLayoutParams();
-            int childWidthSpec = ViewGroup.getChildMeasureSpec(widthSpec,
-                    getPaddingLeft() + getPaddingRight(), p.width);
-            int childHeightSpec = ViewGroup.getChildMeasureSpec(heightSpec,
-                    this.getPaddingTop() + getPaddingBottom(), p.height);
-            view.measure(childWidthSpec, childHeightSpec);
-            measuredDimension[0] = view.getMeasuredWidth() + p.leftMargin + p.rightMargin;
-            measuredDimension[1] = view.getMeasuredHeight() + p.bottomMargin + p.topMargin;
-            recycler.recycleView(view);
+    /**
+     * Calculate the number of columns. Reference link:
+     * https://stackoverflow.com/questions/33575731/gridlayoutmanager-how-to-auto-fit-columns
+     * @param context
+     * @param sizeOfDataList
+     * @return
+     */
+    public static int calculateNumberOfColumns(Context context, int sizeOfDataList) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float dpWidth =((displayMetrics.widthPixels) / (displayMetrics.density));
+        if(sizeOfDataList < 1){
+            return 1;
+        } else {
+            return ((int)(dpWidth / sizeOfDataList));
         }
     }
-
-    */
 
 }

@@ -546,9 +546,11 @@ public class MultiColorLine  extends View {
          * does not look very good. To remove this, just remove the -.1 and .1 to startAt and the line
          *
          * @param percentOfLine  Percent of the line to fill.
-         *                       NOTE! THIS IS BASED OFF OF 100%!
+         *                       NOTE! THIS IS BASED OFF OF 100!
+         *                       IE, passing 35.5 would mean 35.50%
          * @param percentToStartAt Percent to start at (for filling multiple colors).
          *                         NOTE! THIS IS BASED OFF OF 100%!
+         *                         IE, passing 35.5 would mean 35.50%
          * @param colorOfLine      Int color of the line to use
          */
         public CustomStrokeObject(float percentOfLine, float percentToStartAt, Integer colorOfLine) {
