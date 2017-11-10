@@ -77,6 +77,7 @@ public class RetrofitClient {
      * @throws IllegalArgumentException If the BASE_URL String does not end in a forward slash
      *                                  (/), this will throw an illegal argument exception.
      */
+    @SuppressWarnings("unchecked")
     public <T> T buildServiceClient() throws IllegalArgumentException{
         T t = this.buildRetrofitClient();
         return t;
@@ -106,6 +107,7 @@ public class RetrofitClient {
     /**
      * This builds a client that will be used for network calls
      */
+    @SuppressWarnings("unchecked")
     private  <T> T buildRetrofitClient(){
         //First create the interceptor, which will be used in the Retrofit call
         Interceptor interceptor = new Interceptor() {

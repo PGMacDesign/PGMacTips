@@ -30,7 +30,7 @@ public class StackManager <E extends Enum<E>>  {
 	///////////////
 	
 	public StackManager(@NonNull Map<Integer, List<E>> enumTagsAndTypes,
-	                    @NonNull Map<Integer, E> firstItemInStack) throws StackManagerException{
+	                    @NonNull Map<Integer, E> firstItemInStack) {
 		this.maintainMinimumOneItemInStack = false;
 		this.allowEnumStackDuplicates = false;
 		init(enumTagsAndTypes, firstItemInStack);
@@ -38,7 +38,7 @@ public class StackManager <E extends Enum<E>>  {
 	
 	public StackManager(@NonNull Map<Integer, List<E>> enumTagsAndTypes,
 	                    @NonNull Map<Integer, E> firstItemInStack,
-	                    boolean maintainMinimumOneItemInStack) throws StackManagerException{
+	                    boolean maintainMinimumOneItemInStack) {
 		this.maintainMinimumOneItemInStack = maintainMinimumOneItemInStack;
 		this.allowEnumStackDuplicates = false;
 		init(enumTagsAndTypes, firstItemInStack);
@@ -47,7 +47,7 @@ public class StackManager <E extends Enum<E>>  {
 	public StackManager(@NonNull Map<Integer, List<E>> enumTagsAndTypes,
 	                    @NonNull Map<Integer, E> firstItemInStack,
 	                    boolean maintainMinimumOneItemInStack,
-	                    boolean allowEnumStackDuplicates) throws StackManagerException{
+	                    boolean allowEnumStackDuplicates) {
 		this.maintainMinimumOneItemInStack = maintainMinimumOneItemInStack;
 		this.allowEnumStackDuplicates = allowEnumStackDuplicates;
 		init(enumTagsAndTypes, firstItemInStack);
@@ -58,7 +58,7 @@ public class StackManager <E extends Enum<E>>  {
 	}
 	
 	private void init(@NonNull Map<Integer, List<E>> enumTagsAndTypes,
-	                  @NonNull Map<Integer, E> firstItemInStack)throws StackManagerException{
+	                  @NonNull Map<Integer, E> firstItemInStack){
 		this.enableLogging(false);
 		this.managedStacks = new HashMap<>();
 		for(Map.Entry<Integer, List<E>> map : enumTagsAndTypes.entrySet()){
@@ -88,17 +88,52 @@ public class StackManager <E extends Enum<E>>  {
 	}
 	
 	///////////////////////////////////////////
-	//Public classes for managing Stack State//
+	//Public methods for managing Stack State//
 	///////////////////////////////////////////
+	
+	/**
+	 * Clear one stack via the tag sent. Follows the boolean rule set via constructor about maintaining
+	 * 1 left in the stack if the boolean {@link StackManager#maintainMinimumOneItemInStack}
+	 * is set to true
+	 * @ {@link StackManagerException}
+	 */
+	public void clearOneStack(int tag) {
+		CustomStackManagerPOJO pojo = getStackPOJO(tag);
+		if(pojo != null){
+			Stack<E> myStack = pojo.getManagedStack();
+			if(myStack != null) {
+				popTheStack(tag, myStack.size());
+			}
+		}
+	}
+	
+	/**
+	 * Clear all stacks. Follows the boolean rule set via constructor about maintaining
+	 * 1 left in the stack if the boolean {@link StackManager#maintainMinimumOneItemInStack}
+	 * is set to true
+	 * @ {@link StackManagerException}
+	 */
+	public void clearAllStacks() {
+		for(Map.Entry<Integer, CustomStackManagerPOJO> map : managedStacks.entrySet()){
+			Integer key = map.getKey();
+			CustomStackManagerPOJO pojo = map.getValue();
+			if(key != null && pojo != null){
+				Stack<E> myStack = pojo.getManagedStack();
+				if(myStack != null) {
+					popTheStack(key, myStack.size());
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Append enums to the stack
 	 * @param tagToMatchToEnums Int tag to match the map in the constructor
 	 * @param enumToAdd Enum to add / append to the stack
 	 * @return Enum Enum of the one at the top of the stack
-	 * @throws StackManagerException {@link StackManagerException}
+	 * @ {@link StackManagerException}
 	 */
-	public E appendToStack(int tagToMatchToEnums, E enumToAdd) throws StackManagerException{
+	public E appendToTheStack(int tagToMatchToEnums, E enumToAdd) {
 		manageNullEnums(enumToAdd);
 		CustomStackManagerPOJO pojo = getStackPOJO(tagToMatchToEnums);
 		List<E> enums = pojo.getEnumTypes();
@@ -128,9 +163,9 @@ public class StackManager <E extends Enum<E>>  {
 	 * @param tagToMatchToEnums Int tag to match the map in the constructor
 	 * @param enumsToAdd List of Enums to add / append to the stack
 	 * @return Enum of the one at the top of the stack
-	 * @throws StackManagerException {@link StackManagerException}
+	 * @ {@link StackManagerException}
 	 */
-	public E appendToStack(int tagToMatchToEnums, List<E> enumsToAdd) throws StackManagerException{
+	public E appendToTheStack(int tagToMatchToEnums, List<E> enumsToAdd) {
 		for(E e : enumsToAdd){
 			manageNullEnums(e);
 		}
@@ -164,9 +199,9 @@ public class StackManager <E extends Enum<E>>  {
 	 * Pop the stack matching the int enum used.
 	 * @param tagToMatchToEnums Int tag to match the map in the constructor
 	 * @return Returns the enum at the top of the stack. If the stack is empty, returns null
-	 * @throws StackManagerException {@link StackManagerException}
+	 * @ {@link StackManagerException}
 	 */
-	public E popTheStack(int tagToMatchToEnums) throws StackManagerException{
+	public E popTheStack(int tagToMatchToEnums) {
 		CustomStackManagerPOJO pojo = getStackPOJO(tagToMatchToEnums);
 		Stack stack = pojo.getManagedStack();
 		int size = stack.size();
@@ -194,9 +229,9 @@ public class StackManager <E extends Enum<E>>  {
 	 * @param tagToMatchToEnums Int tag to match the map in the constructor
 	 * @param numToPop Number to pop off the stack
 	 * @return Returns the enum at the top of the stack. If the stack is empty, returns null
-	 * @throws StackManagerException {@link StackManagerException}
+	 * @ {@link StackManagerException}
 	 */
-	public E popTheStack(int tagToMatchToEnums, int numToPop) throws StackManagerException{
+	public E popTheStack(int tagToMatchToEnums, int numToPop) {
 		if(numToPop <= 0){
 			throw buildException(NO_NEGATIVE_NUMBERS_TO_POP, null, tagToMatchToEnums);
 		}
@@ -225,6 +260,18 @@ public class StackManager <E extends Enum<E>>  {
 		}
 	}
 	
+	/**
+	 * Gets the Stack<E>. If no stack is found, will throw exception
+	 * @param tag Tag matches one(s) passed in Constructor
+	 * @return {@link Stack<E>}
+	 * @ {@link StackManagerException}
+	 */
+	private Stack<E> getStack(int tag)  {
+		CustomStackManagerPOJO pojo = getStackPOJO(tag);
+		Stack<E> stackToManage = pojo.getManagedStack();
+		return stackToManage;
+	}
+	
 	//////////////////////////////////////
 	//Private classes for arg management//
 	//////////////////////////////////////
@@ -251,9 +298,9 @@ public class StackManager <E extends Enum<E>>  {
 	/**
 	 * Manage null enums passed. If null is passed, will throw exception
 	 * @param enumWorkingOn Matches one(s) passed in Constructor
-	 * @throws StackManagerException {@link StackManagerException}
+	 * @ {@link StackManagerException}
 	 */
-	private void manageNullEnums(E enumWorkingOn) throws StackManagerException {
+	private void manageNullEnums(E enumWorkingOn)  {
 		if(enumWorkingOn == null){
 			throw buildException(BAD_ENUM, enumWorkingOn, null);
 		}
@@ -263,9 +310,9 @@ public class StackManager <E extends Enum<E>>  {
 	 * Gets the POJO. If null is returned, will throw exception
 	 * @param tag Tag matches one(s) passed in Constructor
 	 * @return {@link CustomStackManagerPOJO}
-	 * @throws StackManagerException {@link StackManagerException}
+	 * @ {@link StackManagerException}
 	 */
-	private CustomStackManagerPOJO getStackPOJO(int tag) throws StackManagerException {
+	private CustomStackManagerPOJO getStackPOJO(int tag)  {
 		CustomStackManagerPOJO pojo = managedStacks.get(tag);
 		if(pojo == null){
 			throw buildException(INVALID_KEY, null, tag);

@@ -6,10 +6,13 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.pgmacdesign.pgmacutilities.adaptersandlisteners.GenericRecyclerviewAdapter;
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmacutilities.customui.MultiColorLine;
 import com.pgmacdesign.pgmacutilities.misc.PGMacUtilitiesConstants;
@@ -39,6 +42,7 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
     private DatabaseUtilities dbUtilities;
     private CameraMediaUtilities cam;
     private Button button;
+    private RecyclerView testing_layout_recyclerview;
    // private MultipurposeEditText et;
     private static final String CUSTOM_STRING = "-PAT";
 
@@ -54,10 +58,44 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
         button.setTag("button");
         button.setTransformationMethod(null);
         button.setOnClickListener(this);
+	    testing_layout_recyclerview = (RecyclerView) this.findViewById(
+	    		R.id.testing_layout_recyclerview);
+	    testing_layout_recyclerview.setLayoutManager(new LinearLayoutManager(this));
 
-        init();
+        //init();
+        init2();
     }
 
+    private void init2(){
+	    GenericRecyclerviewAdapter adapter = new GenericRecyclerviewAdapter(new GenericRecyclerviewAdapter.MultipurposeRecyclerviewLink() {
+		    @Override
+		    public void onBindViewTriggered(RecyclerView.ViewHolder holder0, int position) {
+		    	L.m("onBindView triggered from the activity side, working?");
+			    MyTestHolder holder = (MyTestHolder) holder0;
+			    holder.button.setText("AWESOMESAUCE");
+		    }
+	    }, this, R.layout.testing_layout, MyTestHolder.class);
+	    testing_layout_recyclerview.setHasFixedSize(true);
+	    testing_layout_recyclerview.setAdapter(adapter);
+	    SamplePojo sp1 = new SamplePojo();
+	    List<SamplePojo> samplePojos = new ArrayList<>();
+	    samplePojos.add(sp1);
+	    samplePojos.add(sp1);
+	    samplePojos.add(sp1);
+	    samplePojos.add(sp1);
+	    adapter.setListObjects(samplePojos);
+    }
+	
+	public static class MyTestHolder extends RecyclerView.ViewHolder {
+    	private Button button;
+    	private MultiColorLine multi_color_line;
+		public MyTestHolder(View itemView) {
+			super(itemView);
+			multi_color_line = (MultiColorLine) itemView.findViewById(R.id.multi_color_line);
+			button = (Button) itemView.findViewById(R.id.button);
+		}
+	}
+	
     private <E extends Enum<E>> void  init(){
 
         //contactQuery();
@@ -103,7 +141,7 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
 	    myInitialEnums.put(3, TestEnum3.Pat);
 	    try {
 		    StackManager s = new StackManager(myEnums, myInitialEnums);
-		    s.appendToStack(1, TestEnum1.THREE);
+		    s.appendToTheStack(1, TestEnum1.THREE);
 		    
 	    } catch (StackManagerException e1){
 	    	L.m("e1 == " + e1.toString());
