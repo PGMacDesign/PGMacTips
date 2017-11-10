@@ -9,8 +9,11 @@ import android.os.Build;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.pgmacdesign.pgmacutilities.R;
 
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
@@ -19,9 +22,58 @@ import java.util.List;
 /**
  * Created by pmacdowell on 2017-06-20.
  */
+public class MultiColorLine extends View {
 
-public class MultiColorLine  extends View {
+    /*
+    Sample of how to use:
+        multiColorLine = (MultiColorLine) view.findViewById(R.id.multiColorLine);
+        multiColorLine.setDrawDiagonally(false);
+        multiColorLine.setDrawAsSingleLine(true);
+        multiColorLine.setReverseDrawingAnimation(true);
+        multiColorLine.setAnimateStrokes(true, 750);
+        multiColorLine.setColorOfBoarderStroke(ContextCompat.getColor(context, R.color.Black));
+        multiColorLine.setDrawBoarderWithLine(false);
+        multiColorLine.setFps(MultiColorLine.FPS.FPS_120);
+        multiColorLine.setWidthOfBoarderStroke(1);
+        multiColorLine.setRoundCapPaddingAddition(0.04F);
+        float flt = this.dmu.convertToPixels(DisplayManagerUtilities.ComplexUnits
+                .COMPLEX_UNIT_DIP, 19F);
+        multiColorLine.setWidthOfLineStroke((int) flt);
+        float percentComplete1 = 45F;
+        float percentComplete2 = 55F;
 
+        //Line 1
+        int colorBlue = ContextCompat.getColor(context, R.color.Blue);
+        MultiColorLine.CustomStrokeObject obj1 = new MultiColorLine.CustomStrokeObject(
+                percentComplete1, 0, colorBlue);
+        Paint paint1 = new Paint();
+        paint1.setAntiAlias(true);
+        paint1.setColor(colorBlue); //Depending on your color, this may be necessary.
+        paint1.setStyle(Paint.Style.STROKE);
+        paint1.setStrokeCap(Paint.Cap.ROUND);
+        //Set shading here if need be. IE: paint1.setShader(new LinearGradient())
+        obj1.setPaint(paint1);
+
+        //Line 2
+        int colorRed = ContextCompat.getColor(context, R.color.Red);
+        MultiColorLine.CustomStrokeObject obj2 = new MultiColorLine.CustomStrokeObject(
+                (100 - percentComplete), percentComplete2, colorRed)
+        );
+        Paint paint2 = obj2.getPaint();
+        paint2.setAntiAlias(true);
+        paint2.setColor(colorRed); //Depending on your color, this may be necessary.
+        paint2.setStyle(Paint.Style.STROKE);
+        paint2.setStrokeCap(Paint.Cap.ROUND);
+        //Set shading here if need be. IE: paint2.setShader(new LinearGradient())
+        obj2.setPaint(paint2);
+
+        List<MultiColorLine.CustomStrokeObject> objects = new ArrayList<>();
+        objects.add(obj1);
+        objects.add(obj2);
+        multiColorLine.setLineStrokes(objects);
+     */
+    
+    
     /**
      * Frames per second options on animation. Defaults to 60
      */
@@ -32,14 +84,16 @@ public class MultiColorLine  extends View {
     private static final int MAX_DEFAULT_ANIMATION_TIME_IN_MILLISEC = (int) (1.5 * 1000);
 
     private double numberOfAnimationRuns;
-    private FPS fps;
+    private MultiColorLine.FPS fps;
     private RectF rect, outerRect;
-    private Paint perimeterPaint;
+    private Paint perimeterPaint, transparentPaint;
     private List<CustomStrokeObject> strokeObjects, singleStrokeObjects, animatedStrokeObjects;
     private int widthOfLineStroke, widthOfBoarderStroke,
             colorOfBoarderStroke, onePercentPixels;
-    private boolean animateStrokes, drawBoarderWithLine, drawAsSingleLine, drawDiagonally;
+    private boolean animateStrokes, drawBoarderWithLine, drawAsSingleLine,
+            drawDiagonally, reverseDrawingAnimation;
     private long totalAnimationTime;
+    private float roundCapPaddingAddition;
 
     public MultiColorLine(Context context) {
         super(context);
@@ -130,13 +184,13 @@ public class MultiColorLine  extends View {
     /**
      * Set the FPS for the animation. Defaults to 30 if not set
      *
-     * @param fps Frames per second {@link FPS}
+     * @param fps Frames per second {@link MultiColorLine.FPS}
      */
-    public void setFps(FPS fps) {
+    public void setFps(MultiColorLine.FPS fps) {
         if (fps != null) {
             this.fps = fps;
         } else {
-            this.fps = FPS.FPS_60;
+            this.fps = MultiColorLine.FPS.FPS_60;
         }
     }
 
@@ -161,11 +215,35 @@ public class MultiColorLine  extends View {
         this.drawDiagonally = drawDiagonally;
     }
 
+    /**
+     * This is designed to add padding on the sides if the paint Cap type is round. It
+     * is mainly used for adding in a little overlap so there is not a gap on the edges
+     * or in the center where the 2 round spots meet.
+     * @param roundCapPaddingAddition Float value (<1 && >0) to use. If nothing is set,
+     *                                it will default to 3% (0.03).
+     */
+    public void setRoundCapPaddingAddition(float roundCapPaddingAddition) {
+        this.roundCapPaddingAddition = roundCapPaddingAddition;
+    }
+
+    /**
+     * Set to reverse the direction of the drawing animation.
+     * NOTE! As of right now, this is not functioning as intended. It currently just reverses the
+     * order in which the lines are drawn, meaning that the left lines will be "on top" of the right
+     * lines. Will refactor when time permits
+     * @param shouldReverseAnimation If false (default) will draw from left to right, if true,
+     *                                will draw from left to right.
+     */
+    public void setReverseDrawingAnimation(boolean shouldReverseAnimation) {
+        this.reverseDrawingAnimation = shouldReverseAnimation;
+    }
+
     private void init() {
-        this.fps = FPS.FPS_60;
+        this.fps = MultiColorLine.FPS.FPS_60;
         this.drawDiagonally = false;
         this.drawAsSingleLine = false;
         this.drawBoarderWithLine = false;
+        this.reverseDrawingAnimation = false;
         this.strokeObjects = new ArrayList<>();
         this.singleStrokeObjects = new ArrayList<>();
         this.animatedStrokeObjects = new ArrayList<>();
@@ -174,7 +252,8 @@ public class MultiColorLine  extends View {
         this.onePercentPixels = 0; //Default
         this.widthOfLineStroke = 1; //Default
         this.widthOfBoarderStroke = 1; //Default
-        this.colorOfBoarderStroke = Color.parseColor("#000000"); //Default, black
+        this.roundCapPaddingAddition = 0.03F; //Default
+        this.colorOfBoarderStroke = Color.parseColor("#00000000"); //Default, Transparent
         this.rect = new RectF();
         this.outerRect = new RectF();
         this.perimeterPaint = new Paint();
@@ -182,6 +261,17 @@ public class MultiColorLine  extends View {
         this.perimeterPaint.setColor(colorOfBoarderStroke);
         this.perimeterPaint.setAntiAlias(true);
         this.perimeterPaint.setStyle(Paint.Style.STROKE);
+        this.perimeterPaint.setStrokeCap(Paint.Cap.ROUND);
+
+        int transparent = ContextCompat.getColor(getContext(), R.color.Transparent);
+        this.transparentPaint = new Paint(transparent);
+        this.transparentPaint.setStrokeWidth(widthOfBoarderStroke);
+        this.transparentPaint.setColor(colorOfBoarderStroke);
+        this.transparentPaint.setAntiAlias(true);
+        this.transparentPaint.setStyle(Paint.Style.STROKE);
+        //this.transparentPaint.setStrokeCap(Paint.Cap.ROUND);
+
+        this.setBackgroundColor(transparent);
     }
 
 
@@ -208,77 +298,55 @@ public class MultiColorLine  extends View {
         drawLine(canvas, left, top, right, bottom);
     }
 
+
+
     private void drawLine(Canvas canvas, int left, int top, int right, int bottom) {
         //Base rect for sides of circle parameters
         rect.set(left, top, right, bottom);
-
         if (drawAsSingleLine && animateStrokes) {
             if (this.singleStrokeObjects.size() <= 0) {
                 return;
             }
-            int sizeOfList = this.singleStrokeObjects.size();
-            for (CustomStrokeObject strokeObject : this.singleStrokeObjects) {
-                if (strokeObject == null) {
-                    continue;
+            if(reverseDrawingAnimation){
+                for(int i = this.singleStrokeObjects.size(); i > 0; i--){
+                    CustomStrokeObject strokeObject = this.singleStrokeObjects.get(i-1);
+                    if (strokeObject == null) {
+                        continue;
+                    }
+                    drawSingleLineAnimate(canvas, left, top, right, bottom, strokeObject);
                 }
-
-                Paint paint = strokeObject.paint;
-                paint.setStrokeWidth(this.widthOfLineStroke);
-                try {
-                    int xleft, xtop, xright, xbottom;
-                    xleft = (int)(left + (right * (strokeObject.percentToStartAt / 100)));
-                    if(xleft <= 0){
-                        xleft = (left);
+            } else {
+                for(int i = 0; i < this.singleStrokeObjects.size(); i++){
+                    CustomStrokeObject strokeObject = this.singleStrokeObjects.get(i);
+                    if (strokeObject == null) {
+                        continue;
                     }
-                    xright = (int)((xleft + (right * (strokeObject.percentOfLine / 100))) - left);
-                    xtop = (top);
-                    if(drawDiagonally){
-                        xbottom = (int)(sizeOfList * (bottom * (strokeObject.percentOfLine / 100)));
-                    } else {
-                        xbottom = (bottom);
-                    }
-                    //Put this line in if you want it to animate diagonally
-                    //
-
-                    int center = ((xtop + xbottom) / 2);
-                    canvas.drawLine(xleft, center, xright, center, paint);
-                } catch (ConcurrentModificationException cme) {
-                    cme.printStackTrace();
-                    continue;
+                    drawSingleLineAnimate(canvas, left, top, right, bottom, strokeObject);
                 }
             }
-
         } else {
             if (this.strokeObjects.size() <= 0) {
                 return;
             }
-            int sizeOfList = this.strokeObjects.size();
-            for (CustomStrokeObject strokeObject : this.strokeObjects) {
-                if (strokeObject == null) {
-                    continue;
+            if(reverseDrawingAnimation){
+                for(int i = this.strokeObjects.size(); i > 0; i--){
+                    CustomStrokeObject strokeObject = this.strokeObjects.get(i-1);
+                    if (strokeObject == null) {
+                        continue;
+                    }
+                    drawSingleLineAnimate(canvas, left, top, right, bottom, strokeObject);
                 }
-                Paint paint = strokeObject.paint;
-                paint.setStrokeWidth(this.widthOfLineStroke);
-                try {
-                    int xleft, xtop, xright, xbottom;
-                    xleft = (int)(left + (right * (strokeObject.percentToStartAt / 100)));
-                    if(xleft <= 0){
-                        xleft = (left);
+            } else {
+                for(int i = 0; i < this.strokeObjects.size(); i++){
+                    CustomStrokeObject strokeObject = this.strokeObjects.get(i);
+                    if (strokeObject == null) {
+                        continue;
                     }
-                    xright = (int)((xleft + (right * (strokeObject.percentOfLine / 100))) - left);
-                    xtop = (top);
-                    if(drawDiagonally){
-                        xbottom = (int)(sizeOfList * (bottom * (strokeObject.percentOfLine / 100)));
-                    } else {
-                        xbottom = (bottom);
-                    }
-                    int center = ((xtop + xbottom) / 2);
-                    canvas.drawLine(xleft, center, xright, center, paint);
-                } catch (ConcurrentModificationException cme) {
-                    continue;
+                    drawSingleLineAnimate(canvas, left, top, right, bottom, strokeObject);
                 }
             }
         }
+
         drawPerimeterLine(canvas, left, top, right, bottom);
     }
 
@@ -344,6 +412,154 @@ public class MultiColorLine  extends View {
         }
 
         this.bringToFront();
+    }
+
+    private void drawSingleLineAnimate(Canvas canvas, int left, int top, int right, int bottom,
+                                       CustomStrokeObject strokeObject){
+        Paint paint = strokeObject.paint;
+        paint.setStrokeWidth(this.widthOfLineStroke);
+        //Calculate edge padding for Cap.Round types
+        boolean dontPadTheEdges = true;
+        int sizeOfList = this.strokeObjects.size();
+        try {
+            int xleft, xtop, xright, xbottom;
+            xleft = (int)(left + (right * (strokeObject.percentToStartAt / 100)));
+            if(xleft <= 0){
+                xleft = (left);
+            }
+            xright = (int)((xleft + (right * (strokeObject.percentOfLine / 100))) - left);
+            xtop = (top);
+            if(drawDiagonally){
+                xbottom = (int)(sizeOfList * (bottom * (strokeObject.percentOfLine / 100)));
+            } else {
+                xbottom = (bottom);
+            }
+            int center = ((xtop + xbottom) / 2);
+
+            if((paint.getStrokeCap() == Paint.Cap.ROUND)){
+                //May need more logic here for determining types
+                dontPadTheEdges = false;
+            }
+            if(roundCapPaddingAddition < 0 || roundCapPaddingAddition > 1){
+                dontPadTheEdges = true;
+            }
+            if(!dontPadTheEdges){
+                int numToAdjustBy = (int)(100 * (1-roundCapPaddingAddition));
+                if(strokeObject.isLeft && strokeObject.isRight && strokeObject.isCenter){
+                    //No padding needed as no crossover
+                }
+                if(strokeObject.isLeft && strokeObject.isCenter){
+                    if(strokeObject.percentOfLine == 0){
+                        xright = xleft;
+                    } else if (strokeObject.percentOfLine < numToAdjustBy){
+                        xright = xright + ((int)(xright * roundCapPaddingAddition));
+                    }
+                }
+                if(strokeObject.isLeft && !strokeObject.isCenter){
+                    if(strokeObject.percentOfLine == 0){
+                        xright = xleft;
+                    }
+                }
+                if(strokeObject.isRight && strokeObject.isCenter){
+                    if(strokeObject.percentOfLine == 0){
+                        xright = xleft;
+                    } else if (strokeObject.percentOfLine < numToAdjustBy){
+                        xleft = xleft - ((int)(xright * roundCapPaddingAddition));
+                    }
+                }
+                if(strokeObject.isRight && !strokeObject.isCenter){
+                    if(strokeObject.percentOfLine == 0){
+                        xright = xleft;
+                    }
+                }
+                if(strokeObject.isCenter && !strokeObject.isLeft && !strokeObject.isRight){
+                    if(strokeObject.percentOfLine == 0){
+                        xright = xleft;
+                    } else if (strokeObject.percentOfLine < numToAdjustBy){
+                        xleft = xleft - ((int)(xright * roundCapPaddingAddition));
+                        xright = xright + ((int)(xright * roundCapPaddingAddition));
+                    }
+                }
+            }
+
+            canvas.drawLine(xleft, center, xright, center, paint);
+        } catch (ConcurrentModificationException cme) {
+            cme.printStackTrace();
+        }
+    }
+
+    private void drawNotSingleLine(Canvas canvas, int left, int top, int right, int bottom,
+                                   CustomStrokeObject strokeObject){
+        int sizeOfList = this.strokeObjects.size();
+        Paint paint = strokeObject.paint;
+        paint.setStrokeWidth(this.widthOfLineStroke);
+        //Calculate edge padding for Cap.Round types
+        boolean dontPadTheEdges = true;
+        try {
+            int xleft, xtop, xright, xbottom;
+            xleft = (int)(left + (right * (strokeObject.percentToStartAt / 100)));
+            if(xleft <= 0){
+                xleft = (left);
+            }
+            xright = (int)((xleft + (right * (strokeObject.percentOfLine / 100))) - left);
+            xtop = (top);
+            if(drawDiagonally){
+                xbottom = (int)(sizeOfList * (bottom * (strokeObject.percentOfLine / 100)));
+            } else {
+                xbottom = (bottom);
+            }
+            int center = ((xtop + xbottom) / 2);
+
+            if((paint.getStrokeCap() == Paint.Cap.ROUND)){
+                //May need more logic here for determining types
+                dontPadTheEdges = false;
+            }
+            if(roundCapPaddingAddition < 0 || roundCapPaddingAddition > 1){
+                dontPadTheEdges = true;
+            }
+            if(!dontPadTheEdges){
+                int numToAdjustBy = (int)(100 * (1-roundCapPaddingAddition));
+                if(strokeObject.isLeft && strokeObject.isRight && strokeObject.isCenter){
+                    //No padding needed as no crossover
+                }
+                if(strokeObject.isLeft && strokeObject.isCenter){
+                    if(strokeObject.percentOfLine == 0){
+                        xright = xleft;
+                    } else if (strokeObject.percentOfLine < numToAdjustBy){
+                        xright = xright + ((int)(xright * roundCapPaddingAddition));
+                    }
+                }
+                if(strokeObject.isLeft && !strokeObject.isCenter){
+                    if(strokeObject.percentOfLine == 0){
+                        xright = xleft;
+                    }
+                }
+                if(strokeObject.isRight && strokeObject.isCenter){
+                    if(strokeObject.percentOfLine == 0){
+                        xright = xleft;
+                    } else if (strokeObject.percentOfLine < numToAdjustBy){
+                        xleft = xleft - ((int)(xright * roundCapPaddingAddition));
+                    }
+                }
+                if(strokeObject.isRight && !strokeObject.isCenter){
+                    if(strokeObject.percentOfLine == 0){
+                        xright = xleft;
+                    }
+                }
+                if(strokeObject.isCenter && !strokeObject.isLeft && !strokeObject.isRight){
+                    if(strokeObject.percentOfLine == 0){
+                        xright = xleft;
+                    } else if (strokeObject.percentOfLine < numToAdjustBy){
+                        xleft = xleft - ((int)(xright * roundCapPaddingAddition));
+                        xright = xright + ((int)(xright * roundCapPaddingAddition));
+                    }
+                }
+            }
+
+            canvas.drawLine(xleft, center, xright, center, paint);
+        } catch (ConcurrentModificationException cme) {
+            //
+        }
     }
 
     /**
@@ -537,6 +753,7 @@ public class MultiColorLine  extends View {
         float percentOfLine;
         float percentToStartAt;
         Integer colorOfLine;
+        boolean isLeft, isRight, isCenter;
         Paint paint;
 
 
@@ -560,14 +777,31 @@ public class MultiColorLine  extends View {
             if (this.percentOfLine < 0 || this.percentOfLine > 100) {
                 this.percentOfLine = 100; //Default to 100%
             }
+            if(this.percentToStartAt < 0 || this.percentToStartAt > 100){
+                this.percentToStartAt = 0; //Defaults to left side (0%);
+            }
             if (this.colorOfLine == null) {
-                this.colorOfLine = Color.parseColor("#000000"); //Default to black
+                this.colorOfLine = Color.parseColor("#00000000"); //Default to Transparent
+            }
+            if(this.percentOfLine == 100){
+                isLeft = isCenter = isRight = true;
+            } else {
+                if(percentToStartAt == 0){
+                    isLeft = true;
+                    isRight = isCenter = false;
+                }
+                if(percentToStartAt > 0 && percentToStartAt < 100){
+                    isCenter = true;
+                    isRight = false;
+                }
+                if((percentToStartAt + percentOfLine) == 100){
+                    isRight = true;
+                }
             }
             this.paint = new Paint();
             this.paint.setColor(colorOfLine);
             this.paint.setAntiAlias(true);
             this.paint.setStyle(Paint.Style.FILL_AND_STROKE);
-            // TODO: 2017-06-20 may need to remove this
             //If you want to change this, use one of the overloaded constructors or setPaint()
             this.paint.setStrokeCap(Paint.Cap.ROUND);
         }
@@ -582,7 +816,22 @@ public class MultiColorLine  extends View {
             this.percentToStartAt = percentToStartAt;
             this.colorOfLine = colorOfLine;
             if (this.colorOfLine == null) {
-                this.colorOfLine = Color.parseColor("#000000"); //Default to black
+                this.colorOfLine = Color.parseColor("#00000000"); //Default to transparent
+            }
+            if(this.percentOfLine == 100){
+                isLeft = isCenter = isRight = true;
+            } else {
+                if(percentToStartAt == 0){
+                    isLeft = true;
+                    isRight = isCenter = false;
+                }
+                if(percentToStartAt > 0 && percentToStartAt < 100){
+                    isCenter = true;
+                    isRight = false;
+                }
+                if((percentToStartAt + percentOfLine) == 100){
+                    isRight = true;
+                }
             }
             this.paint = paint;
         }
@@ -597,6 +846,9 @@ public class MultiColorLine  extends View {
             this.percentToStartAt = obj.percentToStartAt;
             this.colorOfLine = obj.colorOfLine;
             this.paint = obj.paint;
+            this.isCenter = obj.isCenter;
+            this.isLeft = obj.isLeft;
+            this.isRight = obj.isRight;
         }
 
         /**
@@ -617,4 +869,5 @@ public class MultiColorLine  extends View {
             return this.paint;
         }
     }
+
 }
