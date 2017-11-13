@@ -8,9 +8,32 @@ import android.graphics.Paint;
 import com.squareup.picasso.Transformation;
 
 /**
+ * From: https://stackoverflow.com/a/27236821/2480714
  * Created by pmacdowell on 8/15/2016.
  */
 public class CircleTransform implements Transformation {
+
+    private Integer circleFrameColor, circleFrameWidth;
+
+    /**
+     * Simple circlular transform
+     */
+    public CircleTransform(){
+        this.circleFrameColor = null;
+        this.circleFrameWidth = null;
+    }
+
+    /**
+     * Overloaded constructor to add a color frame around the image
+     * @param circleFrameColor Color to use (IE, ContextCompat.getColor(context, R.color.Red);
+     *                         If null, no circular frame boarder will be drawn.
+     * @param circleFrameWidth Width of the frame to use. If null, will default to 2 (pixels)
+     */
+    public CircleTransform(Integer circleFrameColor, Integer circleFrameWidth){
+        this.circleFrameColor = circleFrameColor;
+        this.circleFrameWidth = circleFrameWidth;
+    }
+
     @Override
     public Bitmap transform(Bitmap source) {
         int size = Math.min(source.getWidth(), source.getHeight());
@@ -23,20 +46,37 @@ public class CircleTransform implements Transformation {
             source.recycle();
         }
 
-        Bitmap.Config config = source.getConfig() != null ? source.getConfig() : Bitmap.Config.ARGB_8888;
-        Bitmap bitmap = Bitmap.createBitmap(size, size, config);
+        Bitmap.Config config = (source.getConfig() != null)
+                ? source.getConfig() : Bitmap.Config.ARGB_8888;
+        Bitmap bitmap = null;
 
-        Canvas canvas = new Canvas(bitmap);
-        Paint paint = new Paint();
-        BitmapShader shader = new BitmapShader(squaredBitmap, BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP);
-        paint.setShader(shader);
-        paint.setAntiAlias(true);
-
-        float r = size/2f;
-        canvas.drawCircle(r, r, r, paint);
-
-        squaredBitmap.recycle();
-        return bitmap;
+        try {
+            bitmap = Bitmap.createBitmap(size, size, config);
+            Canvas canvas = new Canvas(bitmap);
+            Paint paint = new Paint();
+            BitmapShader shader = new BitmapShader(squaredBitmap,
+                    BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP);
+            paint.setShader(shader);
+            paint.setAntiAlias(true);
+            if(this.circleFrameColor != null){
+                paint.setColor(circleFrameColor);
+                paint.setStyle(Paint.Style.STROKE);
+                if(circleFrameWidth == null){
+                    this.circleFrameWidth = 2;
+                }
+                if(this.circleFrameWidth < 1){
+                    this.circleFrameWidth = 2;
+                }
+                paint.setStrokeWidth(this.circleFrameWidth);
+            }
+            float r = size/2f;
+            canvas.drawCircle(r, r, r, paint);
+            squaredBitmap.recycle();
+            return bitmap;
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return source;
     }
 
     @Override

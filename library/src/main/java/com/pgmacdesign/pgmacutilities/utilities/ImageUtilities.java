@@ -49,27 +49,32 @@ public class ImageUtilities {
 
     /**
      * Set a circular image into a view and set caching.
-     * @param urlThumbnail URL String to use
-     * @param viewToSet View to set it into
+     *
+     * @param urlThumbnail          URL String to use
+     * @param viewToSet             View to set it into
      * @param backupImageResourceId Backup resource id in case the String url fails parsing
-     * @param context Context
-     * @param percentMaxCache Percent max cache to use (float, <1 && >0, IE, 0.45  == 45% of max
-     *                        cache. Note that Picasso defaults to 14.3% of max cache if null sent
-     * @param <T> {T extends View}
+     * @param context               Context
+     * @param percentMaxCache       Percent max cache to use (float, <1 && >0, IE, 0.45  == 45% of max
+     *                              cache. Note that Picasso defaults to 14.3% of max cache if null sent
+     * @param context               circularFrameColor Circular frame color (surrounds outside of image)
+     * @param context               circularFrameWidth Circular frame width (in pixels)
+     * @param <T>                   {T extends View}
      */
     public static <T extends ImageView> void setCircularImageWithPicasso(String urlThumbnail,
                                                                          final T viewToSet,
                                                                          final int backupImageResourceId,
                                                                          Context context,
-                                                                         final Float percentMaxCache){
-        if(context == null){
+                                                                         final Float percentMaxCache,
+                                                                         final Integer circularFrameColor,
+                                                                         final Integer circularFrameWidth) {
+        if (context == null) {
             context = viewToSet.getContext();
         }
         final boolean useCustomCachePercent;
-        if(percentMaxCache == null){
+        if (percentMaxCache == null) {
             useCustomCachePercent = false;
         } else {
-            if(percentMaxCache < 0 || percentMaxCache > 1){
+            if (percentMaxCache < 0 || percentMaxCache > 1) {
                 useCustomCachePercent = false;
             } else {
                 useCustomCachePercent = true;
@@ -78,12 +83,13 @@ public class ImageUtilities {
         final Context fContext = context;
 
 
-        if(StringUtilities.isNullOrEmpty(urlThumbnail)){
+        if (StringUtilities.isNullOrEmpty(urlThumbnail)) {
             try {
                 Picasso.with(fContext).load(backupImageResourceId).
-                        transform(new CircleTransform()).into(viewToSet);
+                        transform(new CircleTransform(circularFrameColor, circularFrameWidth)).into(viewToSet);
 
-            } catch (Exception e){}
+            } catch (Exception e) {
+            }
         } else {
 
             final String innerUrlThumbnail = urlThumbnail;
@@ -92,7 +98,7 @@ public class ImageUtilities {
                 Picasso.with(fContext)
                         .load(innerUrlThumbnail)
                         .networkPolicy(NetworkPolicy.OFFLINE)
-                        .transform(new CircleTransform())
+                        .transform(new CircleTransform(circularFrameColor, circularFrameWidth))
                         .into(viewToSet, new Callback() {
                             @Override
                             public void onSuccess() {
@@ -101,23 +107,25 @@ public class ImageUtilities {
                                     List<String> toCache = new ArrayList<String>();
                                     toCache.add(innerUrlThumbnail);
                                     float flt = 0;
-                                    if(useCustomCachePercent){
+                                    if (useCustomCachePercent) {
                                         flt = percentMaxCache;
                                     }
                                     ImageUtilities.LoadImagesIntoPicassoCache async = new
                                             ImageUtilities.LoadImagesIntoPicassoCache(toCache, fContext, flt);
                                     async.execute();
-                                } catch (Exception e2){}
+                                } catch (Exception e2) {
+                                }
                             }
+
                             @Override
                             public void onError() {
                                 Picasso.with(fContext).load(innerUrlThumbnail)
-                                        .transform(new CircleTransform())
+                                        .transform(new CircleTransform(circularFrameColor, circularFrameWidth))
                                         .into(viewToSet);
                                 //Load the image into cache for next time
                                 try {
                                     float flt = 0;
-                                    if(useCustomCachePercent){
+                                    if (useCustomCachePercent) {
                                         flt = percentMaxCache;
                                     }
                                     List<String> toCache = new ArrayList<String>();
@@ -125,58 +133,87 @@ public class ImageUtilities {
                                     ImageUtilities.LoadImagesIntoPicassoCache async = new
                                             ImageUtilities.LoadImagesIntoPicassoCache(toCache, fContext, flt);
                                     async.execute();
-                                } catch (Exception e2){}
+                                } catch (Exception e2) {
+                                }
                             }
                         });
-            } catch (Exception e){
+            } catch (Exception e) {
                 try {
                     Picasso.with(fContext).load(backupImageResourceId).
-                            transform(new CircleTransform()).into(viewToSet);
-                } catch (Exception e1){}
+                            transform(new CircleTransform(circularFrameColor, circularFrameWidth)).into(viewToSet);
+                } catch (Exception e1) {
+                }
             }
         }
-    }
-    /**
-     * Set a circular image into a view and set caching. Overloaded to allow for excluding
-     * max cache size float
-     * @param urlThumbnail URL String to use
-     * @param viewToSet View to set it into
-     * @param backupImageResourceId Backup resource id in case the String url fails parsing
-     * @param context Context
-     * @param <T> {T extends View}
-     */
-    public static <T extends ImageView> void setCircularImageWithPicasso(String urlThumbnail,
-                                                                         final T viewToSet,
-                                                                         final int backupImageResourceId,
-                                                                         Context context){
-        ImageUtilities.setCircularImageWithPicasso(urlThumbnail, viewToSet, backupImageResourceId, context, null);
     }
 
     /**
      * Set a circular image into a view and set caching. Overloaded to allow for excluding
      * max cache size float
-     * @param urlThumbnail URL String to use
-     * @param viewToSet View to set it into
+     *
+     * @param urlThumbnail          URL String to use
+     * @param viewToSet             View to set it into
      * @param backupImageResourceId Backup resource id in case the String url fails parsing
-     * @param context Context
-     * @param <T> {T extends View}
+     * @param context               Context
+     * @param <T>                   {T extends View}
      */
-    public static <T extends ImageView> void setCircularImageWithPicassoNoCache(String urlThumbnail,
+    public static <T extends ImageView> void setCircularImageWithPicasso(String urlThumbnail,
                                                                          final T viewToSet,
                                                                          final int backupImageResourceId,
-                                                                         Context context){
-        if(context == null){
+                                                                         Context context) {
+        ImageUtilities.setCircularImageWithPicasso(urlThumbnail, viewToSet, backupImageResourceId,
+                context, null, null, null);
+    }
+
+    /**
+     * Set a circular image into a view and set caching. Overloaded to allow for excluding
+     * max cache size float
+     *
+     * @param urlThumbnail          URL String to use
+     * @param viewToSet             View to set it into
+     * @param backupImageResourceId Backup resource id in case the String url fails parsing
+     * @param context               Context
+     * @param <T>                   {T extends View}
+     */
+    public static <T extends ImageView> void setCircularImageWithPicasso(String urlThumbnail,
+                                                                         final T viewToSet,
+                                                                         final int backupImageResourceId,
+                                                                         Context context,
+                                                                         final Integer circularFrameColor,
+                                                                         final Integer circularFrameWidth) {
+        ImageUtilities.setCircularImageWithPicasso(urlThumbnail, viewToSet, backupImageResourceId,
+                context, null, circularFrameColor, circularFrameWidth);
+    }
+
+    /**
+     * Set a circular image into a view and set caching. Overloaded to allow for excluding
+     * max cache size float
+     *
+     * @param urlThumbnail          URL String to use
+     * @param viewToSet             View to set it into
+     * @param backupImageResourceId Backup resource id in case the String url fails parsing
+     * @param context               Context
+     * @param <T>                   {T extends View}
+     */
+    public static <T extends ImageView> void setCircularImageWithPicassoNoCache(String urlThumbnail,
+                                                                                final T viewToSet,
+                                                                                final int backupImageResourceId,
+                                                                                Context context,
+                                                                                final Integer circularFrameColor,
+                                                                                final Integer circularFrameWidth) {
+        if (context == null) {
             context = viewToSet.getContext();
         }
         final Context fContext = context;
 
 
-        if(StringUtilities.isNullOrEmpty(urlThumbnail)){
+        if (StringUtilities.isNullOrEmpty(urlThumbnail)) {
             try {
                 Picasso.with(fContext).load(backupImageResourceId).
                         transform(new CircleTransform()).into(viewToSet);
 
-            } catch (Exception e){}
+            } catch (Exception e) {
+            }
         } else {
 
             final String innerUrlThumbnail = urlThumbnail;
@@ -186,64 +223,87 @@ public class ImageUtilities {
                         .load(innerUrlThumbnail)
                         .transform(new CircleTransform())
                         .into(viewToSet);
-            } catch (Exception e){
+            } catch (Exception e) {
                 try {
                     Picasso.with(fContext).load(backupImageResourceId).
                             transform(new CircleTransform()).into(viewToSet);
-                } catch (Exception e1){}
+                } catch (Exception e1) {
+                }
             }
         }
     }
 
+
+    /**
+     * Set a circular image into a view and set caching. Overloaded to allow for excluding
+     * max cache size float
+     *
+     * @param urlThumbnail          URL String to use
+     * @param viewToSet             View to set it into
+     * @param backupImageResourceId Backup resource id in case the String url fails parsing
+     * @param context               Context
+     * @param <T>                   {T extends View}
+     */
+    public static <T extends ImageView> void setCircularImageWithPicassoNoCache(String urlThumbnail,
+                                                                                final T viewToSet,
+                                                                                final int backupImageResourceId,
+                                                                                Context context) {
+        setCircularImageWithPicassoNoCache(urlThumbnail, viewToSet, backupImageResourceId,
+                context, null, null);
+    }
+
+
     /**
      * Set an image into a view and set caching. Overloaded to allow for excluding
      * max cache size float
-     * @param urlThumbnail URL String to use
-     * @param viewToSet View to set it into
+     *
+     * @param urlThumbnail          URL String to use
+     * @param viewToSet             View to set it into
      * @param backupImageResourceId Backup resource id in case the String url fails parsing
-     * @param context Context
-     * @param <T> {T extends View}
+     * @param context               Context
+     * @param <T>                   {T extends View}
      */
     public static <T extends ImageView> void setImageWithPicasso(String urlThumbnail,
                                                                  final T viewToSet,
                                                                  final int backupImageResourceId,
-                                                                 Context context){
+                                                                 Context context) {
         ImageUtilities.setImageWithPicasso(urlThumbnail, viewToSet, backupImageResourceId, context, null);
     }
 
     /**
      * Set an image into a view and set caching.
-     * @param urlThumbnail URL String to use
-     * @param viewToSet View to set it into
+     *
+     * @param urlThumbnail          URL String to use
+     * @param viewToSet             View to set it into
      * @param backupImageResourceId Backup resource id in case the String url fails parsing
-     * @param context Context
-     * @param percentMaxCache Percent max cache to use (float, <1 && >0, IE, 0.45  == 45% of max
-     *                        cache. Note that Picasso defaults to 14.3% of max cache if null sent
-     * @param <T> {T extends View}
+     * @param context               Context
+     * @param percentMaxCache       Percent max cache to use (float, <1 && >0, IE, 0.45  == 45% of max
+     *                              cache. Note that Picasso defaults to 14.3% of max cache if null sent
+     * @param <T>                   {T extends View}
      */
     public static <T extends ImageView> void setImageWithPicasso(String urlThumbnail,
                                                                  final T viewToSet,
                                                                  final int backupImageResourceId,
                                                                  Context context,
-                                                                 final Float percentMaxCache){
-        if(urlThumbnail == null){
+                                                                 final Float percentMaxCache) {
+        if (urlThumbnail == null) {
             urlThumbnail = "";
         }
         final boolean useCustomCachePercent;
-        if(percentMaxCache == null){
+        if (percentMaxCache == null) {
             useCustomCachePercent = false;
         } else {
-            if(percentMaxCache < 0 || percentMaxCache > 1){
+            if (percentMaxCache < 0 || percentMaxCache > 1) {
                 useCustomCachePercent = false;
             } else {
                 useCustomCachePercent = true;
             }
         }
-        if(urlThumbnail.isEmpty() || urlThumbnail.equalsIgnoreCase("")){
+        if (urlThumbnail.isEmpty() || urlThumbnail.equalsIgnoreCase("")) {
             viewToSet.setImageResource(backupImageResourceId);
         } else {
             final Context context1;
-            if(context != null){
+            if (context != null) {
                 context1 = context;
             } else {
                 context1 = viewToSet.getContext();
@@ -270,16 +330,17 @@ public class ImageUtilities {
                                     List<String> toCache = new ArrayList<String>();
                                     toCache.add(innerUrlThumbnail);
                                     float flt = 0;
-                                    if(useCustomCachePercent){
+                                    if (useCustomCachePercent) {
                                         flt = percentMaxCache;
                                     }
                                     ImageUtilities.LoadImagesIntoPicassoCache async = new
                                             ImageUtilities.LoadImagesIntoPicassoCache(toCache, context1, flt);
                                     async.execute();
-                                } catch (Exception e2){}
+                                } catch (Exception e2) {
+                                }
                             }
                         });
-            } catch (Exception e){
+            } catch (Exception e) {
                 //L.m("catch caught in picasso setImageWithPicasso call");
                 viewToSet.setImageResource(backupImageResourceId);
             }
@@ -290,24 +351,25 @@ public class ImageUtilities {
     /**
      * Set an image into a view and set caching. Overloaded to allow for excluding
      * max cache size float
-     * @param urlThumbnail URL String to use
-     * @param viewToSet View to set it into
+     *
+     * @param urlThumbnail          URL String to use
+     * @param viewToSet             View to set it into
      * @param backupImageResourceId Backup resource id in case the String url fails parsing
-     * @param context Context
-     * @param <T> {T extends View}
+     * @param context               Context
+     * @param <T>                   {T extends View}
      */
     public static <T extends ImageView> void setImageWithPicassoNoCache(String urlThumbnail,
-                                                                 final T viewToSet,
-                                                                 final int backupImageResourceId,
-                                                                 Context context){
-        if(urlThumbnail == null){
+                                                                        final T viewToSet,
+                                                                        final int backupImageResourceId,
+                                                                        Context context) {
+        if (urlThumbnail == null) {
             urlThumbnail = "";
         }
-        if(urlThumbnail.isEmpty() || urlThumbnail.equalsIgnoreCase("")){
+        if (urlThumbnail.isEmpty() || urlThumbnail.equalsIgnoreCase("")) {
             viewToSet.setImageResource(backupImageResourceId);
         } else {
             final Context context1;
-            if(context != null){
+            if (context != null) {
                 context1 = context;
             } else {
                 context1 = viewToSet.getContext();
@@ -319,7 +381,7 @@ public class ImageUtilities {
                 Picasso.with(context1)
                         .load(urlThumbnail)
                         .into(viewToSet);
-            } catch (Exception e){
+            } catch (Exception e) {
                 //L.m("catch caught in picasso setImageWithPicasso call");
                 viewToSet.setImageResource(backupImageResourceId);
             }
@@ -331,34 +393,37 @@ public class ImageUtilities {
      * Loads images into the picasso cache by using the fetch() call. Reference:
      * http://stackoverflow.com/questions/23978828/how-do-i-use-disk-caching-in-picasso
      */
-    public static class LoadImagesIntoPicassoCache extends AsyncTask <Void, Void, Void>{
+    public static class LoadImagesIntoPicassoCache extends AsyncTask<Void, Void, Void> {
         private List<String> imageURLs;
         private Context context;
         private float cacheSizeMaxPercent;
 
         /**
          * Load Images into cache constructor
+         *
          * @param imageURLs A list of the image URLs to set
-         * @param context Context
+         * @param context   Context
          */
-        public LoadImagesIntoPicassoCache(List<String> imageURLs, Context context){
+        public LoadImagesIntoPicassoCache(List<String> imageURLs, Context context) {
             this.imageURLs = imageURLs;
             this.context = context;
             this.cacheSizeMaxPercent = 0;
         }
+
         /**
          * Overloaded Constructor
-         * @param imageURLs A list of the image URLs to set
-         * @param context Context
+         *
+         * @param imageURLs           A list of the image URLs to set
+         * @param context             Context
          * @param cacheSizeMaxPercent float % for max cache size. If left out or set to null,
          *                            it will default to the auto generated max (which is
          *                            about 1/7 available ram) Link:
          *                            http://stackoverflow.com/questions/20090265/android-picasso-configure-lrucache-size
          */
-        public LoadImagesIntoPicassoCache(List<String> imageURLs, Context context, Float cacheSizeMaxPercent){
+        public LoadImagesIntoPicassoCache(List<String> imageURLs, Context context, Float cacheSizeMaxPercent) {
             this.imageURLs = imageURLs;
             this.context = context;
-            if(cacheSizeMaxPercent == null){
+            if (cacheSizeMaxPercent == null) {
                 this.cacheSizeMaxPercent = 0;
             } else {
                 this.cacheSizeMaxPercent = cacheSizeMaxPercent;
@@ -370,9 +435,9 @@ public class ImageUtilities {
 
             Picasso p;
 
-            if(cacheSizeMaxPercent > 0 && cacheSizeMaxPercent < 1) {
+            if (cacheSizeMaxPercent > 0 && cacheSizeMaxPercent < 1) {
                 p = new Picasso.Builder(context)
-                        .memoryCache(new LruCache((int)(
+                        .memoryCache(new LruCache((int) (
                                 cacheSizeMaxPercent * ImageUtilities.getMaxCacheSize())))
                         .build();
             } else {
@@ -380,18 +445,19 @@ public class ImageUtilities {
                         .build();
             }
 
-            for(String str : imageURLs){
+            for (String str : imageURLs) {
                 try {
-                    if(isCancelled()){
+                    if (isCancelled()) {
                         return null;
                     }
                     p.with(context).load(str).fetch();
                     Thread.sleep(500);
-                } catch (OutOfMemoryError e1){
+                } catch (OutOfMemoryError e1) {
                     //If we run out of memory, make sure to catch it!
                     p.with(context).invalidate(str);
                     return null;
-                } catch (Exception e){}
+                } catch (Exception e) {
+                }
             }
 
             return null;
@@ -400,6 +466,7 @@ public class ImageUtilities {
 
     /**
      * Adjust the photo orientation
+     *
      * @param pathToFile
      * @return
      */
@@ -438,7 +505,7 @@ public class ImageUtilities {
                 bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
                 return bitmap;
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
@@ -446,12 +513,13 @@ public class ImageUtilities {
 
     /**
      * For rotating images
+     *
      * @param bitmap Bitmap to rotate
      * @param degree Degree amount to rotate
      * @return
      */
     public static Bitmap rotate(Bitmap bitmap, int degree) {
-        if(bitmap == null){
+        if (bitmap == null) {
             return null;
         }
         int w = bitmap.getWidth();
@@ -465,16 +533,17 @@ public class ImageUtilities {
 
     /**
      * Set the drawable to a specific color and return it
-     * @param drawable The drawable to change
+     *
+     * @param drawable   The drawable to change
      * @param colorToSet The color to set it to
      * @return Drawable
      * @throws NullPointerException, if it fails, throws a null pointer
      */
-    public static Drawable colorDrawable(Drawable drawable, int colorToSet){
+    public static Drawable colorDrawable(Drawable drawable, int colorToSet) {
         try {
             drawable.mutate().setColorFilter(colorToSet, PorterDuff.Mode.MULTIPLY);
             return drawable;
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new NullPointerException();
         }
@@ -482,17 +551,18 @@ public class ImageUtilities {
 
     /**
      * Set the drawable to a specific color and return it
+     *
      * @param drawableId the int ID of the drawable to change
      * @param colorToSet The color to set it to
      * @return Drawable
      * @throws NullPointerException, if it fails, throws a null pointer
      */
-    public static Drawable colorDrawable(int drawableId,  int colorToSet, Context context){
+    public static Drawable colorDrawable(int drawableId, int colorToSet, Context context) {
         try {
             Drawable drawable = ContextCompat.getDrawable(context, drawableId);
             drawable.mutate().setColorFilter(colorToSet, PorterDuff.Mode.MULTIPLY);
             return drawable;
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new NullPointerException();
         }
@@ -500,11 +570,12 @@ public class ImageUtilities {
 
     /**
      * Converts an inputstream to a byte array (Mostly useful for sending images via JSON)
+     *
      * @param is Input stream, if using a URI, open it by calling:
-     *     InputStream iStream =   context.getContentResolver().openInputStream(uri);
+     *           InputStream iStream =   context.getContentResolver().openInputStream(uri);
      * @return Byte Array
      */
-    public static Bitmap convertISToBitmap(InputStream is){
+    public static Bitmap convertISToBitmap(InputStream is) {
         try {
             return BitmapFactory.decodeStream(is);
         } catch (Exception e) {
@@ -514,26 +585,28 @@ public class ImageUtilities {
 
     /**
      * Convert a Bitmap into a byte Array
+     *
      * @param bitmap
      * @return
      */
-    public static byte[] convertBitmapToByte(Bitmap bitmap){
+    public static byte[] convertBitmapToByte(Bitmap bitmap) {
         try {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] byteArray = stream.toByteArray();
             return byteArray;
-        } catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
 
     /**
      * Combines multiple bitmaps together into one
+     *
      * @param aParts An array of bitmaps
      * @return Returns a bitmap image
      */
-    public static Bitmap combineBitmaps(Bitmap[] aParts){
+    public static Bitmap combineBitmaps(Bitmap[] aParts) {
         Bitmap[] parts = aParts;
         Bitmap result = Bitmap.createBitmap(parts[0].getWidth() * 2, parts[0].getHeight() * 2, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(result);
@@ -546,11 +619,12 @@ public class ImageUtilities {
 
     /**
      * Decode a file from the path and return a bitmap
+     *
      * @param uri
      * @param context
      * @return
      */
-    public static Bitmap decodeFileFromPath(Uri uri, Context context){
+    public static Bitmap decodeFileFromPath(Uri uri, Context context) {
 
         InputStream in = null;
         try {
@@ -588,6 +662,7 @@ public class ImageUtilities {
 
     /**
      * Decode a bitmap from a resource
+     *
      * @param res
      * @param resId
      * @param reqWidth
@@ -635,11 +710,12 @@ public class ImageUtilities {
 
     /**
      * Convert an image to a byte array
+     *
      * @param uri
      * @param context
      * @return
      */
-    public static byte[] convertImageToByte(Uri uri, Context context){
+    public static byte[] convertImageToByte(Uri uri, Context context) {
         byte[] data = null;
         try {
             ContentResolver cr = context.getContentResolver();
@@ -648,15 +724,17 @@ public class ImageUtilities {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
             data = baos.toByteArray();
-            if(inputStream != null){
+            if (inputStream != null) {
                 try {
                     inputStream.close();
-                } catch (Exception e2){}
+                } catch (Exception e2) {
+                }
             }
-            if(baos != null){
+            if (baos != null) {
                 try {
                     baos.close();
-                } catch (Exception e2){}
+                } catch (Exception e2) {
+                }
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -677,10 +755,11 @@ public class ImageUtilities {
 
         /**
          * Download an image from the web into a file and send that file back via the listener
+         *
          * @param context
-         * @param imageUrl String image Url
-         * @param dialog Progress dialog to show
-         * @param listener listener to send data back on
+         * @param imageUrl            String image Url
+         * @param dialog              Progress dialog to show
+         * @param listener            listener to send data back on
          * @param lengthOfTimeToDelay Length of time to 'delay' in that if the time to download
          *                            the file is shorter than this, it will add time on the
          *                            progress dialog to allow time to finish. This is best used
@@ -693,13 +772,13 @@ public class ImageUtilities {
             this.imageUrl = imageUrl;
             this.listener = listener;
             this.dialog = dialog;
-            if(this.dialog == null){
+            if (this.dialog == null) {
                 //Removed on 2017-07-05 Due to problems with compiling
                 //this.dialog = PGMacCustomProgressBar.buildElasticDialog(context);
                 this.dialog = new ProgressDialog(context);
             }
-            if(lengthOfTimeToDelay == null){
-                lengthOfTimeToDelay = (long)(PGMacUtilitiesConstants.ONE_SECOND * 2.6);
+            if (lengthOfTimeToDelay == null) {
+                lengthOfTimeToDelay = (long) (PGMacUtilitiesConstants.ONE_SECOND * 2.6);
             }
         }
 
@@ -725,7 +804,7 @@ public class ImageUtilities {
                 long total = 0;
                 while ((count = input.read(data)) != -1) {
                     total += count;
-                    int publishNum = ((int)((total*100/lenghtOfFile)));
+                    int publishNum = ((int) ((total * 100 / lenghtOfFile)));
                     publishProgress(publishNum);
                     output.write(data, 0, count);
                 }
@@ -733,8 +812,7 @@ public class ImageUtilities {
                 output.close();
                 input.close();
                 return file;
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -744,10 +822,10 @@ public class ImageUtilities {
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-            if(values[0] != null){
+            if (values[0] != null) {
                 int prog = values[0];
-                if(prog % 10 == 0){
-                    if(prog == 100){
+                if (prog % 10 == 0) {
+                    if (prog == 100) {
                         prog = 99;
                     }
                     dialog.setProgress(prog);
@@ -764,24 +842,26 @@ public class ImageUtilities {
             long timeLeft = lengthOfTimeToDelay - totalTime;
             Handler handler = new Handler();
 
-            if(file == null){
+            if (file == null) {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         try {
                             dialog.dismiss();
-                        } catch (Exception e){}
+                        } catch (Exception e) {
+                        }
                     }
                 }, PGMacUtilitiesConstants.ONE_SECOND);
                 listener.onTaskComplete("Url Error", PGMacUtilitiesConstants.TAG_PHOTO_BAD_URL);
 
             } else {
                 dialog.setProgress(100);
-                if(timeLeft <= 0){
+                if (timeLeft <= 0) {
                     try {
                         dialog.dismiss();
                         listener.onTaskComplete(file1, PGMacUtilitiesConstants.TAG_FILE_DOWNLOADED);
-                    } catch (Exception e){}
+                    } catch (Exception e) {
+                    }
                 } else {
                     handler.postDelayed(new Runnable() {
                         @Override
@@ -789,15 +869,16 @@ public class ImageUtilities {
                             try {
                                 dialog.dismiss();
                                 listener.onTaskComplete(file1, PGMacUtilitiesConstants.TAG_FILE_DOWNLOADED);
-                            } catch (Exception e){}
+                            } catch (Exception e) {
+                            }
                         }
-                    }, (int)timeLeft);
+                    }, (int) timeLeft);
                 }
             }
         }
     }
 
-    public static void zoomAView(){
+    public static void zoomAView() {
         //https://developer.android.com/training/animation/zoom.html
     }
 
@@ -805,12 +886,13 @@ public class ImageUtilities {
      * Get the maximum system cache size for the app. Designed after this answer:
      * https://stackoverflow.com/a/15763477/2480714
      * Note! DO NOT USE THE ENTIRE 100%! Use a fraction of it. (IE, 1/8th)
+     *
      * @return long maximum cache size. (If an error occurs, return 0)
      */
-    public static long getMaxCacheSize(){
+    public static long getMaxCacheSize() {
         try {
-            return (long)((Runtime.getRuntime().maxMemory()) / (1024));
-        } catch (Exception e){
+            return (long) ((Runtime.getRuntime().maxMemory()) / (1024));
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
@@ -837,7 +919,7 @@ public class ImageUtilities {
             byte[] b = baos.toByteArray();
             String encImage = Base64.encodeToString(b, Base64.DEFAULT);
             return encImage;
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -845,11 +927,12 @@ public class ImageUtilities {
 
     /**
      * Encode an image on a background thread
+     *
      * @param listener {@link OnTaskCompleteListener}
-     * @param bm Bitmap to convert
+     * @param bm       Bitmap to convert
      */
     public static void encodeImage(@NonNull final OnTaskCompleteListener listener,
-                                    final Bitmap bm) {
+                                   final Bitmap bm) {
         if (bm == null) {
             listener.onTaskComplete(null, PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_FAIL);
             return;
@@ -863,7 +946,7 @@ public class ImageUtilities {
                     byte[] b = baos.toByteArray();
                     String encImage = Base64.encodeToString(b, Base64.DEFAULT);
                     return encImage;
-                } catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 return null;
@@ -871,7 +954,7 @@ public class ImageUtilities {
 
             @Override
             protected void onPostExecute(String str) {
-                if(!StringUtilities.isNullOrEmpty(str)){
+                if (!StringUtilities.isNullOrEmpty(str)) {
                     listener.onTaskComplete(str,
                             PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_SUCCESS);
                 } else {
@@ -907,7 +990,7 @@ public class ImageUtilities {
             String encImage = Base64.encodeToString(b, Base64.DEFAULT);
             //Base64.de
             return encImage;
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -916,11 +999,12 @@ public class ImageUtilities {
 
     /**
      * Encode an image to a base64 String on a background thread
+     *
      * @param listener {@link OnTaskCompleteListener}
-     * @param file The File to convert
+     * @param file     The File to convert
      */
     public static void encodeImage(@NonNull final OnTaskCompleteListener listener,
-                                    final File file) {
+                                   final File file) {
         if (file == null) {
             listener.onTaskComplete(null, PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_FAIL);
             return;
@@ -946,7 +1030,7 @@ public class ImageUtilities {
                     String encImage = Base64.encodeToString(b, Base64.DEFAULT);
                     //Base64.de
                     return encImage;
-                } catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 return null;
@@ -954,7 +1038,7 @@ public class ImageUtilities {
 
             @Override
             protected void onPostExecute(String str) {
-                if(!StringUtilities.isNullOrEmpty(str)){
+                if (!StringUtilities.isNullOrEmpty(str)) {
                     listener.onTaskComplete(str,
                             PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_SUCCESS);
                 } else {
@@ -994,11 +1078,12 @@ public class ImageUtilities {
 
     /**
      * Encode an image to a base 64 String on a background thread
+     *
      * @param listener {@link OnTaskCompleteListener}
-     * @param path The Path String to the image
+     * @param path     The Path String to the image
      */
     public static void encodeImage(@NonNull final OnTaskCompleteListener listener,
-                                    final String path) {
+                                   final String path) {
         if (StringUtilities.isNullOrEmpty(path)) {
             listener.onTaskComplete(null, PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_FAIL);
             return;
@@ -1027,7 +1112,7 @@ public class ImageUtilities {
 
             @Override
             protected void onPostExecute(String str) {
-                if(!StringUtilities.isNullOrEmpty(str)){
+                if (!StringUtilities.isNullOrEmpty(str)) {
                     listener.onTaskComplete(str,
                             PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_SUCCESS);
                 } else {
