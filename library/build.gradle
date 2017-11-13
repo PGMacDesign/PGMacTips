@@ -1,6 +1,6 @@
 //apply plugin: 'com.android.application'
 apply plugin: 'com.android.library' //Remove this when switching from lib to app
-apply plugin: 'kotlin-android' //Remove this when switching from app to lib
+//apply plugin: 'kotlin-android' //Removing for now
 apply plugin: 'realm-android'
 apply plugin: 'com.github.dcendents.android-maven'
 group='com.github.PGMacDesign'
@@ -135,7 +135,7 @@ if( android.productFlavors.size() > 0 ) {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    //compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
 repositories {
     mavenCentral()

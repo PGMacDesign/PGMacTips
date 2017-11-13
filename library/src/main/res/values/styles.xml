@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="MainTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="MyMainTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/Blue</item>
         <item name="colorPrimaryDark">@color/Navy</item>
@@ -11,7 +11,7 @@
     </style>
 
     <!-- Button Theme 1 -->
-    <style name="ButtonTheme1" parent="MainTheme">
+    <style name="ButtonTheme1" parent="MyMainTheme">
         <item name="android:layout_marginStart">@dimen/left_right_side_margins</item>
         <item name="android:layout_marginEnd">@dimen/left_right_side_margins</item>
     </style>
@@ -30,7 +30,7 @@
     </style>
 
     <!-- Custom full screen dialog theme -->
-    <style name="FullScreenDialog" parent="MainTheme" >
+    <style name="FullScreenDialog" parent="MyMainTheme" >
         <item name="android:windowBackground">@null</item>
         <item name="android:windowIsFloating">true</item>
     </style>

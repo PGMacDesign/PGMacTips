@@ -37,7 +37,7 @@
 		>
 		
 		<ImageView
-			android:id="@+id/selection_adapter_multi_faux_checkbox"
+			android:id="@+id/selection_adapter_multi_left_iv"
 			android:layout_weight="15"
 			android:layout_width="32dp"
 			android:layout_height="32dp"

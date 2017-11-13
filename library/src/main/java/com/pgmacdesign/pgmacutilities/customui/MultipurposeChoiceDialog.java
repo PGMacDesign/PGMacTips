@@ -51,7 +51,7 @@ public class MultipurposeChoiceDialog extends AlertDialog implements
 	private TextView et;
 	
 	//Data values (converted)
-	private List<MultipurposeChoiceAdapter.Companion.MultipurposeChoiceObject> dataValues;
+	private List<MultipurposeChoiceAdapter.MultipurposeChoiceObject> dataValues;
 	
 	//Adapters
 	private MultipurposeChoiceAdapter adapter;
@@ -170,6 +170,8 @@ public class MultipurposeChoiceDialog extends AlertDialog implements
 		
 		multipurpose_choice_dialog_cancel_button.setTransformationMethod(null);
 		multipurpose_choice_dialog_confirm_button.setTransformationMethod(null);
+		multipurpose_choice_dialog_cancel_button.setTag("multipurpose_choice_dialog_cancel_button");
+		multipurpose_choice_dialog_confirm_button.setTag("multipurpose_choice_dialog_confirm_button");
 		multipurpose_choice_dialog_cancel_button.setOnClickListener(this);
 		multipurpose_choice_dialog_confirm_button.setOnClickListener(this);
 		
@@ -191,10 +193,10 @@ public class MultipurposeChoiceDialog extends AlertDialog implements
 		this.multipurpose_choice_dialog_recyclerview.setLayoutManager(
 				new LinearLayoutManager(this.context));
 		if(MiscUtilities.isArrayNullOrEmpty(this.selectedValues)){
-			this.dataValues = MultipurposeChoiceAdapter.Companion.buildSimpleObjectList(
+			this.dataValues = MultipurposeChoiceAdapter.buildSimpleObjectList(
 					Arrays.asList(this.values));
 		} else {
-			this.dataValues = MultipurposeChoiceAdapter.Companion.buildSimpleObjectList(
+			this.dataValues = MultipurposeChoiceAdapter.buildSimpleObjectList(
 					Arrays.asList(this.values), Arrays.asList(this.selectedValues));
 		}
 		
@@ -279,17 +281,23 @@ public class MultipurposeChoiceDialog extends AlertDialog implements
 	
 	@Override
 	public void onClick(View v) {
-		switch (v.getId()){
-			
-			case R.id.multipurpose_choice_dialog_cancel_button:
+		String tag = null;
+		try {
+			tag = (String) v.getTag();
+		} catch (Exception e){
+			return;
+		}
+		if(!StringUtilities.isNullOrEmpty(tag)) {
+			if (tag.equals("multipurpose_choice_dialog_cancel_button")) {
 				this.dismiss();
-				//listener.onTaskComplete("stuff", 456);
-				break;
-			
-			case R.id.multipurpose_choice_dialog_confirm_button:
+				return;
+			}
+			if (tag.equals("multipurpose_choice_dialog_confirm_button")) {
 				this.dismiss();
-				listener.onTaskComplete(this.userSelectedItems, PGMacUtilitiesConstants.TAG_MAP_STRING_INTEGER);
-				break;
+				listener.onTaskComplete(this.userSelectedItems,
+						PGMacUtilitiesConstants.TAG_MAP_STRING_INTEGER);
+				return;
+			}
 		}
 	}
 	
@@ -312,8 +320,8 @@ public class MultipurposeChoiceDialog extends AlertDialog implements
 		setupTimer();
 		if(customTag != null){
 			if(customTag == PGMacUtilitiesConstants.TAG_MULTIPURPOSE_CHOICE_CLICK_ADAPTER){
-				MultipurposeChoiceAdapter.Companion.MultipurposeChoiceObject obj =
-						(MultipurposeChoiceAdapter.Companion.MultipurposeChoiceObject) object;
+				MultipurposeChoiceAdapter.MultipurposeChoiceObject obj =
+						(MultipurposeChoiceAdapter.MultipurposeChoiceObject) object;
 				if(this.dataValues == null){
 					this.dataValues = new ArrayList<>();
 				}
@@ -335,7 +343,7 @@ public class MultipurposeChoiceDialog extends AlertDialog implements
 					if(obj.isSelected()){
 						//Unselect and update list
 						try {
-							MultipurposeChoiceAdapter.Companion.MultipurposeChoiceObject o =
+							MultipurposeChoiceAdapter.MultipurposeChoiceObject o =
 									this.dataValues.get(positionIfAvailable);
 							o.setSelected(false);
 							adapter.updateOneObject(positionIfAvailable, o);
@@ -346,7 +354,7 @@ public class MultipurposeChoiceDialog extends AlertDialog implements
 					} else {
 						//Select and update list
 						try {
-							MultipurposeChoiceAdapter.Companion.MultipurposeChoiceObject o =
+							MultipurposeChoiceAdapter.MultipurposeChoiceObject o =
 									this.dataValues.get(positionIfAvailable);
 							o.setSelected(true);
 							adapter.updateOneObject(positionIfAvailable, o);
