@@ -2,114 +2,114 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.pgmacdesign.pgmacutilities">
 
-    <!--<application>-->
-        <!--<provider-->
-            <!--android:authorities="${applicationId}.pgmaccontextprovider"-->
-            <!--android:exported="false"-->
-            <!--android:enabled="true"-->
-            <!--android:name=".misc.PGMacInitProvider" />-->
+    <application>
+        <provider
+            android:authorities="${applicationId}.pgmaccontextprovider"
+            android:exported="false"
+            android:enabled="true"
+            android:name=".misc.PGMacInitProvider" />
 
 
-        <!--&lt;!&ndash; Gson &ndash;&gt;-->
-        <!--<uses-library-->
-            <!--android:name="com.google.code.gson"-->
-            <!--android:required="false"-->
-            <!--/>-->
-        <!--&lt;!&ndash; Retrofit 2 &ndash;&gt;-->
-        <!--<uses-library-->
-            <!--android:name="com.squareup.retrofit2"-->
-            <!--android:required="false"-->
-            <!--/>-->
-        <!--&lt;!&ndash; OkHttp &ndash;&gt;-->
-        <!--<uses-library-->
-            <!--android:name="com.squareup.okhttp3"-->
-            <!--android:required="false"-->
-            <!--/>-->
-        <!--&lt;!&ndash; Secure Prefs &ndash;&gt;-->
-        <!--<uses-library-->
-            <!--android:name="com.securepreferences"-->
-            <!--android:required="false"-->
-            <!--/>-->
-        <!--&lt;!&ndash; ElasticDownload &ndash;&gt;-->
-        <!--<uses-library-->
-            <!--android:name="is.arontibo.library"-->
-            <!--android:required="false"-->
-            <!--/>-->
-        <!--&lt;!&ndash; UCrop &ndash;&gt;-->
-        <!--<uses-library-->
-            <!--android:name="com.yalantis.ucrop"-->
-            <!--android:required="false"-->
-            <!--/>-->
-        <!--&lt;!&ndash; Animated SVG View &ndash;&gt;-->
-        <!--<uses-library-->
-            <!--android:name="com.jaredrummler.android.animatedsvgview"-->
-            <!--android:required="false"-->
-            <!--/>-->
-        <!--&lt;!&ndash; Volley &ndash;&gt;-->
-        <!--<uses-library-->
-            <!--android:name="com.android.volley"-->
-            <!--android:required="false"-->
-            <!--/>-->
-        <!--&lt;!&ndash; Picasso &ndash;&gt;-->
-        <!--<uses-library-->
-            <!--android:name="com.squareup.picasso"-->
-            <!--android:required="false"-->
-            <!--/>-->
-        <!--&lt;!&ndash; Nine Old Androids &ndash;&gt;-->
-        <!--<uses-library-->
-            <!--android:name="com.nineoldandroids"-->
-            <!--android:required="false"-->
-            <!--/>-->
-        <!--&lt;!&ndash; Okio &ndash;&gt;-->
-        <!--<uses-library-->
-            <!--android:name="com.squareup.okio"-->
-            <!--android:required="false"-->
-            <!--/>-->
-        <!--&lt;!&ndash; Android Animations &ndash;&gt;-->
-        <!--<uses-library-->
-            <!--android:name="com.daimajia.androidanimations.library"-->
-            <!--android:required="false"-->
-            <!--/>-->
-        <!--&lt;!&ndash; Part of Android Animations &ndash;&gt;-->
-        <!--<uses-library-->
-            <!--android:name="com.daimajia.easing"-->
-            <!--android:required="false"-->
-            <!--/>-->
-
-    <!--</application>-->
-
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
-
-
-    <application
-        android:allowBackup="true"
-        android:hardwareAccelerated="false"
-        android:name=".misc.SampleMyApplication"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:supportsRtl="true">
-        <activity
-            android:name=".MyTestActivity"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <service
-            android:name=".services.ServiceFlash"
-            android:exported="false" />
+        <!-- Gson -->
+        <uses-library
+            android:name="com.google.code.gson"
+            android:required="false"
+            />
+        <!-- Retrofit 2 -->
+        <uses-library
+            android:name="com.squareup.retrofit2"
+            android:required="false"
+            />
+        <!-- OkHttp -->
+        <uses-library
+            android:name="com.squareup.okhttp3"
+            android:required="false"
+            />
+        <!-- Secure Prefs -->
+        <uses-library
+            android:name="com.securepreferences"
+            android:required="false"
+            />
+        <!-- ElasticDownload -->
+        <uses-library
+            android:name="is.arontibo.library"
+            android:required="false"
+            />
+        <!-- UCrop -->
+        <uses-library
+            android:name="com.yalantis.ucrop"
+            android:required="false"
+            />
+        <!-- Animated SVG View -->
+        <uses-library
+            android:name="com.jaredrummler.android.animatedsvgview"
+            android:required="false"
+            />
+        <!-- Volley -->
+        <uses-library
+            android:name="com.android.volley"
+            android:required="false"
+            />
+        <!-- Picasso -->
+        <uses-library
+            android:name="com.squareup.picasso"
+            android:required="false"
+            />
+        <!-- Nine Old Androids -->
+        <uses-library
+            android:name="com.nineoldandroids"
+            android:required="false"
+            />
+        <!-- Okio -->
+        <uses-library
+            android:name="com.squareup.okio"
+            android:required="false"
+            />
+        <!-- Android Animations -->
+        <uses-library
+            android:name="com.daimajia.androidanimations.library"
+            android:required="false"
+            />
+        <!-- Part of Android Animations -->
+        <uses-library
+            android:name="com.daimajia.easing"
+            android:required="false"
+            />
 
     </application>
+
+
+    <!--<uses-permission android:name="android.permission.INTERNET" />-->
+    <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
+    <!--<uses-permission android:name="android.permission.CAMERA" />-->
+    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
+    <!--<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />-->
+    <!--<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />-->
+    <!--<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />-->
+    <!--<uses-permission android:name="android.permission.READ_CONTACTS"/>-->
+
+
+    <!--<application-->
+        <!--android:allowBackup="true"-->
+        <!--android:hardwareAccelerated="false"-->
+        <!--android:name=".misc.SampleMyApplication"-->
+        <!--android:icon="@mipmap/ic_launcher"-->
+        <!--android:label="@string/app_name"-->
+        <!--android:supportsRtl="true">-->
+        <!--<activity-->
+            <!--android:name=".MyTestActivity"-->
+            <!--android:screenOrientation="portrait">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        <!--</activity>-->
+
+        <!--<service-->
+            <!--android:name=".services.ServiceFlash"-->
+            <!--android:exported="false" />-->
+
+    <!--</application>-->
  
 
 </manifest>
