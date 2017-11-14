@@ -17,7 +17,7 @@
     </style>
 
     <!-- For a transparent dialog. May be needed for {@link PGMacCustomProgressBar}  -->
-    <style name="CustomTransparentDialog" parent="AppTheme">
+    <style name="CustomTransparentDialog" parent="MyMainTheme">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowBackground">@color/Transparent</item>
         <item name="android:windowIsFloating">true</item>

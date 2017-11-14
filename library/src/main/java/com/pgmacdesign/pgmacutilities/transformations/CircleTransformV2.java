@@ -4,24 +4,25 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.RectF;
 
 import com.squareup.picasso.Transformation;
 
 /**
- * Image boarder color frame Not working at the moment :/
- * From: https://stackoverflow.com/a/27236821/2480714
- * Created by pmacdowell on 8/15/2016.
+ * Created by pmacdowell on 2017-11-13.
  */
-public class CircleTransform implements Transformation {
 
-    private Integer circleFrameColor, circleFrameWidth;
+public class CircleTransformV2 implements Transformation {
+
+    private Integer circleFrameColor, circleFrameWidth, areaMargin;
 
     /**
      * Simple circlular transform
      */
-    public CircleTransform(){
+    public CircleTransformV2(){
         this.circleFrameColor = null;
         this.circleFrameWidth = null;
+        this.areaMargin = null;
     }
 
     /**
@@ -30,9 +31,22 @@ public class CircleTransform implements Transformation {
      *                         If null, no circular frame boarder will be drawn.
      * @param circleFrameWidth Width of the frame to use. If null, will default to 2 (pixels)
      */
-    public CircleTransform(Integer circleFrameColor, Integer circleFrameWidth){
+    public CircleTransformV2(Integer circleFrameColor, Integer circleFrameWidth){
         this.circleFrameColor = circleFrameColor;
         this.circleFrameWidth = circleFrameWidth;
+        this.areaMargin = null;
+    }
+
+    /**
+     * Overloaded constructor to add a color frame around the image
+     * @param circleFrameColor Color to use (IE, ContextCompat.getColor(context, R.color.Red);
+     *                         If null, no circular frame boarder will be drawn.
+     * @param circleFrameWidth Width of the frame to use. If null, will default to 2 (pixels)
+     */
+    public CircleTransformV2(Integer circleFrameColor, Integer circleFrameWidth, Integer margin){
+        this.circleFrameColor = circleFrameColor;
+        this.circleFrameWidth = circleFrameWidth;
+        this.areaMargin = margin;
     }
 
     @Override
@@ -52,6 +66,10 @@ public class CircleTransform implements Transformation {
         Bitmap bitmap = null;
 
         try {
+            int margin = 0;
+            if(areaMargin != null){
+                margin = areaMargin;
+            }
             bitmap = Bitmap.createBitmap(size, size, config);
             Canvas canvas = new Canvas(bitmap);
             Paint paint = new Paint();
@@ -60,8 +78,15 @@ public class CircleTransform implements Transformation {
             paint.setShader(shader);
             paint.setAntiAlias(true);
             float r = size/2f;
-            canvas.drawCircle(r, r, r, paint);
-            squaredBitmap.recycle();
+            //canvas.drawCircle(r, r, r, paint);
+            canvas.drawRoundRect(new RectF(margin, margin,
+                    source.getWidth() - margin,
+                    source.getHeight() - margin),
+                    r, r, paint);
+
+            if (source != bitmap) {
+                source.recycle();
+            }
             if(this.circleFrameColor != null){
                 Paint paint2 = new Paint();
                 paint2.setColor(circleFrameColor);
@@ -74,9 +99,10 @@ public class CircleTransform implements Transformation {
                 }
                 paint2.setStrokeWidth(this.circleFrameWidth);
                 paint2.setAntiAlias(true);
-                canvas.drawCircle((source.getWidth() + circleFrameWidth)/2,
-                        (source.getHeight() + circleFrameWidth)/2,
-                        circleFrameWidth, paint2);
+                canvas.drawCircle((source.getWidth() - margin)/2,
+                        (source.getHeight() - margin)/2,
+                        r-2, paint2);
+
             }
 
             return bitmap;
@@ -90,4 +116,6 @@ public class CircleTransform implements Transformation {
     public String key() {
         return "circle";
     }
+
+
 }
