@@ -29,9 +29,12 @@ import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.net.URI;
+import java.util.Date;
 import java.util.List;
 
 /**
+ * Note! If you are using the cropping option, you must include the UCrop dependency and activity
+ * in your project, https://github.com/Yalantis/uCrop.
  * Created by pmacdowell on 8/16/2016.
  */
 public class CameraMediaUtilities {
@@ -157,8 +160,9 @@ public class CameraMediaUtilities {
     //Variables set by Flags and Options
     private boolean shouldUploadPhoto, shouldDeletePhoto, useFrontFacingCamera;
     private CameraUtilityOptionsAndFlags optionsAndFlags;
-    private String userSentNameOfFile, userSentPathToFile, photoExtension, fileProviderStr;
+    private String userSentNameOfFile, photoExtension, fileProviderStr; //Removed for now userSentPathToFile
     private Integer maxDurationForVideo;
+    private String photoName;
 
     //Misc Variables
     private Dialog alertDialog;
@@ -550,7 +554,7 @@ public class CameraMediaUtilities {
         this.shouldDeletePhoto = optionsAndFlags.getShouldDeletePhotoAfter();
         this.shouldUploadPhoto = optionsAndFlags.getShouldUploadPhoto();
         this.userSentNameOfFile = optionsAndFlags.getNameOfFile();
-        this.userSentPathToFile = optionsAndFlags.getPathToFile();
+        //this.userSentPathToFile = optionsAndFlags.getPathToFile();
         this.maxDurationForVideo = optionsAndFlags.getMaxVideoRecordingTime();
         this.photoFileExtension = optionsAndFlags.getPhotoExtension();
         this.videoFileExtension = optionsAndFlags.getVideoExtension();
@@ -570,10 +574,10 @@ public class CameraMediaUtilities {
         }
         userSentNameOfFile = StringUtilities.removeSpaces(userSentNameOfFile);
 
-        if(StringUtilities.isNullOrEmpty(userSentPathToFile)){
-            userSentPathToFile = Environment.getExternalStorageDirectory() + "/DCIM/";
-        }
-        userSentPathToFile = StringUtilities.removeSpaces(userSentPathToFile);
+//        if(StringUtilities.isNullOrEmpty(userSentPathToFile)){
+//            userSentPathToFile = Environment.getExternalStorageDirectory() + ""ddddddddddddddddd;
+//        }
+//        userSentPathToFile = StringUtilities.removeSpaces(userSentPathToFile);
 
         if(this.maxDurationForVideo == null){
             this.maxDurationForVideo = 0;
@@ -743,7 +747,7 @@ public class CameraMediaUtilities {
             intent = new Intent(activity, TakePhotoActivity.class);
         }
 
-        intent.putExtra(CameraMediaUtilities.TAG_FILE_PATH, userSentPathToFile);
+        //intent.putExtra(CameraMediaUtilities.TAG_FILE_PATH, userSentPathToFile);
         intent.putExtra(CameraMediaUtilities.TAG_FILE_NAME, userSentNameOfFile);
         intent.putExtra(CameraMediaUtilities.TAG_FILE_EXTENSION, photoExtension);
         intent.putExtra(CameraMediaUtilities.TAG_USE_FLASH, true);
@@ -794,7 +798,28 @@ public class CameraMediaUtilities {
             if (requestcode == TAG_TAKE_PICTURE_WITH_CAMERA
                     && resultcode == activity.RESULT_OK) {
                 if(data == null){
-                    startCropping(takePhotoUri, takePhotoUri);
+                    if(optionsAndFlags.shouldCropPhoto) {
+                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+                            File path = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "photo");
+                            if (!path.exists()) path.mkdirs();
+                            File imageFile = new File(path, photoName);
+                            Uri sourceUri = Uri.fromFile(imageFile);
+                            startCropping(sourceUri, sourceUri);
+                        } else {
+                            startCropping(takePhotoUri, takePhotoUri);
+                        }
+                    } else {
+                        String pathUri = takePhotoUri.getPath();
+                        URI javaUri = StringUtilities.convertStringToJavaUri(pathUri);
+                        Uri androidUriUri = StringUtilities.convertStringToAndroidUri(pathUri);
+
+                        CameraMediaUtilities.PhotoObject photoObject = new CameraMediaUtilities.PhotoObject();
+                        photoObject.androidUri = androidUriUri;
+                        photoObject.javaUri = javaUri;
+                        photoObject.stringPath = pathUri;
+                        photoObject.photoFile = fileToPassAround;
+                        listener.onTaskComplete(photoObject, TAG_RETURN_IMAGE_URL);
+                    }
                 } else {
                     listener.onTaskComplete(ERROR_STRING, TAG_PHOTO_UNKNOWN_ERROR);
                 }
@@ -812,12 +837,26 @@ public class CameraMediaUtilities {
                         fileToPassAround = new File(
                                 StringUtilities.convertAndroidUriToString(resultUri));
                     }
-                    tempFile = File.createTempFile("pgmac_photo", ".jpg", context.getCacheDir());
+                    tempFile = File.createTempFile(context.getPackageName()+ "_temp_image", ".jpg", context.getCacheDir());
                     FileUtilities.copyFile(fileToPassAround, tempFile);
                     resultUri = StringUtilities.convertJavaURIToAndroidUri(tempFile.toURI());
                     tempFile.deleteOnExit();
                 } catch (Exception e){}
-                startCropping(resultUri, resultUri);
+
+                if(optionsAndFlags.shouldCropPhoto) {
+                    startCropping(resultUri, resultUri);
+                } else {
+                    String pathUri = resultUri.getPath();
+                    URI javaUri = StringUtilities.convertStringToJavaUri(pathUri);
+                    Uri androidUriUri = StringUtilities.convertStringToAndroidUri(pathUri);
+
+                    CameraMediaUtilities.PhotoObject photoObject = new CameraMediaUtilities.PhotoObject();
+                    photoObject.androidUri = androidUriUri;
+                    photoObject.javaUri = javaUri;
+                    photoObject.stringPath = pathUri;
+                    photoObject.photoFile = fileToPassAround;
+                    listener.onTaskComplete(photoObject, TAG_RETURN_IMAGE_URL);
+                }
             }
 
             //Video is from Recording (Video)
@@ -828,6 +867,7 @@ public class CameraMediaUtilities {
             //Picture is from self photo (I refuse to call it a selfie)
             else if(requestcode == TAG_TAKE_SELF_PHOTO) {
                 try {
+                    // TODO: 2017-11-16 will need to replace this code with regards to api 24+
                     String androidUri = data.getStringExtra(PGMacUtilitiesConstants.TAG_SELF_PHOTO_URI);
                     Uri uri = StringUtilities.convertStringToAndroidUri(androidUri);
                     if(uri != null){
@@ -991,11 +1031,15 @@ public class CameraMediaUtilities {
      */
     public Uri generateImageUri(Context mContext){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
-            fileToPassAround = FileUtilities.generateFileForImage(userSentPathToFile,
-                    userSentNameOfFile, photoFileExtension.photoExtensionName);
-            takePhotoUri = FileProvider.getUriForFile(context, fileProviderStr, fileToPassAround);
+
+            File path = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "photo");
+            if (!path.exists()) path.mkdirs();
+            photoName = "image_" + new Date().getTime();
+            fileToPassAround = new File(path, photoName);
+            takePhotoUri = FileProvider.getUriForFile(activity, fileProviderStr, fileToPassAround);
+
         } else {
-            fileToPassAround = FileUtilities.generateFileForImage(userSentPathToFile,
+            fileToPassAround = FileUtilities.generateFileForImage(mContext,
                     userSentNameOfFile, photoFileExtension.photoExtensionName);
             takePhotoUri = FileUtilities.convertFileToUri(fileToPassAround);
         }
@@ -1016,15 +1060,13 @@ public class CameraMediaUtilities {
         }
         Uri vidUri = null;
         String nameOfFile = userSentNameOfFile;
-        String myPath = userSentPathToFile;
+        //String myPath = userSentPathToFile;
 
         File file = null;
         try {
-            file = new File(myPath,
-                    nameOfFile +
-                    "_" +
-                    DateUtilities.getCurrentDateLong() +
-                    videoFileExtension.videoExtensionName);
+            String tempName = nameOfFile + "_" + DateUtilities.getCurrentDateLong();
+            file = File.createTempFile(tempName, videoFileExtension.videoExtensionName,
+                    context.getExternalFilesDir(Environment.DIRECTORY_MOVIES));
         } catch (Exception e){}
         if(file == null){
             return null;

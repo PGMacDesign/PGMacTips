@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.util.Date;
 
 import static com.pgmacdesign.pgmacutilities.utilities.StringUtilities.getDataColumn;
 
@@ -298,48 +299,6 @@ public class FileUtilities {
     }
 
     /**
-     * Generate an ImageURI
-     * @param mContext
-     * @return
-     */
-    public static File generateFileForImage(Context mContext){
-        return (generateFileForImage(mContext, null, null));
-    }
-
-    /**
-     * Overloaded method, generate the Image URI with more control over name and type
-     * @param mContext Context
-     * @param fileName The file name (IE picture_001)
-     * @param fileType The file type (IE .png or .jpg)
-     * @return
-     */
-    public static File generateFileForImage(Context mContext, String fileName, String fileType){
-        if(mContext == null){
-            return null;
-        }
-        if(fileType == null){
-            fileType = ".png";
-        }
-        if(!fileType.substring(0,1).equalsIgnoreCase(".")){
-            fileType = "." + fileType;
-        }
-        if(fileName == null){
-            fileName = "MyFile";
-        }
-        fileName = StringUtilities.removeSpaces(fileName);
-        String state = Environment.getExternalStorageState();
-        File file;
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            file = new File(Environment.getExternalStorageDirectory() + "/DCIM/", fileName +
-                    "_" + DateUtilities.getCurrentDateLong() + fileType);
-        }else {
-            file = new File(mContext.getFilesDir() , fileName +
-                    DateUtilities.getCurrentDateLong() + fileType);
-        }
-        return file;
-    }
-
-    /**
      * Quick println in the logcat and write it to the file under downloads
      * @param myObject The string to print (or double, int, whatever)
      * @param <E> Extends object
@@ -395,7 +354,7 @@ public class FileUtilities {
      * @param fileName
      * @param fileType
      * @return
-     */
+     */ // TODO: 2017-11-16 May need to refactor this out
     public static File generateFileForImage(@NonNull String filePath, @NonNull String fileName,
                                             @NonNull String fileType){
         fileName = StringUtilities.removeSpaces(fileName);
@@ -404,6 +363,23 @@ public class FileUtilities {
         try {
             file = new File(filePath, fileName + "_" + DateUtilities.getCurrentDateLong()
                     + fileType);
+        } catch (Exception e){}
+        return file;
+    }
+
+    public static File generateFileForImage(@NonNull Context context,
+                                            String imageName,
+                                            String imageExtension){
+        File file = null;
+        if(StringUtilities.isNullOrEmpty(imageExtension)){
+            imageExtension = ".jpg";
+        }
+        if(StringUtilities.isNullOrEmpty(imageName)){
+            imageName = "image_" + new Date().getTime();
+        }
+        try {
+            file = File.createTempFile(imageName, imageExtension,
+                    context.getExternalFilesDir(Environment.DIRECTORY_PICTURES));
         } catch (Exception e){}
         return file;
     }

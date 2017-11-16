@@ -790,7 +790,7 @@ public class ImageUtilities {
 
         @Override
         protected File doInBackground(Void... params) {
-            File file = FileUtilities.generateFileForImage(context);
+            File file = FileUtilities.generateFileForImage(context, null, null);
             int count;
             this.startTime = DateUtilities.getCurrentDateLong();
             try {
