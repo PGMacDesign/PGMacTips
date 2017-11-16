@@ -24,6 +24,8 @@ compile ('com.github.PGMacDesign:PGMacUtilities:0.0.35')
 
 ```
 
+Having trouble with Jitpack? [This link](https://jitpack.io/#pgmacdesign/PGMacUtilities) here will show what is going on with the current build as well as give you instructions on integrating Jitpack into your project. 
+
 ## Nested Libraries
 
 This library utilizes many others within it. Below is a listing of all of the nested libraries this project utilizes under the hood. If you wish to use a class, method, or function that uses one of these other libraries, make sure to include it in your project.
