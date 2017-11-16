@@ -1,5 +1,6 @@
 package com.pgmacdesign.pgmacutilities.utilities;
 
+import android.app.Activity;
 import android.graphics.Point;
 import android.os.Handler;
 import android.os.Looper;
@@ -31,6 +32,37 @@ public class ViewUtilities {
     public static final int VIEW_FINISHED_DRAWING =
             PGMacUtilitiesConstants.TAG_VIEW_FINISHED_DRAWING;
 
+    /**
+     * Alter a view visibility after X milliseconds
+     * @param activity Activity to call upon. Preferred method over excluding this
+     * @param view View to alter
+     * @param visibility Visibility {@link View#GONE}, {@link View#INVISIBLE}, {@link View#VISIBLE}
+     * @param millisecondsToWait Number of milliseconds to wait before making alteration
+     */
+    public static void alterViewVisibility(@NonNull final Activity activity,
+                                           @NonNull final View view,
+                                           final int visibility,
+                                           long millisecondsToWait) {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        view.setVisibility(visibility);
+                    }
+                });
+            }
+        }, millisecondsToWait);
+    }
+
+    /**
+     * Alter a view visibility after X milliseconds
+     * @param view View to alter
+     * @param visibility Visibility {@link View#GONE}, {@link View#INVISIBLE}, {@link View#VISIBLE}
+     * @param millisecondsToWait Number of milliseconds to wait before making alteration
+     */
     public static void alterViewVisibility(@NonNull final View view,
                                            final int visibility,
                                            long millisecondsToWait) {

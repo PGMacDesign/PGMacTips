@@ -16,9 +16,13 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -135,6 +139,62 @@ public class DialogUtilities {
         return mDialog;
     }
 
+    //Web Dialog
+    public static AlertDialog buildWebDialog(@NonNull final Context context,
+                                             @NonNull final DialogFinishedListener listener,
+                                             @NonNull final String webUrlToLoad,
+                                             @Nullable final String title) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        if(StringUtilities.isNullOrEmpty(title)){
+            builder.setTitle("");
+        } else {
+            builder.setTitle(title);
+        }
+        final WebView webView = new WebView(context);
+        webView.setWebViewClient(new WebViewClient(){
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                webView.loadUrl(webUrlToLoad);
+                return true;
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                webView.loadUrl(webUrlToLoad);
+                return true;
+            }
+        });
+//        try {
+//            webView.setWebChromeClient(new WebChromeClient(){
+//                @Override
+//                public void onProgressChanged(WebView view, int newProgress) {
+//                    try {
+//
+//                    } catch (Exception e){
+//                        e.printStackTrace();
+//                        //Will trigger if user has chrome disabled
+//                    }
+//                }
+//            });
+//        } catch (Exception e){
+//            e.printStackTrace();
+//            //Will trigger if user has chrome disabled
+//        }
+        webView.loadUrl(webUrlToLoad);
+        webView.setForegroundGravity(
+                Gravity.CENTER_HORIZONTAL|Gravity.CENTER_HORIZONTAL|Gravity.CENTER);
+        builder.setView(webView);
+        builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                listener.dialogFinished(null, DialogUtilities.SUCCESS_RESPONSE);
+            }
+        });
+        builder.setCancelable(false);
+        return builder.create();
+    }
+
     //Date Picker Dialog  // TODO: 2017-10-18  
 //    public static DatePickerDialog buildNumberPickerDialog(final Context context,
 //                                                           final DialogFinishedListener listener,
@@ -237,7 +297,7 @@ public class DialogUtilities {
         myBuilder.setNegativeButton(noText, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                listener.dialogFinished(false, SUCCESS_RESPONSE);
+                listener.dialogFinished(false, FAIL_RESPONSE);
             }
         });
         myBuilder.setMessage(message);
