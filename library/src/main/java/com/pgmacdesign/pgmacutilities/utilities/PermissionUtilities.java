@@ -45,6 +45,9 @@ public class PermissionUtilities {
     //Camera
     private static final int MY_PERMISSIONS_REQUEST_CAMERA =
             PGMacUtilitiesConstants.TAG_PERMISSIONS_REQUEST_CAMERA;
+    //Gallery
+//    private static final int MY_PERMISSIONS_REQUEST_GALLERY =
+//            PGMacUtilitiesConstants.TAG_PERMISSIONS_REQUEST_GALLERY;
     //Contacts
     private static final int MY_PERMISSIONS_REQUEST_CONTACTS =
             PGMacUtilitiesConstants.TAG_PERMISSIONS_REQUEST_CONTACTS;
@@ -83,7 +86,7 @@ public class PermissionUtilities {
      * @param activity Activity in context
      * @param perms Permissions array being requested
      */
-    public static void PermissionsRequestShortcut(Activity activity,
+    public static void permissionsRequestShortcut(Activity activity,
                                                   PermissionUtilities.permissionsEnum[] perms){
         getInstance(activity).startPermissionsRequest(perms);
     }
@@ -96,7 +99,7 @@ public class PermissionUtilities {
      * @param activity Activity in context
      * @param perms Permissions array being requested
      */
-    public static boolean PermissionsRequestShortcutReturn(
+    public static boolean permissionsRequestShortcutReturn(
             Activity activity,
             PermissionUtilities.permissionsEnum[] perms){
         return (getInstance(activity).startPermissionsRequest(perms));
@@ -108,7 +111,7 @@ public class PermissionUtilities {
      * @param activity Activity in context
      * @param perms Permissions array being requested
      */
-    public static boolean CheckGrantedPermissions(Activity activity,
+    public static boolean checkGrantedPermissions(Activity activity,
                                                   PermissionUtilities.permissionsEnum[] perms){
         return (getInstance(activity).checkGrantedPermissions(perms));
     }
@@ -133,6 +136,9 @@ public class PermissionUtilities {
 
 
     public enum permissionsEnum {
+//        ACCESS_COARSE_LOCATION("Access Coarse Location", "Used in determining your location.",
+//                Manifest.permission.R,
+//                MY_PERMISSIONS_ACCESS_COARSE_LOCATION, false),
         ACCESS_COARSE_LOCATION("Access Coarse Location", "Used in determining your location.",
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 MY_PERMISSIONS_ACCESS_COARSE_LOCATION, false),

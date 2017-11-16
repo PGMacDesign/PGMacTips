@@ -23,7 +23,7 @@ public class PGMacUtilitiesConstants {
 
     //Request codes used for permission requests
     public static final int TAG_PERMISSIONS_ACCESS_NETWORK_STATE = 4398;
-    public static final int MY_PERMISSIONS_REQUEST_CONTACTS = 4399;
+    //public static final int TAG_PERMISSIONS_REQUEST_GALLERY = 4399;
     public static final int TAG_PERMISSIONS_REQUEST_BASE_CALL = 4400;
     public static final int TAG_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 4401;
     public static final int TAG_PERMISSIONS_REQUEST_CAMERA = 4402;

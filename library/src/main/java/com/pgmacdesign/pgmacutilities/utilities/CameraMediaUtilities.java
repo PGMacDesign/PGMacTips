@@ -13,11 +13,13 @@ import android.hardware.camera2.CameraManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.FileUriExposedException;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmacutilities.enhancedphotoclasses.TakePhotoActivity;
@@ -41,20 +43,18 @@ public class CameraMediaUtilities {
      private CameraMediaUtilities cameraUtilities;
 
      2) In the init method somewhere. Adjust the true params as needed
-        cameraUtilities = new CameraMediaUtilities(NAME_OF_ACTIVITY.this,
-            NAME_OF_ACTIVITY.this, true, true, NAME_OF_ACTIVITY.this);
+        cameraUtilities = new CameraMediaUtilities(CONTEXT, ACTIVITY, OnTaskCompleteListener);
 
-        Or, like this if using a photo from the web
-
-        cameraUtilities = new CameraMediaUtilities(NAME_OF_ACTIVITY.this,
-            NAME_OF_ACTIVITY.this, true, STRING_WEB_IMAGE_URL_GOES_HERE, NAME_OF_ACTIVITY.this);
+        To set custom options as well as if you are going to download an image from the web,
+        you need to set the CameraUtilityOptionsAndFlags object. This can either be done within
+        the constructor or as its own setter.
 
      3) It's own method. If already in class, make sure that the if check is near the top
      @Override
      protected void onActivityResult(int requestcode, int resultcode, Intent data) {
 
-        if(CameraMediaUtilities.doesCodeBelongToUtility(requestcode)){
-            cameraUtilities.afterOnActivityResult(requestcode, resultcode, data);
+        if(CameraMediaUtilities.doesCodeBelongToUtility(requestCode)){
+            cameraUtilities.afterOnActivityResult(requestCode, resultCode, data);
             return;
         }
      }
@@ -65,10 +65,6 @@ public class CameraMediaUtilities {
                 CameraMediaUtilities.SourceType.CAMERA);
 
      5) Lastly, need to implement the onTaskComplete listener
-            @Override
-            public void onTaskComplete(Object result) {
-                //Do stuff here
-            }
 
             @Override
             public void onTaskComplete(Object result, int customTag) {
@@ -112,6 +108,9 @@ public class CameraMediaUtilities {
                     }
                 }
             }
+
+        6) NOTE! Important! If you are using API Level 24+, you need to set a File Provider
+            String or else you will see a FileURIExposedException
 
      */
     //Vars
@@ -158,7 +157,7 @@ public class CameraMediaUtilities {
     //Variables set by Flags and Options
     private boolean shouldUploadPhoto, shouldDeletePhoto, useFrontFacingCamera;
     private CameraUtilityOptionsAndFlags optionsAndFlags;
-    private String userSentNameOfFile, userSentPathToFile, photoExtension;
+    private String userSentNameOfFile, userSentPathToFile, photoExtension, fileProviderStr;
     private Integer maxDurationForVideo;
 
     //Misc Variables
@@ -270,8 +269,10 @@ public class CameraMediaUtilities {
         private boolean useDefaultToFrontFacingCamera;
         private Dialog alertDialog;
         private String webImageUrlToDownload;
+        private UCrop.Options cropOptions;
         private SupportedVideoFileExtensions videoExtension;
         private SupportedPhotoFileExtensions photoExtension;
+        private String fileProviderStr;
 
         public CameraUtilityOptionsAndFlags(Context context){
             this.maxVideoRecordingTime = null;
@@ -281,12 +282,14 @@ public class CameraMediaUtilities {
             this.shouldUploadPhoto = false;
             this.shouldDeletePhotoAfter = false;
             this.useDefaultToFrontFacingCamera = false;
+            this.fileProviderStr = null;
             //Removed on 2017-07-05 Due to problems with compiling
             //this.alertDialog = PGMacCustomProgressBar.buildSVGDialog(context);
             this.alertDialog = new AlertDialog.Builder(context).create();
             this.webImageUrlToDownload = null;
             this.videoExtension = SupportedVideoFileExtensions.MP4;
             this.photoExtension = SupportedPhotoFileExtensions.PNG;
+            this.cropOptions = CameraMediaUtilities.buildUCropOptions();
         }
 
         /**
@@ -312,7 +315,9 @@ public class CameraMediaUtilities {
                                             boolean useDefaultToFrontFacingCamera,
                                             AlertDialog alertDialog, String webImageUrlToDownload,
                                             SupportedVideoFileExtensions videoExtension,
-                                            SupportedPhotoFileExtensions photoExtension) {
+                                            SupportedPhotoFileExtensions photoExtension,
+                                            UCrop.Options cropOptions,
+                                            String fileProviderStr) {
             this.videoExtension = videoExtension;
             this.photoExtension = photoExtension;
             this.maxVideoRecordingTime = maxVideoRecordingTime;
@@ -324,6 +329,16 @@ public class CameraMediaUtilities {
             this.useDefaultToFrontFacingCamera = useDefaultToFrontFacingCamera;
             this.alertDialog = alertDialog;
             this.webImageUrlToDownload = webImageUrlToDownload;
+            this.cropOptions = cropOptions;
+            this.fileProviderStr = fileProviderStr;
+        }
+
+        public void setfileProviderStr(String fileProviderStr) {
+            this.fileProviderStr = fileProviderStr;
+        }
+
+        public void setCropOptions(UCrop.Options cropOptions) {
+            this.cropOptions = cropOptions;
         }
 
         public boolean isShouldCropPhoto() {
@@ -336,6 +351,14 @@ public class CameraMediaUtilities {
 
         public SupportedVideoFileExtensions getVideoExtension() {
             return videoExtension;
+        }
+
+        public UCrop.Options getCropOptions() {
+            return cropOptions;
+        }
+
+        public String getFileProviderStr() {
+            return fileProviderStr;
         }
 
         public void setVideoExtension(SupportedVideoFileExtensions videoExtension) {
@@ -432,6 +455,20 @@ public class CameraMediaUtilities {
         this.optionsAndFlags = new CameraUtilityOptionsAndFlags(context);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public CameraMediaUtilities(@NonNull Context context, @NonNull Activity activity,
+                                @NonNull OnTaskCompleteListener listener,
+                                @NonNull String fileProviderStr){
+        if(context == null){
+            return;
+        }
+        this.context = context;
+        this.activity = activity;
+        this.listener = listener;
+        this.optionsAndFlags = new CameraUtilityOptionsAndFlags(context);
+        this.optionsAndFlags.fileProviderStr = fileProviderStr;
+    }
+
     /**
      * Overloaded method to allow for options and flags to be passed in
      * @param context
@@ -446,6 +483,7 @@ public class CameraMediaUtilities {
         this.listener = listener;
         this.optionsAndFlags = optionsAndFlags;
     }
+
     //Setter for optionsAndFlags
     public void setCameraUtilityOptionsAndFlags(@NonNull CameraUtilityOptionsAndFlags optionsAndFlags){
         this.optionsAndFlags = optionsAndFlags;
@@ -494,8 +532,11 @@ public class CameraMediaUtilities {
     /**
      * Starts the photo process depending on what is passed in
      * @param typeOfPicture Type of action to be taken depending on the SourceType
+     * @throws FileUriExposedException If you are targeting {@link Build.VERSION_CODES#N} or higher,
+     * fileProviderStr is required. For more info on this, please see this link:
+     * https://stackoverflow.com/questions/38200282/android-os-fileuriexposedexception-file-storage-emulated-0-test-txt-exposed
      */
-    public void startPhotoProcess(SourceType typeOfPicture){
+    public void startPhotoProcess(SourceType typeOfPicture) throws FileUriExposedException{
         //First request permissions
         boolean canUseCamera, canUserStorage;
         canUseCamera = getCameraPermissions();
@@ -513,6 +554,7 @@ public class CameraMediaUtilities {
         this.maxDurationForVideo = optionsAndFlags.getMaxVideoRecordingTime();
         this.photoFileExtension = optionsAndFlags.getPhotoExtension();
         this.videoFileExtension = optionsAndFlags.getVideoExtension();
+        this.fileProviderStr = optionsAndFlags.getFileProviderStr();
 
         if(!SupportedPhotoFileExtensions.isSupportedType(photoFileExtension.photoExtensionName)){
             photoFileExtension = SupportedPhotoFileExtensions.PNG;
@@ -874,7 +916,10 @@ public class CameraMediaUtilities {
      */
     public void startCropping(Uri sourceUri, Uri destinationUri){
         //Build options
-        options = CameraMediaUtilities.buildUCropOptions();
+        options = optionsAndFlags.cropOptions;
+        if(options == null) {
+            options = CameraMediaUtilities.buildUCropOptions();
+        }
 
         try {
             UCrop cropping = UCrop.of(sourceUri, destinationUri);
@@ -924,7 +969,7 @@ public class CameraMediaUtilities {
      *                     regular colors
      * @return Return UCrop.Options object
      */
-    private static UCrop.Options buildUCropOptions(String frameColor, String statusBarColor,
+    public static UCrop.Options buildUCropOptions(String frameColor, String statusBarColor,
                                                              String toolbarColor){
         int frameColorInt, statusBarColorInt, toolbarColorInt;
 
@@ -936,7 +981,8 @@ public class CameraMediaUtilities {
     }
     //Overloaded method
     private static UCrop.Options buildUCropOptions(){
-        return (CameraMediaUtilities.buildUCropOptions(null, null, null));
+        return (CameraMediaUtilities.buildUCropOptions(
+                null, null, null));
     }
     /**
      * Generate an ImageUri
@@ -944,9 +990,15 @@ public class CameraMediaUtilities {
      * @return
      */
     public Uri generateImageUri(Context mContext){
-        fileToPassAround = FileUtilities.generateFileForImage(userSentPathToFile,
-                userSentNameOfFile, photoFileExtension.photoExtensionName);
-        takePhotoUri = FileUtilities.convertFileToUri(fileToPassAround);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+            fileToPassAround = FileUtilities.generateFileForImage(userSentPathToFile,
+                    userSentNameOfFile, photoFileExtension.photoExtensionName);
+            takePhotoUri = FileProvider.getUriForFile(context, fileProviderStr, fileToPassAround);
+        } else {
+            fileToPassAround = FileUtilities.generateFileForImage(userSentPathToFile,
+                    userSentNameOfFile, photoFileExtension.photoExtensionName);
+            takePhotoUri = FileUtilities.convertFileToUri(fileToPassAround);
+        }
         return takePhotoUri;
     }
 
@@ -977,9 +1029,14 @@ public class CameraMediaUtilities {
         if(file == null){
             return null;
         }
-        vidUri = Uri.fromFile(file);
-        fileToPassAround = file;
 
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+            vidUri = FileProvider.getUriForFile(context, fileProviderStr, file);
+        } else {
+            vidUri = Uri.fromFile(file);
+        }
+
+        fileToPassAround = file;
         takeVideoUri = vidUri;
         return vidUri;
     }
