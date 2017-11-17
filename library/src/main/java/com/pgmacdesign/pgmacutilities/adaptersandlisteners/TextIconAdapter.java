@@ -2,8 +2,8 @@ package com.pgmacdesign.pgmacutilities.adaptersandlisteners;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -64,14 +64,23 @@ public class TextIconAdapter extends ArrayAdapter<SimpleTextIconObject>{
     }
 
     private void init(){
-        this.textColor = ContextCompat.getColor(context, R.color.black);
-        this.backgroundColor = ContextCompat.getColor(context, R.color.white);
+        try {
+            this.textColor = ContextCompat.getColor(context, android.R.color.black);
+            this.backgroundColor = ContextCompat.getColor(context, android.R.color.white);
+        } catch (Resources.NotFoundException e){
+            this.textColor = R.color.black;
+            this.backgroundColor = R.color.white;
+        }
         this.backgroundDrawable = null;
         this.textSize = null;
     }
 
     public void setTextColor(int textColor) {
-        this.textColor = ContextCompat.getColor(context, textColor);
+        try {
+            this.textColor = ContextCompat.getColor(context, textColor);
+        } catch (Resources.NotFoundException e){
+            this.textColor = textColor;
+        }
     }
 
     public void setTextSize(float textSize) {
@@ -79,7 +88,12 @@ public class TextIconAdapter extends ArrayAdapter<SimpleTextIconObject>{
     }
 
     public void setBackgroundColor(int backgroundColor) {
-        this.backgroundColor = ContextCompat.getColor(context, backgroundColor);
+        try {
+            this.backgroundColor = ContextCompat.getColor(context, backgroundColor);
+        } catch (Resources.NotFoundException e){
+            this.backgroundColor = backgroundColor;
+        }
+
     }
 
     public void setBackgroundDrawable(Drawable backgroundDrawable) {
@@ -101,6 +115,7 @@ public class TextIconAdapter extends ArrayAdapter<SimpleTextIconObject>{
         ImageView simple_text_icon_item_iv;
         TextView simple_text_icon_item_tv;
         RelativeLayout simple_text_icon_item_root;
+        View simple_text_icon_item_separator;
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -117,6 +132,8 @@ public class TextIconAdapter extends ArrayAdapter<SimpleTextIconObject>{
                     R.id.simple_text_icon_item_iv);
             holder.simple_text_icon_item_root = (RelativeLayout) convertView.findViewById(
                     R.id.simple_text_icon_item_root);
+            holder.simple_text_icon_item_separator = (View) convertView.findViewById(
+                    R.id.simple_text_icon_item_separator);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -126,7 +143,7 @@ public class TextIconAdapter extends ArrayAdapter<SimpleTextIconObject>{
             holder.simple_text_icon_item_tv.setTextColor(textColor);
         }
         if(this.backgroundColor != null){
-            holder.simple_text_icon_item_root.setBackgroundColor(textColor);
+            holder.simple_text_icon_item_root.setBackgroundColor(backgroundColor);
         }
         if(this.backgroundDrawable != null){
             holder.simple_text_icon_item_root.setBackground(backgroundDrawable);
@@ -137,6 +154,13 @@ public class TextIconAdapter extends ArrayAdapter<SimpleTextIconObject>{
 
         if(sdo == null){
             return convertView;
+        }
+
+        if(position == (getCount() - 1)){
+            //At the end
+            holder.simple_text_icon_item_separator.setVisibility(View.GONE);
+        } else {
+            holder.simple_text_icon_item_separator.setVisibility(View.VISIBLE);
         }
 
         if(callbackTag != null &&  clickCallbackLink != null){

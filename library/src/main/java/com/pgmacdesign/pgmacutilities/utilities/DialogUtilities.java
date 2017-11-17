@@ -5,12 +5,14 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.InputType;
@@ -26,12 +28,17 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.pgmacdesign.pgmacutilities.R;
+import com.pgmacdesign.pgmacutilities.adaptersandlisteners.CustomClickCallbackLink;
+import com.pgmacdesign.pgmacutilities.adaptersandlisteners.TextIconAdapter;
+import com.pgmacdesign.pgmacutilities.datamodels.SimpleTextIconObject;
+import com.pgmacdesign.pgmacutilities.misc.PGMacUtilitiesConstants;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -425,6 +432,145 @@ public class DialogUtilities {
         TimePickerDialog timePicker = new CustomTimePickerDialog(
                 context, tsl, hourStart, minuteStart, checkIs24, hourInterval, minuteInterval);
         return timePicker;
+    }
+
+    public static Dialog buildSimpleTextIconDialog(@NonNull final Context context,
+                                                   @NonNull final DialogFinishedListener listener,
+                                                   @NonNull List<SimpleTextIconObject> simpleTextIconObjects){
+        return buildSimpleTextIconDialog(context, listener, simpleTextIconObjects, null,
+                null, null, null);
+    }
+
+    public static Dialog buildSimpleTextIconDialog(@NonNull final Context context,
+                                                   @NonNull final DialogFinishedListener listener,
+                                                   @NonNull List<SimpleTextIconObject> simpleTextIconObjects,
+                                                   @Nullable String title, @Nullable String message,
+                                                   @Nullable Integer backgroundColor, @Nullable Integer textColor){
+        Dialog d = new TextIconSelectDialog(context, listener, title, message,
+                simpleTextIconObjects, backgroundColor, textColor);
+        return d;
+    }
+
+    private static class TextIconSelectDialog extends Dialog {
+
+        //Objects
+        private Context context;
+        private String title, message;
+        private DialogFinishedListener listener;
+        private List<SimpleTextIconObject> mListObjects;
+        private Integer optionalBackgroundColor, optionalTextColor;
+
+        //UI
+        private RelativeLayout simple_text_image_dialog_root;
+        private ListView simple_text_image_dialog_title_list_view;
+        private TextView simple_text_image_dialog_message_tv, simple_text_image_dialog_title_tv;
+
+        TextIconSelectDialog(@NonNull final Context context,
+                             @NonNull final DialogFinishedListener listener,
+                             @Nullable String title, @Nullable String message,
+                             @NonNull List<SimpleTextIconObject> mListObjects,
+                             @Nullable Integer optionalBackgroundColor,
+                             @Nullable Integer optionalTextColor){
+            super(context);
+            this.title = title;
+            this.message = message;
+            this.context = context;
+            this.listener = listener;
+            this.mListObjects = mListObjects;
+            this.optionalTextColor =optionalTextColor;
+            this.optionalBackgroundColor = optionalBackgroundColor;
+        }
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            if(StringUtilities.isNullOrEmpty(title)){
+                this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            }
+            setCanceledOnTouchOutside(false);
+            setContentView(R.layout.simple_text_image_dialog);
+
+            checkForNulls();
+            initUIFields();
+            setUIFields();
+            setAdapters();
+        }
+
+        private void checkForNulls() {
+            if (StringUtilities.isNullOrEmpty(title)) {
+                this.title = "";
+            }
+            if (StringUtilities.isNullOrEmpty(message)) {
+                this.message = "";
+            }
+        }
+
+        private void initUIFields() {
+            simple_text_image_dialog_root = (RelativeLayout) this.findViewById(
+                    R.id.simple_text_image_dialog_root);
+            simple_text_image_dialog_title_list_view = (ListView) this.findViewById(
+                    R.id.simple_text_image_dialog_title_list_view);
+            simple_text_image_dialog_title_tv = (TextView) this.findViewById(
+                    R.id.simple_text_image_dialog_title_tv);
+            simple_text_image_dialog_message_tv = (TextView) this.findViewById(
+                    R.id.simple_text_image_dialog_message_tv);
+        }
+
+        private void setUIFields() {
+            simple_text_image_dialog_title_tv.setText(title);
+            simple_text_image_dialog_message_tv.setText(message);
+
+            if(this.optionalTextColor != null){
+                try {
+                    this.simple_text_image_dialog_title_tv.setTextColor(ContextCompat.getColor(
+                            context, optionalTextColor));
+                    this.simple_text_image_dialog_message_tv.setTextColor(ContextCompat.getColor(
+                            context, optionalTextColor));
+                } catch (Resources.NotFoundException e){
+                    this.simple_text_image_dialog_title_tv.setTextColor(optionalTextColor);
+                    this.simple_text_image_dialog_message_tv.setTextColor(optionalTextColor);
+                }
+            }
+            if(this.optionalBackgroundColor != null){
+                try {
+                    this.simple_text_image_dialog_root.setBackgroundColor(ContextCompat.getColor(
+                            context, optionalBackgroundColor));
+                } catch (Resources.NotFoundException e){
+                    this.simple_text_image_dialog_root.setBackgroundColor(optionalBackgroundColor);
+                }
+            }
+        }
+
+        private void setAdapters(){
+            TextIconAdapter adapter = new TextIconAdapter(context, R.layout.simple_text_icon_item, mListObjects, new CustomClickCallbackLink() {
+                @Override
+                public void itemClicked(@Nullable Object object, @Nullable Integer customTag, @Nullable Integer positionIfAvailable) {
+                    if(customTag != null){
+                        if(customTag == PGMacUtilitiesConstants.TAG_SIMPLE_TEXT_ICON_ADAPTER_CLICK){
+                            TextIconSelectDialog.this.dismiss();
+                            listener.dialogFinished(object,
+                                    PGMacUtilitiesConstants.TAG_SIMPLE_TEXT_ICON_ADAPTER_CLICK);
+                        }
+                    }
+                }
+            }, PGMacUtilitiesConstants.TAG_SIMPLE_TEXT_ICON_ADAPTER_CLICK);
+            try {
+                adapter.setBackgroundColor(ContextCompat.getColor(context,
+                        optionalBackgroundColor));
+            } catch (Resources.NotFoundException e){
+                adapter.setBackgroundColor(optionalBackgroundColor);
+            }
+            try {
+                adapter.setTextColor(ContextCompat.getColor(context,
+                        optionalTextColor));
+            } catch (Resources.NotFoundException e){
+                adapter.setTextColor(optionalTextColor);
+            }
+
+            simple_text_image_dialog_title_list_view.setAdapter(adapter);
+        }
     }
 
     //3 Button Dialog

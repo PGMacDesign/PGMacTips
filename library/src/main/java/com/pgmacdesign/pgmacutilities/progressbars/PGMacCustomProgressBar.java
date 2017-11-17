@@ -48,10 +48,15 @@ public class PGMacCustomProgressBar extends ProgressDialog {
         WindowManager.LayoutParams lp = window.getAttributes();
         lp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         window.setAttributes(lp);
-        window.setBackgroundDrawable(new ColorDrawable(
-                ContextCompat.getColor(context, R.color.Transparent)
-        ));
-
+        try {
+            window.setBackgroundDrawable(new ColorDrawable(
+                    ContextCompat.getColor(context, R.color.Transparent)
+            ));
+        } catch (Resources.NotFoundException e){
+            window.setBackgroundDrawable(new ColorDrawable(
+            ContextCompat.getColor(context, android.R.color.transparent)
+            ));
+        }
 
         return customAlertDialog;
     }

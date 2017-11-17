@@ -878,6 +878,71 @@ public class ImageUtilities {
         }
     }
 
+    /**
+     * Determine if a bitmap is too large as compared to passed param
+     * @param bmp Bitmap to check
+     * @param desiredSizeInBytes Desired size (in Bytes) to check against
+     * @return boolean, if true, bitmap is larger than the desired size, else, it is not.
+     */
+    public static boolean isImageTooLarge(@NonNull Bitmap bmp, long desiredSizeInBytes){
+        long bitmapSize = (bmp.getRowBytes() * bmp.getHeight());
+        float shrinkFactor = desiredSizeInBytes / bitmapSize;
+        if(shrinkFactor >= 1){
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Determine the float value needed to resize the image so that it is less in size (Bytes)
+     * than the value passed
+     * @param bmp Bitmap to check
+     * @param desiredSizeInBytes Desired size in bytes of the image
+     * @return float value to resize. IE, if 0.34 is returned, the bitmap in question needs
+     *         to be shrunk down by 34% to reach the desired size
+     */
+    public static float getImageResizeFactor(@NonNull Bitmap bmp, long desiredSizeInBytes){
+        long bitmapSize = (bmp.getRowBytes() * bmp.getHeight());
+        return (desiredSizeInBytes / bitmapSize);
+    }
+
+    /**
+     * Resize a photo
+     * @param bmp Bitmap to resize
+     * @param factorToDivide Factor to divide by. if (IE) 2 is passed, it will cut the
+     *                       image in half, 10 will cut it down 10x in size
+     * @return Resized bitmap. If it fails, will send back original
+     */
+    public static Bitmap resizePhoto(@NonNull Bitmap bmp, int factorToDivide){
+        if(factorToDivide <= 1){
+            factorToDivide = 2;
+        }
+        try {
+            return Bitmap.createScaledBitmap(bmp, (int)(bmp.getWidth() / factorToDivide),
+                    (int)(bmp.getHeight() / factorToDivide), true);
+        } catch (Exception e){
+            return bmp;
+        }
+    }
+
+    /**
+     * Resize a photo
+     * @param bmp Bitmap to resize
+     * @param factorToMultiply Factor to multiply by. if (IE) 1.5 is passed, it will increase
+     *                         it by 1.5 times. If 0.4 is passed, it will decrease it by
+     *                         40% of its original size.
+     * @return Resized bitmap. If it fails, will send back original
+     */
+    public static Bitmap resizePhoto(@NonNull Bitmap bmp, float factorToMultiply){
+        try {
+            return Bitmap.createScaledBitmap(bmp, (int)(bmp.getWidth() * factorToMultiply),
+                    (int)(bmp.getHeight() * factorToMultiply), true);
+        } catch (Exception e){
+            return bmp;
+        }
+    }
+
     public static void zoomAView() {
         //https://developer.android.com/training/animation/zoom.html
     }
