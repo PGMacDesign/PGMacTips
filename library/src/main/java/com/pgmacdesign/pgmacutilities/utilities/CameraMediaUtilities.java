@@ -975,13 +975,14 @@ public class CameraMediaUtilities {
     }
 
     /**
-     * Build uCrop Options
+     * Build uCrop Options. This assumes you have already parsed the color using correct syntax,
+     * IE, ContextCompat.getColor(context, R.color.BLUE)
      * @param frameColor int color for the frame. Pass -100 to default them to regular colors
      * @param statusBarColor int color for the status bar. Pass -100 to default them to regular colors
      * @param toolbarColor int color for the toolbar. Pass -100 to default them to regular colors
      * @return Return UCrop.Options object
      */
-    private static UCrop.Options buildUCropOptions(int frameColor, int statusBarColor,
+    public static UCrop.Options buildUCropOptions(int frameColor, int statusBarColor,
                                                              int toolbarColor){
         UCrop.Options options = new UCrop.Options();
         options.useSourceImageAspectRatio();
@@ -991,14 +992,35 @@ public class CameraMediaUtilities {
             options.setCropFrameColor(frameColor);
         }
         if(statusBarColor != -100){
-            options.setCropFrameColor(statusBarColor);
+            options.setStatusBarColor(statusBarColor);
         }
         if(toolbarColor != -100){
-            options.setCropFrameColor(toolbarColor);
+            options.setToolbarColor(toolbarColor);
         }
 
         return options;
     }
+
+    public static UCrop.Options buildUCropOptions(@NonNull final Context context,
+                                                   int frameColor, int statusBarColor,
+                                                   int toolbarColor){
+        UCrop.Options options = new UCrop.Options();
+        options.useSourceImageAspectRatio();
+        //https://github.com/Yalantis/uCrop/issues/173
+        //options.withAspectRatio(1, 1);
+        if(frameColor != -100){
+            options.setCropFrameColor(ContextCompat.getColor(context, frameColor));
+        }
+        if(statusBarColor != -100){
+            options.setStatusBarColor(ContextCompat.getColor(context, statusBarColor));
+        }
+        if(toolbarColor != -100){
+            options.setToolbarColor(ContextCompat.getColor(context, toolbarColor));
+        }
+
+        return options;
+    }
+
     /**
      * Build uCrop Options
      * @param frameColor String color for the frame. Pass -100 or null to default them to
@@ -1024,6 +1046,7 @@ public class CameraMediaUtilities {
         return (CameraMediaUtilities.buildUCropOptions(
                 null, null, null));
     }
+
     /**
      * Generate an ImageUri
      * @param mContext
