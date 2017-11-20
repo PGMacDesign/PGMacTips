@@ -118,8 +118,18 @@ public class PGMacUtilitiesConstants {
 	public static final int TAG_MAP_STRING_INTEGER = 4466;
 	public static final int TAG_STRING = 4467;
 	public static final int TAG_SIMPLE_TEXT_ICON_ADAPTER_CLICK = 4468;
-	public static final int TBD4 = 4469;
-	public static final int TBD5 = 4470;
+	public static final int TAG_GENERIC_FILTER_RESULTS = 4469;
+	public static final int TBD0 = 4470;
+    public static final int TBD1 = 4471;
+    public static final int TBD2 = 4472;
+    public static final int TBD3 = 4473;
+    public static final int TBD4 = 4474;
+    public static final int TBD5 = 4475;
+    public static final int TBD6 = 4476;
+    public static final int TBD7 = 4477;
+    public static final int TBD8 = 4478;
+    public static final int TBD9 = 4479;
+    public static final int TBD99 = 4480;
 
     //String Tags
     public static final String TAG_SELF_PHOTO_URI = "tag_self_photo_uri";
