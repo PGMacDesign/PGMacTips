@@ -113,6 +113,26 @@ public class AnimationUtilities {
             YoYo.with(tech).duration(mDuration).playOn(view);
         }
     }
+
+    public static <E extends View> void animateMyView(E view, Long mDuration, Techniques tech){
+        //If the view is null, stop here
+        if(view == null){
+            return;
+        }
+        if(mDuration == null){
+            mDuration = 500L;
+        }
+        //In case something small like 5 is set, this will make it at least a 10th of a second
+        if(mDuration < 100){
+            mDuration = 100L;
+        }
+
+        //If the animation is not null, move forward with the animation
+        if(tech != null){
+            YoYo.with(tech).duration(mDuration).playOn(view);
+        }
+    }
+
     /**
      * Animates a holder within a recyclerview
      * @param holder The holder to animate
