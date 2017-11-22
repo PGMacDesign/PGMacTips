@@ -146,7 +146,7 @@ public class MultipurposeChoiceDialog extends AlertDialog implements
 		this.unselectedIconImageResource = (unselectedIconImageResource == null)
 				? 0 : unselectedIconImageResource;
 	}
-	
+
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

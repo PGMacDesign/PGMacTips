@@ -160,8 +160,10 @@ public class PGMacUtilitiesConstants {
     public static final int DATE_YYYY_MM_DD_T_HH_MM_SS_Z = -781;
 
     //Default Date Format
-    public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-    public static final String DEFAULT_DATE_FORMAT_WITHOUT_MILLISECONDS = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    public static final String DEFAULT_ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    public static final String DEFAULT_ISO_FORMAT_WITHOUT_MILLISECONDS = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    //This is the string format received when calling Date date = new Date().toString(); //<---
+    public static final String DEFAULT_JAVA_DATE_FORMAT = "EEEE MMM dd HH:mm:ss z yyyy";
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /////Colors/////////////////////////////////////////////////////////////////////////////////////
