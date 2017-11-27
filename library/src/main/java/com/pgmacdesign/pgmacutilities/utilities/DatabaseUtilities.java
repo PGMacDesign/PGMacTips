@@ -109,7 +109,7 @@ public class DatabaseUtilities {
         if(myClass == null){
             return false;
         }
-        if (!isValidWrite(myClass)) {
+        if (!isValidWrite(myClass) || !isClassValid(myClass)) {
             return false;
         }
         Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
@@ -211,7 +211,7 @@ public class DatabaseUtilities {
         if (is == null || myClass == null) {
             return false;
         }
-        if (!isValidWrite(myClass)) {
+        if (!isValidWrite(myClass) || !isClassValid(myClass)) {
             return false;
         }
         Realm realm = DatabaseUtilities.buildRealm(realmConfiguration);
@@ -274,7 +274,7 @@ public class DatabaseUtilities {
         if (jsonObject == null || myClass == null) {
             return false;
         }
-        if (!isValidWrite(myClass)) {
+        if (!isValidWrite(myClass) || !isClassValid(myClass)) {
             return false;
         }
         Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
@@ -1058,6 +1058,20 @@ public class DatabaseUtilities {
     //Misc Utilities//
     //////////////////
 
+    private static boolean isClassValid(Class myClass){
+        if(myClass == null){
+            L.m("Class used to write to the DB was null, please check passed params");
+            return false;
+        }
+        if(!isValidWrite(myClass)){
+            return false;
+        }
+        if(myClass == RealmObject.class) {
+            return true;
+        }
+        return myClass.isAssignableFrom(RealmObject.class);
+    }
+
     /**
      * For checking on valid write / update / delete
      *
@@ -1080,11 +1094,12 @@ public class DatabaseUtilities {
                 return false;
             }
         }
-        if(myClass == RealmObject.class) {
-            return true;
-        }
-        return myClass.isAssignableFrom(RealmObject.class);
-
+//        if(myClass == RealmObject.class) {
+//            return true;
+//        }
+//        return myClass.isAssignableFrom(RealmObject.class);
+        //Refactored this into isClassValid() method to prevent blocking
+        return true;
     }
 
     /**
@@ -1112,11 +1127,12 @@ public class DatabaseUtilities {
                 return false;
             }
         }
-        if(myClass == RealmObject.class) {
-            return true;
-        }
-        return myClass.isAssignableFrom(RealmObject.class);
-
+//        if(myClass == RealmObject.class) {
+//            return true;
+//        }
+//        return myClass.isAssignableFrom(RealmObject.class);
+        //Refactored this into isClassValid() method to prevent blocking
+        return true;
     }
 
     /**

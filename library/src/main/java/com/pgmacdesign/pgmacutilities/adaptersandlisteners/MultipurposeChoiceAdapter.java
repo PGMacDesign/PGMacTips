@@ -1,6 +1,7 @@
 package com.pgmacdesign.pgmacutilities.adaptersandlisteners;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -38,6 +39,7 @@ public class MultipurposeChoiceAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     private Drawable selectedCircle, unselectedCircle;
+    private Integer selectedCircleResource, unselectedCircleResource;
 
     //Vars
     private OnTaskCompleteListener listener;
@@ -70,8 +72,17 @@ public class MultipurposeChoiceAdapter extends RecyclerView.Adapter<RecyclerView
         try {
             this.selectedCircle = ContextCompat.getDrawable(context, selectedImageResource);
             this.unselectedCircle = ContextCompat.getDrawable(context, unselectedImageResource);
+            this.selectedCircleResource = null;
+            this.unselectedCircleResource = null;
+        } catch (Resources.NotFoundException e){
+            this.selectedCircle = null;
+            this.unselectedCircle = null;
+            this.selectedCircleResource = selectedImageResource;
+            this.unselectedCircleResource = unselectedImageResource;
         } catch (Exception e){
             e.printStackTrace();
+            this.selectedCircle = null;
+            this.unselectedCircle = null;
             this.selectedCircle = ContextCompat.getDrawable(context, R.drawable.shutter_black);
             this.unselectedCircle = ContextCompat.getDrawable(context, R.drawable.shutter_white);
         }
@@ -120,9 +131,22 @@ public class MultipurposeChoiceAdapter extends RecyclerView.Adapter<RecyclerView
             holder.selection_adapter_multi_tv.setText(desc);
             // TODO: 2017-06-15 NOTE! This will slow performance in future if not scaled correctly
             if(currentObj.isSelected()){
-                holder.selection_adapter_multi_left_iv.setImageDrawable(selectedCircle);
+                if(selectedCircle != null) {
+                    holder.selection_adapter_multi_left_iv.setImageDrawable(selectedCircle);
+                } else if (selectedCircleResource != null){
+                    holder.selection_adapter_multi_left_iv.setImageResource(selectedCircleResource);
+                } else {
+                    holder.selection_adapter_multi_left_iv.setImageDrawable(null);
+                }
             } else {
                 holder.selection_adapter_multi_left_iv.setImageDrawable(unselectedCircle);
+                if(selectedCircle != null) {
+                    holder.selection_adapter_multi_left_iv.setImageDrawable(selectedCircle);
+                } else if (unselectedCircleResource != null){
+                    holder.selection_adapter_multi_left_iv.setImageResource(unselectedCircleResource);
+                } else {
+                    holder.selection_adapter_multi_left_iv.setImageDrawable(null);
+                }
             }
             if(oneSelectedAnimate){
                 AnimationUtilities.animateMyView(
@@ -136,9 +160,21 @@ public class MultipurposeChoiceAdapter extends RecyclerView.Adapter<RecyclerView
             final SingleSelectChoice holder = (SingleSelectChoice) holder0;
             holder.selection_adapter_single_tv.setText(desc);
             if(currentObj.isSelected()){
-                holder.selection_adapter_single_left_icon.setImageDrawable(selectedCircle);
+                if(selectedCircle != null) {
+                    holder.selection_adapter_single_left_icon.setImageDrawable(selectedCircle);
+                } else if (unselectedCircleResource != null){
+                    holder.selection_adapter_single_left_icon.setImageResource(selectedCircleResource);
+                } else {
+                    holder.selection_adapter_single_left_icon.setImageDrawable(null);
+                }
             } else {
-                holder.selection_adapter_single_left_icon.setImageDrawable(unselectedCircle);
+                if(unselectedCircle != null) {
+                    holder.selection_adapter_single_left_icon.setImageDrawable(unselectedCircle);
+                } else if (unselectedCircleResource != null){
+                    holder.selection_adapter_single_left_icon.setImageResource(unselectedCircleResource);
+                } else {
+                    holder.selection_adapter_single_left_icon.setImageDrawable(null);
+                }
             }
             holder.selection_adapter_single_main_layout.setVisibility(View.VISIBLE);
             holder.selection_adapter_single_main_layout.setOnClickListener(clickListener);
