@@ -51,6 +51,10 @@
 			android:gravity="center_horizontal"
 			android:layout_centerHorizontal="true"
 			android:focusable="false"
+			android:fadeScrollbars="true"
+			android:scrollbars="vertical"
+			android:scrollbarThumbVertical="@android:color/darker_gray"
+			android:scrollbarSize="2dp"
 			/>
 		
 		

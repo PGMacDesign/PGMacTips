@@ -21,12 +21,14 @@ import com.pgmacdesign.pgmacutilities.adaptersandlisteners.CustomLongClickCallba
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.MultipurposeChoiceAdapter;
 import com.pgmacdesign.pgmacutilities.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmacutilities.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmacutilities.utilities.HashMapUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.MiscUtilities;
 import com.pgmacdesign.pgmacutilities.utilities.StringUtilities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -145,6 +147,20 @@ public class MultipurposeChoiceDialog extends AlertDialog implements
 				? 0 : selectedIconImageResource;
 		this.unselectedIconImageResource = (unselectedIconImageResource == null)
 				? 0 : unselectedIconImageResource;
+	}
+
+	public void setRecyclerviewScrollbarVisible(boolean showScrollbar){
+		if(multipurpose_choice_dialog_recyclerview != null){
+			if(!showScrollbar) {
+				multipurpose_choice_dialog_recyclerview.setScrollBarSize(0);
+			}
+		}
+	}
+
+	public void setRecyclerviewScrollbarFade(boolean shouldFade){
+		if(multipurpose_choice_dialog_recyclerview != null){
+			multipurpose_choice_dialog_recyclerview.setVerticalFadingEdgeEnabled(shouldFade);
+		}
 	}
 
 	@Override
@@ -294,8 +310,8 @@ public class MultipurposeChoiceDialog extends AlertDialog implements
 			}
 			if (tag.equals("multipurpose_choice_dialog_confirm_button")) {
 				this.dismiss();
-				listener.onTaskComplete(this.userSelectedItems,
-						PGMacUtilitiesConstants.TAG_MAP_STRING_INTEGER);
+				LinkedHashMap toReturn = HashMapUtilities.sortMapValues(userSelectedItems);
+				listener.onTaskComplete(toReturn, PGMacUtilitiesConstants.TAG_MAP_STRING_INTEGER);
 				return;
 			}
 		}
