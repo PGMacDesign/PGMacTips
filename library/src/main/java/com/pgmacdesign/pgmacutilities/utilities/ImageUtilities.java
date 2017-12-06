@@ -911,7 +911,8 @@ public class ImageUtilities {
      * Resize a photo
      * @param bmp Bitmap to resize
      * @param factorToDivide Factor to divide by. if (IE) 2 is passed, it will cut the
-     *                       image in half, 10 will cut it down 10x in size
+     *                       image in half, 10 will cut it down 10x in size. Note that
+     *                       scaling too much will result in geometric size jumps.
      * @return Resized bitmap. If it fails, will send back original
      */
     public static Bitmap resizePhoto(@NonNull Bitmap bmp, int factorToDivide){
@@ -929,16 +930,20 @@ public class ImageUtilities {
     /**
      * Resize a photo
      * @param bmp Bitmap to resize
-     * @param factorToMultiply Factor to multiply by. if (IE) 1.5 is passed, it will increase
-     *                         it by 1.5 times. If 0.4 is passed, it will decrease it by
-     *                         40% of its original size.
+     * @param desiredImageSizeInBytes The desired image size in bytes. IE, sending 5000000
+     *                                (5 Million) would be a 5 Megapixel (MP) image.
      * @return Resized bitmap. If it fails, will send back original
      */
-    public static Bitmap resizePhoto(@NonNull Bitmap bmp, float factorToMultiply){
+    public static Bitmap resizePhoto(@NonNull Bitmap bmp, long desiredImageSizeInBytes){
         try {
-            return Bitmap.createScaledBitmap(bmp, (int)(bmp.getWidth() * factorToMultiply),
-                    (int)(bmp.getHeight() * factorToMultiply), true);
+            double flt = (double) desiredImageSizeInBytes;
+            double height = Math.sqrt(flt /
+                    (((double) bmp.getWidth()) / bmp.getHeight()));
+            double width = (height / bmp.getHeight()) * bmp.getWidth();
+            return Bitmap.createScaledBitmap(bmp, (int)(width),
+                    (int)(height), true);
         } catch (Exception e){
+            e.printStackTrace();
             return bmp;
         }
     }

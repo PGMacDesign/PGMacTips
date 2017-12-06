@@ -74,8 +74,8 @@ public class MultipurposeChoiceDialog extends AlertDialog implements
 	private int selectedIconImageResource, unselectedIconImageResource;
 	
 	public MultipurposeChoiceDialog(@NonNull Context context,
-	                                String title,
-	                                String[] values,
+	                                @Nullable String title,
+	                                @NonNull String[] values,
 	                                @NonNull OnTaskCompleteListener listener,
 	                                @NonNull MultipurposeChoiceAdapter.MultipurposeChoiceType type,
 	                                @Nullable Integer selectedIconImageResource,
@@ -92,8 +92,8 @@ public class MultipurposeChoiceDialog extends AlertDialog implements
 	}
 	
 	public MultipurposeChoiceDialog(@NonNull Context context,
-	                                String title,
-	                                List<String> values,
+	                                @Nullable String title,
+	                                @NonNull List<String> values,
 	                                @NonNull OnTaskCompleteListener listener,
 	                                @NonNull MultipurposeChoiceAdapter.MultipurposeChoiceType type,
 	                                @Nullable Integer selectedIconImageResource,
@@ -110,8 +110,8 @@ public class MultipurposeChoiceDialog extends AlertDialog implements
 	}
 	
 	public MultipurposeChoiceDialog(@NonNull Context context,
-	                                String title,
-	                                String[] values,
+	                                @Nullable String title,
+	                                @NonNull String[] values,
 	                                @NonNull String[] selectedValues,
 	                                @NonNull OnTaskCompleteListener listener,
 	                                @NonNull MultipurposeChoiceAdapter.MultipurposeChoiceType type,
@@ -130,9 +130,9 @@ public class MultipurposeChoiceDialog extends AlertDialog implements
 	}
 	
 	public MultipurposeChoiceDialog(@NonNull Context context,
-	                                String title,
-	                                List<String> values,
-	                                List<String> selectedValues,
+	                                @Nullable String title,
+	                                @NonNull List<String> values,
+	                                @Nullable List<String> selectedValues,
 	                                @NonNull OnTaskCompleteListener listener,
 	                                @NonNull MultipurposeChoiceAdapter.MultipurposeChoiceType type,
 	                                @Nullable Integer selectedIconImageResource,

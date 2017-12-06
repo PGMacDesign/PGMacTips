@@ -57,6 +57,7 @@ public class MultipurposeChoiceAdapter extends RecyclerView.Adapter<RecyclerView
     private Context context;
     private boolean oneSelectedAnimate;
     private DisplayManagerUtilities dmu;
+    private int customClickLinkTag, customLongClickLinkTag;
 
     public MultipurposeChoiceAdapter(@NonNull Context context,
                                      @NonNull MultipurposeChoiceType type1,
@@ -68,6 +69,7 @@ public class MultipurposeChoiceAdapter extends RecyclerView.Adapter<RecyclerView
         this.clickLink = clickLink;
         this.longClickLink = longClickLink;
         this.mInflater = LayoutInflater.from(context);
+        this.customClickLinkTag = this.customLongClickLinkTag = -1;
         this.dmu = new DisplayManagerUtilities(context);
         try {
             this.selectedCircle = ContextCompat.getDrawable(context, selectedImageResource);
@@ -88,6 +90,23 @@ public class MultipurposeChoiceAdapter extends RecyclerView.Adapter<RecyclerView
         }
     }
 
+    /**
+     * Set the custom click listener callback int tag to reference.
+     * @param customClickLinkTag Tag to compare against on click results. If -1 is
+     *                           passed, will be ignored.
+     */
+    public void setCustomClickLinkTag(int customClickLinkTag) {
+        this.customClickLinkTag = customClickLinkTag;
+    }
+
+    /**
+     * Set the custom long click listener callback int tag to reference.
+     * @param customLongClickLinkTag Tag to compare against on long click results.
+     *                               If -1 is passed, will be ignored.
+     */
+    public void setCustomLongClickLinkTag(int customLongClickLinkTag) {
+        this.customLongClickLinkTag = customLongClickLinkTag;
+    }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -114,10 +133,14 @@ public class MultipurposeChoiceAdapter extends RecyclerView.Adapter<RecyclerView
 
         final MultipurposeChoiceObject currentObj = mListObjects.get(position);
 
-        final CustomClickListener clickListener = new CustomClickListener(clickLink,
-                PGMacUtilitiesConstants.TAG_MULTIPURPOSE_CHOICE_CLICK_ADAPTER, currentObj);
-        final CustomLongClickListener longClickListener = new CustomLongClickListener(longClickLink,
-                PGMacUtilitiesConstants.TAG_MULTIPURPOSE_CHOICE_LONG_CLICK_ADAPTER, currentObj);
+        final CustomClickListener clickListener = new CustomClickListener(
+                clickLink, (customClickLinkTag == -1) ?
+                        PGMacUtilitiesConstants.TAG_MULTIPURPOSE_CHOICE_CLICK_ADAPTER :
+                        customClickLinkTag, currentObj);
+        final CustomLongClickListener longClickListener = new CustomLongClickListener(
+                longClickLink, (customLongClickLinkTag == -1) ?
+                        PGMacUtilitiesConstants.TAG_MULTIPURPOSE_CHOICE_LONG_CLICK_ADAPTER :
+                        customLongClickLinkTag, currentObj);
 
         if(currentObj == null){
             return;
