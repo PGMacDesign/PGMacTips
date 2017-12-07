@@ -40,7 +40,7 @@ public class StringUtilities {
     public static final int DATE_MM_DD_YY = 4406;
     
     /**
-     * Returns just the numbers of a String
+     * Keep numbers (0-9) only. Remove anything else
      * @param s Charsequence to analyze
      * @return String, containing only numbers
      */
@@ -52,12 +52,43 @@ public class StringUtilities {
         }
     }
 
+    /**
+     * Keep letters (a-z) only. Remove anything else
+     * @param s
+     * @return
+     */
     public static String keepLettersOnly(CharSequence s) {
         try {
             return s.toString().replaceAll("[^A-Z]", "");
         } catch (Exception e){
             return null;
         }
+    }
+
+    /**
+     * Shortcut to check for equals ignore case where the strings passed may or may not be null
+     * @param str1 String 1 to compare
+     * @param str2 String 2 to compare
+     * @return True if they are equal
+     */
+    public static boolean doesEqual(String str1, String str2){
+        if(StringUtilities.isNullOrEmpty(str1) || StringUtilities.isNullOrEmpty(str2)){
+            return false;
+        }
+        return str1.equals(str2);
+    }
+
+    /**
+     * Shortcut to check for equals ignore case where the strings passed may or may not be null
+     * @param str1 String 1 to compare
+     * @param str2 String 2 to compare
+     * @return True if they are equal (ignoring case)
+     */
+    public static boolean doesEqualIgnoreCase(String str1, String str2){
+        if(StringUtilities.isNullOrEmpty(str1) || StringUtilities.isNullOrEmpty(str2)){
+            return false;
+        }
+        return str1.equalsIgnoreCase(str2);
     }
 
     /**
