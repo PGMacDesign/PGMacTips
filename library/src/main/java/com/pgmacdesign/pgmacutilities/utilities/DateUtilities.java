@@ -17,6 +17,53 @@ import java.util.Locale;
  */
 public class DateUtilities {
 
+    private static final long SECOND_MILLIS = PGMacUtilitiesConstants.ONE_SECOND;
+    private static final long MINUTE_MILLIS = PGMacUtilitiesConstants.ONE_MINUTE;
+    private static final long HOUR_MILLIS = PGMacUtilitiesConstants.ONE_HOUR;
+    private static final long DAY_MILLIS = PGMacUtilitiesConstants.ONE_DAY;
+    private static final long MONTH_MILLIS = PGMacUtilitiesConstants.ONE_MONTH;
+
+
+    /**
+     * Copyright 2012 Google Inc. (Apache License)
+     * From: https://stackoverflow.com/a/13018647/2480714
+     * @param time Time
+     * @return
+     */
+    public static String getTimeAgo(long time) {
+        if (time < 1000000000000L) {
+            // if timestamp given in seconds, convert to millis
+            time *= 1000;
+        }
+
+        long now = System.currentTimeMillis();
+        if (time > now || time <= 0) {
+            return null;
+        }
+
+        final long diff = now - time;
+        if (diff < MINUTE_MILLIS) {
+            return "just now";
+        } else if (diff < 2 * MINUTE_MILLIS) {
+            return "a minute ago";
+        } else if (diff < 50 * MINUTE_MILLIS) {
+            return diff / MINUTE_MILLIS + " minutes ago";
+        } else if (diff < 90 * MINUTE_MILLIS) {
+            return "an hour ago";
+        } else if (diff < 24 * HOUR_MILLIS) {
+            return diff / HOUR_MILLIS + " hours ago";
+        } else if (diff < 48 * HOUR_MILLIS) {
+            return "yesterday";
+        } else if((diff < 30 * DAY_MILLIS)){
+            return diff / DAY_MILLIS + " days ago";
+        } else if (diff >= 30 * DAY_MILLIS && diff < 60 * DAY_MILLIS){
+            return "a month ago";
+        } else if (diff >= 60 * DAY_MILLIS && diff < 365 * DAY_MILLIS){
+            return diff / MONTH_MILLIS + " months ago";
+        } else {
+            return "years ago";
+        }
+    }
 
     /**
      * Get the SimpleDateFormat to be used
