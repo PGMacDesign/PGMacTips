@@ -1,3 +1,8 @@
+[![Platform](https://img.shields.io/badge/platform-android-green.svg)](http://developer.android.com/index.html)
+<img src="https://img.shields.io/badge/license-Apache 2.0-green.svg?style=flat">
+[![API](https://img.shields.io/badge/API-4%2B-yellow.svg?style=flat)](https://android-arsenal.com/api?level=14)
+
+
 # PGMacUtilities
 This will be a collection of utility methods that I use in nearly all of my projects
 

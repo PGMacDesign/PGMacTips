@@ -159,11 +159,13 @@ public class PGMacUtilitiesConstants {
     public static final int DATE_YYYY_MM_DD_T_HH_MM_SS_SSS_Z = -780;
     public static final int DATE_YYYY_MM_DD_T_HH_MM_SS_Z = -781;
 
-    //Default Date Format
+    //Default Date Formats
     public static final String DEFAULT_ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     public static final String DEFAULT_ISO_FORMAT_WITHOUT_MILLISECONDS = "yyyy-MM-dd'T'HH:mm:ss'Z'";
     //This is the string format received when calling Date date = new Date().toString(); //<---
     public static final String DEFAULT_JAVA_DATE_FORMAT = "EEEE MMM dd HH:mm:ss z yyyy";
+    public static final String DATE_STRING_PATTERN_24_HOUR_TIME = "HH:mm";
+    public static final String DATE_STRING_PATTERN_12_HOUR_TIME = "hh:mm a";
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /////Colors/////////////////////////////////////////////////////////////////////////////////////

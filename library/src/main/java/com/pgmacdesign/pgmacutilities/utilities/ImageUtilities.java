@@ -119,22 +119,34 @@ public class ImageUtilities {
 
                             @Override
                             public void onError() {
+                                //Can trigger if image not in cache
                                 Picasso.with(fContext).load(innerUrlThumbnail)
                                         .transform(new CircleTransform(circularFrameColor, circularFrameWidth))
-                                        .into(viewToSet);
-                                //Load the image into cache for next time
-                                try {
-                                    float flt = 0;
-                                    if (useCustomCachePercent) {
-                                        flt = percentMaxCache;
-                                    }
-                                    List<String> toCache = new ArrayList<String>();
-                                    toCache.add(innerUrlThumbnail);
-                                    ImageUtilities.LoadImagesIntoPicassoCache async = new
-                                            ImageUtilities.LoadImagesIntoPicassoCache(toCache, fContext, flt);
-                                    async.execute();
-                                } catch (Exception e2) {
-                                }
+                                        .into(viewToSet, new Callback() {
+                                            @Override
+                                            public void onSuccess() {
+                                                //Load the image into cache for next time
+                                                try {
+                                                    float flt = 0;
+                                                    if (useCustomCachePercent) {
+                                                        flt = percentMaxCache;
+                                                    }
+                                                    List<String> toCache = new ArrayList<String>();
+                                                    toCache.add(innerUrlThumbnail);
+                                                    ImageUtilities.LoadImagesIntoPicassoCache async = new
+                                                            ImageUtilities.LoadImagesIntoPicassoCache(toCache, fContext, flt);
+                                                    async.execute();
+                                                } catch (Exception e2) {}
+                                            }
+
+                                            @Override
+                                            public void onError() {
+                                                Picasso.with(fContext).load(backupImageResourceId)
+                                                        .transform(new CircleTransform(circularFrameColor, circularFrameWidth))
+                                                        .into(viewToSet);
+                                            }
+                                        });
+
                             }
                         });
             } catch (Exception e) {
@@ -323,21 +335,33 @@ public class ImageUtilities {
 
                             @Override
                             public void onError() {
-                                //Backup, in case caching didn't work
-                                Picasso.with(innerContext1).load(innerUrlThumbnail).into(viewToSet);
+                                //Can trigger if image not in cache
+                                Picasso.with(innerContext1).load(innerUrlThumbnail)
+                                        .into(viewToSet, new Callback() {
+                                            @Override
+                                            public void onSuccess() {
+                                                try {
+                                                    List<String> toCache = new ArrayList<String>();
+                                                    toCache.add(innerUrlThumbnail);
+                                                    float flt = 0;
+                                                    if (useCustomCachePercent) {
+                                                        flt = percentMaxCache;
+                                                    }
+                                                    ImageUtilities.LoadImagesIntoPicassoCache async = new
+                                                            ImageUtilities.LoadImagesIntoPicassoCache(toCache, context1, flt);
+                                                    async.execute();
+                                                } catch (Exception e2) {}
+                                            }
+
+                                            @Override
+                                            public void onError() {
+                                                Picasso.with(context1)
+                                                        .load(backupImageResourceId)
+                                                        .into(viewToSet);
+                                            }
+                                        });
                                 //Load the image into cache for next time
-                                try {
-                                    List<String> toCache = new ArrayList<String>();
-                                    toCache.add(innerUrlThumbnail);
-                                    float flt = 0;
-                                    if (useCustomCachePercent) {
-                                        flt = percentMaxCache;
-                                    }
-                                    ImageUtilities.LoadImagesIntoPicassoCache async = new
-                                            ImageUtilities.LoadImagesIntoPicassoCache(toCache, context1, flt);
-                                    async.execute();
-                                } catch (Exception e2) {
-                                }
+
                             }
                         });
             } catch (Exception e) {

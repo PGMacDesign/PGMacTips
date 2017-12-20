@@ -491,6 +491,32 @@ public class DateUtilities {
     }
 
     /**
+     * Get Day of the week (IE: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday)
+     * @return
+     */
+    public static String getDayOfWeek(){
+        Calendar calendar = Calendar.getInstance();
+        if(calendar != null) {
+            return getDayOfWeek(calendar.get(Calendar.DAY_OF_WEEK));
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Get the day of the week short (IE: Mon, Tues, Wed, Thur, Fri, Sat, Sun
+     * @return String
+     */
+    public static String getDayOfWeekShort(){
+        Calendar calendar = Calendar.getInstance();
+        if(calendar != null) {
+            return getDayOfWeekShort(calendar.get(Calendar.DAY_OF_WEEK));
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Get the day of the week from a calendar instance int
      * @param calendarDayOfWeek {@link Calendar#DAY_OF_WEEK}
      * @return String, day of the week
@@ -526,9 +552,59 @@ public class DateUtilities {
     }
 
     /**
+     * Get the day of the week from a calendar instance int
+     * @param calendarDayOfWeek {@link Calendar#DAY_OF_WEEK}
+     * @return String, day of the week
+     */
+    private static String getDayOfWeekShort(int calendarDayOfWeek){
+        String dayOfWeek;
+        switch (calendarDayOfWeek){
+            case Calendar.MONDAY:
+                dayOfWeek = "Mon";
+                break;
+            case Calendar.TUESDAY:
+                dayOfWeek = "Tues";
+                break;
+            case Calendar.WEDNESDAY:
+                dayOfWeek = "Wed";
+                break;
+            case Calendar.THURSDAY:
+                dayOfWeek = "Thur";
+                break;
+            case Calendar.FRIDAY:
+                dayOfWeek = "Fri";
+                break;
+            case Calendar.SATURDAY:
+                dayOfWeek = "Sat";
+                break;
+            case Calendar.SUNDAY:
+                dayOfWeek = "Sun";
+                break;
+            default:
+                dayOfWeek = "Unknown";
+        }
+        return dayOfWeek;
+    }
+
+    /**
+     * Get the month of the year from a calendar instance
+     * @return String, month of the year (IE: January, February, March, April, May, June,
+     *          July, August, September, October, November, December)
+     */
+    public static String getMonthOfYear(){
+        Calendar calendar = Calendar.getInstance();
+        if(calendar != null){
+            return getMonthOfYear(calendar.get(Calendar.MONTH));
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Get the month of the year from a calendar instance int
      * @param calendarMonth {@link Calendar#MONTH}
-     * @return String, month of the year
+     * @return String, month of the year (IE: January, February, March, April, May, June,
+     *          July, August, September, October, November, December)
      */
     public static String getMonthOfYear(int calendarMonth){
         String monthOfTheYear;
@@ -568,6 +644,72 @@ public class DateUtilities {
                 break;
             case Calendar.DECEMBER:
                 monthOfTheYear = "December";
+                break;
+            default:
+                monthOfTheYear = "Unknown";
+                break;
+        }
+        return monthOfTheYear;
+    }
+
+    /**
+     * Get the month of the year from a calendar instance int
+     * @return String, month of the year (IE: Jan, Feb, Mar, Apr, May, Jun, Jul, Aug,
+     *          Sep, Oct, Nov, Dec)
+     */
+    public static String getMonthOfYearShort(){
+        Calendar calendar = Calendar.getInstance();
+        if(calendar != null){
+            return getMonthOfYearShort(calendar.get(Calendar.MONTH));
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Get the month of the year from a calendar instance int
+     * @param calendarMonth {@link Calendar#MONTH}
+     * @return String, month of the year (IE: Jan, Feb, Mar, Apr, May, Jun, Jul, Aug,
+     *          Sep, Oct, Nov, Dec)
+     */
+    private static String getMonthOfYearShort(int calendarMonth){
+        String monthOfTheYear;
+        switch (calendarMonth){
+            case Calendar.JANUARY:
+                monthOfTheYear = "Jan";
+                break;
+            case Calendar.FEBRUARY:
+                monthOfTheYear = "Feb";
+                break;
+            case Calendar.MARCH:
+                monthOfTheYear = "Mar";
+                break;
+            case Calendar.APRIL:
+                monthOfTheYear = "Apr";
+                break;
+            case Calendar.MAY:
+                monthOfTheYear = "May";
+                break;
+            case Calendar.JUNE:
+                monthOfTheYear = "Jun";
+                break;
+            case Calendar.JULY:
+                monthOfTheYear = "Jul";
+                break;
+            case Calendar.AUGUST:
+                monthOfTheYear = "Aug";
+                break;
+            case Calendar.SEPTEMBER:
+                monthOfTheYear = "Sep";
+                break;
+            case Calendar.OCTOBER:
+                monthOfTheYear = "Oct";
+                break;
+            case Calendar.NOVEMBER:
+                monthOfTheYear = "Nov";
+                break;
+            case Calendar.DECEMBER:
+                monthOfTheYear = "Dec";
                 break;
             default:
                 monthOfTheYear = "Unknown";
