@@ -42,20 +42,20 @@
             </RelativeLayout>
 
             <!-- Preview -->
-            <com.pgmacdesign.pgmacutilities.enhancedphotoclasses.CameraSourcePreview
+            <com.pgmacdesign.pgmactips.enhancedphotoclasses.CameraSourcePreview
                 android:id="@+id/camera_source_preview"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="85">
 
                 <!-- Overlay for your face (oval  /  circle) -->
-                <com.pgmacdesign.pgmacutilities.enhancedphotoclasses.GraphicOverlay
+                <com.pgmacdesign.pgmactips.enhancedphotoclasses.GraphicOverlay
                     android:id="@+id/graphic_face_overlay"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
 
-            </com.pgmacdesign.pgmacutilities.enhancedphotoclasses.CameraSourcePreview>
+            </com.pgmacdesign.pgmactips.enhancedphotoclasses.CameraSourcePreview>
 
         </LinearLayout>
 
@@ -75,7 +75,7 @@
 
             <!-- Overlay layout to use for any custom overlays on top of the camera preview -->
             <!--
-            <com.pgmacdesign.pgmacutilities.enhancedphotoclasses.FilterOverlay
+         pgmactipsenhancedphotoclasses.FilterOverlay
                 android:id="@+id/filter_overlay"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"

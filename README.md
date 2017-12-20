@@ -1,9 +1,10 @@
 [![Platform](https://img.shields.io/badge/platform-android-green.svg)](http://developer.android.com/index.html)
 <img src="https://img.shields.io/badge/license-Apache 2.0-green.svg?style=flat">
-[![API](https://img.shields.io/badge/API-4%2B-yellow.svg?style=flat)](https://android-arsenal.com/api?level=14)
+[![API](https://img.shields.io/badge/API-14%2B-green.svg?style=flat)](https://android-arsenal.com/api?level=14)
+[![JitPack](https://jitpack.io/v/pgmacdesign/PGMacTips.svg)](https://jitpack.io/#pgmacdesign/PGMacTips)
 
 
-# PGMacUtilities
+# PGMacTips
 This will be a collection of utility methods that I use in nearly all of my projects
 
 ## Installation
@@ -25,11 +26,11 @@ And include this in your dependencies section:
 
 ```java
 
-compile ('com.github.PGMacDesign:PGMacUtilities:0.0.36')
+compile ('com.github.PGMacDesign:PGMacTips:0.0.37')
 
 ```
 
-Having trouble with Jitpack? [This link](https://jitpack.io/#pgmacdesign/PGMacUtilities) here will show what is going on with the current build as well as give you instructions on integrating Jitpack into your project. 
+Having trouble with Jitpack? [This link](https://jitpack.io/#pgmacdesign/PGMacTips) here will show what is going on with the current build as well as give you instructions on integrating Jitpack into your project. 
 
 ## Nested Libraries
 

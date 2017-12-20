@@ -17,7 +17,7 @@
             />
 
         <!-- Overlay for your face (dynamic circle) -->
-        <com.pgmacdesign.pgmacutilities.enhancedphotoclasses.GraphicOverlay
+        <com.pgmacdesign.pgmactips.enhancedphotoclasses.GraphicOverlay
             android:id="@+id/graphic_face_overlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

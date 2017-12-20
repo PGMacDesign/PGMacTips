@@ -24,7 +24,7 @@ android {
     buildToolsVersion '26.0.2'
 
     defaultConfig {
-        //applicationId "com.pgmacdesign.pgmacutilities" //Remove this when switching from lib to app
+        //applicationId "com.pgmacdesign.pgmactips" //Remove this when switching from lib to app
         minSdkVersion 17
         targetSdkVersion 25
         multiDexEnabled true
