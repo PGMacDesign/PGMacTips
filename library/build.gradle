@@ -27,7 +27,7 @@ android {
         //applicationId "com.pgmacdesign.pgmactips" //Remove this when switching from lib to app
         minSdkVersion 17
         targetSdkVersion 25
-        multiDexEnabled true
+        //multiDexEnabled true
         versionCode 1
         versionName "0.0.36"
     }
@@ -97,7 +97,7 @@ android {
         //////////////////////////////////////
 
         //Multi-dex. For more info: https://developer.android.com/studio/build/multidex.html
-        compile 'com.android.support:multidex:1.0.1'
+        //compile 'com.android.support:multidex:1.0.1'
 
         //Google play services. Full list here - https://developers.google.com/android/guides/setup
         //Vision

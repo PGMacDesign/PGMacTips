@@ -15,7 +15,7 @@ import java.util.Map;
         "customTag1":"5817d057ccc869088c3c8c82",
         "customTag2":"testing",
         "customTag3":1482190375,
-        "customTag4":"lovelabChat",
+        "customTag4":"customChat",
         "customTag5":"581cbd34ccc869090c35579a"
     },
     "notification":{
@@ -86,6 +86,16 @@ public class PushNotificationsPojo {
         private String title;
         private String sound;
         private Integer badge;
+        private Map<String, Object> otherData;
+
+
+        public Map<String, Object> getOtherData() {
+            return otherData;
+        }
+
+        public void setOtherData(Map<String, Object> otherData) {
+            this.otherData = otherData;
+        }
 
         public Integer getBadge() {
             if(badge == null){

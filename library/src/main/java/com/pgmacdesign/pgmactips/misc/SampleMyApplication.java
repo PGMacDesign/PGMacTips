@@ -1,8 +1,8 @@
 package com.pgmacdesign.pgmactips.misc;
 
+import android.app.Application;
 import android.content.Context;
 import android.location.Location;
-import android.support.multidex.MultiDexApplication;
 
 import com.pgmacdesign.pgmactips.utilities.DatabaseUtilities;
 import com.pgmacdesign.pgmactips.utilities.DisplayManagerUtilities;
@@ -17,7 +17,7 @@ import io.realm.RealmConfiguration;
  * ----> android:name=".misc.MyApplication" <----
  * Created by pmacdowell on 2017-02-13.
  */
-public class SampleMyApplication extends MultiDexApplication {
+public class SampleMyApplication  extends Application {       //extends MultiDexApplication {
 
     //Instance of the application
     private static SampleMyApplication sInstance;

@@ -17,6 +17,7 @@ allprojects {
  repositories {
     jcenter()
     maven { url "https://jitpack.io" }
+	maven { url "https://maven.google.com" } // Google's Maven repository 
  }
 }
 
@@ -26,7 +27,7 @@ And include this in your dependencies section:
 
 ```java
 
-compile ('com.github.PGMacDesign:PGMacTips:0.0.37')
+compile ('com.github.PGMacDesign:PGMacTips:0.0.38')
 
 ```
 
