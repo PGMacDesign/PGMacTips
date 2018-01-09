@@ -5,7 +5,7 @@ import com.daimajia.androidanimations.library.Techniques;
 /**
  * Created by pmacdowell on 8/12/2016.
  */
-public class PGMacUtilitiesConstants {
+public class PGMacTipsConstants {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /////Misc Strings///////////////////////////////////////////////////////////////////////////////
@@ -16,7 +16,8 @@ public class PGMacUtilitiesConstants {
     public static final String URL_GOOGLE = "https://www.google.com";
     public static final String NO_INTERNET_STRING = "It looks like you do not have a stable internet connection. Please check for connectivity and try again";
     public static final String ARRAY_PAGER_ADAPTER_ERROR_1 = "Error: Null fragment in passed map.";
-
+    public final static String HEX = "0123456789ABCDEF";
+    public final static String UTF8 = "UTF-8";
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /////Custom Tags (There is no specific order to these numbers)//////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////

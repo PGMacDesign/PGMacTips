@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -26,11 +26,11 @@ import java.util.TimerTask;
 public class ViewUtilities {
 
     public static final int VIEW_PARAMS_LOADED =
-            PGMacUtilitiesConstants.TAG_VIEW_PARAMS_LOADED;
+            PGMacTipsConstants.TAG_VIEW_PARAMS_LOADED;
     public static final int VIEW_PARAMS_LOADING_FAILED =
-            PGMacUtilitiesConstants.TAG_VIEW_PARAMS_LOADING_FAILED;
+            PGMacTipsConstants.TAG_VIEW_PARAMS_LOADING_FAILED;
     public static final int VIEW_FINISHED_DRAWING =
-            PGMacUtilitiesConstants.TAG_VIEW_FINISHED_DRAWING;
+            PGMacTipsConstants.TAG_VIEW_FINISHED_DRAWING;
 
     /**
      * Alter a view visibility after X milliseconds

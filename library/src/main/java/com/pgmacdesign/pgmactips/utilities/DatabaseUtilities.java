@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.pgmacdesign.pgmactips.datamodels.MasterDatabaseObject;
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
 import org.json.JSONObject;
 
@@ -45,9 +45,9 @@ public class DatabaseUtilities {
     private Context context;
 
     //Defaults. If no configuration is set, these will be used
-    private static final String DEFAULT_DB_NAME = PGMacUtilitiesConstants.DB_NAME;
-    private static final int DEFAULT_DB_SCHEMA = PGMacUtilitiesConstants.DB_VERSION;
-    private static final boolean DEFAULT_DELETE_OPTION = PGMacUtilitiesConstants.DELETE_DB_IF_NEEDED;
+    private static final String DEFAULT_DB_NAME = PGMacTipsConstants.DB_NAME;
+    private static final int DEFAULT_DB_SCHEMA = PGMacTipsConstants.DB_VERSION;
+    private static final boolean DEFAULT_DELETE_OPTION = PGMacTipsConstants.DELETE_DB_IF_NEEDED;
 
     ////////////////////////
     //Constructors - init //

@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.L;
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 
@@ -31,13 +31,13 @@ public class RetrofitParser {
      * or failure tag. If this gets sent back, the object in the
      * {@link OnTaskCompleteListener#onTaskComplete(Object, int)} will be null.
      */
-    public static final int TAG_RETROFIT_PARSE_ERROR = PGMacUtilitiesConstants.TAG_RETROFIT_PARSE_ERROR;
+    public static final int TAG_RETROFIT_PARSE_ERROR = PGMacTipsConstants.TAG_RETROFIT_PARSE_ERROR;
     /**
      * This parse error tag triggers if the call fails or something gets caught in
      * the {@link retrofit2.Callback#onFailure} method. The response will always
      * be a String of the throwable message.
      */
-    public static final int TAG_RETROFIT_CALL_ERROR = PGMacUtilitiesConstants.TAG_RETROFIT_PARSE_ERROR;
+    public static final int TAG_RETROFIT_CALL_ERROR = PGMacTipsConstants.TAG_RETROFIT_PARSE_ERROR;
     public static final String EMPTY_JSON_RESPONSE = "{}";
 
     ////////////////////////

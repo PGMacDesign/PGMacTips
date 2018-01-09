@@ -11,6 +11,8 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
@@ -1117,6 +1119,38 @@ public class StringUtilities {
             }
         }
         return false;
+    }
+
+    /**
+     * Convert a byte array to a hex string
+     * @param buf
+     * @return
+     */
+    public static String toHex(byte[] buf) {
+        if (buf == null)
+            return "";
+        StringBuffer result = new StringBuffer(2*buf.length);
+        for (int i = 0; i < buf.length; i++) {
+            appendHex(result, buf[i]);
+        }
+        return result.toString();
+    }
+    private static void appendHex(StringBuffer sb, byte b) {
+        sb.append(PGMacTipsConstants.HEX.charAt((b>>4)&0x0f))
+                .append(PGMacTipsConstants.HEX.charAt(b&0x0f));
+    }
+
+    /**
+     * Convert a hex string to a byte array
+     * @param hexString
+     * @return
+     */
+    public static byte[] toByte(String hexString) {
+        int len = hexString.length()/2;
+        byte[] result = new byte[len];
+        for (int i = 0; i < len; i++)
+            result[i] = Integer.valueOf(hexString.substring(2*i, 2*i+2), 16).byteValue();
+        return result;
     }
 
     /**

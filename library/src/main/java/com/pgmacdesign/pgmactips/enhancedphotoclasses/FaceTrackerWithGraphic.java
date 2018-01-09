@@ -4,7 +4,7 @@ import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.DateUtilities;
 
 /**
@@ -24,7 +24,7 @@ public class FaceTrackerWithGraphic extends Tracker<Face>  {
     private boolean numFacesOk, isBlocked;
     private long timeEnding;
     // TODO: 9/21/2016 refactor this into dynamic changeable vars
-    private static final long TIME_BETWEEN_ADJUSTMENTS = (long) (PGMacUtilitiesConstants.ONE_SECOND * 1.5);
+    private static final long TIME_BETWEEN_ADJUSTMENTS = (long) (PGMacTipsConstants.ONE_SECOND * 1.5);
 
     public FaceTrackerWithGraphic(GraphicOverlay mOverlay, CustomPhotoListener listener) {
         this.mOverlay = mOverlay;

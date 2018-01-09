@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.reflect.TypeToken;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.CustomConverterFactory;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitClient;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitParser;
@@ -42,8 +42,8 @@ public class FirebaseMessagingUtilities {
             service = new RetrofitClient.Builder(FirebaseEndpoints.class, FIREBASE_BASE_URL)
                     .setCustomConverterFactory(new CustomConverterFactory())
                     .setLogLevel(HttpLoggingInterceptor.Level.BODY)
-                    .setTimeouts(PGMacUtilitiesConstants.ONE_MINUTE,
-                            PGMacUtilitiesConstants.ONE_MINUTE)
+                    .setTimeouts(PGMacTipsConstants.ONE_MINUTE,
+                            PGMacTipsConstants.ONE_MINUTE)
                     .build().buildServiceClient();
         }
     }
@@ -132,17 +132,17 @@ public class FirebaseMessagingUtilities {
                                             @NonNull PushNotificationsPojo pojo) {
         if (StringUtilities.isNullOrEmpty(pojo.getTo())) {
             listener.onTaskComplete("Not a valid recipient. Please check the 'To' field in your object",
-                    PGMacUtilitiesConstants.TAG_FCM_FAIL_RESPONSE);
+                    PGMacTipsConstants.TAG_FCM_FAIL_RESPONSE);
             return;
         }
         if (StringUtilities.isNullOrEmpty(firebaseApiKey)) {
             listener.onTaskComplete("Invalid Firebase API Key. You can obtain this from the console or from the google-services.json file",
-                    PGMacUtilitiesConstants.TAG_FCM_FAIL_RESPONSE);
+                    PGMacTipsConstants.TAG_FCM_FAIL_RESPONSE);
             return;
         }
         if (!doIProceed(context)) {
-            listener.onTaskComplete(PGMacUtilitiesConstants.NO_INTERNET_STRING,
-                    PGMacUtilitiesConstants.TAG_NO_INTERNET);
+            listener.onTaskComplete(PGMacTipsConstants.NO_INTERNET_STRING,
+                    PGMacTipsConstants.TAG_NO_INTERNET);
             return;
         }
         init();
@@ -152,9 +152,9 @@ public class FirebaseMessagingUtilities {
             public void onTaskComplete(Object result, int customTag) {
                 if (customTag == 1) {
 	                Map<String, Object> res = (Map<String, Object>) result;
-                    listener.onTaskComplete(res, PGMacUtilitiesConstants.TAG_FCM_SUCCESS_RESPONSE);
+                    listener.onTaskComplete(res, PGMacTipsConstants.TAG_FCM_SUCCESS_RESPONSE);
                 } else {
-                    listener.onTaskComplete(null, PGMacUtilitiesConstants.TAG_FCM_FAIL_RESPONSE);
+                    listener.onTaskComplete(null, PGMacTipsConstants.TAG_FCM_FAIL_RESPONSE);
                 }
             }
         }, call, TYPE_MAP_OBJECT, TYPE_MAP_OBJECT, 1, 0, false);

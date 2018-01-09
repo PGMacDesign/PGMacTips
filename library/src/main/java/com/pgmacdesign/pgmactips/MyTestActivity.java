@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.GenericRecyclerviewAdapter;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.customui.MultiColorLine;
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.serviceapiinterfaces.ProfantiyCheckerAPICalls;
 import com.pgmacdesign.pgmactips.stackmanagement.StackManager;
 import com.pgmacdesign.pgmactips.stackmanagement.StackManagerException;
@@ -244,9 +244,9 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
                     @Override
                     public void onTaskComplete(Object result, int customTag) {
                         L.m("web call done");
-                        if(customTag == PGMacUtilitiesConstants.TAG_RETROFIT_CALL_SUCCESS_STRING){
+                        if(customTag == PGMacTipsConstants.TAG_RETROFIT_CALL_SUCCESS_STRING){
                             L.m("result == " + result.toString());
-                        } else if(customTag == PGMacUtilitiesConstants.TAG_RETROFIT_CALL_SUCCESS_BOOLEAN){
+                        } else if(customTag == PGMacTipsConstants.TAG_RETROFIT_CALL_SUCCESS_BOOLEAN){
                             L.m("result == " + ((Boolean)result).toString());
                         }
                     }

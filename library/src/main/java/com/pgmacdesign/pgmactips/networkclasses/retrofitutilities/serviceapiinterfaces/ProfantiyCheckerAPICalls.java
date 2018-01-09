@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitClient;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitErrorHandling;
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.NetworkUtilities;
 
 import java.io.IOException;
@@ -48,7 +48,7 @@ public class ProfantiyCheckerAPICalls {
         //Check on internet connectivity before making call
         if (!canIProceed(context)) {
             if(listener != null){
-                listener.onTaskComplete(null, PGMacUtilitiesConstants.TAG_RETROFIT_CALL_FAILED);
+                listener.onTaskComplete(null, PGMacTipsConstants.TAG_RETROFIT_CALL_FAILED);
             }
             return;
         }
@@ -63,7 +63,7 @@ public class ProfantiyCheckerAPICalls {
                 if(!response.isSuccessful()){
                     //Response was not successful. Send to error Handler
                     String str = RetrofitErrorHandling.parseErrorResponse(response);
-                    listener.onTaskComplete(str, PGMacUtilitiesConstants.TAG_RETROFIT_CALL_FAILED);
+                    listener.onTaskComplete(str, PGMacTipsConstants.TAG_RETROFIT_CALL_FAILED);
 
                 } else {
                     //Response was successful. Send back via listener
@@ -76,16 +76,16 @@ public class ProfantiyCheckerAPICalls {
                         boolean whichToSendBack;
 
                         if(str.equalsIgnoreCase("true")){
-                            whichTagToUse = PGMacUtilitiesConstants.TAG_RETROFIT_CALL_SUCCESS_BOOLEAN;
+                            whichTagToUse = PGMacTipsConstants.TAG_RETROFIT_CALL_SUCCESS_BOOLEAN;
                             whichToSendBack = true;
 
                         } else if(str.equalsIgnoreCase("false")){
-                            whichTagToUse = PGMacUtilitiesConstants.TAG_RETROFIT_CALL_SUCCESS_BOOLEAN;
+                            whichTagToUse = PGMacTipsConstants.TAG_RETROFIT_CALL_SUCCESS_BOOLEAN;
                             whichToSendBack = false;
 
                         } else {
                             //This will handle empty string requests as it returns "No Input" from the server
-                            whichTagToUse = PGMacUtilitiesConstants.TAG_RETROFIT_CALL_SUCCESS_BOOLEAN;
+                            whichTagToUse = PGMacTipsConstants.TAG_RETROFIT_CALL_SUCCESS_BOOLEAN;
                             whichToSendBack = false;
                         }
 
@@ -93,7 +93,7 @@ public class ProfantiyCheckerAPICalls {
                     } catch (NullPointerException e){
                         e.printStackTrace();
                         //In case the server sends back weird stuff, handle the responses
-                        listener.onTaskComplete(null, PGMacUtilitiesConstants.TAG_RETROFIT_CALL_FAILED);
+                        listener.onTaskComplete(null, PGMacTipsConstants.TAG_RETROFIT_CALL_FAILED);
                     } catch (IOException e){
                         e.printStackTrace();
                     }
@@ -102,7 +102,7 @@ public class ProfantiyCheckerAPICalls {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 t.printStackTrace();
-                listener.onTaskComplete(null, PGMacUtilitiesConstants.TAG_RETROFIT_CALL_FAILED);
+                listener.onTaskComplete(null, PGMacTipsConstants.TAG_RETROFIT_CALL_FAILED);
             }
         });
     }

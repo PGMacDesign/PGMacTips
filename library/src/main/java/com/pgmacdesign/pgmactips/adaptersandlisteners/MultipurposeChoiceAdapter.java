@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.pgmacdesign.pgmactips.R;
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.AnimationUtilities;
 import com.pgmacdesign.pgmactips.utilities.DisplayManagerUtilities;
 import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
@@ -135,11 +135,11 @@ public class MultipurposeChoiceAdapter extends RecyclerView.Adapter<RecyclerView
 
         final CustomClickListener clickListener = new CustomClickListener(
                 clickLink, (customClickLinkTag == -1) ?
-                        PGMacUtilitiesConstants.TAG_MULTIPURPOSE_CHOICE_CLICK_ADAPTER :
+                        PGMacTipsConstants.TAG_MULTIPURPOSE_CHOICE_CLICK_ADAPTER :
                         customClickLinkTag, currentObj);
         final CustomLongClickListener longClickListener = new CustomLongClickListener(
                 longClickLink, (customLongClickLinkTag == -1) ?
-                        PGMacUtilitiesConstants.TAG_MULTIPURPOSE_CHOICE_LONG_CLICK_ADAPTER :
+                        PGMacTipsConstants.TAG_MULTIPURPOSE_CHOICE_LONG_CLICK_ADAPTER :
                         customLongClickLinkTag, currentObj);
 
         if(currentObj == null){

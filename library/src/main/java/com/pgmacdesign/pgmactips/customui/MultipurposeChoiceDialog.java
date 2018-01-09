@@ -20,7 +20,7 @@ import com.pgmacdesign.pgmactips.adaptersandlisteners.CustomClickCallbackLink;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.CustomLongClickCallbackLink;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.MultipurposeChoiceAdapter;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.HashMapUtilities;
 import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
@@ -311,7 +311,7 @@ public class MultipurposeChoiceDialog extends AlertDialog implements
 			if (tag.equals("multipurpose_choice_dialog_confirm_button")) {
 				this.dismiss();
 				LinkedHashMap toReturn = HashMapUtilities.sortMapValues(userSelectedItems);
-				listener.onTaskComplete(toReturn, PGMacUtilitiesConstants.TAG_MAP_STRING_INTEGER);
+				listener.onTaskComplete(toReturn, PGMacTipsConstants.TAG_MAP_STRING_INTEGER);
 				return;
 			}
 		}
@@ -335,7 +335,7 @@ public class MultipurposeChoiceDialog extends AlertDialog implements
 		}
 		setupTimer();
 		if(customTag != null){
-			if(customTag == PGMacUtilitiesConstants.TAG_MULTIPURPOSE_CHOICE_CLICK_ADAPTER){
+			if(customTag == PGMacTipsConstants.TAG_MULTIPURPOSE_CHOICE_CLICK_ADAPTER){
 				MultipurposeChoiceAdapter.MultipurposeChoiceObject obj =
 						(MultipurposeChoiceAdapter.MultipurposeChoiceObject) object;
 				if(this.dataValues == null){
@@ -351,7 +351,7 @@ public class MultipurposeChoiceDialog extends AlertDialog implements
 						//Do nothing, already selected
 					} else {
 						if(this.listener != null){
-							this.listener.onTaskComplete(description, PGMacUtilitiesConstants.TAG_STRING);
+							this.listener.onTaskComplete(description, PGMacTipsConstants.TAG_STRING);
 							this.dismiss();
 						}
 					}

@@ -4,7 +4,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.widget.TextView;
 
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.AnimationUtilities;
 import com.pgmacdesign.pgmactips.utilities.L;
 
@@ -67,7 +67,7 @@ public class TakePhotoWithCountdownAsync <T extends TextView> extends AsyncTask<
                 //Otherwise, continue on
                 publishProgress(i);
                 try {
-                    Thread.sleep(PGMacUtilitiesConstants.ONE_SECOND);
+                    Thread.sleep(PGMacTipsConstants.ONE_SECOND);
                 } catch (InterruptedException e){
                     e.printStackTrace();
                 }
@@ -83,8 +83,8 @@ public class TakePhotoWithCountdownAsync <T extends TextView> extends AsyncTask<
         textView.setText("" + x);
         if(textView != null) {
             AnimationUtilities.animateMyView(textView,
-                    (int) (PGMacUtilitiesConstants.ONE_SECOND * 0.75),
-                    PGMacUtilitiesConstants.OUT_ZOOM);
+                    (int) (PGMacTipsConstants.ONE_SECOND * 0.75),
+                    PGMacTipsConstants.OUT_ZOOM);
         }
     }
 

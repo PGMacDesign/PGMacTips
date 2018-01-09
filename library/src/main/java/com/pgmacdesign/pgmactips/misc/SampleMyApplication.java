@@ -77,9 +77,9 @@ public class SampleMyApplication  extends Application {       //extends MultiDex
         if(dbUtilities == null){
             RealmConfiguration config = DatabaseUtilities.buildRealmConfig(
                     getContext(),
-                    PGMacUtilitiesConstants.DB_NAME,
-                    PGMacUtilitiesConstants.DB_VERSION,
-                    PGMacUtilitiesConstants.DELETE_DB_IF_NEEDED
+                    PGMacTipsConstants.DB_NAME,
+                    PGMacTipsConstants.DB_VERSION,
+                    PGMacTipsConstants.DELETE_DB_IF_NEEDED
             );
             dbUtilities = new DatabaseUtilities(getContext(), config);
         }
@@ -93,7 +93,7 @@ public class SampleMyApplication  extends Application {       //extends MultiDex
     public static synchronized SharedPrefs getSharedPrefsInstance(){
         if(sp == null){
             sp = SharedPrefs.getSharedPrefsInstance(getContext(),
-                    PGMacUtilitiesConstants.SHARED_PREFS_NAME);
+                    PGMacTipsConstants.SHARED_PREFS_NAME);
         }
         return sp;
     }

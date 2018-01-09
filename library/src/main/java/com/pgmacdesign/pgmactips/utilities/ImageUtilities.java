@@ -21,7 +21,7 @@ import android.util.Base64;
 import android.widget.ImageView;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.transformations.CircleTransform;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.LruCache;
@@ -802,7 +802,7 @@ public class ImageUtilities {
                 this.dialog = new ProgressDialog(context);
             }
             if (lengthOfTimeToDelay == null) {
-                lengthOfTimeToDelay = (long) (PGMacUtilitiesConstants.ONE_SECOND * 2.6);
+                lengthOfTimeToDelay = (long) (PGMacTipsConstants.ONE_SECOND * 2.6);
             }
         }
 
@@ -875,15 +875,15 @@ public class ImageUtilities {
                         } catch (Exception e) {
                         }
                     }
-                }, PGMacUtilitiesConstants.ONE_SECOND);
-                listener.onTaskComplete("Url Error", PGMacUtilitiesConstants.TAG_PHOTO_BAD_URL);
+                }, PGMacTipsConstants.ONE_SECOND);
+                listener.onTaskComplete("Url Error", PGMacTipsConstants.TAG_PHOTO_BAD_URL);
 
             } else {
                 dialog.setProgress(100);
                 if (timeLeft <= 0) {
                     try {
                         dialog.dismiss();
-                        listener.onTaskComplete(file1, PGMacUtilitiesConstants.TAG_FILE_DOWNLOADED);
+                        listener.onTaskComplete(file1, PGMacTipsConstants.TAG_FILE_DOWNLOADED);
                     } catch (Exception e) {
                     }
                 } else {
@@ -892,7 +892,7 @@ public class ImageUtilities {
                         public void run() {
                             try {
                                 dialog.dismiss();
-                                listener.onTaskComplete(file1, PGMacUtilitiesConstants.TAG_FILE_DOWNLOADED);
+                                listener.onTaskComplete(file1, PGMacTipsConstants.TAG_FILE_DOWNLOADED);
                             } catch (Exception e) {
                             }
                         }
@@ -1028,7 +1028,7 @@ public class ImageUtilities {
     public static void encodeImage(@NonNull final OnTaskCompleteListener listener,
                                    final Bitmap bm) {
         if (bm == null) {
-            listener.onTaskComplete(null, PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_FAIL);
+            listener.onTaskComplete(null, PGMacTipsConstants.TAG_BASE64_IMAGE_ENCODE_FAIL);
             return;
         }
         new AsyncTask<Void, Void, String>() {
@@ -1050,10 +1050,10 @@ public class ImageUtilities {
             protected void onPostExecute(String str) {
                 if (!StringUtilities.isNullOrEmpty(str)) {
                     listener.onTaskComplete(str,
-                            PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_SUCCESS);
+                            PGMacTipsConstants.TAG_BASE64_IMAGE_ENCODE_SUCCESS);
                 } else {
                     listener.onTaskComplete(null,
-                            PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_FAIL);
+                            PGMacTipsConstants.TAG_BASE64_IMAGE_ENCODE_FAIL);
                 }
             }
         }.execute();
@@ -1100,7 +1100,7 @@ public class ImageUtilities {
     public static void encodeImage(@NonNull final OnTaskCompleteListener listener,
                                    final File file) {
         if (file == null) {
-            listener.onTaskComplete(null, PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_FAIL);
+            listener.onTaskComplete(null, PGMacTipsConstants.TAG_BASE64_IMAGE_ENCODE_FAIL);
             return;
         }
         new AsyncTask<Void, Void, String>() {
@@ -1134,10 +1134,10 @@ public class ImageUtilities {
             protected void onPostExecute(String str) {
                 if (!StringUtilities.isNullOrEmpty(str)) {
                     listener.onTaskComplete(str,
-                            PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_SUCCESS);
+                            PGMacTipsConstants.TAG_BASE64_IMAGE_ENCODE_SUCCESS);
                 } else {
                     listener.onTaskComplete(null,
-                            PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_FAIL);
+                            PGMacTipsConstants.TAG_BASE64_IMAGE_ENCODE_FAIL);
                 }
             }
         }.execute();
@@ -1179,7 +1179,7 @@ public class ImageUtilities {
     public static void encodeImage(@NonNull final OnTaskCompleteListener listener,
                                    final String path) {
         if (StringUtilities.isNullOrEmpty(path)) {
-            listener.onTaskComplete(null, PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_FAIL);
+            listener.onTaskComplete(null, PGMacTipsConstants.TAG_BASE64_IMAGE_ENCODE_FAIL);
             return;
         }
         new AsyncTask<Void, Void, String>() {
@@ -1208,10 +1208,10 @@ public class ImageUtilities {
             protected void onPostExecute(String str) {
                 if (!StringUtilities.isNullOrEmpty(str)) {
                     listener.onTaskComplete(str,
-                            PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_SUCCESS);
+                            PGMacTipsConstants.TAG_BASE64_IMAGE_ENCODE_SUCCESS);
                 } else {
                     listener.onTaskComplete(null,
-                            PGMacUtilitiesConstants.TAG_BASE64_IMAGE_ENCODE_FAIL);
+                            PGMacTipsConstants.TAG_BASE64_IMAGE_ENCODE_FAIL);
                 }
             }
         }.execute();

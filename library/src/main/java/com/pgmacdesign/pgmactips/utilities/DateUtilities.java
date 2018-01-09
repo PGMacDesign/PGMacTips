@@ -1,7 +1,7 @@
 package com.pgmacdesign.pgmactips.utilities;
 
 
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,11 +17,11 @@ import java.util.Locale;
  */
 public class DateUtilities {
 
-    private static final long SECOND_MILLIS = PGMacUtilitiesConstants.ONE_SECOND;
-    private static final long MINUTE_MILLIS = PGMacUtilitiesConstants.ONE_MINUTE;
-    private static final long HOUR_MILLIS = PGMacUtilitiesConstants.ONE_HOUR;
-    private static final long DAY_MILLIS = PGMacUtilitiesConstants.ONE_DAY;
-    private static final long MONTH_MILLIS = PGMacUtilitiesConstants.ONE_MONTH;
+    private static final long SECOND_MILLIS = PGMacTipsConstants.ONE_SECOND;
+    private static final long MINUTE_MILLIS = PGMacTipsConstants.ONE_MINUTE;
+    private static final long HOUR_MILLIS = PGMacTipsConstants.ONE_HOUR;
+    private static final long DAY_MILLIS = PGMacTipsConstants.ONE_DAY;
+    private static final long MONTH_MILLIS = PGMacTipsConstants.ONE_MONTH;
 
 
     /**
@@ -68,7 +68,7 @@ public class DateUtilities {
     /**
      * Get the SimpleDateFormat to be used
      *
-     * @param formatType The format type to do (See PGMacUtilitiesConstants, IE DATE_YYYY_MM_DD)
+     * @param formatType The format type to do (See PGMacTipsConstants, IE DATE_YYYY_MM_DD)
      * @param delimiter  delimiter to separate them. (IE / or - or ,). If null, will use nothing
      * @param locale     Locale object {@link Locale} . If null, defaults to United States (US)
      * @return SimpleDateFormat
@@ -87,31 +87,31 @@ public class DateUtilities {
         }
 
         //Format
-        if (formatType == PGMacUtilitiesConstants.DATE_MM_DD_YYYY) {
+        if (formatType == PGMacTipsConstants.DATE_MM_DD_YYYY) {
             simpleDateFormat = new SimpleDateFormat("MM" + delimiter + "dd" + delimiter + "yyyy", locale);
         }
-        if (formatType == PGMacUtilitiesConstants.DATE_MM_DD_YY) {
+        if (formatType == PGMacTipsConstants.DATE_MM_DD_YY) {
             simpleDateFormat = new SimpleDateFormat("MM" + delimiter + "dd" + delimiter + "yy", locale);
         }
-        if (formatType == PGMacUtilitiesConstants.DATE_YYYY_MM_DD) {
+        if (formatType == PGMacTipsConstants.DATE_YYYY_MM_DD) {
             simpleDateFormat = new SimpleDateFormat("yyyy" + delimiter + "MM" + delimiter + "dd", locale);
         }
-        if (formatType == PGMacUtilitiesConstants.DATE_MM_DD) {
+        if (formatType == PGMacTipsConstants.DATE_MM_DD) {
             simpleDateFormat = new SimpleDateFormat("MM" + delimiter + "dd", locale);
         }
-        if (formatType == PGMacUtilitiesConstants.DATE_MM_YY) {
+        if (formatType == PGMacTipsConstants.DATE_MM_YY) {
             simpleDateFormat = new SimpleDateFormat("MM" + delimiter + "yy", locale);
         }
-        if (formatType == PGMacUtilitiesConstants.DATE_MM_YYYY) {
+        if (formatType == PGMacTipsConstants.DATE_MM_YYYY) {
             simpleDateFormat = new SimpleDateFormat("MM" + delimiter + "yyyy", locale);
         }
-        if (formatType == PGMacUtilitiesConstants.DATE_MM_DD_YYYY_HH_MM) {
+        if (formatType == PGMacTipsConstants.DATE_MM_DD_YYYY_HH_MM) {
             simpleDateFormat = new SimpleDateFormat("MM" + delimiter + "dd" + delimiter + "yyyy" + " HH:mm", locale);
         }
-        if (formatType == PGMacUtilitiesConstants.DATE_YYYY_MM_DD_T_HH_MM_SS_SSS_Z) {
+        if (formatType == PGMacTipsConstants.DATE_YYYY_MM_DD_T_HH_MM_SS_SSS_Z) {
             simpleDateFormat = new SimpleDateFormat("yyyy" + delimiter + "MM" + delimiter + "dd" + "'T'" + " HH:mm:ss.SSS'Z", locale);
         }
-        if (formatType == PGMacUtilitiesConstants.DATE_YYYY_MM_DD_T_HH_MM_SS_Z) {
+        if (formatType == PGMacTipsConstants.DATE_YYYY_MM_DD_T_HH_MM_SS_Z) {
             simpleDateFormat = new SimpleDateFormat("yyyy" + delimiter + "MM" + delimiter + "dd" + "'T'" + " HH:mm:ss'Z", locale);
         }
 
@@ -122,7 +122,7 @@ public class DateUtilities {
      * Formats a date into a String
      *
      * @param date       The date to be converted
-     * @param formatType The format type to do (See PGMacUtilitiesConstants, IE DATE_YYYY_MM_DD)
+     * @param formatType The format type to do (See PGMacTipsConstants, IE DATE_YYYY_MM_DD)
      * @param delimiter  delimiter to separate them. (IE / or - or ,). If null, will use /
      * @param locale     Locale object {@link Locale} . If null, defaults to United States (US)
      * @return Return a String of the converted date
@@ -141,28 +141,28 @@ public class DateUtilities {
         String convertedString = null;
         //simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
         try {
-            if (formatType == PGMacUtilitiesConstants.DATE_MM_DD_YYYY) {
+            if (formatType == PGMacTipsConstants.DATE_MM_DD_YYYY) {
                 convertedString = simpleDateFormat.format(date);
             }
-            if (formatType == PGMacUtilitiesConstants.DATE_MM_DD_YY) {
+            if (formatType == PGMacTipsConstants.DATE_MM_DD_YY) {
                 convertedString = simpleDateFormat.format(date);
             }
-            if (formatType == PGMacUtilitiesConstants.DATE_YYYY_MM_DD) {
+            if (formatType == PGMacTipsConstants.DATE_YYYY_MM_DD) {
                 convertedString = simpleDateFormat.format(date);
             }
-            if (formatType == PGMacUtilitiesConstants.DATE_MM_DD) {
+            if (formatType == PGMacTipsConstants.DATE_MM_DD) {
                 convertedString = simpleDateFormat.format(date);
             }
-            if (formatType == PGMacUtilitiesConstants.DATE_MM_YY) {
+            if (formatType == PGMacTipsConstants.DATE_MM_YY) {
                 convertedString = simpleDateFormat.format(date);
             }
-            if (formatType == PGMacUtilitiesConstants.DATE_MM_YYYY) {
+            if (formatType == PGMacTipsConstants.DATE_MM_YYYY) {
                 convertedString = simpleDateFormat.format(date);
             }
-            if (formatType == PGMacUtilitiesConstants.DATE_MM_DD_YYYY_HH_MM) {
+            if (formatType == PGMacTipsConstants.DATE_MM_DD_YYYY_HH_MM) {
                 convertedString = simpleDateFormat.format(date);
             }
-            if (formatType == PGMacUtilitiesConstants.DATE_MILLISECONDS) {
+            if (formatType == PGMacTipsConstants.DATE_MILLISECONDS) {
                 long millis = date.getTime();
                 convertedString = Long.toString(millis);
             }

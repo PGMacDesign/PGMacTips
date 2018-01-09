@@ -17,7 +17,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
 /**
  * Created by pmacdowell on 8/15/2016.
@@ -153,14 +153,14 @@ public class GUIUtilities {
                     case DialogInterface.BUTTON_NEGATIVE:
                         try {
                             listener.onTaskComplete("No",
-                                    PGMacUtilitiesConstants.TAG_DIALOG_POPUP_NO);
+                                    PGMacTipsConstants.TAG_DIALOG_POPUP_NO);
                             dialog.dismiss();
                         } catch (Exception e) {}
                         break;
                     case DialogInterface.BUTTON_POSITIVE:
                         try{
                             listener.onTaskComplete("Yes",
-                                    PGMacUtilitiesConstants.TAG_DIALOG_POPUP_YES);
+                                    PGMacTipsConstants.TAG_DIALOG_POPUP_YES);
                             dialog.dismiss();
                         } catch (Exception e) {
                         }
@@ -175,7 +175,7 @@ public class GUIUtilities {
             public void onCancel(DialogInterface dialogInterface) {
                 try{
                     listener.onTaskComplete("Yes",
-                            PGMacUtilitiesConstants.TAG_DIALOG_POPUP_CANCEL);
+                            PGMacTipsConstants.TAG_DIALOG_POPUP_CANCEL);
                 } catch (Exception e) {
                 }
             }

@@ -38,7 +38,7 @@ import com.pgmacdesign.pgmactips.R;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.CustomClickCallbackLink;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.TextIconAdapter;
 import com.pgmacdesign.pgmactips.datamodels.SimpleTextIconObject;
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -548,14 +548,14 @@ public class DialogUtilities {
                 @Override
                 public void itemClicked(@Nullable Object object, @Nullable Integer customTag, @Nullable Integer positionIfAvailable) {
                     if(customTag != null){
-                        if(customTag == PGMacUtilitiesConstants.TAG_SIMPLE_TEXT_ICON_ADAPTER_CLICK){
+                        if(customTag == PGMacTipsConstants.TAG_SIMPLE_TEXT_ICON_ADAPTER_CLICK){
                             TextIconSelectDialog.this.dismiss();
                             listener.dialogFinished(object,
-                                    PGMacUtilitiesConstants.TAG_SIMPLE_TEXT_ICON_ADAPTER_CLICK);
+                                    PGMacTipsConstants.TAG_SIMPLE_TEXT_ICON_ADAPTER_CLICK);
                         }
                     }
                 }
-            }, PGMacUtilitiesConstants.TAG_SIMPLE_TEXT_ICON_ADAPTER_CLICK);
+            }, PGMacTipsConstants.TAG_SIMPLE_TEXT_ICON_ADAPTER_CLICK);
             try {
                 adapter.setBackgroundColor(ContextCompat.getColor(context,
                         optionalBackgroundColor));

@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import android.widget.Filter;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.L;
 import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
@@ -32,7 +32,7 @@ public class GenericFilter <T extends FilterInterface> {
      *                        implement {@link FilterInterface}
      * @param listener Listener to send data back on. Returned data will always be a list of
      *                 T Objects (if none, will be an empty list) and the int tag will always be:
-     *                 {@link PGMacUtilitiesConstants#TAG_GENERIC_FILTER_RESULTS}
+     *                 {@link PGMacTipsConstants#TAG_GENERIC_FILTER_RESULTS}
      */
     public GenericFilter(@NonNull List<T> objectsToFilter,
                          @NonNull OnTaskCompleteListener listener){
@@ -206,7 +206,7 @@ public class GenericFilter <T extends FilterInterface> {
                     results = new ArrayList<>();
                 }
                 listener.onTaskComplete(results,
-                        PGMacUtilitiesConstants.TAG_GENERIC_FILTER_RESULTS);
+                        PGMacTipsConstants.TAG_GENERIC_FILTER_RESULTS);
             }
         };
     }

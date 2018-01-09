@@ -15,7 +15,7 @@ import android.support.annotation.NonNull;
 import android.util.Base64;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -294,7 +294,7 @@ public class FileUtilities {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            listener.onTaskComplete(s, PGMacUtilitiesConstants.TAG_TXT_FILE_CREATION);
+            listener.onTaskComplete(s, PGMacTipsConstants.TAG_TXT_FILE_CREATION);
         }
     }
 
@@ -322,9 +322,9 @@ public class FileUtilities {
             String ss = myObject + "";
             //File file = new File(MyApplication.getAppContext().getExternalFilesDir(Environment.
             //DIRECTORY_DOWNLOADS), "loggingData.txt");
-            File file = new File(PGMacUtilitiesConstants.PHONE_URI_TO_WRITE_TO, PGMacUtilitiesConstants.FILE_NAME);
+            File file = new File(PGMacTipsConstants.PHONE_URI_TO_WRITE_TO, PGMacTipsConstants.FILE_NAME);
             if(file == null){
-                file = new File(StringUtilities.getDataDirectoryLocation(), PGMacUtilitiesConstants.FILE_NAME);
+                file = new File(StringUtilities.getDataDirectoryLocation(), PGMacTipsConstants.FILE_NAME);
             }
             if(file == null){
                 return;

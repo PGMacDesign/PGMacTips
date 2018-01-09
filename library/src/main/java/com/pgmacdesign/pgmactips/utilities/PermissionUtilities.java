@@ -15,12 +15,12 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants.TAG_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE;
+import static com.pgmacdesign.pgmactips.misc.PGMacTipsConstants.TAG_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE;
 
 /**
  * Created by pmacdowell on 8/12/2016.
@@ -35,43 +35,43 @@ public class PermissionUtilities {
 
     //Write external Storage
     private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE =
-            PGMacUtilitiesConstants.TAG_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE;
+            PGMacTipsConstants.TAG_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE;
     //Read External Storage
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE =
-            PGMacUtilitiesConstants.TAG_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE;
+            PGMacTipsConstants.TAG_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE;
     //Read Phone State
     private static final int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE =
-            PGMacUtilitiesConstants.TAG_PERMISSIONS_REQUEST_READ_PHONE_STATE;
+            PGMacTipsConstants.TAG_PERMISSIONS_REQUEST_READ_PHONE_STATE;
     //Camera
     private static final int MY_PERMISSIONS_REQUEST_CAMERA =
-            PGMacUtilitiesConstants.TAG_PERMISSIONS_REQUEST_CAMERA;
+            PGMacTipsConstants.TAG_PERMISSIONS_REQUEST_CAMERA;
     //Gallery
 //    private static final int MY_PERMISSIONS_REQUEST_GALLERY =
-//            PGMacUtilitiesConstants.TAG_PERMISSIONS_REQUEST_GALLERY;
+//            PGMacTipsConstants.TAG_PERMISSIONS_REQUEST_GALLERY;
     //Contacts
     private static final int MY_PERMISSIONS_REQUEST_CONTACTS =
-            PGMacUtilitiesConstants.TAG_PERMISSIONS_REQUEST_CONTACTS;
+            PGMacTipsConstants.TAG_PERMISSIONS_REQUEST_CONTACTS;
     //Network State
     private static final int MY_PERMISSIONS_ACCESS_NETWORK_STATE =
-            PGMacUtilitiesConstants.TAG_PERMISSIONS_ACCESS_NETWORK_STATE;
+            PGMacTipsConstants.TAG_PERMISSIONS_ACCESS_NETWORK_STATE;
     //Wifi State
     private static final int MY_PERMISSIONS_ACCESS_WIFI_STATE =
-            PGMacUtilitiesConstants.TAG_PERMISSIONS_ACCESS_WIFI_STATE;
+            PGMacTipsConstants.TAG_PERMISSIONS_ACCESS_WIFI_STATE;
     //Location (GPS)
     private static final int MY_PERMISSIONS_ACCESS_FINE_LOCATION =
-            PGMacUtilitiesConstants.TAG_PERMISSIONS_ACCESS_FINE_LOCATION;
+            PGMacTipsConstants.TAG_PERMISSIONS_ACCESS_FINE_LOCATION;
     //Location (GPS)
     private static final int MY_PERMISSIONS_ACCESS_COARSE_LOCATION =
-            PGMacUtilitiesConstants.TAG_PERMISSIONS_ACCESS_COARSE_LOCATION;
+            PGMacTipsConstants.TAG_PERMISSIONS_ACCESS_COARSE_LOCATION;
     //Boot Completed
     private static final int MY_PERMISSIONS_RECEIVE_BOOT_COMPLETED =
-            PGMacUtilitiesConstants.TAG_PERMISSIONS_RECEIVE_BOOT_COMPLETED;
+            PGMacTipsConstants.TAG_PERMISSIONS_RECEIVE_BOOT_COMPLETED;
     //All Permissions Request
     private static final int MY_PERMISSIONS_REQUEST_ALL =
-            PGMacUtilitiesConstants.TAG_PERMISSIONS_REQUEST_ALL;
+            PGMacTipsConstants.TAG_PERMISSIONS_REQUEST_ALL;
 
     private static final int PERMISSIONS_REQUEST_BASE_CALL =
-            PGMacUtilitiesConstants.TAG_PERMISSIONS_REQUEST_BASE_CALL;
+            PGMacTipsConstants.TAG_PERMISSIONS_REQUEST_BASE_CALL;
 
 
     private boolean bypassShowRationale, userCheckedNeverRemindBox;

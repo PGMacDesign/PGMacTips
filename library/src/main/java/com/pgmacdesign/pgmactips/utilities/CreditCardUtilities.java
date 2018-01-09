@@ -6,7 +6,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.pgmacdesign.pgmactips.R;
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
 import java.util.regex.Pattern;
 
@@ -23,12 +23,12 @@ public class CreditCardUtilities {
      */
     public static enum CardType {
         UNKNOWN,
-        VISA(PGMacUtilitiesConstants.REGEX_CREDIT_CARD_VISA),
-        MASTERCARD(PGMacUtilitiesConstants.REGEX_CREDIT_CARD_MASTERCARD),
-        AMERICAN_EXPRESS(PGMacUtilitiesConstants.REGEX_CREDIT_CARD_AMERICAN_EXPRESS),
-        DINERS_CLUB(PGMacUtilitiesConstants.REGEX_CREDIT_CARD_DINERS_CLUB),
-        DISCOVER(PGMacUtilitiesConstants.REGEX_CREDIT_CARD_DISCOVER),
-        JCB(PGMacUtilitiesConstants.REGEX_CREDIT_CARD_JCB);
+        VISA(PGMacTipsConstants.REGEX_CREDIT_CARD_VISA),
+        MASTERCARD(PGMacTipsConstants.REGEX_CREDIT_CARD_MASTERCARD),
+        AMERICAN_EXPRESS(PGMacTipsConstants.REGEX_CREDIT_CARD_AMERICAN_EXPRESS),
+        DINERS_CLUB(PGMacTipsConstants.REGEX_CREDIT_CARD_DINERS_CLUB),
+        DISCOVER(PGMacTipsConstants.REGEX_CREDIT_CARD_DISCOVER),
+        JCB(PGMacTipsConstants.REGEX_CREDIT_CARD_JCB);
 
         private Pattern pattern;
 

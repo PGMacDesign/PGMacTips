@@ -24,7 +24,7 @@ import android.support.v4.content.FileProvider;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.enhancedphotoclasses.TakePhotoActivity;
 import com.pgmacdesign.pgmactips.enhancedphotoclasses.TakePhotoActivityAPI21;
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
@@ -121,24 +121,24 @@ public class CameraMediaUtilities {
     private static final String ERROR_STRING = "An error occurred while processing your photo. ";
 
     //Tags used for OnActivityResult
-    public static final int TAG_TAKE_PICTURE_WITH_CAMERA = PGMacUtilitiesConstants.TAG_TAKE_PICTURE_WITH_CAMERA;
-    public static final int TAG_PHOTO_FROM_GALLERY = PGMacUtilitiesConstants.TAG_PHOTO_FROM_GALLERY;
-    public static final int TAG_CROP_PHOTO = PGMacUtilitiesConstants.TAG_CROP_PHOTO;
-    public static final int TAG_TAKE_VIDEO_WITH_RECORDER = PGMacUtilitiesConstants.TAG_TAKE_VIDEO_WITH_RECORDER;
-    public static final int TAG_RETURN_IMAGE_URL = PGMacUtilitiesConstants.TAG_RETURN_IMAGE_URL; //Should be URI
-    public static final int TAG_MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = PGMacUtilitiesConstants.TAG_MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE;
-    public static final int TAG_MY_PERMISSIONS_REQUEST_CAMERA = PGMacUtilitiesConstants.TAG_MY_PERMISSIONS_REQUEST_CAMERA;
-    public static final int TAG_PHOTO_UNKNOWN_ERROR = PGMacUtilitiesConstants.TAG_PHOTO_UNKNOWN_ERROR;
-    public static final int TAG_PHOTO_BAD_URL = PGMacUtilitiesConstants.TAG_PHOTO_BAD_URL;
-    public static final int TAG_FILE_DOWNLOADED = PGMacUtilitiesConstants.TAG_FILE_DOWNLOADED;
-    public static final int TAG_CROP_ERROR = PGMacUtilitiesConstants.TAG_CROP_ERROR;
-    public static final int TAG_CROP_SUCCESS = PGMacUtilitiesConstants.TAG_CROP_SUCCESS;
-    public static final int TAG_PHOTO_CANCEL = PGMacUtilitiesConstants.TAG_PHOTO_CANCEL;
-    public static final int TAG_UPLOAD_ERROR = PGMacUtilitiesConstants.TAG_UPLOAD_ERROR;
-    public static final int TAG_UPLOAD_SUCCESS = PGMacUtilitiesConstants.TAG_UPLOAD_SUCCESS;
-    public static final int TAG_TAKE_SELF_PHOTO = PGMacUtilitiesConstants.TAG_TAKE_SELF_PHOTO;
-    public static final int TAG_TAKE_SELF_PHOTO_SUCCESS = PGMacUtilitiesConstants.TAG_TAKE_SELF_PHOTO_SUCCESS;
-    public static final int TAG_TAKE_SELF_PHOTO_FAILURE = PGMacUtilitiesConstants.TAG_TAKE_SELF_PHOTO_FAILURE;
+    public static final int TAG_TAKE_PICTURE_WITH_CAMERA = PGMacTipsConstants.TAG_TAKE_PICTURE_WITH_CAMERA;
+    public static final int TAG_PHOTO_FROM_GALLERY = PGMacTipsConstants.TAG_PHOTO_FROM_GALLERY;
+    public static final int TAG_CROP_PHOTO = PGMacTipsConstants.TAG_CROP_PHOTO;
+    public static final int TAG_TAKE_VIDEO_WITH_RECORDER = PGMacTipsConstants.TAG_TAKE_VIDEO_WITH_RECORDER;
+    public static final int TAG_RETURN_IMAGE_URL = PGMacTipsConstants.TAG_RETURN_IMAGE_URL; //Should be URI
+    public static final int TAG_MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = PGMacTipsConstants.TAG_MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE;
+    public static final int TAG_MY_PERMISSIONS_REQUEST_CAMERA = PGMacTipsConstants.TAG_MY_PERMISSIONS_REQUEST_CAMERA;
+    public static final int TAG_PHOTO_UNKNOWN_ERROR = PGMacTipsConstants.TAG_PHOTO_UNKNOWN_ERROR;
+    public static final int TAG_PHOTO_BAD_URL = PGMacTipsConstants.TAG_PHOTO_BAD_URL;
+    public static final int TAG_FILE_DOWNLOADED = PGMacTipsConstants.TAG_FILE_DOWNLOADED;
+    public static final int TAG_CROP_ERROR = PGMacTipsConstants.TAG_CROP_ERROR;
+    public static final int TAG_CROP_SUCCESS = PGMacTipsConstants.TAG_CROP_SUCCESS;
+    public static final int TAG_PHOTO_CANCEL = PGMacTipsConstants.TAG_PHOTO_CANCEL;
+    public static final int TAG_UPLOAD_ERROR = PGMacTipsConstants.TAG_UPLOAD_ERROR;
+    public static final int TAG_UPLOAD_SUCCESS = PGMacTipsConstants.TAG_UPLOAD_SUCCESS;
+    public static final int TAG_TAKE_SELF_PHOTO = PGMacTipsConstants.TAG_TAKE_SELF_PHOTO;
+    public static final int TAG_TAKE_SELF_PHOTO_SUCCESS = PGMacTipsConstants.TAG_TAKE_SELF_PHOTO_SUCCESS;
+    public static final int TAG_TAKE_SELF_PHOTO_FAILURE = PGMacTipsConstants.TAG_TAKE_SELF_PHOTO_FAILURE;
 
 
     //Tags used for passing to other activities via intents
@@ -147,7 +147,7 @@ public class CameraMediaUtilities {
     public static final String TAG_FILE_EXTENSION = "tag_file_extension";
     public static final String TAG_USE_FLASH = "tag_use_flash";
     public static final String TAG_USE_FRONT_FACING_CAMERA = "tag_use_front_facing_camera";
-    public static final String TAG_SELF_PHOTO_URI = PGMacUtilitiesConstants.TAG_SELF_PHOTO_URI;
+    public static final String TAG_SELF_PHOTO_URI = PGMacTipsConstants.TAG_SELF_PHOTO_URI;
 
     //UCrop Variables
     private UCrop.Options options;
@@ -868,7 +868,7 @@ public class CameraMediaUtilities {
             else if(requestcode == TAG_TAKE_SELF_PHOTO) {
                 try {
                     // TODO: 2017-11-16 will need to replace this code with regards to api 24+
-                    String androidUri = data.getStringExtra(PGMacUtilitiesConstants.TAG_SELF_PHOTO_URI);
+                    String androidUri = data.getStringExtra(PGMacTipsConstants.TAG_SELF_PHOTO_URI);
                     Uri uri = StringUtilities.convertStringToAndroidUri(androidUri);
                     if(uri != null){
                         if(optionsAndFlags.shouldCropPhoto){

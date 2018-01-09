@@ -6,7 +6,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -18,9 +18,9 @@ import java.util.TimerTask;
 public class TimerUtilities {
 
     public static final int TAG_TIMER_UTILITIES_FINISHED =
-            PGMacUtilitiesConstants.TAG_TIMER_UTILITIES_FINISHED;
+            PGMacTipsConstants.TAG_TIMER_UTILITIES_FINISHED;
     public static final int TAG_TIMER_UTILITIES_FINISHED_WITH_DATA =
-            PGMacUtilitiesConstants.TAG_TIMER_UTILITIES_FINISHED_WITH_DATA;
+            PGMacTipsConstants.TAG_TIMER_UTILITIES_FINISHED_WITH_DATA;
 
     private static Timer localTimer;
 

@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.progressbars.GIFProgressBar;
 import com.pgmacdesign.pgmactips.progressbars.PGMacCustomProgressBar;
 
@@ -237,7 +237,7 @@ public class ProgressBarUtilities {
      * Setup a timeout timer to auto-dismiss the progress dialog after X seconds
      */
     private static void setupTimeoutTimer(){
-        setupTimeoutTimer((PGMacUtilitiesConstants.ONE_SECOND * 5));
+        setupTimeoutTimer((PGMacTipsConstants.ONE_SECOND * 5));
     }
 
     /**

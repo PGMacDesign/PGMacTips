@@ -7,7 +7,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.google.android.gms.vision.CameraSource;
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.ColorUtilities;
 
 import java.util.HashSet;
@@ -171,7 +171,7 @@ public class FilterOverlay <T extends FilterOverlay.Graphic> extends View {
 
         myPaint = new Paint();
         myPaint.setColor(ColorUtilities.parseMyColor(
-                PGMacUtilitiesConstants.COLOR_SEMI_TRANSPARENT_8));
+                PGMacTipsConstants.COLOR_SEMI_TRANSPARENT_8));
 
         canvas.drawCircle(mWidthScaleFactor/2, mHeightScaleFactor/2, mPreviewWidth, myPaint);
         if ((mPreviewWidth != 0) && (mPreviewHeight != 0)) {

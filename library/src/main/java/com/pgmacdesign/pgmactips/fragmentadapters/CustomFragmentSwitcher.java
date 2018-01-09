@@ -22,7 +22,7 @@ import android.widget.FrameLayout;
 
 import com.pgmacdesign.pgmactips.BuildConfig;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.DatabaseUtilities;
 
 /**
@@ -156,7 +156,7 @@ public class CustomFragmentSwitcher extends FrameLayout {
             e.printStackTrace();
             if(this.listener != null){
                 this.listener.onTaskComplete(e.getMessage(),
-                        PGMacUtilitiesConstants.TAG_FRAGMENT_SWITCHER_ERROR);
+                        PGMacTipsConstants.TAG_FRAGMENT_SWITCHER_ERROR);
             }
         }
     }
@@ -307,11 +307,11 @@ public class CustomFragmentSwitcher extends FrameLayout {
             try {
                 Object object = dbUtils.getPersistedObject(mCurrentFragment.getClass());
                 if(object != null){
-                    listener.onTaskComplete(object, PGMacUtilitiesConstants.TAG_FRAGMENT_SWITCHER_OBJECT);
+                    listener.onTaskComplete(object, PGMacTipsConstants.TAG_FRAGMENT_SWITCHER_OBJECT);
                 }
             } catch (Exception e){
                 e.printStackTrace();
-                listener.onTaskComplete(null, PGMacUtilitiesConstants.TAG_FRAGMENT_SWITCHER_NO_OBJECT);
+                listener.onTaskComplete(null, PGMacTipsConstants.TAG_FRAGMENT_SWITCHER_NO_OBJECT);
             }
             */
         }

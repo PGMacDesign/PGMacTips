@@ -13,7 +13,7 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.ColorUtilities;
 import com.pgmacdesign.pgmactips.utilities.L;
 
@@ -142,7 +142,7 @@ public class CircleOverlayView extends LinearLayout {
         private int alphaToUse;
 
         public CircleOverlayParams(){
-            colorToSet = ColorUtilities.parseMyColor(PGMacUtilitiesConstants.COLOR_LIGHT_GRAY);
+            colorToSet = ColorUtilities.parseMyColor(PGMacTipsConstants.COLOR_LIGHT_GRAY);
             alphaToUse = 99;
             shapeType = ShapeTypes.OVAL;
         }

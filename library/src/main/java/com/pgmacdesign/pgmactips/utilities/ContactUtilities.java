@@ -8,7 +8,7 @@ import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -170,10 +170,10 @@ public class ContactUtilities {
          * @param listener The listener to pass data back on. Note! Data sent back will be a
          *                 list of Contact Objects. See {@link Contact}. The data is sent back
          *                 along the Listener with a tag to match the returned results:
-         *                 Email: PGMacUtilitiesConstants.TAG_CONTACT_QUERY_EMAIL
-         *                 Phone: PGMacUtilitiesConstants.TAG_CONTACT_QUERY_PHONE
-         *                 Name: PGMacUtilitiesConstants.TAG_CONTACT_QUERY_NAME
-         *                 Address: PGMacUtilitiesConstants.TAG_CONTACT_QUERY_ADDRESS
+         *                 Email: PGMacTipsConstants.TAG_CONTACT_QUERY_EMAIL
+         *                 Phone: PGMacTipsConstants.TAG_CONTACT_QUERY_PHONE
+         *                 Name: PGMacTipsConstants.TAG_CONTACT_QUERY_NAME
+         *                 Address: PGMacTipsConstants.TAG_CONTACT_QUERY_ADDRESS
          * @param activity The activity this is being called from
          * @param query The query to be included (in String format)
          * @param maxNumResults The int max number of results. If null or zero is passed, it will
@@ -303,19 +303,19 @@ public class ContactUtilities {
 
                 switch (SEARCHTYPES){
                     case EMAIL:
-                        listener.onTaskComplete(contacts1, PGMacUtilitiesConstants.TAG_CONTACT_QUERY_EMAIL);
+                        listener.onTaskComplete(contacts1, PGMacTipsConstants.TAG_CONTACT_QUERY_EMAIL);
                         break;
 
                     case PHONE:
-                        listener.onTaskComplete(contacts1, PGMacUtilitiesConstants.TAG_CONTACT_QUERY_PHONE);
+                        listener.onTaskComplete(contacts1, PGMacTipsConstants.TAG_CONTACT_QUERY_PHONE);
                         break;
 
                     case ADDRESS:
-                        listener.onTaskComplete(contacts1, PGMacUtilitiesConstants.TAG_CONTACT_QUERY_ADDRESS);
+                        listener.onTaskComplete(contacts1, PGMacTipsConstants.TAG_CONTACT_QUERY_ADDRESS);
                         break;
 
                     case NAME:
-                        listener.onTaskComplete(contacts1, PGMacUtilitiesConstants.TAG_CONTACT_QUERY_NAME);
+                        listener.onTaskComplete(contacts1, PGMacTipsConstants.TAG_CONTACT_QUERY_NAME);
                         break;
                 }
             }
@@ -358,7 +358,7 @@ public class ContactUtilities {
 
         @Override
         protected void onPostExecute(List<Contact> contacts) {
-            listener.onTaskComplete(contacts, PGMacUtilitiesConstants.TAG_PHONE_QUERY_REGEX_SUCCESS);
+            listener.onTaskComplete(contacts, PGMacTipsConstants.TAG_PHONE_QUERY_REGEX_SUCCESS);
             super.onPostExecute(contacts);
         }
     }

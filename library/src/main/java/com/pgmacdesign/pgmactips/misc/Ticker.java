@@ -63,9 +63,9 @@ public class Ticker {
         long now = new Date().getTime();
         long gap = now - this.timeAtInit;
         String appendEnd = "";
-        if(gap < PGMacUtilitiesConstants.ONE_MINUTE){
+        if(gap < PGMacTipsConstants.ONE_MINUTE){
             appendEnd = "milliseconds";
-        } else if(gap >= PGMacUtilitiesConstants.ONE_MINUTE && gap < PGMacUtilitiesConstants.ONE_HOUR){
+        } else if(gap >= PGMacTipsConstants.ONE_MINUTE && gap < PGMacTipsConstants.ONE_HOUR){
             gap /= 1000;
             appendEnd = "seconds";
         } else {

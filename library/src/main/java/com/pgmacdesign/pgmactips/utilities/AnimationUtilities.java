@@ -6,7 +6,7 @@ import android.view.View;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
 /**
  * Created by pmacdowell on 8/16/2016.
@@ -27,18 +27,18 @@ public class AnimationUtilities {
     };
     */
     private static final Techniques[] ENTER_ANIMATIONS = {
-            PGMacUtilitiesConstants.IN_ZOOM_UP, PGMacUtilitiesConstants.IN_ROLL,
-            PGMacUtilitiesConstants.IN_PULSE, PGMacUtilitiesConstants.IN_RUBBERBAND,
-            PGMacUtilitiesConstants.IN_FLIP_X, PGMacUtilitiesConstants.IN_RIGHT_SLIDE,
-            PGMacUtilitiesConstants.IN_LEFT_SLIDE, PGMacUtilitiesConstants.IN_SLIDE,
-            PGMacUtilitiesConstants.IN_FADE_DOWN, PGMacUtilitiesConstants.IN_FADE_UP,
-            PGMacUtilitiesConstants.IN_DROP, PGMacUtilitiesConstants.IN_TADA
+            PGMacTipsConstants.IN_ZOOM_UP, PGMacTipsConstants.IN_ROLL,
+            PGMacTipsConstants.IN_PULSE, PGMacTipsConstants.IN_RUBBERBAND,
+            PGMacTipsConstants.IN_FLIP_X, PGMacTipsConstants.IN_RIGHT_SLIDE,
+            PGMacTipsConstants.IN_LEFT_SLIDE, PGMacTipsConstants.IN_SLIDE,
+            PGMacTipsConstants.IN_FADE_DOWN, PGMacTipsConstants.IN_FADE_UP,
+            PGMacTipsConstants.IN_DROP, PGMacTipsConstants.IN_TADA
     };
     private static final Techniques[] EXIT_ANIMATIONS = {
-            PGMacUtilitiesConstants.OUT_ZOOM_DOWN, PGMacUtilitiesConstants.OUT_HINGE,
-            PGMacUtilitiesConstants.OUT_FLIP_Y, PGMacUtilitiesConstants.OUT_SLIDE,
-            PGMacUtilitiesConstants.OUT_FLIP_X, PGMacUtilitiesConstants.OUT_ROLL,
-            PGMacUtilitiesConstants.OUT_ZOOM
+            PGMacTipsConstants.OUT_ZOOM_DOWN, PGMacTipsConstants.OUT_HINGE,
+            PGMacTipsConstants.OUT_FLIP_Y, PGMacTipsConstants.OUT_SLIDE,
+            PGMacTipsConstants.OUT_FLIP_X, PGMacTipsConstants.OUT_ROLL,
+            PGMacTipsConstants.OUT_ZOOM
     };
 
     /**

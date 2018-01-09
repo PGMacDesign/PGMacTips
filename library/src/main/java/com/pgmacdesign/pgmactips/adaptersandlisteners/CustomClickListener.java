@@ -3,7 +3,7 @@ package com.pgmacdesign.pgmactips.adaptersandlisteners;
 import android.support.annotation.NonNull;
 import android.view.View;
 
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.L;
 
 /**
@@ -64,7 +64,7 @@ public class CustomClickListener  implements View.OnClickListener{
             return;
         }
         if(customTag == null){
-            this.customTag = PGMacUtilitiesConstants.TAG_CLICK_NO_TAG_SENT;
+            this.customTag = PGMacTipsConstants.TAG_CLICK_NO_TAG_SENT;
         }
         link.itemClicked(obj, customTag, position);
     }

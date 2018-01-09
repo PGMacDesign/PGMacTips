@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.pgmacdesign.pgmactips.R;
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
 /**
  * This class is used for getting system icons and coloring them (IE a back button)
@@ -42,7 +42,7 @@ public class SystemDrawableUtilities {
     public static Drawable getToolbarBackArrow(Context context, String colorToSet){
         int colorToSetInt = ColorUtilities.parseMyColor(colorToSet);
         if(colorToSetInt == -100){
-            colorToSetInt = ColorUtilities.parseMyColor(PGMacUtilitiesConstants.COLOR_BLACK);
+            colorToSetInt = ColorUtilities.parseMyColor(PGMacTipsConstants.COLOR_BLACK);
         }
         return (SystemDrawableUtilities.getToolbarBackArrow(context, colorToSetInt));
     }

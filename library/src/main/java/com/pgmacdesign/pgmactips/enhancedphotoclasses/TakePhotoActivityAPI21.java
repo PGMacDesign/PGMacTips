@@ -51,7 +51,7 @@ import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.face.FaceDetector;
 import com.pgmacdesign.pgmactips.R;
 import com.pgmacdesign.pgmactips.graphicsanddrawing.CircleOverlayView;
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.AnimationUtilities;
 import com.pgmacdesign.pgmactips.utilities.CameraMediaUtilities;
 import com.pgmacdesign.pgmactips.utilities.ColorUtilities;
@@ -96,7 +96,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
     //Misc
     private long timeActivityOpened;
     private static final long TIME_IN_MILLISECONDS_FOR_INITIAL_DELAY =
-            (PGMacUtilitiesConstants.ONE_SECOND * 4);
+            (PGMacTipsConstants.ONE_SECOND * 4);
     private boolean okToTake;
     private File file;
     private String userSentPathToFile, userSentNameOfFile, photoExtensionName;
@@ -207,7 +207,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
         int width = (int) (dmu.getWidthRadius() * 0.83);
         CircleOverlayView.CircleOverlayParams params = new CircleOverlayView.CircleOverlayParams();
         params.setShapeType(CircleOverlayView.CircleOverlayParams.ShapeTypes.OVAL);
-        params.setColorToSet(ColorUtilities.parseMyColor(PGMacUtilitiesConstants.COLOR_BLACK));
+        params.setColorToSet(ColorUtilities.parseMyColor(PGMacTipsConstants.COLOR_BLACK));
         params.setAlphaToUse(99);
         params.setShapeRadius(width);
         circleOverlayView = new CircleOverlayView(this, params);
@@ -901,13 +901,13 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
         take_photo_activity_api21_relative_layout.setVisibility(View.VISIBLE);
         take_photo_activity_api21_top_text_layout.setVisibility(View.VISIBLE);
         AnimationUtilities.animateMyView(take_photo_activity_api21_top_textview,
-                (int)(PGMacUtilitiesConstants.ONE_SECOND * 0.4),
+                (int)(PGMacTipsConstants.ONE_SECOND * 0.4),
                 Techniques.FadeInUp);
         take_photo_activity_api21_top_textview.bringToFront();
     }
     private void fadeOutTextSlow(){
         AnimationUtilities.animateMyView(take_photo_activity_api21_top_text_layout,
-                (int)(PGMacUtilitiesConstants.ONE_SECOND * 0.4),
+                (int)(PGMacTipsConstants.ONE_SECOND * 0.4),
                 Techniques.FadeOutDown);
     }
 
@@ -916,9 +916,9 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
      */
     private static enum AlertMessages{
         INITIAL("Center your face in circle and give us your best smile!",
-                (int)(PGMacUtilitiesConstants.ONE_SECOND * 3)),
+                (int)(PGMacTipsConstants.ONE_SECOND * 3)),
         BAD_FACES("We can't see your face!",
-                (int)(PGMacUtilitiesConstants.ONE_SECOND * 2.5));
+                (int)(PGMacTipsConstants.ONE_SECOND * 2.5));
 
         String message;
         int lengthOfDisplay;

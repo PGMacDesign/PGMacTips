@@ -3,7 +3,7 @@ package com.pgmacdesign.pgmactips.adaptersandlisteners;
 import android.support.annotation.NonNull;
 import android.view.View;
 
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.L;
 
 /**
@@ -64,7 +64,7 @@ public class CustomLongClickListener implements View.OnLongClickListener {
             return false;
         }
         if(customTag == null) {
-            this.customTag = PGMacUtilitiesConstants.TAG_LONG_CLICK_NO_TAG_SENT;
+            this.customTag = PGMacTipsConstants.TAG_LONG_CLICK_NO_TAG_SENT;
         }
         link.itemLongClicked(obj, customTag, position);
         return false;

@@ -12,7 +12,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
-import com.pgmacdesign.pgmactips.misc.PGMacUtilitiesConstants;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.L;
 
 /**
@@ -25,9 +25,9 @@ public class SMSBroadcastReceiver  extends BroadcastReceiver {
     private static final String TAG = "SMSBroadcastReceiver";
     public static final String INTENT_FILTER_STRING = "SMSBroadcastReceiver-custom-event-name";
     private static final int TAG_SMS_RECEIVED_BROADCAST_RECEIVER =
-            PGMacUtilitiesConstants.TAG_SMS_RECEIVED_BROADCAST_RECEIVER;
+            PGMacTipsConstants.TAG_SMS_RECEIVED_BROADCAST_RECEIVER;
     private static final int TAG_SMS_RECEIVED_BROADCAST_RECEIVER_EMPTY =
-            PGMacUtilitiesConstants.TAG_SMS_RECEIVED_BROADCAST_RECEIVER_EMPTY;
+            PGMacTipsConstants.TAG_SMS_RECEIVED_BROADCAST_RECEIVER_EMPTY;
 
     //Listener to send data back on
     private OnTaskCompleteListener listener;
