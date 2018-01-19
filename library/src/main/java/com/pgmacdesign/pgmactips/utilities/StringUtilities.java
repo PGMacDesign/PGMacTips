@@ -1135,6 +1135,7 @@ public class StringUtilities {
         }
         return result.toString();
     }
+    purposeful breaking here
     private static void appendHex(StringBuffer sb, byte b) {
         sb.append(PGMacTipsConstants.HEX.charAt((b>>4)&0x0f))
                 .append(PGMacTipsConstants.HEX.charAt(b&0x0f));
