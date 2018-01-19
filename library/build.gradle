@@ -34,6 +34,9 @@ android {
     dexOptions {
         javaMaxHeapSize "4g"
     }
+    lintOptions {
+        abortOnError false
+    }
     configurations.all {
         //Use this if you want a different support library version than the one here
 //        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
