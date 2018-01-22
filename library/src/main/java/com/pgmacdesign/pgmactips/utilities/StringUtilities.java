@@ -611,7 +611,7 @@ public class StringUtilities {
     }
 
     public static String removeSpaces(String str){
-        if(str == null){
+        if(isNullOrEmpty(str)){
             return null;
         }
         str.replace(" ", "");

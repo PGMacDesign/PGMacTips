@@ -17,7 +17,16 @@ import java.util.regex.Pattern;
  */
 public class CreditCardUtilities {
 
-
+    private static final String STRING_VISA = "VISA";
+    private static final String STRING_MASTERCARD = "MASTERCARD";
+    private static final String STRING_AMEX = "AMERICANEXPRESS";
+    private static final String STRING_AMEX2 = "AMERICAN EXPRESS";
+    private static final String STRING_DINERS_CLUB = "DINERSCLUB";
+    private static final String STRING_DINERS_CLUB2 = "DINERS CLUB";
+    private static final String STRING_DISCOVER = "DISCOVER";
+    private static final String STRING_JCB= "JCB";
+    private static final String[] ALL_CARDS = {STRING_VISA, STRING_MASTERCARD, STRING_AMEX,
+            STRING_AMEX2, STRING_DINERS_CLUB, STRING_DINERS_CLUB2, STRING_DISCOVER, STRING_JCB};
     /**
      * Checks credit card type. Enum matches via Regular Expressions
      */
@@ -55,6 +64,35 @@ public class CreditCardUtilities {
             return UNKNOWN;
         }
 
+        /**
+         * Another way to parse the card type via the String (In case # isn't avail, but Str is)
+         * @param cardName Card name. IE, if American Express is passed, will return
+         *                 {@link CreditCardUtilities.CardType#AMERICAN_EXPRESS}
+         * @return {@link CreditCardUtilities.CardType}
+         */
+        public static CardType parseName(String cardName){
+            cardName =  StringUtilities.keepLettersOnly(cardName);
+            cardName = StringUtilities.removeSpaces(cardName);
+            if(StringUtilities.doesEqual(cardName, STRING_VISA)){
+                return VISA;
+            } else if (StringUtilities.doesEqual(cardName, STRING_MASTERCARD)){
+                return MASTERCARD;
+            } else if (StringUtilities.doesEqual(cardName, STRING_AMEX2)){
+                return AMERICAN_EXPRESS;
+            } else if (StringUtilities.doesEqual(cardName, STRING_AMEX)){
+                return AMERICAN_EXPRESS;
+            } else if (StringUtilities.doesEqual(cardName, STRING_DINERS_CLUB)){
+                return DINERS_CLUB;
+            } else if (StringUtilities.doesEqual(cardName, STRING_DINERS_CLUB2)){
+                return DINERS_CLUB;
+            } else if (StringUtilities.doesEqual(cardName, STRING_DISCOVER)){
+                return DISCOVER;
+            } else if (StringUtilities.doesEqual(cardName, STRING_JCB)){
+                return JCB;
+            } else {
+                return UNKNOWN;
+            }
+        }
     }
 
     /*
