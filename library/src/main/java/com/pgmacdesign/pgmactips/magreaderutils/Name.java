@@ -4,6 +4,7 @@ package com.pgmacdesign.pgmactips.magreaderutils;
 
 import android.support.annotation.NonNull;
 
+import com.pgmacdesign.pgmactips.misc.TempString;
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 
 import static com.pgmacdesign.pgmactips.utilities.StringUtilities.isNullOrEmpty;

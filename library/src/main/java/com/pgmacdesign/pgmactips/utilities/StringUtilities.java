@@ -9,6 +9,8 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
@@ -17,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -1122,23 +1125,68 @@ public class StringUtilities {
     }
 
     /**
+     * Overloaded to allow for no charset to be passed
+     */
+    public static byte[] convertStringToBytes(@NonNull String str){
+        return convertStringToBytes(str, null);
+    }
+
+    /**
+     * Convert a String to a byte array
+     * @param str String to convert
+     * @param charSetPreference {@link java.nio.charset.Charset} IE, "UTF-8"
+     * @return byte[]
+     */
+    public static byte[] convertStringToBytes(@NonNull String str,
+                                              @Nullable String charSetPreference){
+        if(StringUtilities.isNullOrEmpty(str)){
+            return null;
+        }
+        byte[] s;
+        if(StringUtilities.isNullOrEmpty(charSetPreference)){
+            s = str.getBytes();
+        } else {
+            try {
+                s = str.getBytes(charSetPreference);
+            } catch (UnsupportedEncodingException e) {
+                s = str.getBytes();
+            }
+        }
+        return s;
+    }
+
+    /**
      * Convert a byte array to a hex string
-     * @param buf
-     * @return
+     * @param buf byte array to convert
+     * @return Hex String
      */
     public static String toHex(byte[] buf) {
+        return toHex(buf, false);
+    }
+
+    /**
+     * Convert a byte array to a hex string (boolean to capitalize all chars)
+     * @param buf byte array to convert
+     * @param capitalize if true, all chars will be capitalized
+     * @return String
+     */
+    public static String toHex(byte[] buf, boolean capitalize) {
         if (buf == null)
             return "";
         StringBuffer result = new StringBuffer(2*buf.length);
         for (int i = 0; i < buf.length; i++) {
-            appendHex(result, buf[i]);
+            if(capitalize) {
+                result.append(PGMacTipsConstants.HEX.charAt((buf[i] >> 4) & 0x0f))
+                        .append(PGMacTipsConstants.HEX.charAt(buf[i] & 0x0f));
+            } else {
+//                result.append(Integer.toHexString(0xFF & buf[i]));
+                String str = Integer.toHexString(0xFF & buf[i]);
+                while (str.length() < 2)
+                    str = "0" + str;
+                result.append(str);
+            }
         }
         return result.toString();
-    }
-
-    private static void appendHex(StringBuffer sb, byte b) {
-        sb.append(PGMacTipsConstants.HEX.charAt((b>>4)&0x0f))
-                .append(PGMacTipsConstants.HEX.charAt(b&0x0f));
     }
 
     /**

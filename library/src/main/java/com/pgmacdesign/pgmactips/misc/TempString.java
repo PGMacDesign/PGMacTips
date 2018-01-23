@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmactips.magreaderutils;
+package com.pgmacdesign.pgmactips.misc;
 
 import java.util.Arrays;
 

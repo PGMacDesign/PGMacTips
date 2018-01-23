@@ -51,66 +51,66 @@ android {
     dependencies {
 
         //Secure Shared Prefs. Link: https://github.com/scottyab/secure-preferences
-        compile 'com.scottyab:secure-preferences-lib:0.1.4'
+        api 'com.scottyab:secure-preferences-lib:0.1.4'
 
         //Progress bar animator. This one is better for longer processes, IE uploading photos.
         //Link: https://github.com/Tibolte/ElasticDownload
-        compile 'com.github.tibolte:elasticdownload:1.0.4'
+        api 'com.github.tibolte:elasticdownload:1.0.4'
 
         //Image Cropper. https://github.com/Yalantis/uCrop
-        compile 'com.yalantis:ucrop:2.2.0'
+        api 'com.yalantis:ucrop:2.2.0'
 
         //Animated SVG View (Custom, takes an SVG To work).
         //Link: https://github.com/jaredrummler/AnimatedSvgView
-        compile 'com.jaredrummler:animated-svg-view:1.0.5'
+        api 'com.jaredrummler:animated-svg-view:1.0.5'
 
         //Volley. Link: https://github.com/google/volley
-        compile 'com.android.volley:volley:1.0.0'
+        api 'com.android.volley:volley:1.0.0'
 
         //GSON. Link https://github.com/google/gson
-        compile 'com.google.code.gson:gson:2.8.2'
+        api 'com.google.code.gson:gson:2.8.2'
 
         //Picasso. Link: https://github.com/square/picasso
-        compile 'com.squareup.picasso:picasso:2.5.2'
+        api 'com.squareup.picasso:picasso:2.5.2'
 
         //Animations Base. Link: https://github.com/JakeWharton/NineOldAndroids
-        compile 'com.nineoldandroids:library:2.4.0'
+        api 'com.nineoldandroids:library:2.4.0'
 
         //Retrofit, Retrofit Converters, and OKHTTP.
         //Retrofit - https://github.com/square/retrofit
         //OKHttp - https://github.com/square/okhttp
-        compile 'com.squareup.retrofit2:retrofit:2.3.0'
-        compile 'com.squareup.okhttp3:okhttp:3.9.0'
-        compile 'com.squareup.okhttp3:logging-interceptor:3.9.0'
+        api 'com.squareup.retrofit2:retrofit:2.3.0'
+        api 'com.squareup.okhttp3:okhttp:3.9.0'
+        api 'com.squareup.okhttp3:logging-interceptor:3.9.0'
         //Type-safe HTTP client for Android and Java: https://github.com/square/retrofit
-        compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+        api 'com.squareup.retrofit2:converter-gson:2.3.0'
         //OKIO. Link: https://github.com/square/okio
-        compile 'com.squareup.okio:okio:1.13.0'
+        api 'com.squareup.okio:okio:1.13.0'
 
         //Part of The Android Animations collection below
-        compile 'com.daimajia.easing:library:2.0@aar'
+        api 'com.daimajia.easing:library:2.0@aar'
         //Android Animations. Link: https://github.com/daimajia/AndroidViewAnimations
-        compile 'com.daimajia.androidanimations:library:2.2@aar'
+        api 'com.daimajia.androidanimations:library:2.2@aar'
 
         //Text View  + Animations. Link: https://github.com/hanks-zyh/HTextView
-        compile 'hanks.xyz:htextview-library:0.1.5'
+        api 'hanks.xyz:htextview-library:0.1.5'
 
         //////////////////////////////////////
         //Misc Dependencies (IE Google Libs)//
         //////////////////////////////////////
 
         //Multi-dex. For more info: https://developer.android.com/studio/build/multidex.html
-        //compile 'com.android.support:multidex:1.0.1'
+        //api 'com.android.support:multidex:1.0.1'
 
         //Google play services. Full list here - https://developers.google.com/android/guides/setup
         //Vision
-        compile 'com.google.android.gms:play-services-vision:11.4.2'
+        api 'com.google.android.gms:play-services-vision:11.4.2'
 
         //Maps
-        compile 'com.google.android.gms:play-services-maps:11.4.2'
+        api 'com.google.android.gms:play-services-maps:11.4.2'
 
         //Android support libs
-        compile 'com.android.support:design:26.1.0'
+        api 'com.android.support:design:26.1.0'
 
 
     }

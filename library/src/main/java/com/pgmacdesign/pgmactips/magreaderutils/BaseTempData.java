@@ -2,6 +2,8 @@
 package com.pgmacdesign.pgmactips.magreaderutils;
 
 
+import com.pgmacdesign.pgmactips.misc.TempString;
+
 /**
  * Class is used to wipe data parse the Strings used as a security measure.
  */

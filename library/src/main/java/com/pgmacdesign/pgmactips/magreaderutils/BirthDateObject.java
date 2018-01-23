@@ -2,6 +2,7 @@ package com.pgmacdesign.pgmactips.magreaderutils;
 
 import android.support.annotation.NonNull;
 
+import com.pgmacdesign.pgmactips.misc.TempString;
 import com.pgmacdesign.pgmactips.utilities.DateUtilities;
 
 import java.util.Calendar;

@@ -2,6 +2,7 @@
 package com.pgmacdesign.pgmactips.magreaderutils;
 
 
+import com.pgmacdesign.pgmactips.misc.TempString;
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 
 import java.util.Calendar;

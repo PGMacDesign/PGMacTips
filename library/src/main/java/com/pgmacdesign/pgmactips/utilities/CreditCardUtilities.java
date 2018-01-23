@@ -55,7 +55,7 @@ public class CreditCardUtilities {
          * @return
          */
         public static CardType detect(String cardNumber) {
-
+            if(StringUtilities.isNullOrEmpty(cardNumber)) return UNKNOWN;
             for (CardType cardType : CardType.values()) {
                 if (null == cardType.pattern) continue;
                 if (cardType.pattern.matcher(cardNumber).matches()) return cardType;
@@ -73,21 +73,21 @@ public class CreditCardUtilities {
         public static CardType parseName(String cardName){
             cardName =  StringUtilities.keepLettersOnly(cardName);
             cardName = StringUtilities.removeSpaces(cardName);
-            if(StringUtilities.doesEqual(cardName, STRING_VISA)){
+            if(StringUtilities.doesEqualIgnoreCase(cardName, STRING_VISA)){
                 return VISA;
-            } else if (StringUtilities.doesEqual(cardName, STRING_MASTERCARD)){
+            } else if (StringUtilities.doesEqualIgnoreCase(cardName, STRING_MASTERCARD)){
                 return MASTERCARD;
-            } else if (StringUtilities.doesEqual(cardName, STRING_AMEX2)){
+            } else if (StringUtilities.doesEqualIgnoreCase(cardName, STRING_AMEX2)){
                 return AMERICAN_EXPRESS;
-            } else if (StringUtilities.doesEqual(cardName, STRING_AMEX)){
+            } else if (StringUtilities.doesEqualIgnoreCase(cardName, STRING_AMEX)){
                 return AMERICAN_EXPRESS;
-            } else if (StringUtilities.doesEqual(cardName, STRING_DINERS_CLUB)){
+            } else if (StringUtilities.doesEqualIgnoreCase(cardName, STRING_DINERS_CLUB)){
                 return DINERS_CLUB;
-            } else if (StringUtilities.doesEqual(cardName, STRING_DINERS_CLUB2)){
+            } else if (StringUtilities.doesEqualIgnoreCase(cardName, STRING_DINERS_CLUB2)){
                 return DINERS_CLUB;
-            } else if (StringUtilities.doesEqual(cardName, STRING_DISCOVER)){
+            } else if (StringUtilities.doesEqualIgnoreCase(cardName, STRING_DISCOVER)){
                 return DISCOVER;
-            } else if (StringUtilities.doesEqual(cardName, STRING_JCB)){
+            } else if (StringUtilities.doesEqualIgnoreCase(cardName, STRING_JCB)){
                 return JCB;
             } else {
                 return UNKNOWN;

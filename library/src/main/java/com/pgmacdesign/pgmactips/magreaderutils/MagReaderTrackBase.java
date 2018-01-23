@@ -2,6 +2,8 @@
 package com.pgmacdesign.pgmactips.magreaderutils;
 
 
+import com.pgmacdesign.pgmactips.misc.TempString;
+
 import java.util.regex.Matcher;
 
 abstract class MagReaderTrackBase extends BaseTempData implements TempStringInterface {

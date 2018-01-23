@@ -1,5 +1,7 @@
 package com.pgmacdesign.pgmactips.magreaderutils;
 
+import com.pgmacdesign.pgmactips.misc.TempString;
+
 /**
  * Interface for linking with the {@link TempString} class
  * Created by pmacdowell on 2017-08-03.
