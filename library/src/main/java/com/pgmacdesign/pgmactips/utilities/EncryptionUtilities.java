@@ -2,11 +2,14 @@ package com.pgmacdesign.pgmactips.utilities;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.pgmacdesign.pgmactips.misc.TempString;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -26,15 +29,17 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
- * Note! This class currently only works if the salt is of length 16. Will need to refactor
+ * Utilizing logic from these links:
+ * https://stackoverflow.com/questions/40123319/easy-way-to-encrypt-decrypt-string-in-android
+ * https://nelenkov.blogspot.com/2012/04/using-password-based-encryption-on.html
  * Created by pmacdowell on 2018-01-08.
  */
-
 public class EncryptionUtilities {
 
 
-    //https://stackoverflow.com/questions/40123319/easy-way-to-encrypt-decrypt-string-in-android
-    //https://nelenkov.blogspot.com/2012/04/using-password-based-encryption-on.html
+    private static final String TAG = "EncryptionUtilities";
+    private static final String INVALID_CHARSET_ERROR =
+            "Invalid Charset. Acceptable charsets include: UTF-8, US_ASCII, and ISO_8859_1";
 
     private static final int iterationCount = 1000;
     private static final int keyLength = 256;
@@ -43,23 +48,89 @@ public class EncryptionUtilities {
     private static final String CIPHER_INSTANCE_TYPE = "AES/CBC/PKCS5Padding";
     private static final String AES = "AES";
     private static final String MD5 = "MD5";
-    public final static String UTF8 = "UTF-8";
+    public final static String UTF8 = StandardCharsets.UTF_8.toString();
 
-    private static String charSetPreference;
+    /**
+     * The charset preference to be used throughout the class. {@link StandardCharsets}
+     * Charsets that WILL work:
+     * {@link java.nio.charset.StandardCharsets#UTF_8}
+     * {@link java.nio.charset.StandardCharsets#ISO_8859_1}
+     * {@link java.nio.charset.StandardCharsets#US_ASCII}
+     * Charsets that will NOT work:
+     * {@link java.nio.charset.StandardCharsets#UTF_16}
+     * {@link java.nio.charset.StandardCharsets#UTF_16BE}
+     * {@link java.nio.charset.StandardCharsets#UTF_16LE}
+     */
+    private static String charSetPreference = UTF8;
+
+    /**
+     * If this is true and a salt of length 16 is passed in, the string / byte[] will not be
+     * hashed using MD5. If false, any String / byte[] will be hashed using MD5
+     * {@link EncryptionUtilities#convertToMD5Hash(String)}
+     */
+    private static boolean bypassLength16SaltHashing = false;
 
     /**
      * Set the charset (IE, 'UTF-8'). If this is never set, all calls will default to UTF-8
-     * @param charSetPreference {@link java.nio.charset.Charset}
+     *
+     * @param charSetPreference {@link StandardCharsets}
+     *                          Charsets that WILL work:
+     *                          {@link java.nio.charset.StandardCharsets#UTF_8}
+     *                          {@link java.nio.charset.StandardCharsets#ISO_8859_1}
+     *                          {@link java.nio.charset.StandardCharsets#US_ASCII}
+     *                          Charsets that will NOT work:
+     *                          {@link java.nio.charset.StandardCharsets#UTF_16}
+     *                          {@link java.nio.charset.StandardCharsets#UTF_16BE}
+     *                          {@link java.nio.charset.StandardCharsets#UTF_16LE}
      */
-    public static void setCharSetPreference(@NonNull String charSetPreference) {
-        EncryptionUtilities.charSetPreference = charSetPreference;
+    public static void setCharSetPreference(@NonNull Charset charSetPreference) {
+        boolean okToUse;
+        if (StringUtilities.doesEqual(charSetPreference.toString(),
+                StandardCharsets.UTF_8.toString())) {
+            okToUse = true;
+        } else if (StringUtilities.doesEqual(charSetPreference.toString(),
+                StandardCharsets.ISO_8859_1.toString())) {
+            okToUse = true;
+        } else if (StringUtilities.doesEqual(charSetPreference.toString(),
+                StandardCharsets.US_ASCII.toString())) {
+            okToUse = true;
+        } else if (StringUtilities.doesEqual(charSetPreference.toString(),
+                StandardCharsets.UTF_16.toString())) {
+            okToUse = false;
+        } else if (StringUtilities.doesEqual(charSetPreference.toString(),
+                StandardCharsets.UTF_16BE.toString())) {
+            okToUse = false;
+        } else if (StringUtilities.doesEqual(charSetPreference.toString(),
+                StandardCharsets.UTF_16LE.toString())) {
+            okToUse = false;
+        } else {
+            okToUse = false;
+        }
+        if (okToUse) {
+            EncryptionUtilities.charSetPreference = charSetPreference.toString();
+        } else {
+            Log.d(TAG, EncryptionUtilities.INVALID_CHARSET_ERROR);
+            EncryptionUtilities.charSetPreference = StandardCharsets.UTF_8.toString();
+        }
     }
 
-    private static String getCharSetPreference(){
-        if(StringUtilities.isNullOrEmpty(EncryptionUtilities.charSetPreference)){
-            EncryptionUtilities.charSetPreference = EncryptionUtilities.UTF8;
-        }
+    private static String getCharSetPreference() {
         return EncryptionUtilities.charSetPreference;
+    }
+
+    /**
+     * Set the bypass length 16 salt hash bool. If this is never set, will default to false
+     *
+     * @param bypassLength16SaltHashing If this is true and a salt of length 16 is passed in,
+     *                                  the string / byte[] will not be hashed using MD5.
+     *                                  If false, any String / byte[] will be hashed using MD5
+     */
+    public static void setBypassLength16SaltHashing(boolean bypassLength16SaltHashing) {
+        EncryptionUtilities.bypassLength16SaltHashing = bypassLength16SaltHashing;
+    }
+
+    private static boolean isBypassLength16SaltHashing() {
+        return bypassLength16SaltHashing;
     }
 
     /**
@@ -72,8 +143,9 @@ public class EncryptionUtilities {
 
     /**
      * Generate the secret key to use for encryption or decryption
+     *
      * @param password Password
-     * @param salt Salt
+     * @param salt     Salt
      * @return {@link SecretKey}
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeySpecException
@@ -94,9 +166,10 @@ public class EncryptionUtilities {
 
     /**
      * Encrypt the String
+     *
      * @param messageToEncrypt String message to encrypt
-     * @param password {@link TempString} Password String
-     * @param salt salt byte[]
+     * @param password         {@link TempString} Password String
+     * @param salt             salt byte[]
      * @return Encrypted byte array
      * @throws Exception throws various exceptions
      */
@@ -106,7 +179,7 @@ public class EncryptionUtilities {
             InvalidKeyException, InvalidParameterSpecException,
             IllegalBlockSizeException, BadPaddingException,
             UnsupportedEncodingException, InvalidAlgorithmParameterException,
-            InvalidKeySpecException{
+            InvalidKeySpecException {
 
         salt = convertSaltTo16Digits(salt);
         Cipher cipher = Cipher.getInstance(CIPHER_INSTANCE_TYPE);
@@ -119,9 +192,10 @@ public class EncryptionUtilities {
 
     /**
      * Overloaded to allow for String salts to be passed
+     *
      * @param messageToEncrypt String message to encrypt
-     * @param password {@link TempString} Password String
-     * @param salt salt byte[]
+     * @param password         {@link TempString} Password String
+     * @param salt             salt byte[]
      * @return Encrypted byte array
      * @throws Exception throws various exceptions
      */
@@ -131,16 +205,17 @@ public class EncryptionUtilities {
             InvalidKeyException, InvalidParameterSpecException,
             IllegalBlockSizeException, BadPaddingException,
             UnsupportedEncodingException, InvalidAlgorithmParameterException,
-            InvalidKeySpecException{
+            InvalidKeySpecException {
         return encryptString(messageToEncrypt, password, EncryptionUtilities.convertStringToBytes(salt));
     }
 
 
     /**
      * Decrypt the message
+     *
      * @param cipherText cipher text to be decrypted
-     * @param password Password to use to decrypt
-     * @param salt salt to use to decrypt
+     * @param password   Password to use to decrypt
+     * @param salt       salt to use to decrypt
      * @return Decrypted String
      * @throws Exception throws various exceptions
      */
@@ -156,7 +231,7 @@ public class EncryptionUtilities {
         ivParams = new IvParameterSpec(salt);
         cipher.init(Cipher.DECRYPT_MODE, generateKey(password, salt), ivParams);
         byte[] plaintext = cipher.doFinal(cipherText);
-        return new String(plaintext , getCharSetPreference());
+        return new String(plaintext, getCharSetPreference());
     }
 
     /**
@@ -173,11 +248,12 @@ public class EncryptionUtilities {
 
     /**
      * Convert a String to an MD5 Hash. If the conversion fails, returns null
+     *
      * @param plainText String plain text to convert to MD5
      * @return MD5 String
      */
-    public static String convertToMD5Hash(@NonNull String plainText){
-        if(StringUtilities.isNullOrEmpty(plainText)){
+    public static String convertToMD5Hash(@NonNull String plainText) {
+        if (StringUtilities.isNullOrEmpty(plainText)) {
             return null;
         }
         MessageDigest messageDigest;
@@ -190,7 +266,7 @@ public class EncryptionUtilities {
         messageDigest.reset();
         try {
             messageDigest.update(plainText.getBytes(getCharSetPreference()));
-        } catch (UnsupportedEncodingException uee){
+        } catch (UnsupportedEncodingException uee) {
             uee.printStackTrace();
             messageDigest.update(plainText.getBytes());
         }
@@ -201,10 +277,11 @@ public class EncryptionUtilities {
 
     /**
      * Convert a byte array to an MD5 Hash. If the conversion fails, returns null
+     *
      * @param plainText String plain text to convert to MD5
      * @return MD5 String
      */
-    public static String convertToMD5Hash(@NonNull byte[] plainText){
+    public static String convertToMD5Hash(@NonNull byte[] plainText) {
         MessageDigest messageDigest;
         try {
             messageDigest = MessageDigest.getInstance(MD5);
@@ -220,14 +297,15 @@ public class EncryptionUtilities {
     }
 
     /**
-     /**
+     * /**
      * Convert a String to MD5 Hash. If the conversion fails, returns null
-     * @param plainText String plain text to convert to MD5
+     *
+     * @param plainText  String plain text to convert to MD5
      * @param radixToUse {@link BigInteger#toString(int)} Pass null if not using or unsure of purpose
      * @return MD5 String (of ints)
      */
-    public static String convertToMD5HashInt(@NonNull String plainText, @Nullable Integer radixToUse){
-        if(StringUtilities.isNullOrEmpty(plainText)){
+    public static String convertToMD5HashInt(@NonNull String plainText, @Nullable Integer radixToUse) {
+        if (StringUtilities.isNullOrEmpty(plainText)) {
             return null;
         }
         MessageDigest messageDigest;
@@ -240,14 +318,14 @@ public class EncryptionUtilities {
         messageDigest.reset();
         try {
             messageDigest.update(plainText.getBytes(getCharSetPreference()));
-        } catch (UnsupportedEncodingException uee){
+        } catch (UnsupportedEncodingException uee) {
             uee.printStackTrace();
             messageDigest.update(plainText.getBytes());
         }
         plainText = null;
         final byte[] digest = messageDigest.digest();
         final BigInteger bigInt = new BigInteger(1, digest);
-        if(radixToUse == null) {
+        if (radixToUse == null) {
             return bigInt.toString(); //Removed '8' as radix arg. Add back in if needed
         } else {
             return bigInt.toString(radixToUse);
@@ -257,22 +335,28 @@ public class EncryptionUtilities {
     /**
      * Overloaded to allow String
      */
-    public static byte[] convertSaltTo16Digits(@NonNull String salt){
+    public static byte[] convertSaltTo16Digits(@NonNull String salt) {
         return convertSaltTo16Digits(convertStringToBytes(salt));
     }
 
     /**
      * Convert a Salt so that it becomes 16 digits in length through hashing.
      * This is useful if you have a salt that is not 16 digits and need it to
+     *
      * @param salt Salt to convert
      * @return
      */
-    public static byte[] convertSaltTo16Digits(@NonNull byte[] salt){
-        if(salt.length == 16){
+    public static byte[] convertSaltTo16Digits(@NonNull byte[] salt) {
+        if(salt == null){
             return salt;
         }
+        if (salt.length == 16) {
+            if (bypassLength16SaltHashing) {
+                return salt;
+            }
+        }
         String md5Hash = convertToMD5Hash(salt);
-        if(StringUtilities.isNullOrEmpty(md5Hash)){
+        if (StringUtilities.isNullOrEmpty(md5Hash)) {
             return null;
         }
         md5Hash = md5Hash.substring(0, 16);
@@ -282,17 +366,18 @@ public class EncryptionUtilities {
     /**
      * Simple utility to convert a String to bytes using the preferred charSetPreference.
      * {@link EncryptionUtilities#charSetPreference}
+     *
      * @param str String to convert
      * @return byte[]
      */
-    public static byte[] convertStringToBytes(String str){
-        if(StringUtilities.isNullOrEmpty(str)){
+    public static byte[] convertStringToBytes(String str) {
+        if (StringUtilities.isNullOrEmpty(str)) {
             return null;
         }
         byte[] s;
         try {
             s = str.getBytes(getCharSetPreference());
-        } catch (UnsupportedEncodingException e){
+        } catch (UnsupportedEncodingException e) {
             s = str.getBytes();
         }
         return s;
