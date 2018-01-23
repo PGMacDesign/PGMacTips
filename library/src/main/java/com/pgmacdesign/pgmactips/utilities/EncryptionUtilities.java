@@ -114,9 +114,6 @@ public class EncryptionUtilities {
         ivParams = new IvParameterSpec(salt);
         cipher.init(Cipher.ENCRYPT_MODE, generateKey(password, salt), ivParams);
         byte[] toReturn = cipher.doFinal(messageToEncrypt.getBytes(getCharSetPreference()));
-        password.disposeData();
-        salt = null;
-        messageToEncrypt = null;
         return toReturn;
     }
 
@@ -159,9 +156,6 @@ public class EncryptionUtilities {
         ivParams = new IvParameterSpec(salt);
         cipher.init(Cipher.DECRYPT_MODE, generateKey(password, salt), ivParams);
         byte[] plaintext = cipher.doFinal(cipherText);
-        password.disposeData();
-        salt = null;
-        cipherText = null;
         return new String(plaintext , getCharSetPreference());
     }
 
