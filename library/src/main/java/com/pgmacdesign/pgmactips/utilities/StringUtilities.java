@@ -58,13 +58,14 @@ public class StringUtilities {
     }
 
     /**
-     * Keep letters (a-z) only. Remove anything else
+     * Keep letters (A-Z & a-z) only. Remove anything else. Note, this will
+     * remove letters like: ä, ñ, ж or λ, too, which, depending on who you ask, are letters too
      * @param s
      * @return
      */
     public static String keepLettersOnly(CharSequence s) {
         try {
-            return s.toString().replaceAll("[^A-Z]", "");
+            return s.toString().replaceAll("[^A-Za-z]", "");
         } catch (Exception e){
             return null;
         }

@@ -93,7 +93,7 @@ public class TextFieldUtilities {
 
     /**
      * Set the textview with HTML style text IE, <b>Words</b> or
-     * "<i><small><font color=\"#c5c5c5\">" + "Words Go Here" + "</font></small></i>"
+     * "<i><small><font color='#c5c5c5'>" + "Words Go Here" + "</font></small></i>"
      * @param viewToSet The view to set
      * @param stringToSet The string to set
      * @param <T> T extends TextView
