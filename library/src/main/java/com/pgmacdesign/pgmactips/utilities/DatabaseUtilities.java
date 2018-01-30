@@ -3,6 +3,8 @@ package com.pgmacdesign.pgmactips.utilities;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.pgmacdesign.pgmactips.datamodels.MasterDatabaseObject;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
@@ -39,6 +41,10 @@ import io.realm.RealmResults;
  * 2)
  */
 public class DatabaseUtilities {
+
+    //Misc Type and Typetoken samples
+    //final TypeToken MASTER_DB_OBJECT_TYPETOKEN = new TypeToken<List<MasterDatabaseObject>>(){};
+    //final Type MASTER_DB_OBJECT_TYPE = MASTER_DB_OBJECT_TYPETOKEN.getType();
 
     //Global Vars
     private RealmConfiguration realmConfiguration;
@@ -81,7 +87,7 @@ public class DatabaseUtilities {
         }
     }
 
-    private void init(Context context){
+    private void init(Context context) {
         Realm.init(context);
     }
 
@@ -91,22 +97,23 @@ public class DatabaseUtilities {
 
     /**
      * Standard Database Insertion method with an object.
-     * @param objectToWrite Object to write. Note, the class must extend RealmObject and
-     *                      must also have a valid, designated Primary key declared.
+     *
+     * @param objectToWrite  Object to write. Note, the class must extend RealmObject and
+     *                       must also have a valid, designated Primary key declared.
      * @param appendToObject Boolean, if true, this will call 'updateOrWrite'. If it is false,
      *                       it will call 'write'. The idea being that if you want the object
      *                       already existing in the db to be update, set this
      *                       to true, else, set it to false for an overwrite.
-     * @param <T> T extends {@link RealmObject}
+     * @param <T>            T extends {@link RealmObject}
      * @return Boolean. True if the insert succeeded, false if it did not
      */
-    public <T extends  RealmObject> boolean executeInsertIntoDB(final T objectToWrite,
-                                       final Boolean appendToObject) {
+    public <T extends RealmObject> boolean executeInsertIntoDB(final T objectToWrite,
+                                                               final Boolean appendToObject) {
         if (objectToWrite == null) {
             return false;
         }
         Class myClass = objectToWrite.getClass();
-        if(myClass == null){
+        if (myClass == null) {
             return false;
         }
         if (!isValidWrite(myClass) || !isClassValid(myClass)) {
@@ -134,10 +141,11 @@ public class DatabaseUtilities {
             e.printStackTrace();
         } finally {
             try {
-                if(!realm.isClosed()) {
+                if (!realm.isClosed()) {
                     realm.close();
                 }
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
         return false;
     }
@@ -153,7 +161,7 @@ public class DatabaseUtilities {
      *                       to true, else, set it to false for an overwrite.
      * @return Boolean. True if the insert succeeded, false if it did not
      */
-    public boolean executeInsertIntoDB(final Class myClass,
+    public boolean executeInsertIntoDB(@NonNull final Class myClass,
                                        final String jsonString,
                                        final Boolean appendToObject) {
         if (jsonString == null || myClass == null) {
@@ -184,7 +192,7 @@ public class DatabaseUtilities {
             e.printStackTrace();
         } finally {
             try {
-                if(!realm.isClosed()) {
+                if (!realm.isClosed()) {
                     realm.close();
                 }
             } catch (Exception e) {
@@ -205,9 +213,9 @@ public class DatabaseUtilities {
      *                       to true, else, set it to false for an overwrite.
      * @return Boolean. True if the insert succeeded, false if it did not
      */
-    public  boolean executeInsertIntoDB(final Class myClass,
-                                        final InputStream is,
-                                        final Boolean appendToObject) {
+    public boolean executeInsertIntoDB(@NonNull final Class myClass,
+                                       final InputStream is,
+                                       final Boolean appendToObject) {
         if (is == null || myClass == null) {
             return false;
         }
@@ -247,7 +255,7 @@ public class DatabaseUtilities {
             e.printStackTrace();
         } finally {
             try {
-                if(!realm.isClosed()) {
+                if (!realm.isClosed()) {
                     realm.close();
                 }
             } catch (Exception e) {
@@ -268,7 +276,7 @@ public class DatabaseUtilities {
      *                       to true, else, set it to false for an overwrite.
      * @return Boolean. True if the insert succeeded, false if it did not
      */
-    public boolean executeInsertIntoDB(final Class myClass,
+    public boolean executeInsertIntoDB(@NonNull final Class myClass,
                                        final JSONObject jsonObject,
                                        final Boolean appendToObject) {
         if (jsonObject == null || myClass == null) {
@@ -299,7 +307,7 @@ public class DatabaseUtilities {
             e.printStackTrace();
         } finally {
             try {
-                if(!realm.isClosed()) {
+                if (!realm.isClosed()) {
                     realm.close();
                 }
             } catch (Exception e) {
@@ -308,6 +316,14 @@ public class DatabaseUtilities {
         return false;
     }
 
+    /**
+     * Overloaded to allow for {@link TypeToken}
+     */
+    public boolean executeInsertIntoDB(@NonNull final TypeToken myClass,
+                                       final JSONObject jsonObject,
+                                       final Boolean appendToObject) {
+        return executeInsertIntoDB(myClass.getClass(), jsonObject, appendToObject);
+    }
 
     /**
      * This method will put objects (converted to JSON Strings using Gson) into a custom table.
@@ -318,18 +334,25 @@ public class DatabaseUtilities {
      * different classes. You can insert items into the DB normally, using other methods in this
      * class if the goal is to persist more than one object
      * NOTE: For the class objects being sent in, the fully qualified name of the object (in
-     *       String form) will be used as its id. For example, it will look something like this:
-     *       com.pgmacdesign.pgmactips.pojos.SampleObject
+     * String form) will be used as its id. For example, it will look something like this:
+     * com.pgmacdesign.pgmactips.pojos.SampleObject
      * NOTE: The json String being pulled will be in JSON format, but will match the object
-     *       model as per matching the class passed in. An example would be:
-     *       {"age":30,"gender":"M","id":0,"name":"Patrick"}
+     * model as per matching the class passed in. An example would be:
+     * {"age":30,"gender":"M","id":0,"name":"Patrick"}
      *
      * @param myClass Class that is of the object you are sending
      * @param obj     Object to persist. If null is passed, it will delete any object matching
      *                that class name
      * @return Return a boolean, true if suceeded, false if not
      */
-    public boolean persistObject(final Class myClass, final Object obj) {
+    public boolean persistObject(@NonNull final Class myClass, final Object obj) {
+        return (executeInsertIntoDBMaster(myClass, obj));
+    }
+
+    /**
+     * Overloaded to allow for {@link TypeToken}
+     */
+    public boolean persistObject(@NonNull final TypeToken myClass, final Object obj) {
         return (executeInsertIntoDBMaster(myClass, obj));
     }
 
@@ -338,10 +361,11 @@ public class DatabaseUtilities {
      *
      * @param myClass Class, in this method, the class will represent the ID in the table. If
      *                another object is sent with the same class, it will overwrite it.
-     * @param obj     The object to put into the db. (Will be converted to JSON using Gson)
+     * @param obj     The object to put into the db. (Will be converted to JSON using Gson).
+     *                Note, passing null will delete it from the Table.
      * @return Boolean, true if it succeeded, false if it did not
      */
-    private boolean executeInsertIntoDBMaster(final Class myClass,
+    private boolean executeInsertIntoDBMaster(@NonNull final Class myClass,
                                               final Object obj) {
 
         if (myClass == null) {
@@ -356,7 +380,7 @@ public class DatabaseUtilities {
         String className = myClass.getName();
         String jsonString = null;
         try {
-            jsonString = GsonUtilities.convertObjectToJson(obj, myClass);
+            jsonString = new Gson().toJson(obj, myClass);
         } catch (Exception e) {
         }
 
@@ -400,11 +424,73 @@ public class DatabaseUtilities {
     }
 
     /**
+     * Overloaded to allow for {@link TypeToken}
+     */
+    private boolean executeInsertIntoDBMaster(@NonNull final TypeToken myClass,
+                                              final Object obj) {
+
+        if (myClass == null) {
+            return false;
+        }
+        if (obj == null) {
+            //This means they want to delete the item from the DB. Remove then leave
+            return (this.deleteFromMasterDB(myClass));
+        }
+
+        Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
+        String className = myClass.getType().toString();
+        String jsonString = null;
+        try {
+            jsonString = new Gson().toJson(obj, myClass.getType());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (jsonString == null) {
+            try {
+                realm.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+
+        MasterDatabaseObject mdo = new MasterDatabaseObject();
+        mdo.setId(className);
+        mdo.setJsonString(jsonString);
+        final MasterDatabaseObject mdoFinal = mdo;
+
+        try {
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    realm.copyToRealmOrUpdate(mdoFinal);
+                }
+            });
+            realm.close();
+            return true;
+        } catch (IllegalArgumentException e1) {
+            e1.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (!realm.isClosed()) {
+                    realm.close();
+                }
+            } catch (Exception e) {
+            }
+        }
+        return false;
+    }
+
+    /**
      * Insert an object into the Master Table. For persisting objects
      *
      * @param myClass      Class, in this method, the class will represent the ID in the table. If
      *                     another object is sent with the same class, it will overwrite it.
-     * @param obj          The object to put into the db. (Will be converted to JSON using Gson)
+     * @param obj          The object to put into the db. (Will be converted to JSON using Gson).
+     *                     Note, passing null will delete it from the Table.
      * @param customSuffix String of a custom suffix to be appended to the class name. This is
      *                     used in the event that you want to have a secondary persisted object
      *                     of the same type in the master table. An example would be that you have
@@ -414,7 +500,7 @@ public class DatabaseUtilities {
      *                     suffix. Use that same suffix again to delete it from the db.
      * @return Boolean, true if it succeeded, false if it did not
      */
-    public boolean persistObjectCustom(final Class myClass,
+    public boolean persistObjectCustom(@NonNull final Class myClass,
                                        final Object obj,
                                        final String customSuffix) {
 
@@ -432,7 +518,7 @@ public class DatabaseUtilities {
         String className = myClass.getName();
         String jsonString = null;
         try {
-            jsonString = GsonUtilities.convertObjectToJson(obj, myClass);
+            jsonString = new Gson().toJson(obj, myClass);
         } catch (Exception e) {
         }
 
@@ -445,7 +531,7 @@ public class DatabaseUtilities {
         }
 
         MasterDatabaseObject mdo = new MasterDatabaseObject();
-        if(customSuffix != null){
+        if (customSuffix != null) {
             className = className + customSuffix;
         }
         mdo.setId(className);
@@ -468,7 +554,7 @@ public class DatabaseUtilities {
             e.printStackTrace();
         } finally {
             try {
-                if(!realm.isClosed()) {
+                if (!realm.isClosed()) {
                     realm.close();
                 }
             } catch (Exception e) {
@@ -477,6 +563,74 @@ public class DatabaseUtilities {
         return false;
 
     }
+
+    /**
+     * Overloaded to allow for {@link TypeToken}
+     */
+    public boolean persistObjectCustom(@NonNull final TypeToken myClass,
+                                       final Object obj,
+                                       final String customSuffix) {
+        if (myClass == null) {
+            return false;
+        }
+        if (obj == null) {
+            //This means they want to delete the item from the DB. Remove then leave
+            return (this.deleteFromMasterDB(myClass, customSuffix));
+        }
+
+        if (!isValidWrite(myClass, customSuffix)) {
+            return false;
+        }
+        Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
+        String className = myClass.toString();
+        String jsonString = null;
+        try {
+            jsonString = new Gson().toJson(obj, myClass.getType());
+        } catch (Exception e) {
+        }
+
+        if (jsonString == null) {
+            try {
+                realm.close();
+            } catch (Exception e) {
+            }
+            return false;
+        }
+
+        MasterDatabaseObject mdo = new MasterDatabaseObject();
+        if (customSuffix != null) {
+            className = className + customSuffix;
+        }
+        mdo.setId(className);
+        mdo.setJsonString(jsonString);
+
+        final MasterDatabaseObject mdoFinal = mdo;
+
+        try {
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    realm.copyToRealmOrUpdate(mdoFinal);
+                }
+            });
+            realm.close();
+            return true;
+        } catch (IllegalArgumentException e1) {
+            e1.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (!realm.isClosed()) {
+                    realm.close();
+                }
+            } catch (Exception e) {
+            }
+        }
+        return false;
+
+    }
+
     //////////////////
     //Delete Methods//
     //////////////////
@@ -488,13 +642,29 @@ public class DatabaseUtilities {
      *                key to find the item / row.
      * @return Boolean, true if it succeeded, false if it did not
      */
-    public boolean dePersistObject(final Class myClass) {
+    public boolean dePersistObject(@NonNull final Class myClass) {
         return this.deleteFromMasterDB(myClass);
     }
+
+    /**
+     * Overloaded to allow for {@link TypeToken}
+     */
+    public boolean dePersistObject(@NonNull final TypeToken myClass) {
+        return this.deleteFromMasterDB(myClass);
+    }
+
     //Overloaded for naming simplicity since I forget what things are called all the time!
-    public boolean deletePersistedObject(final Class myClass) {
+    public boolean deletePersistedObject(@NonNull final Class myClass) {
         return this.deleteFromMasterDB(myClass);
     }
+
+    /**
+     * Overloaded to allow for {@link TypeToken}
+     */
+    public boolean deletePersistedObject(@NonNull final TypeToken myClass) {
+        return this.deleteFromMasterDB(myClass);
+    }
+
     /**
      * Delete an object from the Master Table. For deleting persisted objects
      *
@@ -509,8 +679,15 @@ public class DatabaseUtilities {
      *                     suffix. Use that same suffix again to delete it from the db.
      * @return Boolean, true if it succeeded, false if it did not
      */
-    public boolean dePersistObjectCustom(final Class myClass, final String customSuffix) {
+    public boolean dePersistObjectCustom(@NonNull final Class myClass, final String customSuffix) {
         return this.deleteFromMasterDB(myClass, customSuffix);
+    }
+
+    /**
+     * Overloaded to allow for {@link TypeToken}
+     */
+    public boolean dePersistObjectCustom(@NonNull final TypeToken myClass, final String customSuffix) {
+        return this.dePersistObjectCustom(myClass.getClass(), customSuffix);
     }
 
     /**
@@ -520,7 +697,14 @@ public class DatabaseUtilities {
      *                key to find the item / row.
      * @return Boolean, true if it succeeded, false if it did not
      */
-    private boolean deleteFromMasterDB(final Class myClass) {
+    private boolean deleteFromMasterDB(@NonNull final Class myClass) {
+        return this.deleteFromMasterDB(myClass, null);
+    }
+
+    /**
+     * Overloaded to allow for {@link TypeToken}
+     */
+    private boolean deleteFromMasterDB(@NonNull final TypeToken myClass) {
         return this.deleteFromMasterDB(myClass, null);
     }
 
@@ -539,7 +723,7 @@ public class DatabaseUtilities {
      * @param <T>          T extends RealmObject
      * @return Boolean, true if it succeeded, false if it did not
      */
-    private <T extends RealmObject> boolean deleteFromMasterDB(final Class myClass,
+    private <T extends RealmObject> boolean deleteFromMasterDB(@NonNull final Class myClass,
                                                                final String customSuffix) {
         if (myClass == null) {
             return false;
@@ -556,7 +740,7 @@ public class DatabaseUtilities {
         Object obj = this.queryDatabaseMasterSingle(myClass);
         if (obj == null) {
             Object obj2 = this.getPersistedObjectCustom(myClass, customSuffix);
-            if(obj2 == null) {
+            if (obj2 == null) {
                 // TODO: 2017-04-18 may need one more check on customSuffix outside of this if statement
                 //IF it is null, it has already been deleted, return true and move on
                 return true;
@@ -617,10 +801,93 @@ public class DatabaseUtilities {
     }
 
     /**
+     * Overloaded to allow for {@link TypeToken}
+     */
+    private <T extends RealmObject> boolean deleteFromMasterDB(@NonNull final TypeToken myClass,
+                                                               final String customSuffix) {
+
+        if (myClass == null) {
+            return false;
+        }
+        if (!DatabaseUtilities.isValidWrite(myClass, customSuffix)) {
+            L.m("If you want to clear all stored / persisted data, please call " +
+                    "deleteAllPersistedObjects(true, false)");
+            return false;
+        }
+        //Class name String
+        final String myClassName = myClass.toString();
+
+        //Returned object from the master search
+        Object obj = this.queryDatabaseMasterSingle(myClass);
+        if (obj == null) {
+            Object obj2 = this.getPersistedObjectCustom(myClass, customSuffix);
+            if (obj2 == null) {
+                // TODO: 2017-04-18 may need one more check on customSuffix outside of this if statement
+                //IF it is null, it has already been deleted, return true and move on
+                return true;
+            }
+        }
+
+        Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
+        final RealmQuery query = RealmQuery.createQuery(realm, MasterDatabaseObject.class);
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                //Start transaction
+                RealmResults<T> results = query.findAll();
+                if (results == null) {
+                    return;
+                }
+                for (T t : results) {
+                    if (t != null) {
+                        MasterDatabaseObject mdo = (MasterDatabaseObject) t;
+                        String id = mdo.getId();
+                        if (!StringUtilities.isNullOrEmpty(id)) {
+                            if (!StringUtilities.isNullOrEmpty(customSuffix)) {
+                                String customId = myClassName + customSuffix;
+                                //Check if ID Matches package name
+                                if (customId.equals(id)) {
+                                    try {
+                                        t.deleteFromRealm();
+                                        L.m("delete from DB succeeded");
+                                        return;
+                                    } catch (Exception e) {
+                                        L.m("delete failed");
+                                    }
+                                }
+                            } else {
+                                //Check if ID Matches package name
+                                if (myClassName.equals(id)) {
+                                    try {
+                                        t.deleteFromRealm();
+                                        L.m("delete succeeded");
+                                        return;
+                                    } catch (Exception e) {
+                                        L.m("delete failed");
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+        });
+
+        try {
+            realm.close();
+        } catch (Exception e) {
+        }
+        return true;
+
+    }
+
+    /**
      * DANGER ZONE! This will wipe the entire database (Of the configuration set. If you have
      * multiple RealmConfigurations, you will need to create a DatabaseUtilities Object for
      * each one and loop this method to delete them all).
-     * @param areYouSure Pass true to confirm wipe
+     *
+     * @param areYouSure    Pass true to confirm wipe
      * @param areYouNotSure Pass false to confirm wipe
      * @return Boolean of success or not
      */
@@ -634,15 +901,17 @@ public class DatabaseUtilities {
         try {
             L.m("Deleting entire database!");
             return (deleteRealmFileInStorage(realmConfiguration));
-        } catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
+
     /**
      * Only to be called if the realm instance needs to be deleted
+     *
      * @return boolean of completion, true if success.
      */
-    private static boolean deleteRealmFileInStorage(RealmConfiguration realmConfiguration){
+    private static boolean deleteRealmFileInStorage(RealmConfiguration realmConfiguration) {
         return (Realm.deleteRealm(realmConfiguration));
     }
 
@@ -693,7 +962,7 @@ public class DatabaseUtilities {
      * @return return a boolean, true if it succeeded, false if it did not
      */
     public <T extends RealmObject> boolean executeDeleteFromDB(RealmQuery query,
-                                                               final Class myClass) {
+                                                               @NonNull final Class myClass) {
         if (myClass == null) {
             return false;
         }
@@ -724,7 +993,7 @@ public class DatabaseUtilities {
             e.printStackTrace();
         } finally {
             try {
-                if(!realm.isClosed()) {
+                if (!realm.isClosed()) {
                     realm.close();
                 }
             } catch (Exception e) {
@@ -732,6 +1001,51 @@ public class DatabaseUtilities {
         }
         return false;
     }
+
+    /**
+     * Overloaded to allow for {@link TypeToken}
+     */
+    public <T extends RealmObject> boolean executeDeleteFromDB(RealmQuery query,
+                                                               @NonNull final TypeToken myClass) {
+        if (myClass == null) {
+            return false;
+        }
+        if (!isValidWrite(myClass)) {
+            return false;
+        }
+        Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
+        if (query == null) {
+            query = this.buildRealmQuery(realm, myClass);
+        }
+        final RealmResults<T> results = query.findAll();
+        try {
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    for (T t : results) {
+                        t.deleteFromRealm();
+                    }
+                }
+            });
+            realm.close();
+            return true;
+        } catch (IllegalArgumentException e1) {
+            e1.printStackTrace();
+            L.m("A RealmObject with no PrimaryKey cannot be updated. Does " + myClass.toString() +
+                    "have a @PrimaryKey designation over something?");
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (!realm.isClosed()) {
+                    realm.close();
+                }
+            } catch (Exception e) {
+            }
+        }
+        return false;
+    }
+
     /////////////////
     //Query Methods//
     /////////////////
@@ -742,7 +1056,14 @@ public class DatabaseUtilities {
      * @param myClass Class (row / id) to query
      * @return returns an Object that was pulled from the DB. If nothing found, it will return null.
      */
-    public Object getPersistedObject(Class myClass) {
+    public Object getPersistedObject(@NonNull Class myClass) {
+        return this.queryDatabaseMasterSingle(myClass);
+    }
+
+    /**
+     * Overloaded to allow for {@link TypeToken}
+     */
+    public Object getPersistedObject(@NonNull TypeToken myClass) {
         return this.queryDatabaseMasterSingle(myClass);
     }
 
@@ -753,13 +1074,13 @@ public class DatabaseUtilities {
      * key used in the MasterDatabaseObject table and the second String is the
      * object converted into a String using Gson.toJson(). If there are no objects
      * to return whatsoever, an empty map will be returned.
-     *
+     * <p>
      * NOTE: For the class objects being retrieved, the fully qualified name of the object (in
-     *       String form) will be used as its id. For example, it will look something like this:
-     *       com.pgmacdesign.pgmactips.pojos.SampleObject
+     * String form) will be used as its id. For example, it will look something like this:
+     * com.pgmacdesign.pgmactips.pojos.SampleObject
      * NOTE: The json String being pulled will be in JSON format, but will match the object
-     *       model as per matching the class passed in. An example would be:
-     *       {"age":30,"gender":"M","id":0,"name":"Patrick"}
+     * model as per matching the class passed in. An example would be:
+     * {"age":30,"gender":"M","id":0,"name":"Patrick"}
      **/
     public Map<String, String> getAllPersistedObjects() {
         List<MasterDatabaseObject> masterDatabaseObjects = this.queryDatabaseMasterAll();
@@ -785,7 +1106,15 @@ public class DatabaseUtilities {
      *                     space (more rows) for persisted objects.
      * @return returns an Object that was pulled from the DB. If nothing found, it will return null.
      */
-    public Object getPersistedObjectCustom(final Class myClass,
+    public Object getPersistedObjectCustom(@NonNull final Class myClass,
+                                           final String customSuffix) {
+        return this.queryDatabaseMasterSingle(myClass, customSuffix);
+    }
+
+    /**
+     * Overloaded to allow for {@link TypeToken}
+     */
+    public Object getPersistedObjectCustom(@NonNull final TypeToken myClass,
                                            final String customSuffix) {
         return this.queryDatabaseMasterSingle(myClass, customSuffix);
     }
@@ -796,8 +1125,15 @@ public class DatabaseUtilities {
      * @param myClass Class (row / id) to query
      * @return returns an Object that was pulled from the DB. If nothing found, it will return null.
      */
-    private Object queryDatabaseMasterSingle(final Class myClass) {
+    private Object queryDatabaseMasterSingle(@NonNull final Class myClass) {
 
+        return this.queryDatabaseMasterSingle(myClass, null);
+    }
+
+    /**
+     * Overloaded to allow for {@link TypeToken}
+     */
+    private Object queryDatabaseMasterSingle(@NonNull final TypeToken myClass) {
         return this.queryDatabaseMasterSingle(myClass, null);
     }
 
@@ -809,16 +1145,13 @@ public class DatabaseUtilities {
      *                     space (more rows) for persisted objects.
      * @return returns an Object that was pulled from the DB. If nothing found, it will return null.
      */
-    private Object queryDatabaseMasterSingle(final Class myClass,
+    private Object queryDatabaseMasterSingle(@NonNull final Class myClass,
                                              final String customSuffix) {
 
         String className = myClass.getName();
         if (customSuffix != null) {
             className = className + customSuffix;
         }
-        //Realm realm = DatabaseUtilities.buildRealm(realmConfiguration);
-        //RealmQuery query = RealmQuery.createQuery(realm, myClass);
-        // TODO: 8/19/2016 eventually refactor this into a more specified query to make it quicker
         List<MasterDatabaseObject> fullList = this.queryDatabaseMasterAll();
 
         if (fullList == null) {
@@ -831,7 +1164,7 @@ public class DatabaseUtilities {
             if (!StringUtilities.isNullOrEmpty(id)) {
                 if (id.equals(className)) {
                     pulledObject = mdo;
-                    continue;
+                    break;
                 }
             }
         }
@@ -841,9 +1174,51 @@ public class DatabaseUtilities {
         } else {
             try {
                 String jsonString = pulledObject.getJsonString();
-                Object obj = GsonUtilities.convertJsonToObject(jsonString, myClass);
+                Object obj = new Gson().fromJson(jsonString, myClass);
                 return obj;
             } catch (Exception e) {
+                e.printStackTrace();
+                //In case they pass the wrong class name
+                return null;
+            }
+        }
+    }
+
+    /**
+     * Overloaded to allow for {@link TypeToken}
+     */
+    private Object queryDatabaseMasterSingle(@NonNull final TypeToken myClass,
+                                             final String customSuffix) {
+        String className = myClass.toString();
+        if (customSuffix != null) {
+            className = className + customSuffix;
+        }
+        List<MasterDatabaseObject> fullList = this.queryDatabaseMasterAll();
+
+        if (fullList == null) {
+            return null;
+        }
+        MasterDatabaseObject pulledObject = null;
+        //Loop through to check if the String matches the ID
+        for (MasterDatabaseObject mdo : fullList) {
+            String id = mdo.getId();
+            if (!StringUtilities.isNullOrEmpty(id)) {
+                if (id.equals(className)) {
+                    pulledObject = mdo;
+                    break;
+                }
+            }
+        }
+
+        if (pulledObject == null) {
+            return null;
+        } else {
+            try {
+                String jsonString = pulledObject.getJsonString();
+                Object obj = new Gson().fromJson(jsonString, myClass.getType());
+                return obj;
+            } catch (Exception e) {
+                e.printStackTrace();
                 //In case they pass the wrong class name
                 return null;
             }
@@ -895,7 +1270,29 @@ public class DatabaseUtilities {
      * @return An object from the database (one from that table)
      */
     public <T extends RealmModel> Object queryDatabaseSingle(RealmQuery<T> passedQuery,
-                                                             Class myClass) {
+                                                             @NonNull Class myClass) {
+
+        Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
+        if (passedQuery == null) {
+            passedQuery = this.buildRealmQuery(realm, myClass);
+        }
+
+        //Start transaction
+        RealmResults<T> results = passedQuery.findAll();
+
+        if (results != null) {
+            Object object = results.get(0);
+            return object;
+        }
+
+        return null;
+    }
+
+    /**
+     * Overloaded to allow for {@link TypeToken}
+     */
+    public <T extends RealmModel> Object queryDatabaseSingle(RealmQuery<T> passedQuery,
+                                                             @NonNull TypeToken myClass) {
 
         Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
         if (passedQuery == null) {
@@ -923,7 +1320,32 @@ public class DatabaseUtilities {
      * @return An list of objects from the database (all in that table)
      */
     public <T extends RealmModel> List<Object> queryDatabaseList(RealmQuery<T> passedQuery,
-                                                                 Class myClass) {
+                                                                 @NonNull Class myClass) {
+        Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
+        if (passedQuery == null) {
+            passedQuery = this.buildRealmQuery(realm, myClass);
+        }
+
+        //Start transaction
+        RealmResults<T> results = passedQuery.findAll();
+        List<Object> objects = new ArrayList<>();
+        //<T extends RealmModel>
+        if (results != null) {
+            for (T t : results) {
+                Object object = (Object) t;
+                if (object != null) {
+                    objects.add(object);
+                }
+            }
+        }
+        return objects;
+    }
+
+    /**
+     * Overloaded to allow for {@link TypeToken}
+     */
+    public <T extends RealmModel> List<Object> queryDatabaseList(RealmQuery<T> passedQuery,
+                                                                 @NonNull TypeToken myClass) {
         Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
         if (passedQuery == null) {
             passedQuery = this.buildRealmQuery(realm, myClass);
@@ -1011,7 +1433,7 @@ public class DatabaseUtilities {
         if (dbName == null) {
             try {
                 String packageName = MiscUtilities.getPackageName(context);
-                if(!StringUtilities.isNullOrEmpty(packageName)){
+                if (!StringUtilities.isNullOrEmpty(packageName)) {
                     dbName = packageName + ".db";
                 } else {
                     dbName = DEFAULT_DB_NAME;
@@ -1048,28 +1470,43 @@ public class DatabaseUtilities {
      * @param myClass
      * @return
      */
-    private RealmQuery buildRealmQuery(Realm realm, Class myClass) {
-        RealmQuery query = RealmQuery.createQuery(realm, myClass);
-        return query;
+    private RealmQuery buildRealmQuery(Realm realm, @NonNull Class myClass) {
+        return RealmQuery.createQuery(realm, myClass);
     }
 
+    /**
+     * Overloaded to allow for {@link TypeToken}
+     */
+    private RealmQuery buildRealmQuery(Realm realm, @NonNull TypeToken myClass) {
+        return RealmQuery.createQuery(realm, myClass.getRawType());
+    }
 
     //////////////////
     //Misc Utilities//
     //////////////////
 
-    private static boolean isClassValid(Class myClass){
-        if(myClass == null){
+    /**
+     * Checking for a valid class
+     *
+     * @param myClass
+     * @return
+     */
+    private static boolean isClassValid(@NonNull Class myClass) {
+        if (myClass == null) {
             L.m("Class used to write to the DB was null, please check passed params");
             return false;
         }
-        if(!isValidWrite(myClass)){
+        if (!isValidWrite(myClass)) {
             return false;
         }
-        if(myClass == RealmObject.class) {
+        if (myClass == RealmObject.class) {
             return true;
         }
-        return myClass.isAssignableFrom(RealmObject.class);
+        try {
+            return myClass.isAssignableFrom(RealmObject.class);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
@@ -1078,14 +1515,14 @@ public class DatabaseUtilities {
      * @param myClass Class Class object being used
      * @return boolean. False if it invalid and should be aborted, true if it is ok to write
      */
-    private static boolean isValidWrite(Class myClass) {
-        if(myClass == null){
+    private static boolean isValidWrite(@NonNull Class myClass) {
+        if (myClass == null) {
             L.m("Class used to write to the DB was null, please check passed params");
             return false;
         }
         String className = myClass.getName();
         String masterDBObjectName = MasterDatabaseObject.class.getName();
-        if(!StringUtilities.isNullOrEmpty(className) &&
+        if (!StringUtilities.isNullOrEmpty(className) &&
                 !StringUtilities.isNullOrEmpty(masterDBObjectName)) {
             if (masterDBObjectName.equalsIgnoreCase(className)) {
                 L.m("You cannot modify this table from that method. If you want to access the " +
@@ -1094,11 +1531,28 @@ public class DatabaseUtilities {
                 return false;
             }
         }
-//        if(myClass == RealmObject.class) {
-//            return true;
-//        }
-//        return myClass.isAssignableFrom(RealmObject.class);
-        //Refactored this into isClassValid() method to prevent blocking
+        return true;
+    }
+
+    /**
+     * Overloaded to allow for {@link TypeToken}
+     */
+    private static boolean isValidWrite(@NonNull TypeToken myClass) {
+        if (myClass == null) {
+            L.m("Class used to write to the DB was null, please check passed params");
+            return false;
+        }
+        String className = myClass.toString();
+        String masterDBObjectName = MasterDatabaseObject.class.getName();
+        if (!StringUtilities.isNullOrEmpty(className) &&
+                !StringUtilities.isNullOrEmpty(masterDBObjectName)) {
+            if (masterDBObjectName.equalsIgnoreCase(className)) {
+                L.m("You cannot modify this table from that method. If you want to access the " +
+                        "MasterDatabaseObject table, please use the persistObject / dePersistObject /" +
+                        " getPersistedObject / getAllPersistedObjects method calls.");
+                return false;
+            }
+        }
         return true;
     }
 
@@ -1108,17 +1562,17 @@ public class DatabaseUtilities {
      * @param myClass Class Class object being used
      * @return boolean. False if it invalid and should be aborted, true if it is ok to write
      */
-    private static boolean isValidWrite(Class myClass, String customSuffix) {
-        if(myClass == null){
+    private static boolean isValidWrite(@NonNull Class myClass, String customSuffix) {
+        if (myClass == null) {
             L.m("Class used to write to the DB was null, please check passed params");
             return false;
         }
         String className = myClass.getName();
-        if(customSuffix != null){
+        if (customSuffix != null) {
             className = className + customSuffix;
         }
         String masterDBObjectName = MasterDatabaseObject.class.getName();
-        if(!StringUtilities.isNullOrEmpty(className) &&
+        if (!StringUtilities.isNullOrEmpty(className) &&
                 !StringUtilities.isNullOrEmpty(masterDBObjectName)) {
             if (masterDBObjectName.equalsIgnoreCase(className)) {
                 L.m("You cannot modify this table from that method. If you want to access the " +
@@ -1127,11 +1581,31 @@ public class DatabaseUtilities {
                 return false;
             }
         }
-//        if(myClass == RealmObject.class) {
-//            return true;
-//        }
-//        return myClass.isAssignableFrom(RealmObject.class);
-        //Refactored this into isClassValid() method to prevent blocking
+        return true;
+    }
+
+    /**
+     * Overloaded to allow for {@link TypeToken}
+     */
+    private static boolean isValidWrite(@NonNull TypeToken myClass, String customSuffix) {
+        if (myClass == null) {
+            L.m("Class used to write to the DB was null, please check passed params");
+            return false;
+        }
+        String className = myClass.toString();
+        if (customSuffix != null) {
+            className = className + customSuffix;
+        }
+        String masterDBObjectName = MasterDatabaseObject.class.getName();
+        if (!StringUtilities.isNullOrEmpty(className) &&
+                !StringUtilities.isNullOrEmpty(masterDBObjectName)) {
+            if (masterDBObjectName.equalsIgnoreCase(className)) {
+                L.m("You cannot modify this table from that method. If you want to access the " +
+                        "MasterDatabaseObject table, please use the persistObject / dePersistObject /" +
+                        " getPersistedObject / getAllPersistedObjects method calls.");
+                return false;
+            }
+        }
         return true;
     }
 
@@ -1139,15 +1613,15 @@ public class DatabaseUtilities {
      * In case you want to know the name of your db file, this will print the
      * file name in the logcat
      */
-    public void printDatabaseName(){
+    public void printDatabaseName() {
         Realm realm;
-        if(realmConfiguration != null) {
+        if (realmConfiguration != null) {
             realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
         } else {
             realm = buildRealm(context);
         }
         String str = realm.getConfiguration().getRealmFileName();
-        if(!StringUtilities.isNullOrEmpty(str)){
+        if (!StringUtilities.isNullOrEmpty(str)) {
             L.m("Database Name: " + str);
         }
     }
@@ -1155,15 +1629,16 @@ public class DatabaseUtilities {
     /**
      * Simple getter for the realm configuration being used. If it does not exist, it will
      * build it.
+     *
      * @return
      */
-    public RealmConfiguration getRealmConfiguration(){
+    public RealmConfiguration getRealmConfiguration() {
         try {
             if (this.realmConfiguration == null) {
                 this.realmConfiguration = DatabaseUtilities
                         .buildRealmConfig(context, null, null, null);
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -1173,19 +1648,20 @@ public class DatabaseUtilities {
     /**
      * Returns a set of the classes (that extends RealmModel) that make up the current table
      * with the realmConfiguration. If the realmconfig is null, it will build one.
+     *
      * @return
      */
-    public Set<Class<? extends  RealmModel>> getDBTableTypes(){
+    public Set<Class<? extends RealmModel>> getDBTableTypes() {
         try {
             if (this.realmConfiguration == null) {
                 this.realmConfiguration = DatabaseUtilities
                         .buildRealmConfig(context, null, null, null);
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        if(realmConfiguration == null){
+        if (realmConfiguration == null) {
             return null;
         }
         return realmConfiguration.getRealmObjectClasses();
@@ -1248,10 +1724,11 @@ public class DatabaseUtilities {
     /**
      * Prints out the database in the logcat. Useful for checking what is happening
      * if you are receiving weird results.
+     *
      * @param <T>
      */
     public <T extends RealmObject> void printOutDatabase() {
-        L.m("Begin Printout of full Database");
+        L.m("Begin Printout of full Database\n");
         Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
         final RealmQuery query = RealmQuery.createQuery(realm, MasterDatabaseObject.class);
         realm.executeTransaction(new Realm.Transaction() {
@@ -1277,6 +1754,6 @@ public class DatabaseUtilities {
             realm.close();
         } catch (Exception e) {
         }
-        L.m("End Printout of full Database");
+        L.m("\nEnd Printout of full Database");
     }
 }

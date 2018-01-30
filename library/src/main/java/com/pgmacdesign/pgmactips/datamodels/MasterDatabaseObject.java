@@ -9,7 +9,7 @@ import io.realm.annotations.PrimaryKey;
  * Created by Patrick-SSD2 on 11/5/2017.
  */
 
-public class MasterDatabaseObject extends RealmObject {
+public class MasterDatabaseObject extends RealmObject  {
 	@PrimaryKey
 	@SerializedName("id")
 	private String id;
@@ -32,4 +32,5 @@ public class MasterDatabaseObject extends RealmObject {
 	public void setJsonString(String jsonString) {
 		this.jsonString = jsonString;
 	}
+
 }

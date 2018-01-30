@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">PGMacUtilities</string>
+    <!-- To use this below in an edit text field and prevent spaces or special characters:
+         android:digits="@string/text_and_letters_only"
+         android:inputType="textFilter"
+    -->
+    <string name="text_and_letters_only">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890</string>
 </resources>
