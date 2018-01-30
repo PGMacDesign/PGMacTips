@@ -28,7 +28,7 @@ And include this in your dependencies section:
 
 ```java
 
-compile ('com.github.PGMacDesign:PGMacTips:0.0.40')
+compile ('com.github.PGMacDesign:PGMacTips:0.0.41')
 
 ```
 
