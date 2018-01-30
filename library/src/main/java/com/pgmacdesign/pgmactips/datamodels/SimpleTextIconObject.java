@@ -11,13 +11,21 @@ public class SimpleTextIconObject {
     private Integer imageResource;
     private Drawable imageDrawable;
 
+    public SimpleTextIconObject(String text){
+        this.text = text;
+        this.imageDrawable = null;
+        this.imageResource = null;
+    }
+
     public SimpleTextIconObject(String text, Integer imageResource){
         this.imageResource = imageResource;
+        this.imageDrawable = null;
         this.text = text;
     }
 
     public SimpleTextIconObject(String text, Drawable imageDrawable){
         this.imageDrawable = imageDrawable;
+        this.imageResource = null;
         this.text = text;
     }
 
