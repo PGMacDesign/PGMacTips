@@ -1,6 +1,7 @@
 package com.pgmacdesign.pgmactips.maputilities;
 
 import android.graphics.Point;
+import android.location.Location;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -8,6 +9,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.VisibleRegion;
 import com.pgmacdesign.pgmactips.utilities.DisplayManagerUtilities;
 
 /**
@@ -18,6 +20,44 @@ public class MapUtilities {
 
     final static int GLOBE_WIDTH = 256; // a constant in Google's map projection
     final static int ZOOM_MAX = 21;
+
+
+    public static float calculateRadius(GoogleMap googleMap){
+        VisibleRegion visibleRegion = googleMap.getProjection().getVisibleRegion();
+
+        LatLng farRight = visibleRegion.farRight;
+        LatLng farLeft = visibleRegion.farLeft;
+        LatLng nearRight = visibleRegion.nearRight;
+        LatLng nearLeft = visibleRegion.nearLeft;
+
+        float[] distanceWidth = new float[2];
+        Location.distanceBetween(
+                (farRight.latitude+nearRight.latitude)/2,
+                (farRight.longitude+nearRight.longitude)/2,
+                (farLeft.latitude+nearLeft.latitude)/2,
+                (farLeft.longitude+nearLeft.longitude)/2,
+                distanceWidth
+        );
+
+
+        float[] distanceHeight = new float[2];
+        Location.distanceBetween(
+                (farRight.latitude+nearRight.latitude)/2,
+                (farRight.longitude+nearRight.longitude)/2,
+                (farLeft.latitude+nearLeft.latitude)/2,
+                (farLeft.longitude+nearLeft.longitude)/2,
+                distanceHeight
+        );
+
+        float distance;
+
+        if (distanceWidth[0] > distanceHeight[0]){
+            distance = distanceWidth[0];
+        } else {
+            distance = distanceHeight[0];
+        }
+        return distance;
+    }
 
     public static LatLngBounds calculateBounds(@NonNull LatLng center, double radius) {
         return new LatLngBounds.Builder().
