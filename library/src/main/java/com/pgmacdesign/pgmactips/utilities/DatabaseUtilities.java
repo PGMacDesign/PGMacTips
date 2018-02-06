@@ -900,6 +900,18 @@ public class DatabaseUtilities {
         }
         try {
             L.m("Deleting entire database!");
+            Set<Class<? extends RealmModel>> allClasses = getDBTableTypes();
+            if(allClasses != null){
+                if(allClasses.size()>= 0){
+                    for(Class<? extends RealmModel> c : allClasses){
+                        try {
+                            deleteFromMasterDB(c);
+                        } catch (Exception e){
+                            L.m("A class could not be deleted: " + c.getCanonicalName());
+                        }
+                    }
+                }
+            }
             return (deleteRealmFileInStorage(realmConfiguration));
         } catch (Exception e) {
             return false;
