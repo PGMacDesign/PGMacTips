@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Date Utilities for converting and whatnot
@@ -758,6 +759,53 @@ public class DateUtilities {
         Calendar calendar = Calendar.getInstance();
         calendar.set(1985, 10, 8, 11, 11, 11);
         return calendar.getTime();
+    }
+
+    /**
+     * Get the year, 18 years ago
+     * @return Int of year
+     */
+    public static int get18YearsAgoYear(){
+        Calendar cal = Calendar.getInstance(TimeZone.getDefault());
+        cal.add(Calendar.YEAR, -18);
+        return cal.get(Calendar.YEAR);
+    }
+
+    /**
+     * Get the month, 18 years ago
+     * @return Int of month
+     */
+    public static int get18YearsAgoMonth(){
+        Calendar cal = Calendar.getInstance(TimeZone.getDefault());
+        cal.add(Calendar.YEAR, -18);
+        return (1 + cal.get(Calendar.MONTH));
+    }
+
+    /**
+     * Get the day, 18 years ago
+     * @return Int of day
+     */
+    public static int get18YearsAgoDay(){
+        Calendar cal = Calendar.getInstance(TimeZone.getDefault());
+        cal.add(Calendar.YEAR, -18);
+        return cal.get(Calendar.DAY_OF_MONTH);
+    }
+
+    /**
+     * Get the weekday in the past. IE, You want to know what day it was 4 years, 3
+     * months and 2 days ago (--> 'Tuesday')
+     * @param yearsAgo # of years ago (Positive number)
+     * @param monthsAgo # of months ago (Positive number)
+     * @param daysAgo # of days ago (Positive number)
+     * @return String day of week. {@link DateUtilities#getDayOfWeek()}
+     */
+    public static String getWeekdayInPast(int yearsAgo, int monthsAgo, int daysAgo){
+        Calendar cal = Calendar.getInstance(TimeZone.getDefault());
+        cal.add(Calendar.YEAR, -yearsAgo);
+        cal.add(Calendar.MONTH, -monthsAgo);
+        cal.add(Calendar.DAY_OF_MONTH, -daysAgo);
+        int weekday = cal.get(Calendar.DAY_OF_WEEK);
+        return DateUtilities.getDayOfWeek(weekday);
     }
 
     /**

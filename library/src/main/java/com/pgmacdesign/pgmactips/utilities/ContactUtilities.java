@@ -73,9 +73,12 @@ public class ContactUtilities {
      * 3)MOVE_FAVORITES_TO_TOP_OF_LIST - This flag will move favorites within the contact list to
      *                                   the top of the list. The favorites are selected via the
      *                                   contact app and not via this app.
+     * 4)REMOVE_BLOCK_LIST_CONTACTS - This flag will remove the contacts that appear on the global
+     *                                  block list below. {@link ContactUtilities#BLOCK_LIST_NUMBERS}
      */
     public static enum SearchQueryFlags {
-        ADD_ALPHABET_HEADERS, USE_ALL_ALPHABET_LETTERS, MOVE_FAVORITES_TO_TOP_OF_LIST
+        ADD_ALPHABET_HEADERS, USE_ALL_ALPHABET_LETTERS,
+        MOVE_FAVORITES_TO_TOP_OF_LIST, REMOVE_BLOCK_LIST_CONTACTS
     }
 
     private static final String[] EMAIL_PROJECTION = {
@@ -149,6 +152,12 @@ public class ContactUtilities {
             ContactsContract.Contacts._ID
     };
 
+    ////////////////
+    //Main Builder//
+    ////////////////
+
+    // TODO: 2018-02-05 refactor builder methodology here to mirror retrofitclient
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //----------Async Query Methods for Single table pull------------------------------------------/
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -163,7 +172,8 @@ public class ContactUtilities {
         private String query;
         private SearchTypes[] typesToQuery;
         private int maxNumResults;
-        private boolean includeAlphabetHeaders, includeAllLetters,  moveFavoritesToTop;
+        private boolean includeAlphabetHeaders, includeAllLetters,
+                moveFavoritesToTop, removeBlockListItems;
 
         /**
          * Perform a contact query on an asynchronous background thread
@@ -200,6 +210,7 @@ public class ContactUtilities {
             this.includeAlphabetHeaders = false;
             this.includeAllLetters = false;
             this.moveFavoritesToTop = false;
+            this.removeBlockListItems = false;
             if(queryOptions != null){
                 for(SearchQueryFlags option : queryOptions){
                     switch (option){
@@ -242,7 +253,7 @@ public class ContactUtilities {
 
                     case PHONE:
                         List<Contact> phoneContacts = ContactUtilities.getPhoneQuery(
-                                listener, activity, query, maxNumResults
+                                listener, activity, query, maxNumResults, removeBlockListItems
                         );
                         phoneContacts = ContactUtilities.simplifyList(phoneContacts);
                         if(includeAlphabetHeaders) {
@@ -323,6 +334,7 @@ public class ContactUtilities {
         }
     }
 
+    // TODO: 2018-02-05 add in regex options
     private static class ContactQueryAsyncTESTING extends AsyncTask <Void, Void, List<Contact>>{
 
         private OnTaskCompleteListener listener;
@@ -373,8 +385,8 @@ public class ContactUtilities {
      * @param query Query to be searched
      * @param maxNumResults max number of results to return. if 0, no limit
      */
-    public static List<Contact> getPhoneQuery(OnTaskCompleteListener listener, Activity activity,
-                                              String query, int maxNumResults) {
+    private static List<Contact> getPhoneQuery(OnTaskCompleteListener listener, Activity activity,
+                                              String query, int maxNumResults, boolean removeBlockListItems) {
         if (activity == null || listener == null) {
             return null;
         }
@@ -458,10 +470,11 @@ public class ContactUtilities {
                         phone = new Contact.Phone(phoneNumber, phoneNumberType);
                     }
 
-                    //if(numberOnBlockList(phoneNumber)){
-                        // TODO: 10/20/2016 add in boolean param to throw this or not
-                        //continue;
-                    //}
+                    if(removeBlockListItems) {
+                        if (numberOnBlockList(phoneNumber)) {
+                            continue;
+                        }
+                    }
 
                     List<Contact.Phone> phones = new ArrayList<>();
                     phones.add(phone);
@@ -489,7 +502,7 @@ public class ContactUtilities {
      * @param query Query to be searched
      * @param maxNumResults max number of results to return. if 0, no limit
      */
-    public static List<Contact> getEmailQuery(OnTaskCompleteListener listener, Activity activity,
+    private static List<Contact> getEmailQuery(OnTaskCompleteListener listener, Activity activity,
                                               String query, int maxNumResults) {
         if (activity == null || listener == null) {
             return null;
@@ -596,7 +609,7 @@ public class ContactUtilities {
      * @param query Query to be searched
      * @param maxNumResults max number of results to return. if 0, no limit
      */
-    public static List<Contact> getAddressQuery(OnTaskCompleteListener listener, Activity activity,
+    private static List<Contact> getAddressQuery(OnTaskCompleteListener listener, Activity activity,
                                                 String query, int maxNumResults) {
         if (activity == null || listener == null) {
             return null;
@@ -706,7 +719,7 @@ public class ContactUtilities {
      * @param query Query to be searched
      * @param maxNumResults max number of results to return. if 0, no limit
      */
-    public static List<Contact> getNameQuery(OnTaskCompleteListener listener, Activity activity,
+    private static List<Contact> getNameQuery(OnTaskCompleteListener listener, Activity activity,
                                              String query, int maxNumResults) {
         if (activity == null || listener == null) {
             return null;
@@ -817,7 +830,7 @@ public class ContactUtilities {
      * @param query Query to be searched
      * @param maxNumResults max number of results to return. if 0, no limit
      */
-    public static List<Contact> getPhoneQueryRegex(OnTaskCompleteListener listener, Activity activity,
+    private static List<Contact> getPhoneQueryRegex(OnTaskCompleteListener listener, Activity activity,
                                                    String query, int maxNumResults, List<String> mListStrings) {
         if (activity == null || listener == null) {
             return null;
@@ -1388,7 +1401,7 @@ public class ContactUtilities {
      * @param id
      * @param contactToUpdate
      */
-    public static void getNameData(ContentResolver cr, String id, Contact contactToUpdate) {
+    private static void getNameData(ContentResolver cr, String id, Contact contactToUpdate) {
         //Name
         try {
             String[] projection = {
@@ -1452,7 +1465,7 @@ public class ContactUtilities {
      * @param id
      * @param contactToUpdate
      */
-    public static void getNoteData(ContentResolver cr, String id, Contact contactToUpdate) {
+    private static void getNoteData(ContentResolver cr, String id, Contact contactToUpdate) {
         //Note
         try {
             String[] projection = {
@@ -1493,7 +1506,7 @@ public class ContactUtilities {
      * @param id
      * @param contactToUpdate
      */
-    public static void getAddressData(ContentResolver cr, String id, Contact contactToUpdate) {
+    private static void getAddressData(ContentResolver cr, String id, Contact contactToUpdate) {
         //Address
         try {
             String[] projection = {
@@ -1551,7 +1564,7 @@ public class ContactUtilities {
      * @param id
      * @param contactToUpdate
      */
-    public static void getEmailData(ContentResolver cr, String id, Contact contactToUpdate) {
+    private static void getEmailData(ContentResolver cr, String id, Contact contactToUpdate) {
         //Email
         try {
             String emailWhere = ContactsContract.Data.CONTACT_ID + " = ? AND " +
@@ -1602,7 +1615,7 @@ public class ContactUtilities {
      * @param id
      * @param contactToUpdate
      */
-    public static void getPhoneData(ContentResolver cr, String id, Contact contactToUpdate) {
+    private static void getPhoneData(ContentResolver cr, String id, Contact contactToUpdate) {
         //Phone Number
         try {
             String phoneWhere = ContactsContract.Data.CONTACT_ID + " = ? AND " +
@@ -2151,7 +2164,7 @@ public class ContactUtilities {
      * @param contacts List of contacts to both iterate and update
      * @return Returns the altered list with new Strings added
      */
-    public static List<Contact> simplifyList(List<Contact> contacts){
+    private static List<Contact> simplifyList(List<Contact> contacts){
         if(contacts == null){
             return contacts;
         }
@@ -2291,7 +2304,7 @@ public class ContactUtilities {
      *                   instead of the full A-Z list
      * @return Altered list
      */
-    public static List<Contact> addAlphabetHeadersToList(List<Contact> contactList, boolean allLetters){
+    private static List<Contact> addAlphabetHeadersToList(List<Contact> contactList, boolean allLetters){
         if(contactList == null){
             return null;
         }
@@ -2638,7 +2651,7 @@ public class ContactUtilities {
      * @param email email to check
      * @return boolean, true if it already contains it, false if it does not.
      */
-    public static boolean listAlreadyContainsEmail(List<Contact> contacts, String email){
+    private static boolean listAlreadyContainsEmail(List<Contact> contacts, String email){
         if(contacts == null || StringUtilities.isNullOrEmpty(email)){
             return false;
         }
@@ -2663,7 +2676,7 @@ public class ContactUtilities {
      * @param phoneNumber Phone number to check
      * @return boolean, true if it already contains it, false if it does not.
      */
-    public static boolean listAlreadyContainsPhoneNumber(List<Contact> contacts, String phoneNumber){
+    private static boolean listAlreadyContainsPhoneNumber(List<Contact> contacts, String phoneNumber){
         if(contacts == null || StringUtilities.isNullOrEmpty(phoneNumber)){
             return false;
         }
@@ -2690,7 +2703,7 @@ public class ContactUtilities {
      */
     public static boolean numberOnBlockList(String phoneNumber){
         try {
-            return Arrays.asList(SERVICE_NUMBERS).contains(phoneNumber);
+            return Arrays.asList(BLOCK_LIST_NUMBERS).contains(phoneNumber);
         } catch (Exception e){
             return false;
         }
@@ -2700,7 +2713,7 @@ public class ContactUtilities {
      * List of service numbers. These can be blocked for bringing up a list to send SMS to as they
      * will not take in SMS
      */
-    public static final String[] SERVICE_NUMBERS = {
+    public static final String[] BLOCK_LIST_NUMBERS = {
             //Verizon
             "#225", "#3282", "*226", "#646", "#768", "#874", "*86", "18668946848", "8668946848",
             "18776237433", "8776237433", "8009220204", "18009220204", "18664065154", "8664065154",
@@ -2775,7 +2788,7 @@ public class ContactUtilities {
      * @param myList List of contacts to filter / adjust
      * @return List of Contact objects
      */
-    public static List<Contact> moveFavoritesToTop(List<Contact> myList){
+    private static List<Contact> moveFavoritesToTop(List<Contact> myList){
         if(myList == null){
             return myList;
         }
@@ -2817,7 +2830,7 @@ public class ContactUtilities {
      * @param positions positions of favorites within the myList object
      * @return List of Contact objects
      */
-    public static List<Contact> moveFavoritesToTop(List<Contact> myList, int[] positions){
+    private static List<Contact> moveFavoritesToTop(List<Contact> myList, int[] positions){
         if(myList == null){
             return myList;
         }
