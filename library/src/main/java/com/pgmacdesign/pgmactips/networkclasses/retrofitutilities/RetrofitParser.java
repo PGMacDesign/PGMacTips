@@ -3,10 +3,14 @@ package com.pgmacdesign.pgmactips.networkclasses.retrofitutilities;
 import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.L;
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 
@@ -17,14 +21,36 @@ import retrofit2.Response;
 
 
 /**
- * Master Response Parser that is used for parsing calls via enqueue.
  * Created by pmacdowell on 2017-09-11.
+ * Master Response Parser that is used for parsing calls using {@link retrofit2.Call#enqueue(Callback)}.
+ * How to use:
+ *      //Parse the response within your onTaskCompleteListener.
+ *      Call call = yourServiceInterface.apiCall(params);
+ *      RetrofitParser.parse(yourOnTaskCompleteListener, call,
+ *          successDataModel.class, errorDataModel.class,
+ *          successCallbackIntTag, failCallbackIntTag);
+ * The responses on the onTaskComplete listener will be sent back on one of the following int tags:
+ *      1) Your successCallbackIntTag
+ *      2) Your failCallbackIntTag
+ *      3) TAG_RETROFIT_PARSE_ERROR (4411)
+ *      4) TAG_RETROFIT_CALL_ERROR (4412)
  * <p>
  * Note: If you want to send in a Type {@link Type} for these overloaded methods, use one of
  * the examples shown in {@link CustomConverterFactory} at the top of the class
  */
 public class RetrofitParser {
 
+    private static final String PARSE_FAILED_STR_1 =
+            "Web response could not be converted using the passed type. ";
+    private static final String PARSE_FAILED_STR_2 =
+            "Response was instead resolved as type: ";
+    private static final String PARSE_FAILED_PRINTOUT = ". Data = ";
+    private static final String PARSE_FAILED_PRINTOUT_ALT = "Response = \n";
+    public static final Type TYPE_BOOLEAN = Boolean.TYPE;
+    public static final Type TYPE_DOUBLE = Double.TYPE;
+    public static final Type TYPE_INTEGER = Integer.TYPE;
+    public static final Type TYPE_STRING = new TypeToken<String>() {
+    }.getType();
 
     /**
      * This parse error tag triggers if the call could not be parsed by either the success
@@ -47,8 +73,10 @@ public class RetrofitParser {
     /**
      * Parse a {@link Call}. This will run the call and attempt to parse the response
      * NOTE! This call is Asynchronous and will run on a background thread. Data will be
-     * returned along the {@link OnTaskCompleteListener}. If you wish to run this synchronously,
-     * see
+     * returned along the {@link OnTaskCompleteListener}.
+     * NOTE! Failing to add the Internet permission
+     * (<uses-permission android:name="android.permission.INTERNET"/>)
+     * in your manifest will throw the java.lang.SecurityException exception
      *
      * @param listener                {@link OnTaskCompleteListener} To send data back on
      * @param call                    {@link Call} The call to send. Note, the type being
@@ -62,10 +90,10 @@ public class RetrofitParser {
      * @param failCallbackTag         {@link Integer} Callback tag (enum / int) to be used
      *                                if the call is Unsuccessful or parsed incorrectly.
      * @param serverCanReturn200Error This represents whether the server you are hitting can send
-     *                                back a 200 response code with an error object. As most REST
-     *                                APIs will return a 200 tag for a success and a 400 for an
+     *                                back a 2xx response code with an error object. As most REST
+     *                                APIs will return a 2xx tag for a success and a 4xx for an
      *                                error, this is not usually the case, but some servers will
-     *                                respond with a 200 response code and have the 'error object'
+     *                                respond with a 2xx response code and have the 'error object'
      *                                be considered a 'fail' response. Sending this in as true
      *                                will attempt to parse the 'fail' response from both the
      *                                response body as well as the response error body. If you
@@ -117,6 +145,8 @@ public class RetrofitParser {
                                 listener.onTaskComplete(o, successCallbackTag);
                                 return;
                             } else {
+                                RetrofitParser.failedParsingDetermineType(responseJson, successClassDataModel);
+                                RetrofitParser.failedParsingDetermineType(errorResponseJson, errorClassDataModel);
                                 listener.onTaskComplete(null, TAG_RETROFIT_PARSE_ERROR);
                                 return;
                             }
@@ -132,6 +162,8 @@ public class RetrofitParser {
                                 listener.onTaskComplete(o, successCallbackTag);
                                 return;
                             } else {
+                                RetrofitParser.failedParsingDetermineType(responseJson, successClassDataModel);
+                                RetrofitParser.failedParsingDetermineType(errorResponseJson, errorClassDataModel);
                                 listener.onTaskComplete(null, TAG_RETROFIT_PARSE_ERROR);
                                 return;
                             }
@@ -153,6 +185,9 @@ public class RetrofitParser {
 
     /**
      * Overloaded to allow for Type {@link Type} entry
+     * NOTE! Failing to add the Internet permission
+     * (<uses-permission android:name="android.permission.INTERNET"/>)
+     * in your manifest will throw the java.lang.SecurityException exception
      */
     public static void parse(@NonNull final OnTaskCompleteListener listener,
                              @NonNull final Call<ResponseBody> call,
@@ -200,6 +235,8 @@ public class RetrofitParser {
                                 listener.onTaskComplete(o, successCallbackTag);
                                 return;
                             } else {
+                                RetrofitParser.failedParsingDetermineType(responseJson, successClassDataModel);
+                                RetrofitParser.failedParsingDetermineType(errorResponseJson, errorClassDataModel);
                                 listener.onTaskComplete(null, TAG_RETROFIT_PARSE_ERROR);
                                 return;
                             }
@@ -215,6 +252,8 @@ public class RetrofitParser {
                                 listener.onTaskComplete(o, successCallbackTag);
                                 return;
                             } else {
+                                RetrofitParser.failedParsingDetermineType(responseJson, successClassDataModel);
+                                RetrofitParser.failedParsingDetermineType(errorResponseJson, errorClassDataModel);
                                 listener.onTaskComplete(null, TAG_RETROFIT_PARSE_ERROR);
                                 return;
                             }
@@ -237,6 +276,9 @@ public class RetrofitParser {
     /**
      * Overloaded method to allow for excluding last boolean. See
      * {@link RetrofitParser#parse(OnTaskCompleteListener, Call, Class, Class, Integer, Integer, boolean)}
+     * NOTE! Failing to add the Internet permission
+     * (<uses-permission android:name="android.permission.INTERNET"/>)
+     * in your manifest will throw the java.lang.SecurityException exception
      * For full documentation
      */
     public static void parse(@NonNull final OnTaskCompleteListener listener,
@@ -251,6 +293,9 @@ public class RetrofitParser {
 
     /**
      * Overloaded to allow for Type {@link Type} entry
+     * NOTE! Failing to add the Internet permission
+     * (<uses-permission android:name="android.permission.INTERNET"/>)
+     * in your manifest will throw the java.lang.SecurityException exception
      */
     public static void parse(@NonNull final OnTaskCompleteListener listener,
                              @NonNull final Call<ResponseBody> call,
@@ -294,11 +339,9 @@ public class RetrofitParser {
                 }
             }
         } else {
-            // TODO: 2017-10-27 insert raw type checking here
             try {
                 return new Gson().fromJson(responseBodyString, successClassDataModel);
             } catch (Exception e) {
-                L.m("Error converting response: " + e.getMessage());
             }
         }
         return null;
@@ -328,11 +371,9 @@ public class RetrofitParser {
                 }
             }
         } else {
-            // TODO: 2017-10-27 insert raw type checking here
             try {
                 return new Gson().fromJson(responseBodyString, successClassDataType);
             } catch (Exception e) {
-                L.m("Error converting response: " + e.getMessage());
             }
         }
         return null;
@@ -341,7 +382,7 @@ public class RetrofitParser {
     /**
      * Check for an error response.
      *
-     * @param responseBodyString  Success body string. Some servers send back a 200 for all
+     * @param responseBodyString  Success body string. Some servers send back a 2xx for all
      *                            responses and expect you to parse the error out of the response
      *                            body instead of the error body; this is to account for that.
      * @param errorBodyString     Error body string
@@ -373,7 +414,6 @@ public class RetrofitParser {
                 }
             }
         } else {
-            // TODO: 2017-10-27 insert raw type checking here
             try {
                 return new Gson().fromJson(errorBodyString, errorClassDataModel);
             } catch (Exception e) {
@@ -410,7 +450,6 @@ public class RetrofitParser {
                 }
             }
         } else {
-            // TODO: 2017-10-27 insert raw type checking here
             try {
                 return new Gson().fromJson(errorBodyString, errorClassDataModel);
             } catch (Exception e) {
@@ -443,7 +482,6 @@ public class RetrofitParser {
                 }
             }
         } else {
-            // TODO: 2017-10-27 insert raw type checking here
             try {
                 return new Gson().fromJson(errorBodyString, errorClassDataModel);
             } catch (Exception e) {
@@ -453,7 +491,6 @@ public class RetrofitParser {
             } catch (Exception e) {
             }
         }
-        // TODO: 2018-02-07 need to handle string parsing here as separate response
         return null;
     }
 
@@ -473,7 +510,6 @@ public class RetrofitParser {
                 }
             }
         } else {
-            // TODO: 2017-10-27 insert raw type checking here
             try {
                 return new Gson().fromJson(errorBodyString, errorClassDataModel);
             } catch (Exception e) {
@@ -482,5 +518,265 @@ public class RetrofitParser {
         return null;
     }
 
+
+    /**
+     * Used to determine if response is raw type (IE Boolean, Integer, Double, String)
+     *
+     * @param responseBodyString
+     * @param typeToCast
+     */
+    private static void failedParsingDetermineType(String responseBodyString, Type typeToCast) {
+        //Raw Checks
+        if (StringUtilities.isNullOrEmpty(responseBodyString)) {
+            return;
+        }
+        try {
+            Boolean bool = new Gson().fromJson(responseBodyString, TYPE_BOOLEAN);
+            if (bool != null) {
+                L.m((typeToCast != null) ? PARSE_FAILED_STR_1
+                        + "(Passed = " + typeToCast.toString() + "). "
+                        + PARSE_FAILED_STR_2 + TYPE_BOOLEAN.toString()
+                        + PARSE_FAILED_PRINTOUT + bool :
+                        PARSE_FAILED_STR_1 + PARSE_FAILED_STR_2 + TYPE_BOOLEAN.toString()
+                                + PARSE_FAILED_PRINTOUT + bool
+                );
+                return;
+            }
+        } catch (Exception e) {
+        }
+        try {
+            if (responseBodyString.equalsIgnoreCase("true")
+                    || responseBodyString.equalsIgnoreCase("false")) {
+                L.m((typeToCast != null) ? PARSE_FAILED_STR_1
+                        + "(Passed = " + typeToCast.toString() + "). "
+                        + PARSE_FAILED_STR_2 + TYPE_BOOLEAN.toString()
+                        + PARSE_FAILED_PRINTOUT + responseBodyString :
+                        PARSE_FAILED_STR_1 + PARSE_FAILED_STR_2 + TYPE_BOOLEAN.toString()
+                                + PARSE_FAILED_PRINTOUT + responseBodyString
+                );
+                return;
+            }
+        } catch (Exception e) {
+        }
+        try {
+            Double dbl = new Gson().fromJson(responseBodyString, TYPE_DOUBLE);
+            if (dbl != null) {
+                L.m((typeToCast != null) ? PARSE_FAILED_STR_1
+                        + "(Passed = " + typeToCast.toString() + "). "
+                        + PARSE_FAILED_STR_2 + TYPE_DOUBLE.toString()
+                        + PARSE_FAILED_PRINTOUT + dbl :
+                        PARSE_FAILED_STR_1 + PARSE_FAILED_STR_2 + TYPE_DOUBLE.toString()
+                                + PARSE_FAILED_PRINTOUT + dbl);
+                return;
+            }
+        } catch (Exception e) {
+        }
+        try {
+            Double dbl = Double.parseDouble(responseBodyString);
+            if (dbl != null) {
+                L.m((typeToCast != null) ? PARSE_FAILED_STR_1
+                        + "(Passed = " + typeToCast.toString() + "). "
+                        + PARSE_FAILED_STR_2 + TYPE_DOUBLE.toString()
+                        + PARSE_FAILED_PRINTOUT + dbl :
+                        PARSE_FAILED_STR_1 + PARSE_FAILED_STR_2 + TYPE_DOUBLE.toString()
+                                + PARSE_FAILED_PRINTOUT + dbl);
+                return;
+            }
+        } catch (Exception e) {
+        }
+        try {
+            Integer intx = new Gson().fromJson(responseBodyString, TYPE_INTEGER);
+            if (intx != null) {
+                L.m((typeToCast != null) ? PARSE_FAILED_STR_1
+                        + "(Passed = " + typeToCast.toString() + "). "
+                        + PARSE_FAILED_STR_2 + TYPE_INTEGER.toString()
+                        + PARSE_FAILED_PRINTOUT + intx :
+                        PARSE_FAILED_STR_1 + PARSE_FAILED_STR_2 + TYPE_INTEGER.toString()
+                                + PARSE_FAILED_PRINTOUT + intx);
+                return;
+            }
+        } catch (Exception e) {
+        }
+        try {
+            Integer intx = Integer.parseInt(responseBodyString);
+            if (intx != null) {
+                L.m((typeToCast != null) ? PARSE_FAILED_STR_1
+                        + "(Passed = " + typeToCast.toString() + "). "
+                        + PARSE_FAILED_STR_2 + TYPE_INTEGER.toString()
+                        + PARSE_FAILED_PRINTOUT + intx :
+                        PARSE_FAILED_STR_1 + PARSE_FAILED_STR_2 + TYPE_INTEGER.toString()
+                                + PARSE_FAILED_PRINTOUT + intx);
+                return;
+            }
+        } catch (Exception e) {
+        }
+        try {
+            String str = new Gson().fromJson(responseBodyString, TYPE_STRING);
+            if (!StringUtilities.isNullOrEmpty(str)) {
+                L.m((typeToCast != null) ? PARSE_FAILED_STR_1
+                        + "(Passed = " + typeToCast.toString() + "). "
+                        + PARSE_FAILED_STR_2 + TYPE_STRING.toString()
+                        + PARSE_FAILED_PRINTOUT + str :
+                        PARSE_FAILED_STR_1 + PARSE_FAILED_STR_2 + TYPE_STRING.toString()
+                                + PARSE_FAILED_PRINTOUT + str);
+                return;
+            }
+        } catch (Exception e) {
+        }
+        boolean isJSONObject = false, isJSONArray = false;
+        try {
+            JSONObject o = new JSONObject(responseBodyString);
+            isJSONObject = true;
+        } catch (Exception e) {
+        }
+        try {
+            JSONArray o = new JSONArray(responseBodyString);
+            isJSONArray = true;
+        } catch (Exception e) {
+        }
+        if (isJSONArray || isJSONObject) {
+            L.m((typeToCast != null) ? PARSE_FAILED_STR_1
+                    + "(Passed = " + typeToCast.toString() + "). "
+                    + PARSE_FAILED_PRINTOUT_ALT + responseBodyString :
+                    PARSE_FAILED_STR_1 + PARSE_FAILED_PRINTOUT_ALT + responseBodyString);
+        } else {
+            L.m((typeToCast != null) ? PARSE_FAILED_STR_1
+                    + "(Passed = " + typeToCast.toString() + "). "
+                    + PARSE_FAILED_STR_2 + TYPE_STRING.toString()
+                    + PARSE_FAILED_PRINTOUT + responseBodyString :
+                    PARSE_FAILED_STR_1 + PARSE_FAILED_STR_2 + TYPE_STRING.toString()
+                            + PARSE_FAILED_PRINTOUT + responseBodyString);
+        }
+    }
+
+    /**
+     * Used to determine if response is raw type (IE Boolean, Integer, Double, String)
+     *
+     * @param responseBodyString
+     * @param typeToCast
+     */
+    private static void failedParsingDetermineType(String responseBodyString, Class typeToCast) {
+        //Raw Checks
+        if (StringUtilities.isNullOrEmpty(responseBodyString)) {
+            return;
+        }
+        try {
+            Boolean bool = new Gson().fromJson(responseBodyString, TYPE_BOOLEAN);
+            if (bool != null) {
+                L.m((typeToCast != null) ? PARSE_FAILED_STR_1
+                        + "(Passed = " + typeToCast.toString() + "). "
+                        + PARSE_FAILED_STR_2 + TYPE_BOOLEAN.toString()
+                        + PARSE_FAILED_PRINTOUT + bool :
+                        PARSE_FAILED_STR_1 + PARSE_FAILED_STR_2 + TYPE_BOOLEAN.toString()
+                                + PARSE_FAILED_PRINTOUT + bool
+                );
+                return;
+            }
+        } catch (Exception e) {
+        }
+        try {
+            if (responseBodyString.equalsIgnoreCase("true")
+                    || responseBodyString.equalsIgnoreCase("false")) {
+                L.m((typeToCast != null) ? PARSE_FAILED_STR_1
+                        + "(Passed = " + typeToCast.toString() + "). "
+                        + PARSE_FAILED_STR_2 + TYPE_BOOLEAN.toString()
+                        + PARSE_FAILED_PRINTOUT + responseBodyString :
+                        PARSE_FAILED_STR_1 + PARSE_FAILED_STR_2 + TYPE_BOOLEAN.toString()
+                                + PARSE_FAILED_PRINTOUT + responseBodyString
+                );
+                return;
+            }
+        } catch (Exception e) {
+        }
+        try {
+            Double dbl = new Gson().fromJson(responseBodyString, TYPE_DOUBLE);
+            if (dbl != null) {
+                L.m((typeToCast != null) ? PARSE_FAILED_STR_1
+                        + "(Passed = " + typeToCast.toString() + "). "
+                        + PARSE_FAILED_STR_2 + TYPE_DOUBLE.toString()
+                        + PARSE_FAILED_PRINTOUT + dbl :
+                        PARSE_FAILED_STR_1 + PARSE_FAILED_STR_2 + TYPE_DOUBLE.toString()
+                                + PARSE_FAILED_PRINTOUT + dbl);
+                return;
+            }
+        } catch (Exception e) {
+        }
+        try {
+            Double dbl = Double.parseDouble(responseBodyString);
+            if (dbl != null) {
+                L.m((typeToCast != null) ? PARSE_FAILED_STR_1
+                        + "(Passed = " + typeToCast.toString() + "). "
+                        + PARSE_FAILED_STR_2 + TYPE_DOUBLE.toString()
+                        + PARSE_FAILED_PRINTOUT + dbl :
+                        PARSE_FAILED_STR_1 + PARSE_FAILED_STR_2 + TYPE_DOUBLE.toString()
+                                + PARSE_FAILED_PRINTOUT + dbl);
+                return;
+            }
+        } catch (Exception e) {
+        }
+        try {
+            Integer intx = new Gson().fromJson(responseBodyString, TYPE_INTEGER);
+            if (intx != null) {
+                L.m((typeToCast != null) ? PARSE_FAILED_STR_1
+                        + "(Passed = " + typeToCast.toString() + "). "
+                        + PARSE_FAILED_STR_2 + TYPE_INTEGER.toString()
+                        + PARSE_FAILED_PRINTOUT + intx :
+                        PARSE_FAILED_STR_1 + PARSE_FAILED_STR_2 + TYPE_INTEGER.toString()
+                                + PARSE_FAILED_PRINTOUT + intx);
+                return;
+            }
+        } catch (Exception e) {
+        }
+        try {
+            Integer intx = Integer.parseInt(responseBodyString);
+            if (intx != null) {
+                L.m((typeToCast != null) ? PARSE_FAILED_STR_1
+                        + "(Passed = " + typeToCast.toString() + "). "
+                        + PARSE_FAILED_STR_2 + TYPE_INTEGER.toString()
+                        + PARSE_FAILED_PRINTOUT + intx :
+                        PARSE_FAILED_STR_1 + PARSE_FAILED_STR_2 + TYPE_INTEGER.toString()
+                                + PARSE_FAILED_PRINTOUT + intx);
+                return;
+            }
+        } catch (Exception e) {
+        }
+        try {
+            String str = new Gson().fromJson(responseBodyString, TYPE_STRING);
+            if (!StringUtilities.isNullOrEmpty(str)) {
+                L.m((typeToCast != null) ? PARSE_FAILED_STR_1
+                        + "(Passed = " + typeToCast.toString() + "). "
+                        + PARSE_FAILED_STR_2 + TYPE_STRING.toString()
+                        + PARSE_FAILED_PRINTOUT + str :
+                        PARSE_FAILED_STR_1 + PARSE_FAILED_STR_2 + TYPE_STRING.toString()
+                                + PARSE_FAILED_PRINTOUT + str);
+                return;
+            }
+        } catch (Exception e) {
+        }
+        boolean isJSONObject = false, isJSONArray = false;
+        try {
+            JSONObject o = new JSONObject(responseBodyString);
+            isJSONObject = true;
+        } catch (Exception e) {
+        }
+        try {
+            JSONArray o = new JSONArray(responseBodyString);
+            isJSONArray = true;
+        } catch (Exception e) {
+        }
+        if (isJSONArray || isJSONObject) {
+            L.m((typeToCast != null) ? PARSE_FAILED_STR_1
+                    + "(Passed = " + typeToCast.toString() + "). "
+                    + PARSE_FAILED_PRINTOUT_ALT + responseBodyString :
+                    PARSE_FAILED_STR_1 + PARSE_FAILED_PRINTOUT_ALT + responseBodyString);
+        } else {
+            L.m((typeToCast != null) ? PARSE_FAILED_STR_1
+                    + "(Passed = " + typeToCast.toString() + "). "
+                    + PARSE_FAILED_STR_2 + TYPE_STRING.toString()
+                    + PARSE_FAILED_PRINTOUT + responseBodyString :
+                    PARSE_FAILED_STR_1 + PARSE_FAILED_STR_2 + TYPE_STRING.toString()
+                            + PARSE_FAILED_PRINTOUT + responseBodyString);
+        }
+    }
 
 }

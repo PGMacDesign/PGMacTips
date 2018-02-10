@@ -28,7 +28,7 @@ import retrofit2.Response;
 public class ProfantiyCheckerAPICalls {
 
     private static ProfantiyCheckerInterface serviceInterface;
-    private static final String BASE_URL = "http://www.purgomalum.com";
+    private static final String BASE_URL = "http://www.purgomalum.com/";
 
     static {
         init();

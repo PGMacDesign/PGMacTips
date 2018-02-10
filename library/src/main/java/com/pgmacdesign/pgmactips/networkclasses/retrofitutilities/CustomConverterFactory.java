@@ -2,6 +2,7 @@ package com.pgmacdesign.pgmactips.networkclasses.retrofitutilities;
 
 import com.google.gson.reflect.TypeToken;
 import com.pgmacdesign.pgmactips.SamplePojo;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.L;
 
 import java.io.IOException;
@@ -21,14 +22,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class CustomConverterFactory extends Converter.Factory  {
 
-    private static final Type TYPE_BOOLEAN = Boolean.TYPE;
-    private static final Type TYPE_DOUBLE = Double.TYPE;
-    private static final Type TYPE_INTEGER = Integer.TYPE;
-    private static final Type TYPE_STRING = new TypeToken<String>(){}.getType();
-
     //How to make custom type converters
     private static final Type TYPE_TESTINGPOJO = new TypeToken<SamplePojo>(){}.getType();
     private static final Type TYPE_LIST_OF_TESTINGPOJO = new TypeToken<ArrayList<SamplePojo>>(){}.getType();
+
+    private static final String SERIALIZED_STRING_ERROR =
+            "Make sure you don't have the same '@Serialized' string name declaration over 2 different variables. This will cause an exception. See this for more details: https://stackoverflow.com/questions/32367469/unable-to-create-converter-for-my-class-in-android-retrofit-library/42517143#42517143";
 
 
     public CustomConverterFactory() {
@@ -37,7 +36,7 @@ public class CustomConverterFactory extends Converter.Factory  {
 
     @Override
     public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
-        if(type ==TYPE_BOOLEAN){
+        if(type == PGMacTipsConstants.TYPE_BOOLEAN){
             //Boolean
             try {
                 Converter<ResponseBody, ?> converter = new Converter<ResponseBody, Boolean>() {
@@ -51,7 +50,7 @@ public class CustomConverterFactory extends Converter.Factory  {
                 e.printStackTrace();
             }
 
-        } else if(type == TYPE_DOUBLE){
+        } else if(type == PGMacTipsConstants.TYPE_DOUBLE){
             //Double
             try {
                 Converter<ResponseBody, ?> converter = new Converter<ResponseBody, Double>() {
@@ -65,7 +64,7 @@ public class CustomConverterFactory extends Converter.Factory  {
                 e.printStackTrace();
             }
 
-        } else if(type == TYPE_INTEGER){
+        } else if(type == PGMacTipsConstants.TYPE_INTEGER){
             //Integer
             try {
                 Converter<ResponseBody, ?> converter = new Converter<ResponseBody, Integer>() {
@@ -79,7 +78,7 @@ public class CustomConverterFactory extends Converter.Factory  {
                 e.printStackTrace();
             }
 
-        } else if(type == (TYPE_STRING)){
+        } else if(type == (PGMacTipsConstants.TYPE_STRING)){
             //String
             try {
                 Converter<ResponseBody, ?> converter = new Converter<ResponseBody, String>() {
@@ -92,14 +91,13 @@ public class CustomConverterFactory extends Converter.Factory  {
             } catch (Exception e){
                 e.printStackTrace();
             }
-
         } else {
             try {
                 Converter<ResponseBody, ?> gsonConverter = GsonConverterFactory
                         .create().responseBodyConverter(type, annotations, retrofit);
                 return gsonConverter;
             } catch (Exception e){
-                L.m("Make sure you don't have the same '@Serialized' string name declaration over 2 different variables. This will cause an exception");
+                L.m(SERIALIZED_STRING_ERROR);
                 e.printStackTrace();
             }
         }

@@ -1,15 +1,18 @@
 package com.pgmacdesign.pgmactips.misc;
 
 import com.daimajia.androidanimations.library.Techniques;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 
 /**
  * Created by pmacdowell on 8/12/2016.
  */
 public class PGMacTipsConstants {
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    /////Misc Strings///////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////
+    //Misc Strings//
+    ////////////////
 
     public static final String PHONE_URI_TO_WRITE_TO = "/storage/emulated/0/Download/";
     public static final String FILE_NAME = "debugLoggingData.txt";
@@ -18,9 +21,9 @@ public class PGMacTipsConstants {
     public static final String ARRAY_PAGER_ADAPTER_ERROR_1 = "Error: Null fragment in passed map.";
     public final static String HEX = "0123456789ABCDEF";
     public final static String UTF8 = "UTF-8";
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    /////Custom Tags (There is no specific order to these numbers)//////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////
+    //Custom Tags (There is no specific order to these numbers)//
+    /////////////////////////////////////////////////////////////
 
     //Request codes used for permission requests
     public static final int TAG_PERMISSIONS_ACCESS_NETWORK_STATE = 4398;
@@ -144,9 +147,9 @@ public class PGMacTipsConstants {
     public static final int DB_VERSION = 1;
     public static final String SHARED_PREFS_NAME = "PGMacUtilities_SharedPrefs";
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    /////Time Values ///////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////
+    //Time Values //
+    ////////////////
 
     //Time values in milliseconds
     public static final long ONE_SECOND = (1000);
@@ -168,9 +171,9 @@ public class PGMacTipsConstants {
     public static final String DATE_STRING_PATTERN_24_HOUR_TIME = "HH:mm";
     public static final String DATE_STRING_PATTERN_12_HOUR_TIME = "hh:mm a";
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    /////Colors/////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////
+    //Colors//
+    //////////
 
     //Color Strings
     public static final String COLOR_TRANSPARENT = "#00000000";
@@ -204,9 +207,18 @@ public class PGMacTipsConstants {
     public static final String COLOR_SEMI_TRANSPARENT_8 = "#99111111";
     public static final String COLOR_SEMI_TRANSPARENT_9 = "#A9111111";
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    /////Regular Expressions////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////
+    //Raw Types//
+    /////////////
+
+    public static final Type TYPE_BOOLEAN = Boolean.TYPE;
+    public static final Type TYPE_DOUBLE = Double.TYPE;
+    public static final Type TYPE_INTEGER = Integer.TYPE;
+    public static final Type TYPE_STRING = new TypeToken<String>(){}.getType();
+
+    ///////////////////////
+    //Regular Expressions//
+    ///////////////////////
 
     //Credit Card Regular Expressions
     public static final String REGEX_CREDIT_CARD_VISA = "^4[0-9]{12}(?:[0-9]{3})?$";
@@ -230,9 +242,9 @@ public class PGMacTipsConstants {
     public static final String REGEX_DATE = "^[0-9]{1,2}[-/][0-9]{1,2}[-/][0-9]{2,4}$";
     public static final String REGEX_EMAIL = "^\\s*[^@\\s]+@(?:[^@\\.\\s]+\\.[^@\\.\\s]+)+\\s*$";
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    /////Animation Constants and Tags///////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////
+    //Animation Constants and Tags//
+    ////////////////////////////////
 
     //Animation Techniques (From the library com.daimajia.androidanimations:library:1.1.3@aar).
     //Prefix: In means it brings them into sight while out takes them out of sight
@@ -257,9 +269,9 @@ public class PGMacTipsConstants {
     public static final Techniques OUT_ZOOM = Techniques.ZoomOut;
     public static final Techniques IN_FLASH = Techniques.Flash; //Quick flash
 
-    //////////////////////////////////
-    /// Known Malware Package Names //
-    //////////////////////////////////
+    ////////////////////////////////
+    //Known Malware Package Names //
+    ////////////////////////////////
 
     public static final String[] MALWARE_PACKAGE_STRINGS = {
             "cn.etouch.ecalendar.life",
