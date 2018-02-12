@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmactips.receivers;
+package com.pgmacdesign.pgmactips.broadcastReceivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
 
 /**
  * Connectivity Receiver. Useful for detecting no internet connection (as a listener)
+ * Requires Permission: <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
  * Created by pmacdowell on 8/16/2016.
  */
 public class ConnectivityReceiver extends BroadcastReceiver {

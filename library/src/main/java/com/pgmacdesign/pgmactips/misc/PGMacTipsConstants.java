@@ -123,10 +123,10 @@ public class PGMacTipsConstants {
 	public static final int TAG_STRING = 4467;
 	public static final int TAG_SIMPLE_TEXT_ICON_ADAPTER_CLICK = 4468;
 	public static final int TAG_GENERIC_FILTER_RESULTS = 4469;
-	public static final int TBD0 = 4470;
-    public static final int TBD1 = 4471;
-    public static final int TBD2 = 4472;
-    public static final int TBD3 = 4473;
+	public static final int TAG_CONTACT_QUERY_PROGRESS_UPDATE = 4470;
+    public static final int TAG_CONTACT_QUERY_NO_RESULTS = 4471;
+    public static final int TAG_CONTACT_QUERY_MISSING_CONTACT_PERMISSION = 4472;
+    public static final int TAG_CONTACT_QUERY_UNKNOWN_ERROR = 4473;
     public static final int TBD4 = 4474;
     public static final int TBD5 = 4475;
     public static final int TBD6 = 4476;
@@ -134,6 +134,10 @@ public class PGMacTipsConstants {
     public static final int TBD8 = 4478;
     public static final int TBD9 = 4479;
     public static final int TBD99 = 4480;
+    public static final int TBD0 = 4481;
+    public static final int TBD1 = 4482;
+    public static final int TBD2 = 4483;
+    public static final int TBD3 = 4484;
 
     //String Tags
     public static final String TAG_SELF_PHOTO_URI = "tag_self_photo_uri";

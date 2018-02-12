@@ -86,8 +86,8 @@ public class PermissionUtilities {
      * @param activity Activity in context
      * @param perms Permissions array being requested
      */
-    public static void permissionsRequestShortcut(Activity activity,
-                                                  PermissionUtilities.permissionsEnum[] perms){
+    public static void permissionsRequestShortcut(@NonNull Activity activity,
+                                                  @NonNull PermissionUtilities.permissionsEnum[] perms){
         getInstance(activity).startPermissionsRequest(perms);
     }
 
@@ -100,8 +100,8 @@ public class PermissionUtilities {
      * @param perms Permissions array being requested
      */
     public static boolean permissionsRequestShortcutReturn(
-            Activity activity,
-            PermissionUtilities.permissionsEnum[] perms){
+            @NonNull Activity activity,
+            @NonNull PermissionUtilities.permissionsEnum[] perms){
         return (getInstance(activity).startPermissionsRequest(perms));
     }
 
@@ -111,12 +111,12 @@ public class PermissionUtilities {
      * @param activity Activity in context
      * @param perms Permissions array being requested
      */
-    public static boolean checkGrantedPermissions(Activity activity,
-                                                  PermissionUtilities.permissionsEnum[] perms){
+    public static boolean checkGrantedPermissions(@NonNull Activity activity,
+                                                  @NonNull PermissionUtilities.permissionsEnum[] perms){
         return (getInstance(activity).checkGrantedPermissions(perms));
     }
 
-    public static PermissionUtilities getInstance(Activity activity){
+    public static PermissionUtilities getInstance(@NonNull Activity activity){
         if(staticPermissionUtility == null) {
             staticPermissionUtility = new PermissionUtilities(activity);
         }
@@ -126,7 +126,7 @@ public class PermissionUtilities {
      * Constructor
      * @param activity
      */
-    public PermissionUtilities(Activity activity){
+    public PermissionUtilities(@NonNull Activity activity){
         this.activity = activity;
         this.numRequests = 0;
         this.currentAttemptNumber = 0;
@@ -393,7 +393,7 @@ public class PermissionUtilities {
      * @param activity
      * @param perms
      */
-    public static void makeDialogForSettings(@NonNull final Activity activity, permissionsEnum[] perms){
+    public static void makeDialogForSettings(@NonNull final Activity activity, @NonNull permissionsEnum[] perms){
         String message = null;
         if(perms != null){
             if(perms.length > 0){
@@ -447,7 +447,7 @@ public class PermissionUtilities {
 
     //Quick Utils
 
-    public static boolean getContactPermissions(Activity activity){
+    public static boolean getContactPermissions(@NonNull Activity activity){
         if(Build.VERSION.SDK_INT < 23){
             return true;
         } else {

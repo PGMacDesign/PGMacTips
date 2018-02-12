@@ -1,5 +1,7 @@
 package com.pgmacdesign.pgmactips.utilities;
 
+import android.support.annotation.Nullable;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -169,6 +171,32 @@ public class NumberUtilities {
         BigDecimal bd = new BigDecimal(value);
         bd = bd.setScale(places, RoundingMode.CEILING);
         return bd.doubleValue();
+    }
+
+    /**
+     * Simple method for preventing Null Pointer Exceptions when working with Floats
+     * @param flt
+     * @return Float value, 0 if float was null
+     */
+    public static float getFloat(@Nullable Float flt){
+        if(flt == null){
+            return 0;
+        } else {
+            return flt;
+        }
+    }
+
+    /**
+     * Simple method for preventing Null Pointer Exceptions when working with Doubles
+     * @param dbl
+     * @return Float value, 0 if float was null
+     */
+    public static double getDouble(@Nullable Double dbl){
+        if(dbl == null){
+            return 0;
+        } else {
+            return dbl;
+        }
     }
 
     /**

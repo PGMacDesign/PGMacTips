@@ -7,6 +7,7 @@ import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 import java.util.Date;
 
 /**
+ * Class for measuring system time while running an app. Useful for debugging
  * Created by pmacdowell on 2017-08-21.
  */
 
