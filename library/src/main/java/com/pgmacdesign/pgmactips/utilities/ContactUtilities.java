@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -380,17 +379,45 @@ public class ContactUtilities {
         async.execute();
     }
 
+    public void queryContacts(@Nullable SearchTypes[] typesToQuery,
+                              @Nullable Integer maxNumResults,
+                              @Nullable Pattern regularExpressionFilter){
+        if(MiscUtilities.isArrayNullOrEmpty(typesToQuery)){
+            typesToQuery = new SearchTypes[]{SearchTypes.NAME, SearchTypes.PHONE,
+                    SearchTypes.EMAIL, SearchTypes.ADDRESS};
+        }
+        int numResults = (IntegerUtilities.getInt(maxNumResults) <= 0) ? 0
+                : (IntegerUtilities.getInt(maxNumResults));
+
+        ContactQueryAsync async = new ContactQueryAsync(this, typesToQuery, numResults,
+                regularExpressionFilter);
+        async.execute();
+    }
+
     private static class ContactQueryAsync extends AsyncTask<Void, Double, Map<SearchTypes, List<Contact>>> {
 
         private SearchTypes[] typesToQuery;
         private int maxNumResults;
         private String query;
-        private boolean missingPermissions;
+        private boolean missingPermissions, useRegex;
+        private Pattern regexPattern;
         private WeakReference<ContactUtilities> classReference;
 
         private ContactQueryAsync(@NonNull ContactUtilities referent,
                                   @NonNull SearchTypes[] typesToQuery,
-                                  int maxNumResults, @Nullable String query){
+                                  int maxNumResults,
+                                  @Nullable String query){
+            this.typesToQuery = typesToQuery;
+            this.query = query;
+            this.maxNumResults = maxNumResults;
+            this.missingPermissions = false;
+            this.classReference = new WeakReference<ContactUtilities>(referent);
+        }
+
+        private ContactQueryAsync(@NonNull ContactUtilities referent,
+                                  @NonNull SearchTypes[] typesToQuery,
+                                  int maxNumResults,
+                                  @Nullable Pattern regularExpressionFilter){
             this.typesToQuery = typesToQuery;
             this.query = query;
             this.maxNumResults = maxNumResults;
@@ -537,47 +564,6 @@ public class ContactUtilities {
             super.onPostExecute(contacts);
         }
 
-    }
-
-    // TODO: 2018-02-05 add in regex options
-    private static class ContactQueryAsyncTESTING extends AsyncTask <Void, Void, List<Contact>>{
-
-        private OnTaskCompleteListener listener;
-        private Activity activity;
-        private String query;
-        private SearchTypes[] typesToQuery;
-        private int maxNumResults;
-        private List<String> testAlphabetQueries;
-
-        private ContactQueryAsyncTESTING(OnTaskCompleteListener listener, Activity activity,
-                                        String query, SearchTypes[] typesToQuery, int maxNumResults,
-                                        List<String> testAlphabetQueries){
-            this.listener = listener;
-            this.activity = activity;
-            this.query = query;
-            this.typesToQuery = typesToQuery;
-            this.maxNumResults = maxNumResults;
-            this.testAlphabetQueries = testAlphabetQueries;
-        }
-
-        @Override
-        protected List<Contact> doInBackground(Void... params) {
-
-            List<Contact> phoneContacts = ContactUtilities.getPhoneQueryRegex(
-                    listener, activity, query, maxNumResults, testAlphabetQueries
-            );
-            phoneContacts = ContactUtilities.simplifyList(phoneContacts);
-            phoneContacts = ContactUtilities.addAlphabetHeadersToList(phoneContacts, false);
-            phoneContacts = ContactUtilities.moveFavoritesToTop(phoneContacts);
-
-            return phoneContacts;
-        }
-
-        @Override
-        protected void onPostExecute(List<Contact> contacts) {
-            listener.onTaskComplete(contacts, PGMacTipsConstants.TAG_PHONE_QUERY_REGEX_SUCCESS);
-            super.onPostExecute(contacts);
-        }
     }
 
     ///////////////////////////////////////
@@ -1016,21 +1002,14 @@ public class ContactUtilities {
 
     /**
      * Query the phone table within the contacts database. Used for things like phone number and type
-     * @param listener listener to pass data back on
-     * @param activity activity for context
-     * @param query Query to be searched
+     * @param context Context used to obtain the contentResolver
+     * @param regexPattern Regular Expression Pattern to use in the filtering
      * @param maxNumResults max number of results to return. if 0, no limit
      */
-    private static List<Contact> getPhoneQueryRegex(OnTaskCompleteListener listener, Activity activity,
-                                                   String query, int maxNumResults, List<String> mListStrings) {
-        if (activity == null || listener == null) {
-            return null;
-        }
-        if (!PermissionUtilities.getContactPermissions(activity)) {
-            return null;
-        }
+    public static List<Contact> getPhoneQueryRegex(Context context, Pattern regexPattern,
+                                              int maxNumResults, boolean removeBlockListItems) {
 
-        ContentResolver cr = activity.getContentResolver();
+        ContentResolver cr = context.getContentResolver();
 
         List<Contact> contacts = new ArrayList<>();
 
@@ -1047,6 +1026,10 @@ public class ContactUtilities {
                     phoneWhere,
                     phoneWhereParams,
                     SORT_BY_DISPLAY_NAME);
+
+            if(pCur == null){
+                return contacts;
+            }
 
             int counter = 0;
             while (pCur.moveToNext()) {
@@ -1088,11 +1071,17 @@ public class ContactUtilities {
                         phone = new Contact.Phone(phoneNumber, phoneNumberType);
                     }
 
+                    if(removeBlockListItems) {
+                        if (numberOnBlockList(phoneNumber)) {
+                            continue;
+                        }
+                    }
+
                     List<Contact.Phone> phones = new ArrayList<>();
                     phones.add(phone);
                     contact.setPhone(phones);
 
-                    if(matchesCustomQuery(query, mListStrings, contact)) {
+                    if(ContactUtilities.matchesCustomQuery(regexPattern, contact)) {
                         contacts.add(contact);
                         counter++;
                     }
@@ -1110,56 +1099,298 @@ public class ContactUtilities {
     }
 
     /**
+     * Query the email table within the contacts database. Used for things like email address, email
+     * type.
+     * @param context Context used to obtain the contentResolver
+     * @param regexPattern Regular Expression Pattern to use in the filtering
+     * @param maxNumResults max number of results to return. if 0, no limit
+     */
+    public static List<Contact> getEmailQueryRegex(Context context, Pattern regexPattern, int maxNumResults) {
+
+        ContentResolver cr = context.getContentResolver();
+
+        List<Contact> contacts = new ArrayList<>();
+        try {
+
+            String emailWhere = null;
+            String[] emailWhereParams = null;
+            emailWhere = ContactsContract.Data.MIMETYPE + " = ?";
+            emailWhereParams = new String[]{
+                    ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE};
+
+            Cursor emailCur = cr.query(
+                    ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+                    EMAIL_PROJECTION_V2,
+                    emailWhere,
+                    emailWhereParams,
+                    SORT_BY_DISPLAY_NAME);
+
+            if(emailCur == null){
+                return contacts;
+            }
+
+            int counter = 0;
+            while (emailCur.moveToNext()) {
+                if(counter < maxNumResults || maxNumResults == 0) {
+
+                    Contact contact = new Contact();
+
+                    String id = getColumnData(emailCur, ContactsContract.Contacts._ID);
+                    String photoUri = getColumnData(emailCur, ContactsContract.Contacts.PHOTO_URI);
+                    String displayName = getColumnData(emailCur, ContactsContract.Contacts.DISPLAY_NAME);
+                    String starred = getColumnData(emailCur, ContactsContract.Contacts.STARRED);
+
+                    contact.setId(id);
+                    contact.setRawDisplayName(displayName);
+                    contact.setPhotoUri(photoUri);
+                    if (starred != null) {
+                        int starredInt = Integer.parseInt(starred);
+                        if (starredInt == 1) {
+                            contact.setStarred(true);
+                        } else {
+                            contact.setStarred(false);
+                        }
+                    } else {
+                        contact.setStarred(false);
+                    }
+
+                    String email = getColumnData(emailCur,
+                            ContactsContract.CommonDataKinds.Email.DATA);
+                    String emailType = getColumnData(emailCur,
+                            ContactsContract.CommonDataKinds.Email.TYPE);
+
+                    Contact.Email myEmail;
+
+                    if (emailType != null) {
+                        int x = Integer.parseInt(emailType);
+                        emailType = ContactsContractSourceCodeStuff.getEmailType(x);
+                        myEmail = new Contact.Email(email, emailType);
+                    } else {
+                        myEmail = new Contact.Email(email, null);
+                    }
+
+                    List<Contact.Email> emails = new ArrayList<>();
+                    emails.add(myEmail);
+                    contact.setEmail(emails);
+
+                    if(ContactUtilities.matchesCustomQuery(regexPattern, contact)) {
+                        contacts.add(contact);
+                        counter++;
+                    }
+                }
+            }
+            emailCur.close();
+            //End Phone Number
+
+        } catch (IllegalStateException e) {
+            //This will get thrown on contacts without a phone number. No reason to stress over it
+            //e.printStackTrace();
+        }
+
+        return contacts;
+    }
+
+
+    /**
+     * Query the address table within the contacts database. Used for things like full address,
+     * zip code, city, state, etc
+     * @param context Context used to obtain the contentResolver
+     * @param regexPattern Regular Expression Pattern to use in the filtering
+     * @param maxNumResults max number of results to return. if 0, no limit
+     */
+    public static List<Contact> getAddressQueryRegex(Context context, Pattern regexPattern, int maxNumResults) {
+
+        ContentResolver cr = context.getContentResolver();
+
+        List<Contact> contacts = new ArrayList<>();
+        try {
+
+            String addrWhere = null;
+            String[] addrWhereParams = null;
+            addrWhere = ContactsContract.Data.MIMETYPE + " = ?";
+            addrWhereParams = new String[]{
+                    ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE};
+
+            Cursor addrCur = cr.query(ContactsContract.Data.CONTENT_URI,
+                    ADDRESS_PROJECTION_V2,
+                    addrWhere,
+                    addrWhereParams,
+                    SORT_BY_DISPLAY_NAME);
+
+            if(addrCur == null){
+                return contacts;
+            }
+
+            List<Contact.Address> myAddress = new ArrayList<>();
+
+            int counter = 0;
+            while (addrCur.moveToNext()) {
+
+                if(counter < maxNumResults || maxNumResults == 0) {
+
+                    Contact contact = new Contact();
+
+                    String id = getColumnData(addrCur, ContactsContract.Contacts._ID);
+                    String photoUri = getColumnData(addrCur, ContactsContract.Contacts.PHOTO_URI);
+                    String displayName = getColumnData(addrCur, ContactsContract.Contacts.DISPLAY_NAME);
+                    String starred = getColumnData(addrCur, ContactsContract.Contacts.STARRED);
+
+                    contact.setId(id);
+                    contact.setRawDisplayName(displayName);
+                    contact.setPhotoUri(photoUri);
+                    if (starred != null) {
+                        int starredInt = Integer.parseInt(starred);
+                        if (starredInt == 1) {
+                            contact.setStarred(true);
+                        } else {
+                            contact.setStarred(false);
+                        }
+                    } else {
+                        contact.setStarred(false);
+                    }
+
+                    String poBox = getColumnData(addrCur,
+                            ContactsContract.CommonDataKinds.StructuredPostal.POBOX);
+                    String street = getColumnData(addrCur,
+                            ContactsContract.CommonDataKinds.StructuredPostal.STREET);
+                    String city = getColumnData(addrCur,
+                            ContactsContract.CommonDataKinds.StructuredPostal.CITY);
+                    String state = getColumnData(addrCur,
+                            ContactsContract.CommonDataKinds.StructuredPostal.REGION);
+                    String postalCode = getColumnData(addrCur,
+                            ContactsContract.CommonDataKinds.StructuredPostal.POSTCODE);
+                    String country = getColumnData(addrCur,
+                            ContactsContract.CommonDataKinds.StructuredPostal.COUNTRY);
+                    String type = getColumnData(addrCur,
+                            ContactsContract.CommonDataKinds.StructuredPostal.TYPE);
+
+                    Contact.Address address = new Contact.Address(poBox, street, city, state,
+                            postalCode, country, type);
+
+                    myAddress.add(address);
+
+                    contact.setAddresses(myAddress);
+
+                    if(ContactUtilities.matchesCustomQuery(regexPattern, contact)) {
+                        contacts.add(contact);
+                        counter++;
+                    }
+                }
+            }
+            addrCur.close();
+        } catch (IllegalStateException e) {
+            //This will get thrown on contacts without a phone number. No reason to stress over it
+            //e.printStackTrace();
+        }
+
+        return contacts;
+    }
+
+    /**
+     * Query the name table within the contacts database. Used for things like first name, last
+     * name, middle name, suffix, prefix.
+     * @param context Context used to obtain the contentResolver
+     * @param regexPattern Regular Expression Pattern to use in the filtering
+     * @param maxNumResults max number of results to return. if 0, no limit
+     */
+    public static List<Contact> getNameQueryRegex(Context context, Pattern regexPattern, int maxNumResults) {
+
+        ContentResolver cr = context.getContentResolver();
+
+        List<Contact> contacts = new ArrayList<>();
+        try {
+            String nameWhere = ContactsContract.Data.MIMETYPE + " = ?";
+            String[] nameWhereParams = new String[]{
+                    ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE};
+
+            Cursor nameCur = cr.query(ContactsContract.Data.CONTENT_URI,
+                    NAME_PROJECTION_V2,
+                    nameWhere,
+                    nameWhereParams,
+                    SORT_BY_DISPLAY_NAME);
+
+            if(nameCur == null){
+                return contacts;
+            }
+
+            int counter = 0;
+            while (nameCur.moveToNext()) {
+
+                if(counter < maxNumResults || maxNumResults == 0) {
+
+                    Contact contact = new Contact();
+
+                    String id = getColumnData(nameCur, ContactsContract.Contacts._ID);
+                    String photoUri = getColumnData(nameCur, ContactsContract.Contacts.PHOTO_URI);
+                    String displayName = getColumnData(nameCur, ContactsContract.Contacts.DISPLAY_NAME);
+                    String starred = getColumnData(nameCur, ContactsContract.Contacts.STARRED);
+
+                    contact.setId(id);
+                    contact.setRawDisplayName(displayName);
+                    contact.setPhotoUri(photoUri);
+                    if (starred != null) {
+                        int starredInt = Integer.parseInt(starred);
+                        if (starredInt == 1) {
+                            contact.setStarred(true);
+                        } else {
+                            contact.setStarred(false);
+                        }
+                    } else {
+                        contact.setStarred(false);
+                    }
+
+                    String displayName2 = getColumnData(nameCur,
+                            ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME);
+                    String suffix = getColumnData(nameCur,
+                            ContactsContract.CommonDataKinds.StructuredName.SUFFIX);
+                    String prefix = getColumnData(nameCur,
+                            ContactsContract.CommonDataKinds.StructuredName.PREFIX);
+                    String middleName = getColumnData(nameCur,
+                            ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME);
+                    String lastName = getColumnData(nameCur,
+                            ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME);
+                    String firstName = getColumnData(nameCur,
+                            ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
+
+                    Contact.NameObject nameObject = new Contact.NameObject();
+                    nameObject.setFirstName(firstName);
+                    nameObject.setLastName(lastName);
+                    nameObject.setMiddleName(middleName);
+                    nameObject.setPrefix(prefix);
+                    nameObject.setSuffix(suffix);
+                    nameObject.setDisplayName(displayName2);
+                    contact.setNameObject(nameObject);
+
+                    if(ContactUtilities.matchesCustomQuery(regexPattern, contact)) {
+                        contacts.add(contact);
+                        counter++;
+                    }
+                }
+            }
+            nameCur.close();
+        } catch (IllegalStateException e) {
+            //This will get thrown on contacts without a phone number. No reason to stress over it
+            //e.printStackTrace();
+        }
+
+        return contacts;
+    }
+
+    /**
      * Makes a check to compare a query and list of strings (chars) against the name / number.
-     * @param query Query (Name or number)
-     * @param regexQueries list of Strings (IE {"ABCabc", "PQRSpqrs})
+     * @param pattern Regular Expression Pattern to use in the filtering
      * @param contact Contact object to compare against
      * @return Return true if it matches, false if not
      */
-    private static boolean matchesCustomQuery(String query, List<String> regexQueries, Contact contact){
-
-        String rawDisplayName = contact.getRawDisplayName();
-        String number = contact.getSimplifiedPhoneNumber();
-        //Check on Raw Display name first
-        if(rawDisplayName != null) {
-            //Check on Query being null next
-            if (query != null) {
-                String queryMatch = "%" + query + "%";
-                Pattern p = Pattern.compile(queryMatch);
-                Matcher m = p.matcher(rawDisplayName);
-                if(m.matches()){
-                    return true;
-                }
-            }
-            //Check on List of Strings next
-            if(!MiscUtilities.isListNullOrEmpty(regexQueries)){
-                String queryMatch = null;
-                StringBuilder sb = new StringBuilder();
-                for(String currentString : regexQueries){
-                    if(!StringUtilities.isNullOrEmpty(currentString)){
-                        sb.append("[" + currentString + "]");
-                    }
-                }
-                queryMatch = sb.toString();
-                Pattern p = Pattern.compile(queryMatch);
-                Matcher m = p.matcher(rawDisplayName);
-                if(m.matches()){
-                    return true;
-                }
-            }
+    private static boolean matchesCustomQuery(@NonNull Pattern pattern, @NonNull Contact contact){
+        if(pattern == null || contact == null){
+            return false;
         }
-        if(number != null){
-            //Check on query once more, this time using number
-            if (query != null) {
-                String queryMatch = "%" + query + "%";
-                Pattern p = Pattern.compile(queryMatch);
-                Matcher m = p.matcher(number);
-                if(m.matches()){
-                    return true;
-                }
-            }
+        String jsonString = GsonUtilities.convertObjectToJson(contact, Contact.class);
+        if(StringUtilities.isNullOrEmpty(jsonString)){
+            return false;
         }
-        return false;
+        return (pattern.matcher(jsonString)).matches();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////
@@ -1171,7 +1402,7 @@ public class ContactUtilities {
      * @param listener listener to pass data back on
      * @param query Query to be searched
      */
-    public Map<Integer, Contact> getPhoneQueryMap(OnTaskCompleteListener listener,
+    private Map<Integer, Contact> getPhoneQueryMap(OnTaskCompleteListener listener,
                                                   String query) {
         if (listener == null) {
             return null;
@@ -1272,7 +1503,7 @@ public class ContactUtilities {
      * @param listener listener to pass data back on
      * @param query Query to be searched
      */
-    public Map<Integer, Contact> getEmailQueryMap(OnTaskCompleteListener listener,
+    private Map<Integer, Contact> getEmailQueryMap(OnTaskCompleteListener listener,
                                                   String query) {
         if (listener == null) {
             return null;
@@ -1376,7 +1607,7 @@ public class ContactUtilities {
      * @param listener listener to pass data back on
      * @param query Query to be searched
      */
-    public Map<Integer, Contact> getAddressQueryMap(OnTaskCompleteListener listener,
+    private Map<Integer, Contact> getAddressQueryMap(OnTaskCompleteListener listener,
                                                     String query) {
         if (listener == null) {
             return null;
@@ -1480,7 +1711,7 @@ public class ContactUtilities {
      * @param listener listener to pass data back on
      * @param query Query to be searched
      */
-    public Map<Integer, Contact> getNameQueryMap(OnTaskCompleteListener listener,
+    private Map<Integer, Contact> getNameQueryMap(OnTaskCompleteListener listener,
                                                  String query) {
         if (listener == null) {
             return null;
