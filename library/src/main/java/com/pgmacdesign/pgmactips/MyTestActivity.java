@@ -189,24 +189,21 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
         return context.getPackageName();
     }
     private void contactQuery(){
-        ContactUtilities.ContactQueryAsync async = new ContactUtilities.ContactQueryAsync(
-                new OnTaskCompleteListener() {
-                    @Override
-                    public void onTaskComplete(Object result, int customTag) {
-                        List<ContactUtilities.Contact> myContacts =
-                                (List<ContactUtilities.Contact>) result;
-                        L.m("result size = " + myContacts.size());
-                    }
-                }, this, null, null,
-                new ContactUtilities.SearchTypes[]{
-                        ContactUtilities.SearchTypes.NAME, ContactUtilities.SearchTypes.PHONE,
-                        ContactUtilities.SearchTypes.EMAIL},
-                new ContactUtilities.SearchQueryFlags[]{
-                        ContactUtilities.SearchQueryFlags.ADD_ALPHABET_HEADERS,
-                        ContactUtilities.SearchQueryFlags.USE_ALL_ALPHABET_LETTERS,
-                        ContactUtilities.SearchQueryFlags.MOVE_FAVORITES_TO_TOP_OF_LIST}
-        );
-        async.execute();
+        ContactUtilities.Builder builder = new ContactUtilities.Builder(this, new OnTaskCompleteListener() {
+            @Override
+            public void onTaskComplete(Object result, int customTag) {
+                L.m("contact query complete");
+            }
+        });
+        builder.setSearchQueryFlags(new ContactUtilities.SearchQueryFlags[]{
+                ContactUtilities.SearchQueryFlags.ADD_ALPHABET_HEADERS,
+                ContactUtilities.SearchQueryFlags.USE_ALL_ALPHABET_LETTERS,
+                ContactUtilities.SearchQueryFlags.MOVE_FAVORITES_TO_TOP_OF_LIST});
+        builder.setActivity(this);
+        ContactUtilities c = builder.build();
+        c.queryContacts(new ContactUtilities.SearchTypes[]{
+                ContactUtilities.SearchTypes.NAME, ContactUtilities.SearchTypes.PHONE,
+                ContactUtilities.SearchTypes.EMAIL}, 100, null);
         L.m("async started");
     }
 

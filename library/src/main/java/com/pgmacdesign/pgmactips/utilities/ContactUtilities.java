@@ -184,7 +184,7 @@ public class ContactUtilities {
         this.moveFavoritesToTop = moveFavoritesToTop;
         this.shouldUpdateProgress = shouldUpdateProgress;
     }
-    
+
     ////////////////
     //Main Builder//
     ////////////////
@@ -250,6 +250,18 @@ public class ContactUtilities {
          */
         public Builder setSearchQueryFlags(List<SearchQueryFlags> searchQueryFlags){
             this.searchQueryFlags = searchQueryFlags;
+            return this;
+        }
+
+        /**
+         * Set a list of search Query Flags
+         * @param searchQueryFlags {@link ContactUtilities.SearchQueryFlags}
+         * @return
+         */
+        public Builder setSearchQueryFlags(SearchQueryFlags[] searchQueryFlags){
+            if(!MiscUtilities.isArrayNullOrEmpty(searchQueryFlags)){
+                this.searchQueryFlags = Arrays.asList(searchQueryFlags);
+            }
             return this;
         }
 
