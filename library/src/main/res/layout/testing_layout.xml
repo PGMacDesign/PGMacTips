@@ -29,7 +29,7 @@
         android:layout_marginEnd="@dimen/left_right_side_margins"
         android:background="@drawable/pgmac_multipurpose_button2"
         android:textColor="@drawable/pgmac_multipurpose_button2"
-        android:visibility="gone"
+        android:visibility="visible"
         />
 
     <com.pgmacdesign.pgmactips.customui.MultiColorLine

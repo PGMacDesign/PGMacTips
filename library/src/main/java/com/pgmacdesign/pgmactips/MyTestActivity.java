@@ -16,7 +16,10 @@ import com.pgmacdesign.pgmactips.adaptersandlisteners.GenericRecyclerviewAdapter
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.customui.MultiColorLine;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
+import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitClient;
+import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitParser;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.serviceapiinterfaces.ProfantiyCheckerAPICalls;
+import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.serviceapiinterfaces.ProfantiyCheckerInterface;
 import com.pgmacdesign.pgmactips.stackmanagement.StackManager;
 import com.pgmacdesign.pgmactips.stackmanagement.StackManagerException;
 import com.pgmacdesign.pgmactips.utilities.CameraMediaUtilities;
@@ -32,6 +35,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
 
 /**
  * Created by pmacdowell on 8/12/2016.
@@ -58,6 +64,7 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
         button.setTag("button");
         button.setTransformationMethod(null);
         button.setOnClickListener(this);
+        L.m("setoNClickListener");
 	    testing_layout_recyclerview = (RecyclerView) this.findViewById(
 	    		R.id.testing_layout_recyclerview);
 	    testing_layout_recyclerview.setLayoutManager(new LinearLayoutManager(this));
@@ -203,7 +210,7 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
         ContactUtilities c = builder.build();
         c.queryContacts(new ContactUtilities.SearchTypes[]{
                 ContactUtilities.SearchTypes.NAME, ContactUtilities.SearchTypes.PHONE,
-                ContactUtilities.SearchTypes.EMAIL}, 100, null);
+                ContactUtilities.SearchTypes.EMAIL}, 100);
         L.m("async started");
     }
 
@@ -273,9 +280,9 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
             }
         });
         */
-        doWebCall();
+        //doWebCall();
         //showGIFLoader();
-
+        loadTestCall();
     }
 
     private void makeMultiColorLine() {
@@ -306,4 +313,21 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
         //ProgressBarUtilities.showGIFProgressDialog(this, R.drawable.but_why_gif);
     }
 
+    private void loadTestCall(){
+        String BASE_URL = "http://www.purgomalum.com/";
+        String tempURL = "http://ec2-52-9-73-238.us-west-1.compute.amazonaws.com/";
+        ProfantiyCheckerInterface serviceInterface = new RetrofitClient.Builder(
+                ProfantiyCheckerInterface.class, tempURL)
+                .setTimeouts(60000,60000)
+                .setLogLevel(HttpLoggingInterceptor.Level.NONE)
+                .build().buildServiceClient();
+        SamplePojo pojo = new SamplePojo();
+        Call call = serviceInterface.checkProfanity2(pojo);
+        RetrofitParser.parse(new OnTaskCompleteListener() {
+            @Override
+            public void onTaskComplete(Object result, int customTag) {
+                L.m("CALLBACK TAG == " + customTag);
+            }
+        }, call, RetrofitParser.TYPE_INTEGER, RetrofitParser.TYPE_BOOLEAN, 1, 0, true);
+    }
 }

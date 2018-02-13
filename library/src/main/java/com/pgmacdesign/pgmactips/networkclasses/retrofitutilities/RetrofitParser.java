@@ -44,6 +44,9 @@ public class RetrofitParser {
             "Web response could not be converted using the passed type. ";
     private static final String PARSE_FAILED_STR_2 =
             "Response was instead resolved as type: ";
+    private static final String HTML_PAGE_COMMENT =
+            "HTML Page. Please enable logging to see full response";
+    private static final String HTML_TEXT_MARKER = "<!DOCTYPE html>";
     private static final String PARSE_FAILED_PRINTOUT = ". Data = ";
     private static final String PARSE_FAILED_PRINTOUT_ALT = "Response = \n";
     public static final Type TYPE_BOOLEAN = Boolean.TYPE;
@@ -51,6 +54,7 @@ public class RetrofitParser {
     public static final Type TYPE_INTEGER = Integer.TYPE;
     public static final Type TYPE_STRING = new TypeToken<String>() {
     }.getType();
+
 
     /**
      * This parse error tag triggers if the call could not be parsed by either the success
@@ -137,6 +141,7 @@ public class RetrofitParser {
                         Object o = checkForError(responseJson, errorResponseJson,
                                 errorClassDataModel);
                         if (o != null) {
+                            //This means error response parsed successfully with error model OR success model
                             listener.onTaskComplete(o, failCallbackTag);
                             return;
                         } else {
@@ -145,6 +150,34 @@ public class RetrofitParser {
                                 listener.onTaskComplete(o, successCallbackTag);
                                 return;
                             } else {
+                                //Check if either success or fail model is a raw type
+                                if(RetrofitParser.isRawType(successClassDataModel)){ L.m("retrofitparser -- " + 150);
+                                    Object o1 = RetrofitParser.convertRawType(
+                                            responseJson, successClassDataModel);
+                                    if(o1 != null){
+                                        L.m("retrofitparser -- " + 156);
+                                        listener.onTaskComplete(o1, successCallbackTag);
+                                        return;
+                                    }
+                                }
+                                if(RetrofitParser.isRawType(errorClassDataModel)){ L.m("retrofitparser -- " + 166);
+                                    Object o1 = RetrofitParser.convertRawType(
+                                            errorResponseJson, errorClassDataModel);
+                                    Object o2 = RetrofitParser.convertRawType(
+                                            responseJson, errorClassDataModel);
+                                    if(o1 != null){
+                                        listener.onTaskComplete(o1, failCallbackTag);
+                                        return;
+                                    }
+                                    if(o2 != null){
+                                        listener.onTaskComplete(o2, failCallbackTag);
+                                        return;
+                                    }
+                                }
+
+                                // TODO: 2018-02-13 add in html checks here
+                                //At this point, no passed types match parsing, likely either unknown JSON response or an error
+
                                 RetrofitParser.failedParsingDetermineType(responseJson, successClassDataModel);
                                 RetrofitParser.failedParsingDetermineType(errorResponseJson, errorClassDataModel);
                                 listener.onTaskComplete(null, TAG_RETROFIT_PARSE_ERROR);
@@ -152,8 +185,9 @@ public class RetrofitParser {
                             }
                         }
                     } else {
-                        Object o = checkForError(responseJson, errorClassDataModel);
+                        Object o = checkForError(errorResponseJson, errorClassDataModel);
                         if (o != null) {
+                            //This means error response parsed successfully with error model
                             listener.onTaskComplete(o, failCallbackTag);
                             return;
                         } else {
@@ -162,6 +196,26 @@ public class RetrofitParser {
                                 listener.onTaskComplete(o, successCallbackTag);
                                 return;
                             } else {
+                                //Check if either success or fail model is a raw type
+                                if(RetrofitParser.isRawType(successClassDataModel)){
+                                    Object o1 = RetrofitParser.convertRawType(
+                                            responseJson, successClassDataModel);
+                                    if(o1 != null){
+                                        listener.onTaskComplete(o1, successCallbackTag);
+                                        return;
+                                    }
+                                }
+                                if(RetrofitParser.isRawType(errorClassDataModel)){
+                                    Object o1 = RetrofitParser.convertRawType(
+                                            errorResponseJson, errorClassDataModel);
+                                    if(o1 != null){
+                                        listener.onTaskComplete(o1, failCallbackTag);
+                                        return;
+                                    }
+                                }
+
+                                // TODO: 2018-02-13 add in html checks here
+                                //At this point, no passed types match parsing, likely either unknown JSON response or an error
                                 RetrofitParser.failedParsingDetermineType(responseJson, successClassDataModel);
                                 RetrofitParser.failedParsingDetermineType(errorResponseJson, errorClassDataModel);
                                 listener.onTaskComplete(null, TAG_RETROFIT_PARSE_ERROR);
@@ -174,7 +228,7 @@ public class RetrofitParser {
                 @Override
                 public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable throwable) {
                     throwable.printStackTrace();
-                    listener.onTaskComplete(throwable.getMessage(), failCallbackTag);
+                    listener.onTaskComplete(throwable.getMessage(), TAG_RETROFIT_CALL_ERROR);
                 }
             });
         } catch (Exception e) {
@@ -222,11 +276,11 @@ public class RetrofitParser {
                         } catch (Exception e) {
                         }
                     }
-
                     if (serverCanReturn200Error) {
                         Object o = checkForError(responseJson, errorResponseJson,
                                 errorClassDataModel);
                         if (o != null) {
+                            //This means error response parsed successfully with error model OR success model
                             listener.onTaskComplete(o, failCallbackTag);
                             return;
                         } else {
@@ -235,6 +289,32 @@ public class RetrofitParser {
                                 listener.onTaskComplete(o, successCallbackTag);
                                 return;
                             } else {
+                                //Check if either success or fail model is a raw type
+                                if(RetrofitParser.isRawType(successClassDataModel)){
+                                    Object o1 = RetrofitParser.convertRawType(
+                                            responseJson, successClassDataModel);
+                                    if(o1 != null){
+                                        listener.onTaskComplete(o1, successCallbackTag);
+                                        return;
+                                    }
+                                }
+                                if(RetrofitParser.isRawType(errorClassDataModel)){
+                                    Object o1 = RetrofitParser.convertRawType(
+                                            errorResponseJson, errorClassDataModel);
+                                    Object o2 = RetrofitParser.convertRawType(
+                                            responseJson, errorClassDataModel);
+                                    if(o1 != null){
+                                        listener.onTaskComplete(o1, failCallbackTag);
+                                        return;
+                                    }
+                                    if(o2 != null){
+                                        listener.onTaskComplete(o2, failCallbackTag);
+                                        return;
+                                    }
+                                }
+
+                                // TODO: 2018-02-13 add in html checks here
+                                //At this point, no passed types match parsing, likely either unknown JSON response or an error
                                 RetrofitParser.failedParsingDetermineType(responseJson, successClassDataModel);
                                 RetrofitParser.failedParsingDetermineType(errorResponseJson, errorClassDataModel);
                                 listener.onTaskComplete(null, TAG_RETROFIT_PARSE_ERROR);
@@ -242,8 +322,9 @@ public class RetrofitParser {
                             }
                         }
                     } else {
-                        Object o = checkForError(responseJson, errorClassDataModel);
+                        Object o = checkForError(errorResponseJson, errorClassDataModel);
                         if (o != null) {
+                            //This means error response parsed successfully with error model
                             listener.onTaskComplete(o, failCallbackTag);
                             return;
                         } else {
@@ -252,6 +333,26 @@ public class RetrofitParser {
                                 listener.onTaskComplete(o, successCallbackTag);
                                 return;
                             } else {
+                                //Check if either success or fail model is a raw type
+                                if(RetrofitParser.isRawType(successClassDataModel)){
+                                    Object o1 = RetrofitParser.convertRawType(
+                                            responseJson, successClassDataModel);
+                                    if(o1 != null){
+                                        listener.onTaskComplete(o1, successCallbackTag);
+                                        return;
+                                    }
+                                }
+                                if(RetrofitParser.isRawType(errorClassDataModel)){
+                                    Object o1 = RetrofitParser.convertRawType(
+                                            errorResponseJson, errorClassDataModel);
+                                    if(o1 != null){
+                                        listener.onTaskComplete(o1, failCallbackTag);
+                                        return;
+                                    }
+                                }
+
+                                // TODO: 2018-02-13 add in html checks here
+                                //At this point, no passed types match parsing, likely either unknown JSON response or an error
                                 RetrofitParser.failedParsingDetermineType(responseJson, successClassDataModel);
                                 RetrofitParser.failedParsingDetermineType(errorResponseJson, errorClassDataModel);
                                 listener.onTaskComplete(null, TAG_RETROFIT_PARSE_ERROR);
@@ -264,7 +365,7 @@ public class RetrofitParser {
                 @Override
                 public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable throwable) {
                     throwable.printStackTrace();
-                    listener.onTaskComplete(throwable.getMessage(), failCallbackTag);
+                    listener.onTaskComplete(throwable.getMessage(), TAG_RETROFIT_CALL_ERROR);
                 }
             });
         } catch (Exception e) {
@@ -348,6 +449,113 @@ public class RetrofitParser {
     }
 
     /**
+     * Convert to object using raw type checks
+     * @param responseBodyString String to check against
+     * @param classDataModel Class data model to be compared against raw types (String, Boolean,
+     *                       Integer, Double)
+     * @return Object, non-null if parsed as intended, null if it did not
+     */
+    private static Object convertRawType (final String responseBodyString,
+                                          final Class classDataModel){
+        if (StringUtilities.isNullOrEmpty(responseBodyString)) {
+            return null;
+        }
+        if (classDataModel == null) {
+            if (!StringUtilities.isNullOrEmpty(responseBodyString)) {
+                if (responseBodyString.equalsIgnoreCase(EMPTY_JSON_RESPONSE)) {
+                    //Expected empty response as per error class data model
+                    return new Object();
+                }
+            }
+        } else {
+            //Raw Checks
+            if(classDataModel == TYPE_BOOLEAN){
+                L.m("retrofitparser -- " + 476);
+                try {
+                    Boolean bool = new Gson().fromJson(responseBodyString, TYPE_BOOLEAN);
+                    if (bool != null) {
+                        return bool;
+                    }
+                } catch (Exception e) {
+                }
+                try {
+                    if (responseBodyString.equalsIgnoreCase("true")
+                            || responseBodyString.equalsIgnoreCase("false")) {
+                        Boolean bool = Boolean.parseBoolean(responseBodyString);
+                        if(bool != null) {
+                            return bool;
+                        }
+                    }
+                } catch (Exception e) {
+                }
+
+            } else if (classDataModel == TYPE_DOUBLE){
+                L.m("retrofitparser -- " + 496);
+                try {
+                    Double dbl = new Gson().fromJson(responseBodyString, TYPE_DOUBLE);
+                    if (dbl != null) {
+                        return dbl;
+                    }
+                } catch (Exception e) {
+                }
+                try {
+                    Double dbl = Double.parseDouble(responseBodyString);
+                    if (dbl != null) {
+                        return dbl;
+                    }
+                } catch (Exception e) {
+                }
+
+            } else if (classDataModel == TYPE_INTEGER){
+                L.m("retrofitparser -- " + 513);
+                try {
+                    Integer intx = new Gson().fromJson(responseBodyString, TYPE_INTEGER);
+                    if (intx != null) {
+                        return intx;
+                    }
+                } catch (Exception e) {
+                }
+                try {
+                    Integer intx = Integer.parseInt(responseBodyString);
+                    if (intx != null) {
+                        return intx;
+                    }
+                } catch (Exception e) {
+                }
+
+            } else if (classDataModel == TYPE_STRING) {
+                try {
+                    String str = new Gson().fromJson(responseBodyString, TYPE_STRING);
+                    if (!StringUtilities.isNullOrEmpty(str)) {
+                        return str;
+                    }
+                } catch (Exception e) {
+                }
+                boolean isJSONObject = false, isJSONArray = false;
+                try {
+                    JSONObject o = new JSONObject(responseBodyString);
+                    isJSONObject = true;
+                } catch (Exception e) {
+                }
+                try {
+                    JSONArray o = new JSONArray(responseBodyString);
+                    isJSONArray = true;
+                } catch (Exception e) {
+                }
+                if (isJSONArray || isJSONObject) {
+                    return null;
+                } else {
+                    return responseBodyString;
+                }
+            } else {
+                L.m("retrofitparser -- " + 555);
+                return null;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Convert a response object into the success type data model
      *
      * @param responseBodyString   Response body from the {@link Call} response
@@ -374,6 +582,109 @@ public class RetrofitParser {
             try {
                 return new Gson().fromJson(responseBodyString, successClassDataType);
             } catch (Exception e) {
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Overloaded to allow for {@link Type}
+     */
+    private static Object convertRawType (final String responseBodyString,
+                                          final Type classDataModel){
+        if (StringUtilities.isNullOrEmpty(responseBodyString)) {
+            return null;
+        }
+        if (classDataModel == null) {
+            if (!StringUtilities.isNullOrEmpty(responseBodyString)) {
+                if (responseBodyString.equalsIgnoreCase(EMPTY_JSON_RESPONSE)) {
+                    //Expected empty response as per error class data model
+                    return new Object();
+                }
+            }
+        } else {
+            //Raw Checks
+            if(classDataModel == TYPE_BOOLEAN){
+                L.m("retrofitparser -- " + 612);
+                try {
+                    Boolean bool = new Gson().fromJson(responseBodyString, TYPE_BOOLEAN);
+                    if (bool != null) {
+                        return bool;
+                    }
+                } catch (Exception e) {
+                }
+                try {
+                    if (responseBodyString.equalsIgnoreCase("true")
+                            || responseBodyString.equalsIgnoreCase("false")) {
+                        Boolean bool = Boolean.parseBoolean(responseBodyString);
+                        if(bool != null) {
+                            return bool;
+                        }
+                    }
+                } catch (Exception e) {
+                }
+
+            } else if (classDataModel == TYPE_DOUBLE){
+                L.m("retrofitparser -- " + 632);
+                try {
+                    Double dbl = new Gson().fromJson(responseBodyString, TYPE_DOUBLE);
+                    if (dbl != null) {
+                        return dbl;
+                    }
+                } catch (Exception e) {
+                }
+                try {
+                    Double dbl = Double.parseDouble(responseBodyString);
+                    if (dbl != null) {
+                        return dbl;
+                    }
+                } catch (Exception e) {
+                }
+
+            } else if (classDataModel == TYPE_INTEGER){
+                L.m("retrofitparser -- " + 649);
+                try {
+                    Integer intx = new Gson().fromJson(responseBodyString, TYPE_INTEGER);
+                    if (intx != null) {
+                        return intx;
+                    }
+                } catch (Exception e) {
+                }
+                try {
+                    Integer intx = Integer.parseInt(responseBodyString);
+                    if (intx != null) {
+                        return intx;
+                    }
+                } catch (Exception e) {
+                }
+
+            } else if (classDataModel == TYPE_STRING){
+                try {
+                    String str = new Gson().fromJson(responseBodyString, TYPE_STRING);
+                    if (!StringUtilities.isNullOrEmpty(str)) {
+                        return str;
+                    }
+                } catch (Exception e) {
+                }
+                boolean isJSONObject = false, isJSONArray = false;
+                try {
+                    JSONObject o = new JSONObject(responseBodyString);
+                    isJSONObject = true;
+                } catch (Exception e) {
+                }
+                try {
+                    JSONArray o = new JSONArray(responseBodyString);
+                    isJSONArray = true;
+                } catch (Exception e) {
+                }
+                if (isJSONArray || isJSONObject) {
+                    return null;
+                } else {
+                    return responseBodyString;
+                }
+            } else {
+                L.m("retrofitparser -- " + 691);
+                return null;
             }
         }
         return null;
@@ -518,9 +829,53 @@ public class RetrofitParser {
         return null;
     }
 
+    /**
+     * Simple checker for if the return type is a raw type
+     * @param typeToCast input to check if raw
+     * @return boolean, true if it is, false if it is not
+     */
+    private static boolean isRawType(Type typeToCast){
+        if(typeToCast == null){
+            return false;
+        }
+        if(typeToCast == TYPE_BOOLEAN){
+            return true;
+        } else if (typeToCast == TYPE_DOUBLE){
+            return true;
+        } else if (typeToCast == TYPE_INTEGER){
+            return true;
+        } else if (typeToCast == TYPE_STRING){
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
-     * Used to determine if response is raw type (IE Boolean, Integer, Double, String)
+     * Simple checker for if the return type is a raw type
+     * @param typeToCast input to check if raw
+     * @return boolean, true if it is, false if it is not
+     */
+    private static boolean isRawType(Class typeToCast){
+        if(typeToCast == null){
+            return false;
+        }
+        if(typeToCast == TYPE_BOOLEAN){
+            return true;
+        } else if (typeToCast == TYPE_DOUBLE){
+            return true;
+        } else if (typeToCast == TYPE_INTEGER){
+            return true;
+        } else if (typeToCast == TYPE_STRING){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Used to determine if response is raw type (IE Boolean, Integer, Double, String) and
+     * then print out the info in the log cat
      *
      * @param responseBodyString
      * @param typeToCast
@@ -640,17 +995,39 @@ public class RetrofitParser {
                     + PARSE_FAILED_PRINTOUT_ALT + responseBodyString :
                     PARSE_FAILED_STR_1 + PARSE_FAILED_PRINTOUT_ALT + responseBodyString);
         } else {
-            L.m((typeToCast != null) ? PARSE_FAILED_STR_1
-                    + "(Passed = " + typeToCast.toString() + "). "
-                    + PARSE_FAILED_STR_2 + TYPE_STRING.toString()
-                    + PARSE_FAILED_PRINTOUT + responseBodyString :
-                    PARSE_FAILED_STR_1 + PARSE_FAILED_STR_2 + TYPE_STRING.toString()
-                            + PARSE_FAILED_PRINTOUT + responseBodyString);
+            boolean isHtmlString = false;
+            if(PGMacTipsConstants.ATTEMPT_TO_PARSE_HTML) {
+                try {
+                    if (responseBodyString.contains(HTML_TEXT_MARKER)) {
+                        isHtmlString = true;
+                        L.m("html tag check = true");
+                    } else {
+                        L.m("html tag check = false");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    isHtmlString = false;
+                }
+            }
+            if(isHtmlString){
+                L.m((typeToCast != null) ? PARSE_FAILED_STR_1
+                        + "(Passed = " + typeToCast.toString() + "). "
+                        + PARSE_FAILED_STR_2 + HTML_PAGE_COMMENT :
+                        PARSE_FAILED_STR_1 + PARSE_FAILED_STR_2 + HTML_PAGE_COMMENT);
+            } else {
+                L.m((typeToCast != null) ? PARSE_FAILED_STR_1
+                        + "(Passed = " + typeToCast.toString() + "). "
+                        + PARSE_FAILED_STR_2 + TYPE_STRING.toString()
+                        + PARSE_FAILED_PRINTOUT + responseBodyString :
+                        PARSE_FAILED_STR_1 + PARSE_FAILED_STR_2 + TYPE_STRING.toString()
+                                + PARSE_FAILED_PRINTOUT + responseBodyString);
+            }
         }
     }
 
     /**
-     * Used to determine if response is raw type (IE Boolean, Integer, Double, String)
+     * Used to determine if response is raw type (IE Boolean, Integer, Double, String) and
+     * then print out the info in the log cat
      *
      * @param responseBodyString
      * @param typeToCast
@@ -770,12 +1147,33 @@ public class RetrofitParser {
                     + PARSE_FAILED_PRINTOUT_ALT + responseBodyString :
                     PARSE_FAILED_STR_1 + PARSE_FAILED_PRINTOUT_ALT + responseBodyString);
         } else {
-            L.m((typeToCast != null) ? PARSE_FAILED_STR_1
-                    + "(Passed = " + typeToCast.toString() + "). "
-                    + PARSE_FAILED_STR_2 + TYPE_STRING.toString()
-                    + PARSE_FAILED_PRINTOUT + responseBodyString :
-                    PARSE_FAILED_STR_1 + PARSE_FAILED_STR_2 + TYPE_STRING.toString()
-                            + PARSE_FAILED_PRINTOUT + responseBodyString);
+            boolean isHtmlString = false;
+            if(PGMacTipsConstants.ATTEMPT_TO_PARSE_HTML) {
+                try {
+                    if (responseBodyString.contains(HTML_TEXT_MARKER)) {
+                        isHtmlString = true;
+                        L.m("html tag check = true");
+                    } else {
+                        L.m("html tag check = false");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    isHtmlString = false;
+                }
+            }
+            if(isHtmlString){
+                L.m((typeToCast != null) ? PARSE_FAILED_STR_1
+                        + "(Passed = " + typeToCast.toString() + "). "
+                        + PARSE_FAILED_STR_2 + HTML_PAGE_COMMENT :
+                        PARSE_FAILED_STR_1 + PARSE_FAILED_STR_2 + HTML_PAGE_COMMENT);
+            } else {
+                L.m((typeToCast != null) ? PARSE_FAILED_STR_1
+                        + "(Passed = " + typeToCast.toString() + "). "
+                        + PARSE_FAILED_STR_2 + TYPE_STRING.toString()
+                        + PARSE_FAILED_PRINTOUT + responseBodyString :
+                        PARSE_FAILED_STR_1 + PARSE_FAILED_STR_2 + TYPE_STRING.toString()
+                                + PARSE_FAILED_PRINTOUT + responseBodyString);
+            }
         }
     }
 

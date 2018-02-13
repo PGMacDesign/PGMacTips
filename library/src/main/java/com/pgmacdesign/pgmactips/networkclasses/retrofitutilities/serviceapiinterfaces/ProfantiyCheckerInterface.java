@@ -1,8 +1,12 @@
 package com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.serviceapiinterfaces;
 
+import com.pgmacdesign.pgmactips.SamplePojo;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 /**
@@ -28,5 +32,6 @@ public interface ProfantiyCheckerInterface {
     @GET(SERVICE_BASE_STRING + PROFANITY_BASE_STRING)
     Call<ResponseBody> checkProfanity(@Query("text") String text);
 
-
+    @POST(SERVICE_BASE_STRING + PROFANITY_BASE_STRING)
+    Call<ResponseBody> checkProfanity2(@Body SamplePojo userObject);
 }

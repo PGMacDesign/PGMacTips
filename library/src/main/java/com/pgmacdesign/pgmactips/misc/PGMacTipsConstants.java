@@ -10,6 +10,13 @@ import java.lang.reflect.Type;
  */
 public class PGMacTipsConstants {
 
+    /////////////////
+    //Misc Booleans//
+    /////////////////
+
+    // TODO: 2018-02-13 refactor this into preferences setup
+    public static final boolean ATTEMPT_TO_PARSE_HTML = false;
+
     ////////////////
     //Misc Strings//
     ////////////////
@@ -235,6 +242,8 @@ public class PGMacTipsConstants {
 
     //Misc Regexs
     public static final String REGEX_WEB_URL_ENCODING = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
+    public static final String REGEX_HTML = "<(\\\"[^\\\"]*\\\"|'[^']*'|[^'\\\">])*>";
+    public static final String REGEX_HTML2 = "<html>";
     public static final String REGEX_PASSWORD_PATTERN = "^\\S*(?=\\S*[a-zA-Z])(?=\\S*[0-9])\\S*$";
     public static final String REGEX_INTEGER = "^[0-9]+$";
     public static final String REGEX_DECIMAL = "^[0-9]+(?:\\.[0-9]+)?$";

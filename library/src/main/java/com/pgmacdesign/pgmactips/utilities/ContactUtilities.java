@@ -351,7 +351,22 @@ public class ContactUtilities {
      *                      simply have no limit on the max number of results.
      */
     public void getContacts(@Nullable SearchTypes[] typesToQuery, @Nullable Integer maxNumResults){
-        queryContacts(typesToQuery, maxNumResults, null);
+        queryContacts(typesToQuery, maxNumResults, "");
+    }
+
+    /**
+     * Perform a contact query on an asynchronous background thread. Data is passed back
+     * on the {@link OnTaskCompleteListener}. This is overloaded to allow no query string to be
+     * passed in. Treats it as if an empty string was passed.
+     * @param typesToQuery Array of SearchTypes enum objects. These are the types of items
+     *                     to actually make a query to. Sending multiple will return multiple
+     *                     See {@link SearchTypes}
+     * @param maxNumResults The int max number of results per search type.
+     *                      If null or zero is passed, it will
+     *                      simply have no limit on the max number of results.
+     */
+    public void queryContacts(@Nullable SearchTypes[] typesToQuery, @Nullable Integer maxNumResults){
+        queryContacts(typesToQuery, maxNumResults, "");
     }
 
     /**
