@@ -9,7 +9,15 @@ import java.lang.reflect.Type;
  * Created by pmacdowell on 8/12/2016.
  */
 public class PGMacTipsConstants {
-
+	
+	///////////////
+	//Misc Values//
+	///////////////
+	
+	// TODO: 2018-02-13 refactor this into preferences setup
+	public static final String PGMACTIPS_PACKAGE_ID = "com.pgmacdesign.pgmactips";
+	public static final String PGMACTIPS_CONTEXT_PROVIDER = "PGMacContextProvider";
+	
     /////////////////
     //Misc Booleans//
     /////////////////
@@ -28,6 +36,7 @@ public class PGMacTipsConstants {
     public static final String ARRAY_PAGER_ADAPTER_ERROR_1 = "Error: Null fragment in passed map.";
     public final static String HEX = "0123456789ABCDEF";
     public final static String UTF8 = "UTF-8";
+    
     /////////////////////////////////////////////////////////////
     //Custom Tags (There is no specific order to these numbers)//
     /////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 package com.pgmacdesign.pgmactips.networkclasses.retrofitutilities;
 
 import com.google.gson.reflect.TypeToken;
-import com.pgmacdesign.pgmactips.SamplePojo;
+import com.pgmacdesign.pgmactips.datamodels.SamplePojo;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.L;
 

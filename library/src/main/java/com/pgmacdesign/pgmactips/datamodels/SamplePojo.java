@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmactips;
+package com.pgmacdesign.pgmactips.datamodels;
 
 import com.google.gson.annotations.SerializedName;
 

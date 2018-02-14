@@ -2,14 +2,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.pgmacdesign.pgmactips">
 
-    <!--<application>-->
-        <!--<provider-->
-            <!--android:authorities="${applicationId}.pgmaccontextprovider"-->
-            <!--android:exported="false"-->
-            <!--android:enabled="true"-->
-            <!--android:name=".misc.PGMacInitProvider" />-->
-
-
+    <application>
+        <provider
+            android:authorities="${applicationId}.PGMacContextProvider"
+            android:exported="false"
+            android:enabled="true"
+            android:name=".misc.PGMacContextProvider"
+	        />
+	
+	</application>
         <!--&lt;!&ndash; Gson &ndash;&gt;-->
         <!--<uses-library-->
             <!--android:name="com.google.code.gson"-->

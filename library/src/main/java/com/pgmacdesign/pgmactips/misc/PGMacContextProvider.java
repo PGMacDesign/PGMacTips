@@ -9,19 +9,20 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 
 import com.pgmacdesign.pgmactips.utilities.L;
+import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 
 /**
  * Following Guide from -- https://medium.com/@andretietz/auto-initialize-your-android-library-2349daf06920
  *
  * Created by pmacdowell on 2017-09-19.
  */
-public final class PGMacInitProvider  extends ContentProvider {
+public final class PGMacContextProvider extends ContentProvider {
 
     private static final String ERROR_STR_1 = "Cannot initialize PGMacUtilities Context. Please make sure ProviderInfo is not null";
     private static final String ERROR_STR_2 = "Incorrect provider authority in manifest. Most likely due to a "
             + "missing applicationId variable in application\'s build.gradle.";
 
-    public PGMacInitProvider() {}
+    public PGMacContextProvider() {}
 
     @Override
     public boolean onCreate() {
@@ -61,21 +62,22 @@ public final class PGMacInitProvider  extends ContentProvider {
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         return 0;
     }
-
-
-    @Override
-    public void attachInfo(Context context, ProviderInfo providerInfo) {
-        if (providerInfo == null) {
-            L.m(ERROR_STR_1);
-            //throw new NullPointerException("YourLibraryInitProvider ProviderInfo cannot be null.");
-            return;
-        }
-        // So if the authorities equal the library internal ones, the developer forgot to set his applicationId
-        if ("<your-library-applicationid>.yourlibraryinitprovider".equals(providerInfo.authority)) {
-            L.m(ERROR_STR_2);
-            //throw new IllegalStateException();
-            return;
-        }
-        super.attachInfo(context, providerInfo);
-    }
+	
+	
+	@Override
+	public void attachInfo(Context context, ProviderInfo providerInfo) {
+		if (providerInfo == null) {
+			L.m(ERROR_STR_1);
+			//throw new NullPointerException("YourLibraryInitProvider ProviderInfo cannot be null.");
+			return;
+		}
+		// So if the authorities equal the library internal ones, the developer forgot to set his applicationId
+		String str = PGMacTipsConstants.PGMACTIPS_PACKAGE_ID + PGMacTipsConstants.PGMACTIPS_CONTEXT_PROVIDER;
+		if(StringUtilities.doesEqual(str, providerInfo.authority)){
+			L.m(ERROR_STR_2);
+			//throw new IllegalStateException();
+			return;
+		}
+		super.attachInfo(context, providerInfo);
+	}
 }

@@ -1,6 +1,6 @@
 package com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.serviceapiinterfaces;
 
-import com.pgmacdesign.pgmactips.SamplePojo;
+import com.pgmacdesign.pgmactips.datamodels.SamplePojo;
 
 import java.util.Map;
 
