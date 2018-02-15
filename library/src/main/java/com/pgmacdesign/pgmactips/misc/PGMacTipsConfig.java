@@ -24,30 +24,18 @@ public class PGMacTipsConfig {
     }
 
     /**
-     * Get the instance
-     * @param context Context
-     * @return this
-     */
-    public static PGMacTipsConfig getInstance(@NonNull Context context){
-        if(instance == null){
-            instance = new PGMacTipsConfig.Builder().build(context);
-        }
-        return instance;
-    }
-
-    /**
-     * Use to forcefully reset instance with context
+     * Reset the instance. To create an instance with the variables set, use the
+     * {@link PGMacTipsConfig.Builder} class
      * @param context Context
      * @return this
      */
     public static PGMacTipsConfig resetInstance(@NonNull Context context){
-        instance = null;
         instance = new PGMacTipsConfig.Builder().build(context);
         return instance;
     }
 
     /**
-     * Can return null if set to null
+     * Return Can return null if set to null
      * @return this
      */
     public static PGMacTipsConfig getInstance(){
@@ -55,11 +43,10 @@ public class PGMacTipsConfig {
     }
 
     //Default Variables
-    private final boolean retrofitCallsAreApplicationJson;
-    private final boolean defaultStringForDatabaseName;
     private final boolean isLiveBuild;
     private final Context context;
-    
+    private final String tagForLogging;
+
 
     /**
      * Overloaded constructor for builder
@@ -67,9 +54,9 @@ public class PGMacTipsConfig {
      */
     private PGMacTipsConfig(Builder builder){
         this.context = builder.context;
-        this.retrofitCallsAreApplicationJson = builder.retrofitCallsAreApplicationJson;
-        this.defaultStringForDatabaseName = builder.defaultStringForDatabaseName;
         this.isLiveBuild = builder.isLiveBuild;
+        this.tagForLogging = builder.tagForLogging;
+        PGMacTipsConfig.instance = this;
     }
 
     /**
@@ -77,20 +64,16 @@ public class PGMacTipsConfig {
      */
     public static class Builder {
         private Context context;
-        private boolean retrofitCallsAreApplicationJson;
-        private boolean defaultStringForDatabaseName;
+        private String tagForLogging;
         private boolean isLiveBuild;
 
-
-        public Builder setRetrofitCallsAreApplicationJson(
-                boolean retrofitCallsAreApplicationJson) {
-            this.retrofitCallsAreApplicationJson = retrofitCallsAreApplicationJson;
-            return this;
-        }
-
-        public Builder setDefaultStringForDatabaseName(
-                boolean defaultStringForDatabaseName) {
-            this.defaultStringForDatabaseName = defaultStringForDatabaseName;
+        /**
+         * This is used for setting the tag String to be printed out in the logging class
+         * {@link com.pgmacdesign.pgmactips.utilities.L
+         * @param tagForLogging
+         */
+        public Builder setTagForLogging(@NonNull String tagForLogging) {
+            this.tagForLogging = tagForLogging;
             return this;
         }
 
@@ -108,20 +91,17 @@ public class PGMacTipsConfig {
 
 	    public PGMacTipsConfig build(@NonNull Context context){
             this.context = context;
-		    return new PGMacTipsConfig(this);
+            PGMacTipsConfig.instance = new PGMacTipsConfig(this);
+		    return PGMacTipsConfig.instance;
 	    }
     }
-    
-	public boolean getRetrofitCallsAreApplicationJson() {
-		return retrofitCallsAreApplicationJson;
-	}
-	
-	public boolean getDefaultStringForDatabaseName() {
-		return defaultStringForDatabaseName;
-	}
 
     public boolean getIsLiveBuild() {
         return isLiveBuild;
+    }
+
+    public String getTagForLogging() {
+        return tagForLogging;
     }
 
     public Context getContext(){

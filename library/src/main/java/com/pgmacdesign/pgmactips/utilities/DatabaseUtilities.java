@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.pgmacdesign.pgmactips.datamodels.MasterDatabaseObject;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConfig;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
 import org.json.JSONObject;
@@ -47,6 +48,11 @@ public class DatabaseUtilities {
     //final TypeToken MASTER_DB_OBJECT_TYPETOKEN = new TypeToken<List<MasterDatabaseObject>>(){};
     //final Type MASTER_DB_OBJECT_TYPE = MASTER_DB_OBJECT_TYPETOKEN.getType();
 
+    private static final String CONTEXT_NULL =
+            "Context null within DatabaseUtilities. Please call overloaded method to pass in Context";
+    private static final String PGMACTIPS_NOT_INITIALIZED =
+            "Could not initialize DatabaseUtilities. Either initialize PGMacTipsConfig or call the overloaded constructor to pass in context";
+
     //Global Vars
     private RealmConfiguration realmConfiguration;
     private Context context;
@@ -63,13 +69,20 @@ public class DatabaseUtilities {
     /**
      * Test constructor
      */
-//    public DatabaseUtilities() {
-//        L.m("attempting to get context for app from context provider");
-//        this.context = PGMacTipsConfig.getInstance().getContext();
-//        L.m("getting contact for db utilities from content provider");
-//        this.init(context);
-//        this.realmConfiguration = DatabaseUtilities.buildRealmConfig(context, null, null, null);
-//    }
+    public DatabaseUtilities() {
+        if(PGMacTipsConfig.getInstance() == null){
+            L.m(PGMACTIPS_NOT_INITIALIZED);
+            return;
+        }
+        this.context = PGMacTipsConfig.getInstance().getContext();
+        if(this.context == null){
+            L.m(CONTEXT_NULL);
+            return;
+        }
+        this.init(context);
+        this.realmConfiguration = DatabaseUtilities.buildRealmConfig(context,
+                null, null, null);
+    }
 
     /**
      * Constructor
@@ -78,8 +91,29 @@ public class DatabaseUtilities {
      */
     public DatabaseUtilities(@NonNull Context context) {
         this.context = context;
+        if(this.context == null){
+            L.m(CONTEXT_NULL);
+            return;
+        }
         this.init(context);
-        this.realmConfiguration = DatabaseUtilities.buildRealmConfig(context, null, null, null);
+        this.realmConfiguration = DatabaseUtilities.buildRealmConfig(context,
+                null, null, null);
+    }
+
+    /**
+     * Constructor. For more explanation of the input params, see:
+     * {@link DatabaseUtilities#buildRealmConfig(Context, String, Integer, Boolean)}
+     */
+    public DatabaseUtilities(@NonNull Context context, @Nullable String dbName,
+                             @Nullable Integer dbSchemaVersion, @Nullable Boolean deleteDBIfNeeded) {
+        this.context = context;
+        if(this.context == null){
+            L.m(CONTEXT_NULL);
+            return;
+        }
+        this.init(context);
+        this.realmConfiguration = DatabaseUtilities.buildRealmConfig(context,
+                dbName, dbSchemaVersion, deleteDBIfNeeded);
     }
 
     /**
@@ -92,6 +126,10 @@ public class DatabaseUtilities {
      */
     public DatabaseUtilities(@NonNull Context context, RealmConfiguration realmConfiguration) {
         this.context = context;
+        if(this.context == null){
+            L.m(CONTEXT_NULL);
+            return;
+        }
         this.init(context);
         this.realmConfiguration = realmConfiguration;
         if (realmConfiguration == null) {
@@ -148,7 +186,7 @@ public class DatabaseUtilities {
         } catch (IllegalArgumentException e1) {
             e1.printStackTrace();
             L.m("A RealmObject with no PrimaryKey cannot be updated. Does " + myClass.getName() +
-                    "have a @PrimaryKey designation over something?");
+                    "have a @PrimaryKey designation over a variable?");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -262,7 +300,7 @@ public class DatabaseUtilities {
         } catch (IllegalArgumentException e1) {
             e1.printStackTrace();
             L.m("A RealmObject with no PrimaryKey cannot be updated. Does " + myClass.getName() +
-                    "have a @PrimaryKey designation over something?");
+                    "have a @PrimaryKey designation over a variable??");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -314,7 +352,7 @@ public class DatabaseUtilities {
         } catch (IllegalArgumentException e1) {
             e1.printStackTrace();
             L.m("A RealmObject with no PrimaryKey cannot be updated. Does " + myClass.getName() +
-                    "have a @PrimaryKey designation over something?");
+                    "have a @PrimaryKey designation over a variable?");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -1012,7 +1050,7 @@ public class DatabaseUtilities {
         } catch (IllegalArgumentException e1) {
             e1.printStackTrace();
             L.m("A RealmObject with no PrimaryKey cannot be updated. Does " + myClass.getName() +
-                    "have a @PrimaryKey designation over something?");
+                    "have a @PrimaryKey designation over a variable?");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -1056,7 +1094,7 @@ public class DatabaseUtilities {
         } catch (IllegalArgumentException e1) {
             e1.printStackTrace();
             L.m("A RealmObject with no PrimaryKey cannot be updated. Does " + myClass.toString() +
-                    "have a @PrimaryKey designation over something?");
+                    "have a @PrimaryKey designation over a variable?");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -1414,7 +1452,7 @@ public class DatabaseUtilities {
      * @param realmConfiguration
      * @return Realm object
      */
-    public static Realm buildRealm(RealmConfiguration realmConfiguration) {
+    public static Realm buildRealm(@NonNull RealmConfiguration realmConfiguration) {
         Realm realm = null;
         if (realmConfiguration != null) {
             realm = Realm.getInstance(realmConfiguration);
@@ -1450,10 +1488,8 @@ public class DatabaseUtilities {
                                                       @Nullable String dbName,
                                                       @Nullable Integer schemaVersion,
                                                       @Nullable Boolean deleteIfNeeded) {
-//        if (context == null) {
-//            context = PGMacTipsConfig.getInstance().getContext();
-//        }
         if (context == null) {
+            L.m(CONTEXT_NULL);
             return null;
         }
         Realm.init(context);
