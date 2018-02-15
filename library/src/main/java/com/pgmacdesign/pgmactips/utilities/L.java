@@ -16,7 +16,11 @@ public class L {
     private static final String TAG = "PGMacUtilities";
 
     private static boolean isLiveBuild(){
-        return PGMacTipsConfig.getInstance().getIsLiveBuild();
+        try {
+            return PGMacTipsConfig.getInstance().getIsLiveBuild();
+        } catch (Exception e){
+            return false;
+        }
     }
 
     /**
