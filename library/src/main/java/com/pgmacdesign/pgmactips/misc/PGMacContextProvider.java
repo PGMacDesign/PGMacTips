@@ -26,13 +26,23 @@ public final class PGMacContextProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
+        L.m("onCreate was actually called in PGMacContextProvider");
         // get the context (Application context)
         Context context = getContext();
-
+        L.m("context is null: " + (context == null));
         // Call init here on various things
+        if(context != null) {
+            L.m("starting setting up PGMacTipsConfig");
+            PGMacTipsConfig.resetInstance(context);
+            L.m("finished setting up PGMacTipsConfig");
+        }
 
         //Then return it
         return (context != null);
+    }
+
+    public static Context getAppContext(){
+        return new PGMacContextProvider().getContext();
     }
 
     @Nullable
@@ -80,4 +90,5 @@ public final class PGMacContextProvider extends ContentProvider {
 		}
 		super.attachInfo(context, providerInfo);
 	}
+
 }

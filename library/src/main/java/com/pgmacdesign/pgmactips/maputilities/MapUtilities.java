@@ -59,6 +59,26 @@ public class MapUtilities {
         return distance;
     }
 
+    /**
+     * Get the center of the map. Will return null if some problem something happens (IE, null map)
+     * @param map Map to check against
+     * @return {@link LatLng}
+     */
+    public static LatLng getCenterOfMap(GoogleMap map){
+        try {
+            return map.getCameraPosition().target;
+        } catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Calculate the LatLngBounds using a center and radius (in meters)
+     * @param center
+     * @param radius
+     * @return
+     */
     public static LatLngBounds calculateBounds(@NonNull LatLng center, double radius) {
         return new LatLngBounds.Builder().
                 include(SphericalUtils.computeOffset(center, radius, 0)).
@@ -67,6 +87,14 @@ public class MapUtilities {
                 include(SphericalUtils.computeOffset(center, radius, 270)).build();
     }
 
+    /**
+     * Calculate a zoom level to use on on
+     * {@link com.google.android.gms.maps.GoogleMap#moveCamera(CameraUpdate)}
+     * @param latLng {@link LatLng}
+     * @param radiusInMeters Radius (in meters)
+     * @param dmu {@link DisplayManagerUtilities}
+     * @return {@link CameraUpdate}
+     */
     public static CameraUpdate calculateZoomLevel(@NonNull LatLng latLng, float radiusInMeters,
                                                    @NonNull DisplayManagerUtilities dmu){
         if(radiusInMeters < 0){
@@ -90,6 +118,12 @@ public class MapUtilities {
 //        float x = (Math.round(14-(Math.log(radius)/Math.L)))
 //    }
 
+    /**
+     * Calculate the meters per pixel using a LatLng and a zoom (Map zoom, IE, 14)
+     * @param latLng
+     * @param zoom
+     * @return
+     */
     public static float getMetersPerPixel(LatLng latLng, float zoom){
         float metersPerPx = (float)(156543.03392 * Math.cos(
                 latLng.latitude * Math.PI / 180) / Math.pow(2, zoom));

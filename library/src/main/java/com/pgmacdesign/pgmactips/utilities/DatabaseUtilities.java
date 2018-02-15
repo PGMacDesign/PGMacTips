@@ -2,6 +2,7 @@ package com.pgmacdesign.pgmactips.utilities;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -58,6 +59,17 @@ public class DatabaseUtilities {
     ////////////////////////
     //Constructors - init //
     ////////////////////////
+
+    /**
+     * Test constructor
+     */
+//    public DatabaseUtilities() {
+//        L.m("attempting to get context for app from context provider");
+//        this.context = PGMacTipsConfig.getInstance().getContext();
+//        L.m("getting contact for db utilities from content provider");
+//        this.init(context);
+//        this.realmConfiguration = DatabaseUtilities.buildRealmConfig(context, null, null, null);
+//    }
 
     /**
      * Constructor
@@ -1435,14 +1447,17 @@ public class DatabaseUtilities {
      * @return
      */
     public static RealmConfiguration buildRealmConfig(@NonNull Context context,
-                                                      String dbName,
-                                                      Integer schemaVersion,
-                                                      Boolean deleteIfNeeded) {
+                                                      @Nullable String dbName,
+                                                      @Nullable Integer schemaVersion,
+                                                      @Nullable Boolean deleteIfNeeded) {
+//        if (context == null) {
+//            context = PGMacTipsConfig.getInstance().getContext();
+//        }
         if (context == null) {
             return null;
         }
         Realm.init(context);
-        if (dbName == null) {
+        if (StringUtilities.isNullOrEmpty(dbName)) {
             try {
                 String packageName = MiscUtilities.getPackageName(context);
                 if (!StringUtilities.isNullOrEmpty(packageName)) {

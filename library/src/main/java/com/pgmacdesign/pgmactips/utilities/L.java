@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConfig;
+
 /**
  * Simplistic class. Used primarily for logs, toasts, and OTHER tedious things
  * Created by pmacdowell on 8/12/2016.
@@ -13,7 +15,9 @@ public class L {
 
     private static final String TAG = "PGMacUtilities";
 
-
+    private static boolean isLiveBuild(){
+        return PGMacTipsConfig.getInstance().getIsLiveBuild();
+    }
 
     /**
      * Quick println
@@ -23,6 +27,9 @@ public class L {
     public static <E> void m (E myObject){
         String str = myObject + "";
         if(StringUtilities.isNullOrEmpty(str)){
+            return;
+        }
+        if (isLiveBuild()) {
             return;
         }
         if (str.length() > 4000) {
@@ -46,6 +53,9 @@ public class L {
      * @param x int, line number
      */
     public static void l(int x){
+        if (isLiveBuild()) {
+            return;
+        }
         Log.d(TAG, "Line Number " + x + " hit");
     }
 
@@ -54,6 +64,9 @@ public class L {
      * @param x int, line number
      */
     public static void l(Context context, int x){
+        if (isLiveBuild()) {
+            return;
+        }
         String activityName = null;
         try {
             activityName = context.getClass().getSimpleName();
