@@ -21,7 +21,7 @@ public final class PGMacContextProvider extends ContentProvider {
     private static final String ERROR_STR_1 = "Cannot initialize PGMacUtilities Context. Please make sure ProviderInfo is not null";
     private static final String ERROR_STR_2 = "Incorrect provider authority in manifest. Most likely due to a "
             + "missing applicationId variable in application\'s build.gradle.";
-    private static final String CONTEXT_SETUP = "Successfully initialized PGMacTipsConfig";
+    private static final String CONFIG_INITIALIZED = "Successfully initialized PGMacTipsConfig";
 
     public PGMacContextProvider() {}
 
@@ -38,8 +38,20 @@ public final class PGMacContextProvider extends ContentProvider {
                 if(packageName.length() <= 22){
                     builder.setTagForLogging(packageName);
                 }
+                String dbDefaultName = null;
+                if(packageName.length() > 3){
+                    String sub = packageName.substring((packageName.length() - 3), (packageName.length()));
+                    if(StringUtilities.doesEqualIgnoreCase(sub, ".db")){
+                        dbDefaultName = packageName + ".db";
+                    }
+                }
+                if(StringUtilities.isNullOrEmpty(dbDefaultName)) {
+                    dbDefaultName = packageName + ".db";
+                }
+                builder.setDefaultDatabaseName(dbDefaultName);
             }
             builder.build(context);
+            L.m(CONFIG_INITIALIZED);
         }
 
         //Then return it

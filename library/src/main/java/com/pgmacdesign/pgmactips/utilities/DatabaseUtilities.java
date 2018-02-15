@@ -1494,14 +1494,24 @@ public class DatabaseUtilities {
         }
         Realm.init(context);
         if (StringUtilities.isNullOrEmpty(dbName)) {
+            boolean setNameSuccess = false;
             try {
-                String packageName = MiscUtilities.getPackageName(context);
-                if (!StringUtilities.isNullOrEmpty(packageName)) {
-                    dbName = packageName + ".db";
-                } else {
-                    dbName = DEFAULT_DB_NAME;
+                String s = PGMacTipsConfig.getInstance().getDefaultDatabaseName();
+                if(!StringUtilities.isNullOrEmpty(s)){
+                    dbName = s;
+                    setNameSuccess = true;
                 }
-            } catch (Exception e) {
+            } catch (Exception e){}
+            if(!setNameSuccess){
+                try {
+                    String packageName = MiscUtilities.getPackageName(context);
+                    if (!StringUtilities.isNullOrEmpty(packageName)) {
+                        dbName = packageName + ".db";
+                        setNameSuccess = true;
+                    }
+                } catch (Exception e1) {}
+            }
+            if(!setNameSuccess){
                 dbName = DEFAULT_DB_NAME;
             }
         }

@@ -46,6 +46,7 @@ public class PGMacTipsConfig {
     private final boolean isLiveBuild;
     private final Context context;
     private final String tagForLogging;
+    private final String defaultDatabaseName;
 
 
     /**
@@ -56,6 +57,7 @@ public class PGMacTipsConfig {
         this.context = builder.context;
         this.isLiveBuild = builder.isLiveBuild;
         this.tagForLogging = builder.tagForLogging;
+        this.defaultDatabaseName = builder.defaultDatabaseName;
         PGMacTipsConfig.instance = this;
     }
 
@@ -65,7 +67,21 @@ public class PGMacTipsConfig {
     public static class Builder {
         private Context context;
         private String tagForLogging;
+        private String defaultDatabaseName;
         private boolean isLiveBuild;
+
+        /**
+         * This is used to set the default Database name within the
+         * {@link com.pgmacdesign.pgmactips.utilities.DatabaseUtilities} class.
+         * This will only be used if null is passed into the constructor of the DatabaseUtilities, IE
+         * {@link com.pgmacdesign.pgmactips.utilities.DatabaseUtilities#DatabaseUtilities(Context, String, Integer, Boolean)}
+         * @param defaultDatabaseName
+         * @return
+         */
+        public Builder setDefaultDatabaseName(String defaultDatabaseName) {
+            this.defaultDatabaseName = defaultDatabaseName;
+            return this;
+        }
 
         /**
          * This is used for setting the tag String to be printed out in the logging class
@@ -94,6 +110,10 @@ public class PGMacTipsConfig {
             PGMacTipsConfig.instance = new PGMacTipsConfig(this);
 		    return PGMacTipsConfig.instance;
 	    }
+    }
+
+    public String getDefaultDatabaseName() {
+        return defaultDatabaseName;
     }
 
     public boolean getIsLiveBuild() {

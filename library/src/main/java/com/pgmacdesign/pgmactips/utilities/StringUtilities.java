@@ -85,6 +85,25 @@ public class StringUtilities {
     }
 
     /**
+     * Shortcut to check for equals where the strings passed may or may not be null
+     * @param str1 String 1 to compare
+     * @param posStart int start position to check the strings for comparison
+     * @param posEnd int end position to check the Strings for comparison
+     * @param str2 String 2 to compare. This is the one that will be substringed for comparison
+     * @return True if they are equal
+     */
+    public static boolean doesEqual(String str1, int posStart, int posEnd, String str2){
+        if(StringUtilities.isNullOrEmpty(str1) || StringUtilities.isNullOrEmpty(str2)){
+            return false;
+        }
+        String s2 = null;
+        try {
+            s2 = str2.substring(posStart, posEnd);
+        } catch (Exception e){}
+        return StringUtilities.doesEqual(str1, s2);
+    }
+
+    /**
      * Shortcut to check for equals ignore case where the strings passed may or may not be null
      * @param str1 String 1 to compare
      * @param str2 String 2 to compare
@@ -96,6 +115,56 @@ public class StringUtilities {
         }
         return str1.equalsIgnoreCase(str2);
     }
+
+    /**
+     * Shortcut to check for equals ignore case where the strings passed may or may not be null
+     * @param str1 String 1 to compare
+     * @param posStart int start position to check the strings for comparison
+     * @param posEnd int end position to check the Strings for comparison
+     * @param str2 String 2 to compare. This is the one that will be substringed for comparison
+     * @return True if they are equal
+     */
+    public static boolean doesEqualIgnoreCase(String str1, int posStart, int posEnd, String str2){
+        if(StringUtilities.isNullOrEmpty(str1) || StringUtilities.isNullOrEmpty(str2)){
+            return false;
+        }
+        String s2 = null;
+        try {
+            s2 = str2.substring(posStart, posEnd);
+        } catch (Exception e){}
+        return StringUtilities.doesEqualIgnoreCase(str1, s2);
+    }
+
+    /**
+     * Simple checker whether the first string contains the second string within positions passed
+     * @param originalString String to check: IE, Patrick
+     * @param posStart POS to start: IE, 0
+     * @param posEnd POS to end: IE, 4
+     * @param otherStringToCheckFor String: IE, Pat
+     * @return true if it does contain it within those bounds, else false. If wanting to check
+     * equality of those strings, see {@link StringUtilities#doesEqual(String, int, int, String)}
+     */
+    public static boolean doesStringContain(@NonNull String originalString, int posStart,
+                                            int posEnd, @NonNull String otherStringToCheckFor){
+        if(StringUtilities.isNullOrEmpty(originalString) ||
+                StringUtilities.isNullOrEmpty(otherStringToCheckFor)){
+            return false;
+        }
+        if(originalString.length() < posEnd){
+            return false;
+        }
+        try {
+            String s1 = otherStringToCheckFor.substring(posStart, posEnd);
+            return originalString.contains(s1);
+        } catch (Exception e){}
+        return false;
+    }
+
+    public static boolean doesStringContain(@NonNull String originalString,
+                                            @NonNull String otherStringToCheckFor){
+        return doesStringContain(originalString, 0, (originalString.length()), otherStringToCheckFor);
+    }
+
 
     /**
      * This will format a String passed in (7145551234) and convert it into standard US phone
@@ -186,8 +255,6 @@ public class StringUtilities {
                     return formatted;
                 } catch (Exception e){}
             }
-
-
         }
         return str;
     }
