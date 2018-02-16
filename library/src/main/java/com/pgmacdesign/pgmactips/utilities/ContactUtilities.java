@@ -10,9 +10,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConfig;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
-import java.lang.ref.WeakReference;
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -118,36 +119,37 @@ public class ContactUtilities {
     /**
      * The type of search options that can be performed.
      * 1) EMAIL - This will search the address book for contacts nested under the email data table.
-     *            Any queries sent in with it will search via the contact display name (raw) and the
-     *            email address as well. So searching for: "La" will return both "Larry" the name
-     *            and "Laura@something.com" the email as both have 'LA'.
+     * Any queries sent in with it will search via the contact display name (raw) and the
+     * email address as well. So searching for: "La" will return both "Larry" the name
+     * and "Laura@something.com" the email as both have 'LA'.
      * 2)ADDRESS - This will search the address book for contacts nested under the postal address
-     *             data table. Any query passed will search both the full structured postal address
-     *             as well as the raw display name.
+     * data table. Any query passed will search both the full structured postal address
+     * as well as the raw display name.
      * 3)PHONE - This will search the address book for contacts nested under the phone number
-     *           data table. Any query passed will search both the phone number (without any
-     *           special characters) as the raw display name.
+     * data table. Any query passed will search both the phone number (without any
+     * special characters) as the raw display name.
      * 4)NAME - This will search the address book for contacts nested under the Name
-     *          data table. Any query passed will search the raw display name.
+     * data table. Any query passed will search the raw display name.
      */
     public static enum SearchTypes {
         EMAIL, ADDRESS, PHONE, NAME
     }
+
     /**
      * These filters add options for query results
      * 1)ADD_ALPHABET_HEADERS - Adds alphabetically ordered headers to the top to match the
-     *                          First name of the contact (raw display name). So P would be
-     *                          above Patrick in the contact list
+     * First name of the contact (raw display name). So P would be
+     * above Patrick in the contact list
      * 2)USE_ALL_ALPHABET_LETTERS - If this flag is passed, it will use all letters in the alphabet
-     *                              for the headers. IE, it will append A, B, C, D to the contact
-     *                              list regardless of matching names. If false, it will instead
-     *                              just put letter headers for actual contacts. For example, Bob
-     *                              and David will have 'B' and 'D' but no 'C'  header.
+     * for the headers. IE, it will append A, B, C, D to the contact
+     * list regardless of matching names. If false, it will instead
+     * just put letter headers for actual contacts. For example, Bob
+     * and David will have 'B' and 'D' but no 'C'  header.
      * 3)MOVE_FAVORITES_TO_TOP_OF_LIST - This flag will move favorites within the contact list to
-     *                                   the top of the list. The favorites are selected via the
-     *                                   contact app and not via this app.
+     * the top of the list. The favorites are selected via the
+     * contact app and not via this app.
      * 4)REMOVE_BLOCK_LIST_CONTACTS - This flag will remove the contacts that appear on the global
-     *                                  block list below. {@link ContactUtilities#BLOCK_LIST_NUMBERS}
+     * block list below. {@link ContactUtilities#BLOCK_LIST_NUMBERS}
      */
     public static enum SearchQueryFlags {
         ADD_ALPHABET_HEADERS, USE_ALL_ALPHABET_LETTERS,
@@ -158,22 +160,22 @@ public class ContactUtilities {
     //Global Variables//
     ////////////////////
 
-    private OnTaskCompleteListener listener;
-    private Activity activity;
-    private Context context;
+    private final OnTaskCompleteListener listener;
+    private final Activity activity;
+    private final Context context;
     //private String query;
     //private int maxNumResults;
-    private boolean includeAlphabetHeaders, includeAllLetters,
+    private final boolean includeAlphabetHeaders, includeAllLetters,
             moveFavoritesToTop, removeBlockListItems, shouldUpdateProgress;
 
     //Private Constructor
-    private ContactUtilities (Context context, Activity activity,
-                              OnTaskCompleteListener listener,
-                              boolean includeAlphabetHeaders,
-                              boolean includeAllLetters,
-                              boolean moveFavoritesToTop,
-                              boolean removeBlockListItems,
-                              boolean shouldUpdateProgress){
+    private ContactUtilities(Context context, Activity activity,
+                             OnTaskCompleteListener listener,
+                             boolean includeAlphabetHeaders,
+                             boolean includeAllLetters,
+                             boolean moveFavoritesToTop,
+                             boolean removeBlockListItems,
+                             boolean shouldUpdateProgress) {
         this.context = context;
         this.activity = activity;
         this.listener = listener;
@@ -194,11 +196,12 @@ public class ContactUtilities {
         private Context context;
         private Activity activity;
         private OnTaskCompleteListener listener;
-        private boolean shouldUpdateProgress;
+        private boolean shouldUpdateProgressLocal;
 
         /**
          * Builder for the Contact Utilities class
-         * @param context Context
+         *
+         * @param context  Context
          * @param listener {@link OnTaskCompleteListener}
          *                 The listener to pass data back on. Note! Data sent back will be a
          *                 list of Contact Objects. See {@link Contact}. The data is sent back
@@ -212,10 +215,10 @@ public class ContactUtilities {
          *                 -Missing READ_CONTACTS permission: {@link PGMacTipsConstants#TAG_CONTACT_QUERY_MISSING_CONTACT_PERMISSION}
          *                 -Some Unknown Error: {@link PGMacTipsConstants#TAG_CONTACT_QUERY_UNKNOWN_ERROR}
          *                 Bear in mind that the progressUpdate will only have data to send if
-         *                    the boolean flag for shouldUpdateProgress is set to true.
-         *                  {@link ContactUtilities.Builder#shouldUpdateSearchProgress}
+         *                 the boolean flag for shouldUpdateProgress is set to true.
+         *                 {@link ContactUtilities.Builder#shouldUpdateSearchProgress}
          */
-        public Builder(@NonNull Context context, @NonNull OnTaskCompleteListener listener){
+        public Builder(@NonNull Context context, @NonNull OnTaskCompleteListener listener) {
             this.context = context;
             this.listener = listener;
             this.activity = null;
@@ -224,41 +227,45 @@ public class ContactUtilities {
 
         /**
          * If this is called, the listener will pass back progress updates while querying
+         *
          * @return this
          */
-        public Builder shouldUpdateSearchProgress(){
-            this.shouldUpdateProgress = true;
+        public Builder shouldUpdateSearchProgress() {
+            this.shouldUpdateProgressLocal = true;
             return this;
         }
 
         /**
          * Set the activity. If this is set, a check for Contact permissions is made before
          * running operations. If this is not set, the check falls to the developer
+         *
          * @param activity Activity to check contact permissions
          * @return this
          */
-        public Builder setActivity(@NonNull Activity activity){
+        public Builder setActivity(@NonNull Activity activity) {
             this.activity = activity;
             return this;
         }
 
         /**
          * Set a list of search Query Flags
+         *
          * @param searchQueryFlags {@link ContactUtilities.SearchQueryFlags}
          * @return
          */
-        public Builder setSearchQueryFlags(List<SearchQueryFlags> searchQueryFlags){
+        public Builder setSearchQueryFlags(List<SearchQueryFlags> searchQueryFlags) {
             this.searchQueryFlags = searchQueryFlags;
             return this;
         }
 
         /**
          * Set a list of search Query Flags
+         *
          * @param searchQueryFlags {@link ContactUtilities.SearchQueryFlags}
          * @return
          */
-        public Builder setSearchQueryFlags(SearchQueryFlags[] searchQueryFlags){
-            if(!MiscUtilities.isArrayNullOrEmpty(searchQueryFlags)){
+        public Builder setSearchQueryFlags(SearchQueryFlags[] searchQueryFlags) {
+            if (!MiscUtilities.isArrayNullOrEmpty(searchQueryFlags)) {
                 this.searchQueryFlags = Arrays.asList(searchQueryFlags);
             }
             return this;
@@ -266,57 +273,61 @@ public class ContactUtilities {
 
         /**
          * Adds alphabetically ordered headers to the top to match the
-         *                          First name of the contact (raw display name). So P would be
-         *                          above Patrick in the contact list
+         * First name of the contact (raw display name). So P would be
+         * above Patrick in the contact list
+         *
          * @return
          */
-        public Builder addAlphabetHeaders(){
+        public Builder addAlphabetHeaders() {
             searchQueryFlags.add(SearchQueryFlags.ADD_ALPHABET_HEADERS);
             return this;
         }
 
         /**
          * If this flag is passed, it will use all letters in the alphabet
-         *                              for the headers. IE, it will append A, B, C, D to the contact
-         *                              list regardless of matching names. If false, it will instead
-         *                              just put letter headers for actual contacts. For example, Bob
-         *                              and David will have 'B' and 'D' but no 'C'  header.
+         * for the headers. IE, it will append A, B, C, D to the contact
+         * list regardless of matching names. If false, it will instead
+         * just put letter headers for actual contacts. For example, Bob
+         * and David will have 'B' and 'D' but no 'C'  header.
+         *
          * @return
          */
-        public Builder useAllAlphabetHeaders(){
+        public Builder useAllAlphabetHeaders() {
             searchQueryFlags.add(SearchQueryFlags.USE_ALL_ALPHABET_LETTERS);
             return this;
         }
 
         /**
          * This flag will move favorites within the contact list to
-         *                                   the top of the list. The favorites are selected via the
-         *                                   contact app and not via this app.
+         * the top of the list. The favorites are selected via the
+         * contact app and not via this app.
+         *
          * @return
          */
-        public Builder moveFavoritesToTop(){
+        public Builder moveFavoritesToTop() {
             searchQueryFlags.add(SearchQueryFlags.MOVE_FAVORITES_TO_TOP_OF_LIST);
             return this;
         }
 
         /**
          * This flag will remove the contacts that appear on the global
-         *                                  block list below. {@link ContactUtilities#BLOCK_LIST_NUMBERS}
+         * block list below. {@link ContactUtilities#BLOCK_LIST_NUMBERS}
+         *
          * @return
          */
-        public Builder removeBlockListContacts(){
+        public Builder removeBlockListContacts() {
             searchQueryFlags.add(SearchQueryFlags.REMOVE_BLOCK_LIST_CONTACTS);
             return this;
         }
 
-        public ContactUtilities build(){
+        public ContactUtilities build() {
 
             boolean includeAlphabetHeaders = false, includeAllLetters = false,
                     moveFavoritesToTop = false, removeBlockListItems = false;
-            for(SearchQueryFlags flag : this.searchQueryFlags){
-                switch (flag){
+            for (SearchQueryFlags flag : this.searchQueryFlags) {
+                switch (flag) {
                     case ADD_ALPHABET_HEADERS:
-                        includeAlphabetHeaders  = true;
+                        includeAlphabetHeaders = true;
                         break;
                     case USE_ALL_ALPHABET_LETTERS:
                         includeAllLetters = true;
@@ -332,7 +343,7 @@ public class ContactUtilities {
 
             return new ContactUtilities(context, activity, listener, includeAlphabetHeaders,
                     includeAllLetters, moveFavoritesToTop, removeBlockListItems,
-                    this.shouldUpdateProgress);
+                    this.shouldUpdateProgressLocal);
         }
     }
 
@@ -343,14 +354,15 @@ public class ContactUtilities {
     /**
      * Perform a contact query on an asynchronous background thread. Data is passed back
      * on the {@link OnTaskCompleteListener}
-     * @param typesToQuery Array of SearchTypes enum objects. These are the types of items
-     *                     to actually make a query to. Sending multiple will return multiple
-     *                     See {@link SearchTypes}
+     *
+     * @param typesToQuery  Array of SearchTypes enum objects. These are the types of items
+     *                      to actually make a query to. Sending multiple will return multiple
+     *                      See {@link SearchTypes}
      * @param maxNumResults The int max number of results per search type.
      *                      If null or zero is passed, it will
      *                      simply have no limit on the max number of results.
      */
-    public void getContacts(@Nullable SearchTypes[] typesToQuery, @Nullable Integer maxNumResults){
+    public void getContacts(@Nullable SearchTypes[] typesToQuery, @Nullable Integer maxNumResults) {
         queryContacts(typesToQuery, maxNumResults, "");
     }
 
@@ -358,32 +370,34 @@ public class ContactUtilities {
      * Perform a contact query on an asynchronous background thread. Data is passed back
      * on the {@link OnTaskCompleteListener}. This is overloaded to allow no query string to be
      * passed in. Treats it as if an empty string was passed.
-     * @param typesToQuery Array of SearchTypes enum objects. These are the types of items
-     *                     to actually make a query to. Sending multiple will return multiple
-     *                     See {@link SearchTypes}
+     *
+     * @param typesToQuery  Array of SearchTypes enum objects. These are the types of items
+     *                      to actually make a query to. Sending multiple will return multiple
+     *                      See {@link SearchTypes}
      * @param maxNumResults The int max number of results per search type.
      *                      If null or zero is passed, it will
      *                      simply have no limit on the max number of results.
      */
-    public void queryContacts(@Nullable SearchTypes[] typesToQuery, @Nullable Integer maxNumResults){
+    public void queryContacts(@Nullable SearchTypes[] typesToQuery, @Nullable Integer maxNumResults) {
         queryContacts(typesToQuery, maxNumResults, "");
     }
 
     /**
      * Perform a contact query on an asynchronous background thread. Data is passed back
      * on the {@link OnTaskCompleteListener}
-     * @param typesToQuery Array of SearchTypes enum objects. These are the types of items
-     *                     to actually make a query to. Sending multiple will return multiple
-     *                     See {@link SearchTypes}. If null is passed, it will query all 4 types.
+     *
+     * @param typesToQuery  Array of SearchTypes enum objects. These are the types of items
+     *                      to actually make a query to. Sending multiple will return multiple
+     *                      See {@link SearchTypes}. If null is passed, it will query all 4 types.
      * @param maxNumResults The int max number of results per search type.
      *                      If null or zero is passed, it will
      *                      simply have no limit on the max number of results.
-     * @param query The query to be included (in String format)
+     * @param query         The query to be included (in String format)
      */
     public void queryContacts(@Nullable SearchTypes[] typesToQuery,
                               @Nullable Integer maxNumResults,
-                              @Nullable String query){
-        if(MiscUtilities.isArrayNullOrEmpty(typesToQuery)){
+                              @Nullable String query) {
+        if (MiscUtilities.isArrayNullOrEmpty(typesToQuery)) {
             typesToQuery = new SearchTypes[]{SearchTypes.NAME, SearchTypes.PHONE,
                     SearchTypes.EMAIL, SearchTypes.ADDRESS};
         }
@@ -396,8 +410,8 @@ public class ContactUtilities {
 
     public void queryContacts(@Nullable SearchTypes[] typesToQuery,
                               @Nullable Integer maxNumResults,
-                              @Nullable Pattern regularExpressionFilter){
-        if(MiscUtilities.isArrayNullOrEmpty(typesToQuery)){
+                              @Nullable Pattern regularExpressionFilter) {
+        if (MiscUtilities.isArrayNullOrEmpty(typesToQuery)) {
             typesToQuery = new SearchTypes[]{SearchTypes.NAME, SearchTypes.PHONE,
                     SearchTypes.EMAIL, SearchTypes.ADDRESS};
         }
@@ -409,53 +423,92 @@ public class ContactUtilities {
         async.execute();
     }
 
-    private static class ContactQueryAsync extends AsyncTask<Void, Double, Map<SearchTypes, List<Contact>>> {
+    private static class ContactQueryAsync extends AsyncTask<Void, Float, Map<SearchTypes, List<Contact>>> {
 
         private SearchTypes[] typesToQuery;
         private int maxNumResults;
+        private float divisor, diffAmount, baseFloatToAppendTo;
         private String query;
         private boolean missingPermissions, useRegex;
         private Pattern regexPattern;
-        private WeakReference<ContactUtilities> classReference;
+        private SoftReference<ContactUtilities> classReference;
+        private OnTaskCompleteListener progressListener;
 
         private ContactQueryAsync(@NonNull ContactUtilities referent,
                                   @NonNull SearchTypes[] typesToQuery,
                                   int maxNumResults,
-                                  @Nullable String query){
-            this.typesToQuery = typesToQuery;
+                                  @Nullable String query) {
+            this.typesToQuery = ContactUtilities.removeDuplicateTypes(typesToQuery);
             this.query = query;
+            this.regexPattern = null;
             this.maxNumResults = maxNumResults;
             this.missingPermissions = false;
-            this.classReference = new WeakReference<ContactUtilities>(referent);
+            this.classReference = new SoftReference<ContactUtilities>(referent);
+            this.useRegex = false;
+            this.init();
         }
 
         private ContactQueryAsync(@NonNull ContactUtilities referent,
                                   @NonNull SearchTypes[] typesToQuery,
                                   int maxNumResults,
-                                  @Nullable Pattern regularExpressionFilter){
-            this.typesToQuery = typesToQuery;
-            this.query = query;
+                                  @Nullable Pattern regularExpressionFilter) {
+            this.typesToQuery = ContactUtilities.removeDuplicateTypes(typesToQuery);
+            this.query = null;
+            this.regexPattern = regularExpressionFilter;
             this.maxNumResults = maxNumResults;
             this.missingPermissions = false;
-            this.classReference = new WeakReference<ContactUtilities>(referent);
+            this.classReference = new SoftReference<ContactUtilities>(referent);
+            if(regularExpressionFilter == null){
+                this.useRegex = false;
+            } else {
+                this.useRegex = true;
+            }
+            this.init();
+        }
+
+        private void init(){
+            this.baseFloatToAppendTo = 0;
+            this.divisor = (float)this.typesToQuery.length;
+            this.diffAmount = (divisor == 0) ? 100 : ((float)(100 / divisor));
+            this.progressListener = new OnTaskCompleteListener() {
+                @Override
+                public void onTaskComplete(Object result, int customTag) {
+                    if(customTag == PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE){
+                        try {
+                            Float flt = (Float) result;
+                            if (flt != null) {
+                                float toUpdate = (float)((float)flt / (float)divisor);
+                                onProgressUpdate(toUpdate);
+                            }
+                        } catch (Exception e){}
+                    }
+                }
+            };
         }
 
         @Override
-        protected void onProgressUpdate(Double... values) {
-            if(this.classReference.get().shouldUpdateProgress) {
+        protected void onProgressUpdate(Float... values) {
+            if(values == null){
+                return;
+            }
+            if(values[0] == null){
+                return;
+            }
+            if (this.classReference.get().shouldUpdateProgress) {
                 if (this.classReference.get().listener != null) {
-                    this.classReference.get().listener.onTaskComplete(values,
+                    this.classReference.get().listener.onTaskComplete(
+                            (this.baseFloatToAppendTo + values[0]),
                             PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE);
                 }
             }
         }
 
         @Override
-        protected Map<SearchTypes, List<Contact>> doInBackground(Void...args) {
+        protected Map<SearchTypes, List<Contact>> doInBackground(Void... args) {
 
             Map<SearchTypes, List<Contact>> toGenerate = new HashMap<>();
 
-            if(this.classReference.get().activity != null) {
+            if (this.classReference.get().activity != null) {
                 if (!PermissionUtilities.getContactPermissions(this.classReference.get().activity)) {
                     this.missingPermissions = true;
                     this.classReference.get().listener.onTaskComplete(null,
@@ -464,97 +517,104 @@ public class ContactUtilities {
                 }
             }
 
-            for(SearchTypes type : this.typesToQuery){
-                switch (type){
+            for (SearchTypes type : this.typesToQuery) {
+                switch (type) {
                     case EMAIL:
-                        List<Contact> emailContacts = ContactUtilities.getEmailQuery(
-                                this.classReference.get().context, this.query, this.maxNumResults
-                        );
+                        List<Contact> emailContacts = (this.useRegex) ? ContactUtilities.getEmailQueryRegex(this.progressListener,
+                                this.classReference.get().context, this.regexPattern, this.maxNumResults)
+                                : ContactUtilities.getEmailQuery(this.progressListener,
+                                this.classReference.get().context, this.query, this.maxNumResults);
                         emailContacts = ContactUtilities.simplifyList(emailContacts);
-                        if(this.classReference.get().includeAlphabetHeaders) {
+                        if (this.classReference.get().includeAlphabetHeaders) {
                             emailContacts = ContactUtilities.addAlphabetHeadersToList(
                                     emailContacts, this.classReference.get().includeAllLetters);
                         }
-                        if(this.classReference.get().moveFavoritesToTop) {
+                        if (this.classReference.get().moveFavoritesToTop) {
                             emailContacts = ContactUtilities.moveFavoritesToTop(emailContacts);
                         }
                         toGenerate.put(SearchTypes.EMAIL, emailContacts);
                         break;
 
                     case PHONE:
-                        List<Contact> phoneContacts = ContactUtilities.getPhoneQuery(
+                        List<Contact> phoneContacts = (this.useRegex) ? ContactUtilities.getPhoneQueryRegex(this.progressListener,
+                                this.classReference.get().context, this.regexPattern, this.maxNumResults,
+                                this.classReference.get().removeBlockListItems) :
+                                ContactUtilities.getPhoneQuery(this.progressListener,
                                 this.classReference.get().context, this.query, this.maxNumResults,
-                                this.classReference.get().removeBlockListItems
-                        );
+                                this.classReference.get().removeBlockListItems);
                         phoneContacts = ContactUtilities.simplifyList(phoneContacts);
-                        if(this.classReference.get().includeAlphabetHeaders) {
+                        if (this.classReference.get().includeAlphabetHeaders) {
                             phoneContacts = ContactUtilities.addAlphabetHeadersToList(
                                     phoneContacts, this.classReference.get().includeAllLetters);
                         }
-                        if(this.classReference.get().moveFavoritesToTop) {
+                        if (this.classReference.get().moveFavoritesToTop) {
                             phoneContacts = ContactUtilities.moveFavoritesToTop(phoneContacts);
                         }
                         toGenerate.put(SearchTypes.PHONE, phoneContacts);
                         break;
 
                     case ADDRESS:
-                        List<Contact> addressContacts = ContactUtilities.getAddressQuery(
-                                this.classReference.get().context, this.query, this.maxNumResults
-                        );
+                        List<Contact> addressContacts = (this.useRegex) ? ContactUtilities.getAddressQueryRegex(this.progressListener,
+                                this.classReference.get().context, this.regexPattern, this.maxNumResults) :
+                                ContactUtilities.getAddressQuery(this.progressListener,
+                                this.classReference.get().context, this.query, this.maxNumResults);
                         addressContacts = ContactUtilities.simplifyList(addressContacts);
-                        if(this.classReference.get().includeAlphabetHeaders) {
+                        if (this.classReference.get().includeAlphabetHeaders) {
                             addressContacts = ContactUtilities.addAlphabetHeadersToList(
                                     addressContacts, this.classReference.get().includeAllLetters);
                         }
-                        if(this.classReference.get().moveFavoritesToTop) {
+                        if (this.classReference.get().moveFavoritesToTop) {
                             addressContacts = ContactUtilities.moveFavoritesToTop(addressContacts);
                         }
                         toGenerate.put(SearchTypes.ADDRESS, addressContacts);
                         break;
 
                     case NAME:
-                        List<Contact> nameContacts = ContactUtilities.getNameQuery(
-                                this.classReference.get().context, this.query, this.maxNumResults
-                        );
+                        List<Contact> nameContacts = (this.useRegex) ? ContactUtilities.getNameQueryRegex(this.progressListener,
+                                this.classReference.get().context, this.regexPattern, this.maxNumResults) :
+                                ContactUtilities.getNameQuery(this.progressListener,
+                                this.classReference.get().context, this.query, this.maxNumResults);
                         nameContacts = ContactUtilities.simplifyList(nameContacts);
-                        if(this.classReference.get().includeAlphabetHeaders) {
+                        if (this.classReference.get().includeAlphabetHeaders) {
                             nameContacts = ContactUtilities.addAlphabetHeadersToList(
                                     nameContacts, this.classReference.get().includeAllLetters);
                         }
-                        if(this.classReference.get().moveFavoritesToTop) {
+                        if (this.classReference.get().moveFavoritesToTop) {
                             nameContacts = ContactUtilities.moveFavoritesToTop(nameContacts);
                         }
                         toGenerate.put(SearchTypes.NAME, nameContacts);
                         break;
                 }
+                this.baseFloatToAppendTo += diffAmount;
             }
+            onProgressUpdate(100F); //Trigger complete
             return toGenerate;
         }
 
         @Override
         protected void onPostExecute(Map<SearchTypes, List<Contact>> contacts) {
-            if(this.classReference.get().listener == null){
+            if (this.classReference.get().listener == null) {
                 return;
             }
-            if(this.missingPermissions){
+            if (this.missingPermissions) {
                 //Do nothing, result already sent back on listener
                 return;
             }
-            if(MiscUtilities.isMapNullOrEmpty(contacts)){
+            if (MiscUtilities.isMapNullOrEmpty(contacts)) {
                 this.classReference.get().listener.onTaskComplete("No Contacts Found",
                         PGMacTipsConstants.TAG_CONTACT_QUERY_NO_RESULTS);
                 return;
             }
-            for(Map.Entry<SearchTypes, List<Contact>> myMap : contacts.entrySet()){
+            for (Map.Entry<SearchTypes, List<Contact>> myMap : contacts.entrySet()) {
                 SearchTypes typeKey = myMap.getKey();
                 List<Contact> contacts1 = myMap.getValue();
 
                 //Skip the loop if null
-                if(typeKey == null || contacts1 == null){
+                if (typeKey == null || contacts1 == null) {
                     continue;
                 }
 
-                switch (typeKey){
+                switch (typeKey) {
                     case EMAIL:
                         this.classReference.get().listener.onTaskComplete(
                                 contacts1, PGMacTipsConstants.TAG_CONTACT_QUERY_EMAIL);
@@ -586,17 +646,38 @@ public class ContactUtilities {
     ///////////////////////////////////////
 
     /**
-     * Query the phone table within the contacts database. Used for things like phone number and type
-     * @param context Context used to obtain the contentResolver
-     * @param query Query to be searched
-     * @param maxNumResults max number of results to return. if 0, no limit
+     * Overloaded to allow for null progressListener
      */
     public static List<Contact> getPhoneQuery(Context context, String query,
-                                        int maxNumResults, boolean removeBlockListItems) {
+                                              int maxNumResults, boolean removeBlockListItems) {
+        return getPhoneQuery(null, context, query, maxNumResults, removeBlockListItems);
+    }
 
-        ContentResolver cr = context.getContentResolver();
-
+    /**
+     * Query the phone table within the contacts database. Used for things like phone number and type
+     *
+     * @param progressListener Listener to send progress back upon. If null, no progress to be sent back
+     * @param context          Context used to obtain the contentResolver
+     * @param query            Query to be searched
+     * @param maxNumResults    max number of results to return. if 0, no limit
+     */
+    public static List<Contact> getPhoneQuery(@Nullable OnTaskCompleteListener progressListener,
+                                              Context context, String query,
+                                              int maxNumResults, boolean removeBlockListItems) {
         List<Contact> contacts = new ArrayList<>();
+        if (context == null) {
+            try {
+                context = PGMacTipsConfig.getInstance().getContext();
+            } catch (Exception e) {
+            }
+        }
+        boolean shouldUpdateProgress = false;
+        ContentResolver cr;
+        try {
+            cr = context.getContentResolver();
+        } catch (NullPointerException npe) {
+            return contacts;
+        }
 
         if (query != null) {
             query = "%" + query + "%";
@@ -605,7 +686,7 @@ public class ContactUtilities {
         try {
             String phoneWhere = null;
             String[] phoneWhereParams = null;
-            if(query != null){
+            if (query != null) {
                 phoneWhere = ContactsContract.Data.MIMETYPE +
                         " = ? AND " +
                         "(" +
@@ -630,14 +711,17 @@ public class ContactUtilities {
                     phoneWhereParams,
                     SORT_BY_DISPLAY_NAME);
 
-            if(pCur == null){
+            if (pCur == null) {
                 return contacts;
             }
-
-            int counter = 0;
+            
+            int updateProgressMaxInt = ContactUtilities.getMaxForProgressUpdates(
+                    progressListener, maxNumResults, pCur.getCount());
+            shouldUpdateProgress = (updateProgressMaxInt != -1);
+            int counter = 0, totalCounter = -1;
             while (pCur.moveToNext()) {
-
-                if(counter < maxNumResults || maxNumResults == 0){
+                totalCounter++;
+                if (counter < maxNumResults || maxNumResults == 0) {
 
                     Contact contact = new Contact();
 
@@ -666,7 +750,7 @@ public class ContactUtilities {
                             ContactsContract.CommonDataKinds.Phone.NUMBER);
 
                     Contact.Phone phone;
-                    if(phoneNumberType != null){
+                    if (phoneNumberType != null) {
                         int x = Integer.parseInt(phoneNumberType);
                         phoneNumberType = ContactsContractSourceCodeStuff.getPhoneType(x);
                         phone = new Contact.Phone(phoneNumber, phoneNumberType);
@@ -674,7 +758,7 @@ public class ContactUtilities {
                         phone = new Contact.Phone(phoneNumber, phoneNumberType);
                     }
 
-                    if(removeBlockListItems) {
+                    if (removeBlockListItems) {
                         if (numberOnBlockList(phoneNumber)) {
                             continue;
                         }
@@ -685,6 +769,14 @@ public class ContactUtilities {
                     contact.setPhone(phones);
 
                     contacts.add(contact);
+                    counter++;
+                    if(shouldUpdateProgress){
+                        progressListener.onTaskComplete(
+                                ContactUtilities.getProgressCount(
+                                        (float)counter, (float)updateProgressMaxInt),
+                                PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE);
+                    }
+                    
                 }
             }
             pCur.close();
@@ -694,22 +786,44 @@ public class ContactUtilities {
             //This will get thrown on contacts without a phone number. No reason to stress over it
             //e.printStackTrace();
         }
-
+        if(shouldUpdateProgress){
+            progressListener.onTaskComplete(100, PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE);
+        }
         return contacts;
+    }
+
+    /**
+     * Overloaded to allow for null progressListener
+     */
+    public static List<Contact> getEmailQuery(Context context, String query, int maxNumResults) {
+        return getEmailQuery(null, context, query, maxNumResults);
     }
 
     /**
      * Query the email table within the contacts database. Used for things like email address, email
      * type.
-     * @param context Context used to obtain the contentResolver
-     * @param query Query to be searched
+     *
+     * @param context       Context used to obtain the contentResolver
+     * @param query         Query to be searched
      * @param maxNumResults max number of results to return. if 0, no limit
      */
-    public static List<Contact> getEmailQuery(Context context, String query, int maxNumResults) {
-
-        ContentResolver cr = context.getContentResolver();
+    public static List<Contact> getEmailQuery(@Nullable OnTaskCompleteListener progressListener,
+                                              Context context, String query, int maxNumResults) {
 
         List<Contact> contacts = new ArrayList<>();
+        if (context == null) {
+            try {
+                context = PGMacTipsConfig.getInstance().getContext();
+            } catch (Exception e) {
+            }
+        }
+        ContentResolver cr;
+        try {
+            cr = context.getContentResolver();
+        } catch (NullPointerException npe) {
+            return contacts;
+        }
+        boolean shouldUpdateProgress = false;
 
         if (query != null) {
             query = "%" + query + "%";
@@ -719,7 +833,7 @@ public class ContactUtilities {
 
             String emailWhere = null;
             String[] emailWhereParams = null;
-            if(query != null){
+            if (query != null) {
                 emailWhere = ContactsContract.Data.MIMETYPE + " = ? AND " +
                         ContactsContract.CommonDataKinds.Email.ADDRESS + " LIKE ? COLLATE NOCASE";
                 emailWhereParams = new String[]{
@@ -737,13 +851,18 @@ public class ContactUtilities {
                     emailWhereParams,
                     SORT_BY_DISPLAY_NAME);
 
-            if(emailCur == null){
+            if (emailCur == null) {
                 return contacts;
             }
 
-            int counter = 0;
+            int updateProgressMaxInt = ContactUtilities.getMaxForProgressUpdates(
+                    progressListener, maxNumResults, emailCur.getCount());
+            shouldUpdateProgress = (updateProgressMaxInt != -1);
+
+            int counter = 0, totalCounter = -1;
             while (emailCur.moveToNext()) {
-                if(counter < maxNumResults || maxNumResults == 0) {
+                totalCounter++;
+                if (counter < maxNumResults || maxNumResults == 0) {
 
                     Contact contact = new Contact();
 
@@ -787,6 +906,12 @@ public class ContactUtilities {
 
                     contacts.add(contact);
                     counter++;
+                    if(shouldUpdateProgress){
+                        progressListener.onTaskComplete(
+                                ContactUtilities.getProgressCount(
+                                        (float)counter, (float)updateProgressMaxInt),
+                                PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE);
+                    }
                 }
             }
             emailCur.close();
@@ -796,23 +921,44 @@ public class ContactUtilities {
             //This will get thrown on contacts without a phone number. No reason to stress over it
             //e.printStackTrace();
         }
-
+        if(shouldUpdateProgress){
+            progressListener.onTaskComplete(100, PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE);
+        }
         return contacts;
     }
 
+    /**
+     * Overloaded to allow for null progressListener
+     */
+    public static List<Contact> getAddressQuery(Context context, String query, int maxNumResults) {
+        return getAddressQuery(null, context, query, maxNumResults);
+    }
 
     /**
      * Query the address table within the contacts database. Used for things like full address,
      * zip code, city, state, etc
-     * @param context Context used to obtain the contentResolver
-     * @param query Query to be searched
+     *
+     * @param context       Context used to obtain the contentResolver
+     * @param query         Query to be searched
      * @param maxNumResults max number of results to return. if 0, no limit
      */
-    public static List<Contact> getAddressQuery(Context context, String query, int maxNumResults) {
-
-        ContentResolver cr = context.getContentResolver();
+    public static List<Contact> getAddressQuery(@Nullable OnTaskCompleteListener progressListener,
+                                                Context context, String query, int maxNumResults) {
 
         List<Contact> contacts = new ArrayList<>();
+        if (context == null) {
+            try {
+                context = PGMacTipsConfig.getInstance().getContext();
+            } catch (Exception e) {
+            }
+        }
+        ContentResolver cr;
+        try {
+            cr = context.getContentResolver();
+        } catch (NullPointerException npe) {
+            return contacts;
+        }
+        boolean shouldUpdateProgress = false;
 
         if (query != null) {
             query = "%" + query + "%";
@@ -822,7 +968,7 @@ public class ContactUtilities {
 
             String addrWhere = null;
             String[] addrWhereParams = null;
-            if(query != null){
+            if (query != null) {
                 addrWhere = ContactsContract.Data.MIMETYPE + " = ? AND " +
                         ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS
                         + " LIKE ? COLLATE NOCASE";
@@ -840,16 +986,20 @@ public class ContactUtilities {
                     addrWhereParams,
                     SORT_BY_DISPLAY_NAME);
 
-            if(addrCur == null){
+            if (addrCur == null) {
                 return contacts;
             }
 
+            int updateProgressMaxInt = ContactUtilities.getMaxForProgressUpdates(
+                    progressListener, maxNumResults, addrCur.getCount());
+            shouldUpdateProgress = (updateProgressMaxInt != -1);
+
             List<Contact.Address> myAddress = new ArrayList<>();
 
-            int counter = 0;
+            int counter = 0, totalCounter = -1;
             while (addrCur.moveToNext()) {
-
-                if(counter < maxNumResults || maxNumResults == 0) {
+                totalCounter++;
+                if (counter < maxNumResults || maxNumResults == 0) {
 
                     Contact contact = new Contact();
 
@@ -896,6 +1046,12 @@ public class ContactUtilities {
 
                     contacts.add(contact);
                     counter++;
+                    if(shouldUpdateProgress){
+                        progressListener.onTaskComplete(
+                                ContactUtilities.getProgressCount(
+                                        (float)counter, (float)updateProgressMaxInt),
+                                PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE);
+                    }
                 }
             }
             addrCur.close();
@@ -903,22 +1059,44 @@ public class ContactUtilities {
             //This will get thrown on contacts without a phone number. No reason to stress over it
             //e.printStackTrace();
         }
-
+        if(shouldUpdateProgress){
+            progressListener.onTaskComplete(100, PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE);
+        }
         return contacts;
+    }
+
+    /**
+     * Overloaded to allow for null progressListener
+     */
+    public static List<Contact> getNameQuery(Context context, String query, int maxNumResults) {
+        return getNameQuery(null, context, query, maxNumResults);
     }
 
     /**
      * Query the name table within the contacts database. Used for things like first name, last
      * name, middle name, suffix, prefix.
-     * @param context Context used to obtain the contentResolver
-     * @param query Query to be searched
+     *
+     * @param context       Context used to obtain the contentResolver
+     * @param query         Query to be searched
      * @param maxNumResults max number of results to return. if 0, no limit
      */
-    public static List<Contact> getNameQuery(Context context, String query, int maxNumResults) {
-
-        ContentResolver cr = context.getContentResolver();
+    public static List<Contact> getNameQuery(@Nullable OnTaskCompleteListener progressListener,
+                                             Context context, String query, int maxNumResults) {
 
         List<Contact> contacts = new ArrayList<>();
+        if (context == null) {
+            try {
+                context = PGMacTipsConfig.getInstance().getContext();
+            } catch (Exception e) {
+            }
+        }
+        ContentResolver cr;
+        try {
+            cr = context.getContentResolver();
+        } catch (NullPointerException npe) {
+            return contacts;
+        }
+        boolean shouldUpdateProgress = false;
 
         if (query != null) {
             query = "%" + query + "%";
@@ -928,7 +1106,7 @@ public class ContactUtilities {
 
             String nameWhere = null;
             String[] nameWhereParams = null;
-            if(query != null){
+            if (query != null) {
                 nameWhere = ContactsContract.Data.MIMETYPE + " = ? AND " +
                         ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " LIKE ? COLLATE NOCASE";
                 nameWhereParams = new String[]{
@@ -945,14 +1123,18 @@ public class ContactUtilities {
                     nameWhereParams,
                     SORT_BY_DISPLAY_NAME);
 
-            if(nameCur == null){
+            if (nameCur == null) {
                 return contacts;
             }
 
-            int counter = 0;
-            while (nameCur.moveToNext()) {
+            int updateProgressMaxInt = ContactUtilities.getMaxForProgressUpdates(
+                    progressListener, maxNumResults, nameCur.getCount());
+            shouldUpdateProgress = (updateProgressMaxInt != -1);
 
-                if(counter < maxNumResults || maxNumResults == 0) {
+            int counter = 0, totalCounter = -1;
+            while (nameCur.moveToNext()) {
+                totalCounter++;
+                if (counter < maxNumResults || maxNumResults == 0) {
 
                     Contact contact = new Contact();
 
@@ -999,6 +1181,13 @@ public class ContactUtilities {
 
                     contacts.add(contact);
                     counter++;
+                    if(shouldUpdateProgress){
+                        progressListener.onTaskComplete(
+                                ContactUtilities.getProgressCount(
+                                        (float)counter, (float)updateProgressMaxInt),
+                                PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE);
+                    }
+
                 }
             }
             nameCur.close();
@@ -1006,7 +1195,9 @@ public class ContactUtilities {
             //This will get thrown on contacts without a phone number. No reason to stress over it
             //e.printStackTrace();
         }
-
+        if(shouldUpdateProgress){
+            progressListener.onTaskComplete(100, PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE);
+        }
         return contacts;
     }
 
@@ -1016,17 +1207,38 @@ public class ContactUtilities {
     /////////////////////////////////////////////////////////////
 
     /**
-     * Query the phone table within the contacts database. Used for things like phone number and type
-     * @param context Context used to obtain the contentResolver
-     * @param regexPattern Regular Expression Pattern to use in the filtering
-     * @param maxNumResults max number of results to return. if 0, no limit
+     * Overloaded to allow for null progressListener
      */
     public static List<Contact> getPhoneQueryRegex(Context context, Pattern regexPattern,
-                                              int maxNumResults, boolean removeBlockListItems) {
+                                                   int maxNumResults, boolean removeBlockListItems){
+        return getPhoneQueryRegex(null, context, regexPattern, maxNumResults, removeBlockListItems);
+    }
 
-        ContentResolver cr = context.getContentResolver();
+    /**
+     * Query the phone table within the contacts database. Used for things like phone number and type
+     *
+     * @param context       Context used to obtain the contentResolver
+     * @param regexPattern  Regular Expression Pattern to use in the filtering
+     * @param maxNumResults max number of results to return. if 0, no limit
+     */
+    public static List<Contact> getPhoneQueryRegex(@Nullable OnTaskCompleteListener progressListener,
+                                                   Context context, Pattern regexPattern,
+                                                   int maxNumResults, boolean removeBlockListItems) {
 
         List<Contact> contacts = new ArrayList<>();
+        if (context == null) {
+            try {
+                context = PGMacTipsConfig.getInstance().getContext();
+            } catch (Exception e) {
+            }
+        }
+        ContentResolver cr;
+        try {
+            cr = context.getContentResolver();
+        } catch (NullPointerException npe) {
+            return contacts;
+        }
+        boolean shouldUpdateProgress = false;
 
         try {
             String phoneWhere = null;
@@ -1042,14 +1254,18 @@ public class ContactUtilities {
                     phoneWhereParams,
                     SORT_BY_DISPLAY_NAME);
 
-            if(pCur == null){
+            if (pCur == null) {
                 return contacts;
             }
 
-            int counter = 0;
-            while (pCur.moveToNext()) {
+            int updateProgressMaxInt = ContactUtilities.getMaxForProgressUpdates(
+                    progressListener, maxNumResults, pCur.getCount());
+            shouldUpdateProgress = (updateProgressMaxInt != -1);
 
-                if(counter < maxNumResults || maxNumResults == 0){
+            int counter = 0, totalCounter = -1;
+            while (pCur.moveToNext()) {
+                totalCounter++;
+                if (counter < maxNumResults || maxNumResults == 0) {
 
                     Contact contact = new Contact();
 
@@ -1078,7 +1294,7 @@ public class ContactUtilities {
                             ContactsContract.CommonDataKinds.Phone.NUMBER);
 
                     Contact.Phone phone;
-                    if(phoneNumberType != null){
+                    if (phoneNumberType != null) {
                         int x = Integer.parseInt(phoneNumberType);
                         phoneNumberType = ContactsContractSourceCodeStuff.getPhoneType(x);
                         phone = new Contact.Phone(phoneNumber, phoneNumberType);
@@ -1086,7 +1302,7 @@ public class ContactUtilities {
                         phone = new Contact.Phone(phoneNumber, phoneNumberType);
                     }
 
-                    if(removeBlockListItems) {
+                    if (removeBlockListItems) {
                         if (numberOnBlockList(phoneNumber)) {
                             continue;
                         }
@@ -1096,9 +1312,15 @@ public class ContactUtilities {
                     phones.add(phone);
                     contact.setPhone(phones);
 
-                    if(ContactUtilities.matchesCustomQuery(regexPattern, contact)) {
+                    if (ContactUtilities.matchesCustomQuery(regexPattern, contact)) {
                         contacts.add(contact);
                         counter++;
+                        if(shouldUpdateProgress){
+                            progressListener.onTaskComplete(
+                                    ContactUtilities.getProgressCount(
+                                            (float)counter, (float)updateProgressMaxInt),
+                                    PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE);
+                        }
                     }
                 }
             }
@@ -1109,22 +1331,45 @@ public class ContactUtilities {
             //This will get thrown on contacts without a phone number. No reason to stress over it
             //e.printStackTrace();
         }
-
+        if(shouldUpdateProgress){
+            progressListener.onTaskComplete(100, PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE);
+        }
         return contacts;
+    }
+
+    /**
+     * Overloaded to allow for null progressListener
+     */
+    public static List<Contact> getEmailQueryRegex(Context context, Pattern regexPattern, int maxNumResults){
+        return getEmailQueryRegex(null, context, regexPattern, maxNumResults);
     }
 
     /**
      * Query the email table within the contacts database. Used for things like email address, email
      * type.
-     * @param context Context used to obtain the contentResolver
-     * @param regexPattern Regular Expression Pattern to use in the filtering
+     *
+     * @param context       Context used to obtain the contentResolver
+     * @param regexPattern  Regular Expression Pattern to use in the filtering
      * @param maxNumResults max number of results to return. if 0, no limit
      */
-    public static List<Contact> getEmailQueryRegex(Context context, Pattern regexPattern, int maxNumResults) {
-
-        ContentResolver cr = context.getContentResolver();
+    public static List<Contact> getEmailQueryRegex(@Nullable OnTaskCompleteListener progressListener,
+                                                   Context context, Pattern regexPattern, int maxNumResults) {
 
         List<Contact> contacts = new ArrayList<>();
+        if (context == null) {
+            try {
+                context = PGMacTipsConfig.getInstance().getContext();
+            } catch (Exception e) {
+            }
+        }
+        ContentResolver cr;
+        try {
+            cr = context.getContentResolver();
+        } catch (NullPointerException npe) {
+            return contacts;
+        }
+        boolean shouldUpdateProgress = false;
+
         try {
 
             String emailWhere = null;
@@ -1140,14 +1385,18 @@ public class ContactUtilities {
                     emailWhereParams,
                     SORT_BY_DISPLAY_NAME);
 
-            if(emailCur == null){
+            if (emailCur == null) {
                 return contacts;
             }
 
-            int counter = 0;
-            while (emailCur.moveToNext()) {
-                if(counter < maxNumResults || maxNumResults == 0) {
+            int updateProgressMaxInt = ContactUtilities.getMaxForProgressUpdates(
+                    progressListener, maxNumResults, emailCur.getCount());
+            shouldUpdateProgress = (updateProgressMaxInt != -1);
 
+            int counter = 0, totalCounter = -1;
+            while (emailCur.moveToNext()) {
+                totalCounter++;
+                if (counter < maxNumResults || maxNumResults == 0) {
                     Contact contact = new Contact();
 
                     String id = getColumnData(emailCur, ContactsContract.Contacts._ID);
@@ -1188,9 +1437,15 @@ public class ContactUtilities {
                     emails.add(myEmail);
                     contact.setEmail(emails);
 
-                    if(ContactUtilities.matchesCustomQuery(regexPattern, contact)) {
+                    if (ContactUtilities.matchesCustomQuery(regexPattern, contact)) {
                         contacts.add(contact);
                         counter++;
+                        if(shouldUpdateProgress){
+                            progressListener.onTaskComplete(
+                                    ContactUtilities.getProgressCount(
+                                            (float)counter, (float)updateProgressMaxInt),
+                                    PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE);
+                        }
                     }
                 }
             }
@@ -1201,23 +1456,44 @@ public class ContactUtilities {
             //This will get thrown on contacts without a phone number. No reason to stress over it
             //e.printStackTrace();
         }
-
+        if(shouldUpdateProgress){
+            progressListener.onTaskComplete(100, PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE);
+        }
         return contacts;
     }
 
+    /**
+     * Overloaded to allow for null progressListener
+     */
+    public static List<Contact> getAddressQueryRegex(Context context, Pattern regexPattern, int maxNumResults){
+        return getAddressQueryRegex(null, context, regexPattern, maxNumResults);
+    }
 
     /**
      * Query the address table within the contacts database. Used for things like full address,
      * zip code, city, state, etc
-     * @param context Context used to obtain the contentResolver
-     * @param regexPattern Regular Expression Pattern to use in the filtering
+     *
+     * @param context       Context used to obtain the contentResolver
+     * @param regexPattern  Regular Expression Pattern to use in the filtering
      * @param maxNumResults max number of results to return. if 0, no limit
      */
-    public static List<Contact> getAddressQueryRegex(Context context, Pattern regexPattern, int maxNumResults) {
-
-        ContentResolver cr = context.getContentResolver();
+    public static List<Contact> getAddressQueryRegex(@Nullable OnTaskCompleteListener progressListener,
+                                                     Context context, Pattern regexPattern, int maxNumResults) {
 
         List<Contact> contacts = new ArrayList<>();
+        if (context == null) {
+            try {
+                context = PGMacTipsConfig.getInstance().getContext();
+            } catch (Exception e) {
+            }
+        }
+        ContentResolver cr;
+        try {
+            cr = context.getContentResolver();
+        } catch (NullPointerException npe) {
+            return contacts;
+        }
+        boolean shouldUpdateProgress = false;
         try {
 
             String addrWhere = null;
@@ -1232,16 +1508,20 @@ public class ContactUtilities {
                     addrWhereParams,
                     SORT_BY_DISPLAY_NAME);
 
-            if(addrCur == null){
+            if (addrCur == null) {
                 return contacts;
             }
 
             List<Contact.Address> myAddress = new ArrayList<>();
 
-            int counter = 0;
-            while (addrCur.moveToNext()) {
+            int updateProgressMaxInt = ContactUtilities.getMaxForProgressUpdates(
+                    progressListener, maxNumResults, addrCur.getCount());
+            shouldUpdateProgress = (updateProgressMaxInt != -1);
 
-                if(counter < maxNumResults || maxNumResults == 0) {
+            int counter = 0, totalCounter = -1;
+            while (addrCur.moveToNext()) {
+                totalCounter++;
+                if (counter < maxNumResults || maxNumResults == 0) {
 
                     Contact contact = new Contact();
 
@@ -1286,9 +1566,15 @@ public class ContactUtilities {
 
                     contact.setAddresses(myAddress);
 
-                    if(ContactUtilities.matchesCustomQuery(regexPattern, contact)) {
+                    if (ContactUtilities.matchesCustomQuery(regexPattern, contact)) {
                         contacts.add(contact);
                         counter++;
+                        if(shouldUpdateProgress){
+                            progressListener.onTaskComplete(
+                                    ContactUtilities.getProgressCount(
+                                            (float)counter, (float)updateProgressMaxInt),
+                                    PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE);
+                        }
                     }
                 }
             }
@@ -1297,22 +1583,44 @@ public class ContactUtilities {
             //This will get thrown on contacts without a phone number. No reason to stress over it
             //e.printStackTrace();
         }
-
+        if(shouldUpdateProgress){
+            progressListener.onTaskComplete(100, PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE);
+        }
         return contacts;
+    }
+
+    /**
+     * Overloaded to allow for null progressListener
+     */
+    public static List<Contact> getNameQueryRegex(Context context, Pattern regexPattern, int maxNumResults){
+        return getNameQueryRegex(null, context, regexPattern, maxNumResults);
     }
 
     /**
      * Query the name table within the contacts database. Used for things like first name, last
      * name, middle name, suffix, prefix.
-     * @param context Context used to obtain the contentResolver
-     * @param regexPattern Regular Expression Pattern to use in the filtering
+     *
+     * @param context       Context used to obtain the contentResolver
+     * @param regexPattern  Regular Expression Pattern to use in the filtering
      * @param maxNumResults max number of results to return. if 0, no limit
      */
-    public static List<Contact> getNameQueryRegex(Context context, Pattern regexPattern, int maxNumResults) {
-
-        ContentResolver cr = context.getContentResolver();
+    public static List<Contact> getNameQueryRegex(@Nullable OnTaskCompleteListener progressListener,
+                                                  Context context, Pattern regexPattern, int maxNumResults) {
 
         List<Contact> contacts = new ArrayList<>();
+        if (context == null) {
+            try {
+                context = PGMacTipsConfig.getInstance().getContext();
+            } catch (Exception e) {
+            }
+        }
+        ContentResolver cr;
+        try {
+            cr = context.getContentResolver();
+        } catch (NullPointerException npe) {
+            return contacts;
+        }
+        boolean shouldUpdateProgress = false;
         try {
             String nameWhere = ContactsContract.Data.MIMETYPE + " = ?";
             String[] nameWhereParams = new String[]{
@@ -1324,14 +1632,18 @@ public class ContactUtilities {
                     nameWhereParams,
                     SORT_BY_DISPLAY_NAME);
 
-            if(nameCur == null){
+            if (nameCur == null) {
                 return contacts;
             }
 
-            int counter = 0;
-            while (nameCur.moveToNext()) {
+            int updateProgressMaxInt = ContactUtilities.getMaxForProgressUpdates(
+                    progressListener, maxNumResults, nameCur.getCount());
+            shouldUpdateProgress = (updateProgressMaxInt != -1);
 
-                if(counter < maxNumResults || maxNumResults == 0) {
+            int counter = 0, totalCounter = -1;
+            while (nameCur.moveToNext()) {
+                totalCounter++;
+                if (counter < maxNumResults || maxNumResults == 0) {
 
                     Contact contact = new Contact();
 
@@ -1376,9 +1688,15 @@ public class ContactUtilities {
                     nameObject.setDisplayName(displayName2);
                     contact.setNameObject(nameObject);
 
-                    if(ContactUtilities.matchesCustomQuery(regexPattern, contact)) {
+                    if (ContactUtilities.matchesCustomQuery(regexPattern, contact)) {
                         contacts.add(contact);
                         counter++;
+                        if(shouldUpdateProgress){
+                            progressListener.onTaskComplete(
+                                    ContactUtilities.getProgressCount(
+                                            (float)counter, (float)updateProgressMaxInt),
+                                    PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE);
+                        }
                     }
                 }
             }
@@ -1387,26 +1705,12 @@ public class ContactUtilities {
             //This will get thrown on contacts without a phone number. No reason to stress over it
             //e.printStackTrace();
         }
-
+        if(shouldUpdateProgress){
+             progressListener.onTaskComplete(100, PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE);
+        }
         return contacts;
     }
 
-    /**
-     * Makes a check to compare a query and list of strings (chars) against the name / number.
-     * @param pattern Regular Expression Pattern to use in the filtering
-     * @param contact Contact object to compare against
-     * @return Return true if it matches, false if not
-     */
-    private static boolean matchesCustomQuery(@NonNull Pattern pattern, @NonNull Contact contact){
-        if(pattern == null || contact == null){
-            return false;
-        }
-        String jsonString = GsonUtilities.convertObjectToJson(contact, Contact.class);
-        if(StringUtilities.isNullOrEmpty(jsonString)){
-            return false;
-        }
-        return (pattern.matcher(jsonString)).matches();
-    }
 
     /////////////////////////////////////////////////////////////////////////////////////////
     //Query HashMap Builder methods (Same as above, but return Map<contactId, ContactObject//
@@ -1414,15 +1718,16 @@ public class ContactUtilities {
 
     /**
      * Query the phone table within the contacts database. Used for things like phone number and type
+     *
      * @param listener listener to pass data back on
-     * @param query Query to be searched
+     * @param query    Query to be searched
      */
     private Map<Integer, Contact> getPhoneQueryMap(OnTaskCompleteListener listener,
-                                                  String query) {
+                                                   String query) {
         if (listener == null) {
             return null;
         }
-        if(this.activity != null) {
+        if (this.activity != null) {
             if (!PermissionUtilities.getContactPermissions(activity)) {
                 return null;
             }
@@ -1440,7 +1745,7 @@ public class ContactUtilities {
 
             String phoneWhere = null;
             String[] phoneWhereParams = null;
-            if(query != null){
+            if (query != null) {
                 phoneWhere = ContactsContract.Data.MIMETYPE + " = ? AND " +
                         ContactsContract.CommonDataKinds.Phone.NUMBER + " LIKE ?";
                 phoneWhereParams = new String[]{
@@ -1487,7 +1792,7 @@ public class ContactUtilities {
                         ContactsContract.CommonDataKinds.Phone.NUMBER);
 
                 Contact.Phone phone;
-                if(phoneNumberType != null){
+                if (phoneNumberType != null) {
                     int x = Integer.parseInt(phoneNumberType);
                     phoneNumberType = ContactsContractSourceCodeStuff.getPhoneType(x);
                     phone = new Contact.Phone(phoneNumber, phoneNumberType);
@@ -1515,15 +1820,16 @@ public class ContactUtilities {
     /**
      * Query the email table within the contacts database. Used for things like email address, email
      * type.
+     *
      * @param listener listener to pass data back on
-     * @param query Query to be searched
+     * @param query    Query to be searched
      */
     private Map<Integer, Contact> getEmailQueryMap(OnTaskCompleteListener listener,
-                                                  String query) {
+                                                   String query) {
         if (listener == null) {
             return null;
         }
-        if(this.activity != null) {
+        if (this.activity != null) {
             if (!PermissionUtilities.getContactPermissions(activity)) {
                 return null;
             }
@@ -1541,7 +1847,7 @@ public class ContactUtilities {
 
             String emailWhere = null;
             String[] emailWhereParams = null;
-            if(query != null){
+            if (query != null) {
                 emailWhere = ContactsContract.Data.MIMETYPE + " = ? AND " +
                         ContactsContract.CommonDataKinds.Email.ADDRESS + " LIKE ?";
                 emailWhereParams = new String[]{
@@ -1589,7 +1895,7 @@ public class ContactUtilities {
 
                 Contact.Email myEmail;
 
-                if(emailType != null){
+                if (emailType != null) {
                     int x = Integer.parseInt(emailType);
                     emailType = ContactsContractSourceCodeStuff.getEmailType(x);
                     myEmail = new Contact.Email(email, emailType);
@@ -1619,15 +1925,16 @@ public class ContactUtilities {
     /**
      * Query the address table within the contacts database. Used for things like full address,
      * zip code, city, state, etc
+     *
      * @param listener listener to pass data back on
-     * @param query Query to be searched
+     * @param query    Query to be searched
      */
     private Map<Integer, Contact> getAddressQueryMap(OnTaskCompleteListener listener,
-                                                    String query) {
+                                                     String query) {
         if (listener == null) {
             return null;
         }
-        if(this.activity != null) {
+        if (this.activity != null) {
             if (!PermissionUtilities.getContactPermissions(activity)) {
                 return null;
             }
@@ -1646,7 +1953,7 @@ public class ContactUtilities {
 
             String addrWhere = null;
             String[] addrWhereParams = null;
-            if(query != null){
+            if (query != null) {
                 addrWhere = ContactsContract.Data.MIMETYPE + " = ? AND " +
                         ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS
                         + " LIKE ?";
@@ -1723,15 +2030,16 @@ public class ContactUtilities {
     /**
      * Query the name table within the contacts database. Used for things like first name, last
      * name, middle name, suffix, prefix.
+     *
      * @param listener listener to pass data back on
-     * @param query Query to be searched
+     * @param query    Query to be searched
      */
     private Map<Integer, Contact> getNameQueryMap(OnTaskCompleteListener listener,
-                                                 String query) {
+                                                  String query) {
         if (listener == null) {
             return null;
         }
-        if(this.activity != null) {
+        if (this.activity != null) {
             if (!PermissionUtilities.getContactPermissions(activity)) {
                 return null;
             }
@@ -1751,7 +2059,7 @@ public class ContactUtilities {
 
             String nameWhere = null;
             String[] nameWhereParams = null;
-            if(query != null){
+            if (query != null) {
                 nameWhere = ContactsContract.Data.MIMETYPE + " = ? AND " +
                         ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " LIKE ?";
                 nameWhereParams = new String[]{
@@ -2029,7 +2337,7 @@ public class ContactUtilities {
                         ContactsContract.CommonDataKinds.Email.TYPE);
 
                 Contact.Email myEmail;
-                if(emailType != null){
+                if (emailType != null) {
                     int x = Integer.parseInt(emailType);
                     emailType = ContactsContractSourceCodeStuff.getEmailType(x);
                     myEmail = new Contact.Email(email, emailType);
@@ -2080,7 +2388,7 @@ public class ContactUtilities {
 
 
                 Contact.Phone phone;
-                if(phoneNumberType != null){
+                if (phoneNumberType != null) {
                     int x = Integer.parseInt(phoneNumberType);
                     phoneNumberType = ContactsContractSourceCodeStuff.getPhoneType(x);
                     phone = new Contact.Phone(phoneNumber, phoneNumberType);
@@ -2590,6 +2898,7 @@ public class ContactUtilities {
         }
 
     }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //----------Methods for mutating or accessing lists of contacts--------------------------------/
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2599,19 +2908,20 @@ public class ContactUtilities {
      * will have less overall work to do.
      * NOTE! ONLY CALL THIS IF YOU HAVE CONTACTS WITH ONE ATTRIBUTE IN THE EMAIL, PHONE LISTS. IF
      * THE LISTS CONTAIN MULTIPLE ADDRESSES OR EMAILS, THIS WILL ONLY KEEP THE LAST IN THE LIST
+     *
      * @param contacts List of contacts to both iterate and update
      * @return Returns the altered list with new Strings added
      */
-    private static List<Contact> simplifyList(List<Contact> contacts){
-        if(contacts == null){
+    private static List<Contact> simplifyList(List<Contact> contacts) {
+        if (contacts == null) {
             return contacts;
         }
-        for(Contact currentContact : contacts){
+        for (Contact currentContact : contacts) {
 
             //Address
             List<ContactUtilities.Contact.Address> addresses = currentContact.getAddresses();
-            if(!MiscUtilities.isListNullOrEmpty(addresses)){
-                for(ContactUtilities.Contact.Address add : addresses){
+            if (!MiscUtilities.isListNullOrEmpty(addresses)) {
+                for (ContactUtilities.Contact.Address add : addresses) {
                     String add1 = add.getState();
                     String add2 = add.getCity();
                     String add3 = add.getState();
@@ -2623,23 +2933,23 @@ public class ContactUtilities {
 
             //Email
             List<ContactUtilities.Contact.Email> emails = currentContact.getEmail();
-            if(!MiscUtilities.isListNullOrEmpty(emails)){
+            if (!MiscUtilities.isListNullOrEmpty(emails)) {
 
                 String combinedEmails = null;
                 String combinedEmailTypes = null;
-                for(ContactUtilities.Contact.Email email : emails){
+                for (ContactUtilities.Contact.Email email : emails) {
 
                     String strEmail = email.getAddress();
                     String emailType = email.getType();
 
-                    if(strEmail != null){
-                        if(!strEmail.equalsIgnoreCase("null")) {
+                    if (strEmail != null) {
+                        if (!strEmail.equalsIgnoreCase("null")) {
                             combinedEmails = combinedEmails + ", " + strEmail;
                         }
                     }
                     combinedEmailTypes = emailType;
                 }
-                if(combinedEmails != null) {
+                if (combinedEmails != null) {
                     //Replace the goofy nulls
                     combinedEmails = combinedEmails.replace("null, ", "");
 
@@ -2650,23 +2960,23 @@ public class ContactUtilities {
 
             //Phone Number
             List<ContactUtilities.Contact.Phone> phones = currentContact.getPhone();
-            if(!MiscUtilities.isListNullOrEmpty(phones)){
+            if (!MiscUtilities.isListNullOrEmpty(phones)) {
                 String combinedNumbers = null;
                 String combinedNumberTypes = null;
-                for(ContactUtilities.Contact.Phone phone : phones){
+                for (ContactUtilities.Contact.Phone phone : phones) {
                     String strPhone = phone.getNumber();
                     String phoneType = phone.getType();
 
-                    if(strPhone != null){
+                    if (strPhone != null) {
                         strPhone = strPhone.trim();
-                        if(!strPhone.equalsIgnoreCase("null")) {
+                        if (!strPhone.equalsIgnoreCase("null")) {
                             combinedNumbers = combinedNumbers + ", " + strPhone;
                         }
                     }
                     combinedNumberTypes = phoneType;
                 }
 
-                if(combinedNumbers != null) {
+                if (combinedNumbers != null) {
                     //Replace the goofy nulls
                     combinedNumbers = combinedNumbers.replace("null, ", "");
 
@@ -2682,22 +2992,23 @@ public class ContactUtilities {
 
     /**
      * This checks (via the IDs) if a user is already in the list.
+     *
      * @param contacts List to loop through
      * @return Already in list it returns true, false if not
      */
-    private static boolean isObjectInList(String id, List<Contact> contacts){
-        if(StringUtilities.isNullOrEmpty(id) || contacts == null){
+    private static boolean isObjectInList(String id, List<Contact> contacts) {
+        if (StringUtilities.isNullOrEmpty(id) || contacts == null) {
             return false;
         }
-        if(contacts.size() <= 0){
+        if (contacts.size() <= 0) {
             return false;
         }
-        for(Contact contact : contacts){
+        for (Contact contact : contacts) {
             String id1 = contact.getId();
-            if(id1 == null){
+            if (id1 == null) {
                 continue;
             }
-            if(id.equalsIgnoreCase(id1)){
+            if (id.equalsIgnoreCase(id1)) {
                 return true;
             }
         }
@@ -2707,24 +3018,25 @@ public class ContactUtilities {
     /**
      * This checks (via the IDs) if a user is already in the list. Different than above method
      * in that it returns the position as to where the item already is
+     *
      * @param contacts List to loop through
      * @return returns the position of the duplicate. If no duplicate, it returns -1
      */
-    private static int isObjectInListPos(String id, List<Contact> contacts){
-        if(StringUtilities.isNullOrEmpty(id) || contacts == null){
+    private static int isObjectInListPos(String id, List<Contact> contacts) {
+        if (StringUtilities.isNullOrEmpty(id) || contacts == null) {
             return -1;
         }
-        if(contacts.size() <= 0){
+        if (contacts.size() <= 0) {
             return -1;
         }
         int pos = 0;
-        for(Contact contact : contacts){
+        for (Contact contact : contacts) {
             String id1 = contact.getId();
-            if(id1 == null){
+            if (id1 == null) {
                 pos++;
                 continue;
             }
-            if(id.equalsIgnoreCase(id1)){
+            if (id.equalsIgnoreCase(id1)) {
                 return pos;
             }
             pos++;
@@ -2734,19 +3046,20 @@ public class ContactUtilities {
 
     /**
      * Adds header objects (Alphabet headers) to the list
+     *
      * @param contactList List to be altered
-     * @param allLetters Boolean, if true, it will set ALL alphabet letters into a list (IE, Bob
-     *                   and Patrick in contacts, but it will still return A - Z).
-     *                   If false, only the letters that match the header of the next name will
-     *                   be included (IE, Bob and Patrick in contacts, but will only return B and P
-     *                   instead of the full A-Z list
+     * @param allLetters  Boolean, if true, it will set ALL alphabet letters into a list (IE, Bob
+     *                    and Patrick in contacts, but it will still return A - Z).
+     *                    If false, only the letters that match the header of the next name will
+     *                    be included (IE, Bob and Patrick in contacts, but will only return B and P
+     *                    instead of the full A-Z list
      * @return Altered list
      */
-    private static List<Contact> addAlphabetHeadersToList(List<Contact> contactList, boolean allLetters){
-        if(contactList == null){
+    private static List<Contact> addAlphabetHeadersToList(List<Contact> contactList, boolean allLetters) {
+        if (contactList == null) {
             return null;
         }
-        if(contactList.size() == 0){
+        if (contactList.size() == 0) {
             return contactList;
         }
 
@@ -2754,7 +3067,7 @@ public class ContactUtilities {
         List<Contact> toReturn = new ArrayList<>();
 
         //All letters, A-Z, regardless if contact list
-        if(allLetters) {
+        if (allLetters) {
 
             //Initialize with first letter
             String currentLetter = "A";
@@ -2854,7 +3167,7 @@ public class ContactUtilities {
             //Iterate over list
             for (Contact contact : contactList) {
 
-                if(contact == null){
+                if (contact == null) {
                     continue;
                 }
                 String firstLetter = contact.getRawDisplayName();
@@ -2887,7 +3200,7 @@ public class ContactUtilities {
                                 result--;
                             }
 
-                            if(firstLetterPlaced){
+                            if (firstLetterPlaced) {
                                 Contact headerContact = new Contact();
                                 headerContact.setHeader(true);
                                 headerContact.setHeaderString(currentLetter);
@@ -2929,7 +3242,7 @@ public class ContactUtilities {
                         }
                     } else if (result == 0) {
 
-                        if(!firstLetterPlaced){
+                        if (!firstLetterPlaced) {
                             firstLetter = contact.getRawDisplayName();
                             firstLetter = firstLetter.substring(0, 1);
                             firstLetter = firstLetter.toUpperCase();
@@ -2970,15 +3283,103 @@ public class ContactUtilities {
     ///////////////////
 
     /**
+     * Simple method to remove duplicates. This could happen in that people could request
+     * multiple duplicates, which will mess with progress updates.
+     * @param typesToQuery
+     * @return
+     */
+    private static SearchTypes[] removeDuplicateTypes(SearchTypes[] typesToQuery) {
+        if(MiscUtilities.isArrayNullOrEmpty(typesToQuery)){
+            return typesToQuery;
+        }
+        Map<SearchTypes, Integer> myMap = new HashMap<>();
+        for(SearchTypes s : typesToQuery){
+            myMap.put(s, 0);
+        }
+        if(MiscUtilities.isMapNullOrEmpty(myMap)){
+            return typesToQuery;
+        }
+        List<SearchTypes> toReturn = new ArrayList<>();
+        for(Map.Entry<SearchTypes, Integer> m : myMap.entrySet()){
+            toReturn.add(m.getKey());
+        }
+        if(MiscUtilities.isListNullOrEmpty(toReturn)){
+            return typesToQuery;
+        }
+        return toReturn.toArray(new SearchTypes[toReturn.size()]);
+    }
+
+    /**
+     * Makes a check to compare a query and list of strings (chars) against the name / number.
+     *
+     * @param pattern Regular Expression Pattern to use in the filtering
+     * @param contact Contact object to compare against
+     * @return Return true if it matches, false if not
+     */
+    private static boolean matchesCustomQuery(@NonNull Pattern pattern, @NonNull Contact contact) {
+        if (pattern == null || contact == null) {
+            return false;
+        }
+        String jsonString = GsonUtilities.convertObjectToJson(contact, Contact.class);
+        if (StringUtilities.isNullOrEmpty(jsonString)) {
+            return false;
+        }
+        return (pattern.matcher(jsonString)).matches();
+    }
+
+    /**
+     * Checker for getting the max number for the progress update listener.
+     * @param listener Listener that will be used for sending back data. If null, returns -1
+     * @param maxNumResults max number of results imposed by the user constraints
+     * @param cursorSize size of the cursor
+     * @return Size to use. If -1, it means send no updates, otherwise, progress num is based off of
+     */
+    private static int getMaxForProgressUpdates(@Nullable final OnTaskCompleteListener listener,
+                                                Integer maxNumResults, int cursorSize){
+        if(listener == null){
+            return -1;
+        }
+        if(cursorSize <= 0){
+            return -1;
+        }
+        int max = IntegerUtilities.getInt(maxNumResults);
+        if(max < 0){
+            max = 0;
+        }
+        if(max != 0 && max <= cursorSize){
+            return max;
+        } else {
+            return cursorSize;
+        }
+    }
+
+    /**
+     * Calculate the current progress to update
+     * @param currentCount current count
+     * @param maxCount max count
+     * @return float value (percent out of 100) for
+     */
+    private static float getProgressCount(float currentCount, float maxCount){
+        if(maxCount == 0){
+            return 0;
+        } else {
+            float x = (float)(100 * ((float)((float)currentCount / (float)maxCount)));
+            return x;
+        }
+    }
+
+
+    /**
      * Iterates through the list of all contacts and compares to the list of selected contacts
      * to see if they are on the list. If they are, it sets the full listOfContacts individual
      * object to selected=true and then returns it. This is used for when a new search / query
      * is made and you get back a full list of contacts, but don't know which ones are selected
      * so that a recyclerview 'isSelected' won't work.
-     * @param listOfContacts The list of contacts that is unknown as to whether or not it is
-     *                       selected. This would be the list brought back from query
-     * @param selectedContacts This is the persisted list of contacts where the user has already
-     *                         selected some and they are persisted.
+     *
+     * @param listOfContacts       The list of contacts that is unknown as to whether or not it is
+     *                             selected. This would be the list brought back from query
+     * @param selectedContacts     This is the persisted list of contacts where the user has already
+     *                             selected some and they are persisted.
      * @param typeSearchingThrough This is the type we are searching through. (To obtain the
      *                             correct String info to compare against)
      * @return List<Contacts> {@link ContactUtilities.Contact}
@@ -2986,51 +3387,51 @@ public class ContactUtilities {
     public static List<ContactUtilities.Contact> checkAndSetSelected(
             List<ContactUtilities.Contact> listOfContacts,
             List<ContactUtilities.Contact> selectedContacts,
-            @NonNull SearchTypes typeSearchingThrough){
-        if(MiscUtilities.isListNullOrEmpty(listOfContacts) ||
-                MiscUtilities.isListNullOrEmpty(selectedContacts)){
+            @NonNull SearchTypes typeSearchingThrough) {
+        if (MiscUtilities.isListNullOrEmpty(listOfContacts) ||
+                MiscUtilities.isListNullOrEmpty(selectedContacts)) {
             return listOfContacts;
         }
 
         List<String> listToCheckAgainst = new ArrayList<>();
 
-        if(typeSearchingThrough == SearchTypes.PHONE){
-            for(ContactUtilities.Contact contact : selectedContacts){
-                if(contact == null){
+        if (typeSearchingThrough == SearchTypes.PHONE) {
+            for (ContactUtilities.Contact contact : selectedContacts) {
+                if (contact == null) {
                     continue;
                 }
                 String str = contact.getSimplifiedPhoneNumber();
-                if(!StringUtilities.isNullOrEmpty(str)){
+                if (!StringUtilities.isNullOrEmpty(str)) {
                     listToCheckAgainst.add(str);
                 }
             }
-        } else if(typeSearchingThrough == SearchTypes.EMAIL){
-            for(ContactUtilities.Contact contact : selectedContacts){
-                if(contact == null){
+        } else if (typeSearchingThrough == SearchTypes.EMAIL) {
+            for (ContactUtilities.Contact contact : selectedContacts) {
+                if (contact == null) {
                     continue;
                 }
                 String str = contact.getSimplifiedEmail();
-                if(!StringUtilities.isNullOrEmpty(str)){
+                if (!StringUtilities.isNullOrEmpty(str)) {
                     listToCheckAgainst.add(str);
                 }
             }
-        } else if(typeSearchingThrough == SearchTypes.NAME){
-            for(ContactUtilities.Contact contact : selectedContacts){
-                if(contact == null){
+        } else if (typeSearchingThrough == SearchTypes.NAME) {
+            for (ContactUtilities.Contact contact : selectedContacts) {
+                if (contact == null) {
                     continue;
                 }
                 String str = contact.getRawDisplayName();
-                if(!StringUtilities.isNullOrEmpty(str)){
+                if (!StringUtilities.isNullOrEmpty(str)) {
                     listToCheckAgainst.add(str);
                 }
             }
-        } else if(typeSearchingThrough == SearchTypes.ADDRESS){
-            for(ContactUtilities.Contact contact : selectedContacts){
-                if(contact == null){
+        } else if (typeSearchingThrough == SearchTypes.ADDRESS) {
+            for (ContactUtilities.Contact contact : selectedContacts) {
+                if (contact == null) {
                     continue;
                 }
                 String str = contact.getSimplifiedAddress();
-                if(!StringUtilities.isNullOrEmpty(str)){
+                if (!StringUtilities.isNullOrEmpty(str)) {
                     listToCheckAgainst.add(str);
                 }
             }
@@ -3039,41 +3440,41 @@ public class ContactUtilities {
             return listOfContacts;
         }
         //Iterate entire list
-        for(int i = 0; i < listOfContacts.size(); i++){
+        for (int i = 0; i < listOfContacts.size(); i++) {
             ContactUtilities.Contact currentContact = listOfContacts.get(i);
 
-            if(currentContact == null){
+            if (currentContact == null) {
                 continue;
             }
 
-            if(typeSearchingThrough == SearchTypes.PHONE){
+            if (typeSearchingThrough == SearchTypes.PHONE) {
                 String str = currentContact.getSimplifiedPhoneNumber();
-                if(!StringUtilities.isNullOrEmpty(str)){
-                    if(listToCheckAgainst.contains(str)){
+                if (!StringUtilities.isNullOrEmpty(str)) {
+                    if (listToCheckAgainst.contains(str)) {
                         currentContact.setSelectedInList(true);
                         listOfContacts.set(i, currentContact);
                     }
                 }
-            } else if(typeSearchingThrough == SearchTypes.EMAIL){
+            } else if (typeSearchingThrough == SearchTypes.EMAIL) {
                 String str = currentContact.getSimplifiedEmail();
-                if(!StringUtilities.isNullOrEmpty(str)){
-                    if(listToCheckAgainst.contains(str)){
+                if (!StringUtilities.isNullOrEmpty(str)) {
+                    if (listToCheckAgainst.contains(str)) {
                         currentContact.setSelectedInList(true);
                         listOfContacts.set(i, currentContact);
                     }
                 }
-            } else if(typeSearchingThrough == SearchTypes.NAME){
+            } else if (typeSearchingThrough == SearchTypes.NAME) {
                 String str = currentContact.getRawDisplayName();
-                if(!StringUtilities.isNullOrEmpty(str)){
-                    if(listToCheckAgainst.contains(str)){
+                if (!StringUtilities.isNullOrEmpty(str)) {
+                    if (listToCheckAgainst.contains(str)) {
                         currentContact.setSelectedInList(true);
                         listOfContacts.set(i, currentContact);
                     }
                 }
-            } else if(typeSearchingThrough == SearchTypes.ADDRESS){
+            } else if (typeSearchingThrough == SearchTypes.ADDRESS) {
                 String str = currentContact.getSimplifiedAddress();
-                if(!StringUtilities.isNullOrEmpty(str)){
-                    if(listToCheckAgainst.contains(str)){
+                if (!StringUtilities.isNullOrEmpty(str)) {
+                    if (listToCheckAgainst.contains(str)) {
                         currentContact.setSelectedInList(true);
                         listOfContacts.set(i, currentContact);
                     }
@@ -3085,18 +3486,19 @@ public class ContactUtilities {
 
     /**
      * Deselect all contacts in a list
+     *
      * @param listOfContacts List to set and return
      * @return Altered list of the one passed in
      */
     public static List<ContactUtilities.Contact> deselectAllContacts(
-            List<ContactUtilities.Contact> listOfContacts){
-        if(MiscUtilities.isListNullOrEmpty(listOfContacts)){
+            List<ContactUtilities.Contact> listOfContacts) {
+        if (MiscUtilities.isListNullOrEmpty(listOfContacts)) {
             return listOfContacts;
         }
         //Iterate entire list
-        for(int i = 0; i < listOfContacts.size(); i++){
+        for (int i = 0; i < listOfContacts.size(); i++) {
             ContactUtilities.Contact currentContact = listOfContacts.get(i);
-            if(currentContact == null){
+            if (currentContact == null) {
                 continue;
             }
             currentContact.setSelectedInList(false);
@@ -3107,18 +3509,19 @@ public class ContactUtilities {
 
     /**
      * Select all contacts in a list
+     *
      * @param listOfContacts List to set and return
      * @return Altered list of the one passed in
      */
     public static List<ContactUtilities.Contact> selectAllContacts(
-            List<ContactUtilities.Contact> listOfContacts){
-        if(MiscUtilities.isListNullOrEmpty(listOfContacts)){
+            List<ContactUtilities.Contact> listOfContacts) {
+        if (MiscUtilities.isListNullOrEmpty(listOfContacts)) {
             return listOfContacts;
         }
         //Iterate entire list
-        for(int i = 0; i < listOfContacts.size(); i++){
+        for (int i = 0; i < listOfContacts.size(); i++) {
             ContactUtilities.Contact currentContact = listOfContacts.get(i);
-            if(currentContact == null){
+            if (currentContact == null) {
                 continue;
             }
             currentContact.setSelectedInList(true);
@@ -3129,21 +3532,22 @@ public class ContactUtilities {
 
     /**
      * Check if a list contains the email already
+     *
      * @param contacts Contact list to compare against
-     * @param email email to check
+     * @param email    email to check
      * @return boolean, true if it already contains it, false if it does not.
      */
-    private static boolean listAlreadyContainsEmail(List<Contact> contacts, String email){
-        if(contacts == null || StringUtilities.isNullOrEmpty(email)){
+    private static boolean listAlreadyContainsEmail(List<Contact> contacts, String email) {
+        if (contacts == null || StringUtilities.isNullOrEmpty(email)) {
             return false;
         }
 
-        for(Contact contact : contacts){
+        for (Contact contact : contacts) {
             List<Contact.Email> checkEmails = contact.getEmail();
-            for(Contact.Email singleEmail : checkEmails){
+            for (Contact.Email singleEmail : checkEmails) {
                 String checkEmail = singleEmail.getAddress();
-                if(!StringUtilities.isNullOrEmpty(checkEmail)){
-                    if(checkEmail.equalsIgnoreCase(email)){
+                if (!StringUtilities.isNullOrEmpty(checkEmail)) {
+                    if (checkEmail.equalsIgnoreCase(email)) {
                         return true;
                     }
                 }
@@ -3154,21 +3558,22 @@ public class ContactUtilities {
 
     /**
      * Check if a list contains the phone number already
-     * @param contacts Contact list to compare against
+     *
+     * @param contacts    Contact list to compare against
      * @param phoneNumber Phone number to check
      * @return boolean, true if it already contains it, false if it does not.
      */
-    private static boolean listAlreadyContainsPhoneNumber(List<Contact> contacts, String phoneNumber){
-        if(contacts == null || StringUtilities.isNullOrEmpty(phoneNumber)){
+    private static boolean listAlreadyContainsPhoneNumber(List<Contact> contacts, String phoneNumber) {
+        if (contacts == null || StringUtilities.isNullOrEmpty(phoneNumber)) {
             return false;
         }
 
-        for(Contact contact : contacts){
+        for (Contact contact : contacts) {
             List<Contact.Phone> checkPhones = contact.getPhone();
-            for(Contact.Phone singlePhone : checkPhones){
+            for (Contact.Phone singlePhone : checkPhones) {
                 String checkPhone = singlePhone.getNumber();
-                if(!StringUtilities.isNullOrEmpty(checkPhone)){
-                    if(checkPhone.equalsIgnoreCase(phoneNumber)){
+                if (!StringUtilities.isNullOrEmpty(checkPhone)) {
+                    if (checkPhone.equalsIgnoreCase(phoneNumber)) {
                         return true;
                     }
                 }
@@ -3180,13 +3585,14 @@ public class ContactUtilities {
     /**
      * Checks if the number is one of the ones we want to remove from list.
      * This list includes the build in ones into the phone (IE, #data, *611, etc)
+     *
      * @param phoneNumber Phone number to check against
      * @return boolean, true if it is on the list, false if it is not
      */
-    public static boolean numberOnBlockList(String phoneNumber){
+    public static boolean numberOnBlockList(String phoneNumber) {
         try {
             return Arrays.asList(BLOCK_LIST_NUMBERS).contains(phoneNumber);
-        } catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
@@ -3217,16 +3623,17 @@ public class ContactUtilities {
      * have contacts in your phone with something other than a number or a letter to start,
      * it will screw up the first letter up top section. This will make it either a pound
      * sign (#. I refuse to call it hashtag. Dang young whippersnappers) or a letter.
+     *
      * @param str String to alter/ check
      * @return Altered string with proper formatting
      */
-    private static String formatFirstLetterForPage(String str){
-        if(StringUtilities.isNullOrEmpty(str)){
+    private static String formatFirstLetterForPage(String str) {
+        if (StringUtilities.isNullOrEmpty(str)) {
             return str;
         }
         str = str.trim();
         str = str.substring(0, 1);
-        if(str.equalsIgnoreCase("0") ||
+        if (str.equalsIgnoreCase("0") ||
                 str.equalsIgnoreCase("1") ||
                 str.equalsIgnoreCase("2") ||
                 str.equalsIgnoreCase("3") ||
@@ -3236,10 +3643,10 @@ public class ContactUtilities {
                 str.equalsIgnoreCase("7") ||
                 str.equalsIgnoreCase("8") ||
                 str.equalsIgnoreCase("9")
-                ){
+                ) {
             str = "#";
         }
-        if(str.equalsIgnoreCase("+") ||
+        if (str.equalsIgnoreCase("+") ||
                 str.equalsIgnoreCase("-") ||
                 str.equalsIgnoreCase("(") ||
                 str.equalsIgnoreCase(")") ||
@@ -3257,42 +3664,44 @@ public class ContactUtilities {
                 str.equalsIgnoreCase("}") ||
                 str.equalsIgnoreCase(",") ||
                 str.equalsIgnoreCase(".")
-                ){
+                ) {
             str = "A";
         }
         return str;
     }
+
     /**
      * Moves contacts with a favorites tag to the top of the list. If none exist, it will just
      * return the existing list.
      * NOTE: This must be run AFTER adding in the alphabetical characters (A, B, C) else this will
-     *     not be able to be up top. (Assuming you wanted alphabetical headers)
+     * not be able to be up top. (Assuming you wanted alphabetical headers)
+     *
      * @param myList List of contacts to filter / adjust
      * @return List of Contact objects
      */
-    private static List<Contact> moveFavoritesToTop(List<Contact> myList){
-        if(myList == null){
+    private static List<Contact> moveFavoritesToTop(List<Contact> myList) {
+        if (myList == null) {
             return myList;
         }
-        if(myList.size() <= 0){
+        if (myList.size() <= 0) {
             return myList;
         }
 
         List<Integer> pos = new ArrayList<>();
 
         Integer counter = 0;
-        for(Contact contact : myList){
+        for (Contact contact : myList) {
             boolean isFavorite = contact.isStarred();
             //If favorites, add it to the list
-            if(isFavorite){
+            if (isFavorite) {
                 pos.add(counter);
             }
             counter++;
         }
 
-        if(pos.size() > 0){
+        if (pos.size() > 0) {
             int[] favPositions = new int[pos.size()];
-            for (int i = 0; i < pos.size(); i++){
+            for (int i = 0; i < pos.size(); i++) {
                 favPositions[i] = pos.get(i);
             }
             return moveFavoritesToTop(myList, favPositions);
@@ -3305,32 +3714,34 @@ public class ContactUtilities {
      * Moves contacts with a favorites tag to the top of the list. If none exist, it will just
      * return the existing list.
      * NOTE: This must be run AFTER adding in the alphabetical characters (A, B, C) else this will
-     *     not be able to be up top. (Assuming you wanted alphabetical headers)
+     * not be able to be up top. (Assuming you wanted alphabetical headers)
      * NOTE: This method takes in an array of positions for the favorites. If the list has not
-     *     been built yet, call the overloaded method without said array
-     * @param myList List of contacts to filter / adjust
+     * been built yet, call the overloaded method without said array
+     *
+     * @param myList    List of contacts to filter / adjust
      * @param positions positions of favorites within the myList object
      * @return List of Contact objects
      */
-    private static List<Contact> moveFavoritesToTop(List<Contact> myList, int[] positions){
-        if(myList == null){
+    private static List<Contact> moveFavoritesToTop(List<Contact> myList, int[] positions) {
+        if (myList == null) {
             return myList;
         }
-        if(myList.size() <= 0){
+        if (myList.size() <= 0) {
             return myList;
         }
 
         //Loop through, move objects from their position in list to the top
-        for(int x : positions){
+        for (int x : positions) {
             try {
                 Contact contact = myList.get(x);
                 myList.remove(x);
                 myList.add(0, contact);
-            } catch (Exception e){} //If any issues happen while trying to remove items from the list
+            } catch (Exception e) {
+            } //If any issues happen while trying to remove items from the list
         }
 
         //If any were moved, add a favorites tag up top
-        if(positions.length > 0){
+        if (positions.length > 0) {
             Contact contact = new Contact();
             contact.setHeaderString("Favorites");
             contact.setHeader(true);
@@ -3347,7 +3758,7 @@ public class ContactUtilities {
      * This class is copied from the Android Source code (ContactsContract.java) with some minor
      * changes to allow for auto-converting to Strings
      */
-    private static class ContactsContractSourceCodeStuff{
+    private static class ContactsContractSourceCodeStuff {
         /*
         This section is copied from the Android Source code (ContactsContract.java). Lines 5867 - 5886
         and 5927 - 5950. Not sure why I was unable to access it, so I copied it here so I can compare
@@ -3358,17 +3769,24 @@ public class ContactUtilities {
         private static final int TYPE_WORK = 3;
         private static final int TYPE_FAX_WORK = 4;
         private static final int TYPE_FAX_HOME = 5;
+
         /**
          * Return the string resource that best describes the given type
          */
         public static final String getPhoneType(int type) {
             switch (type) {
-                case TYPE_HOME: return "Home";
-                case TYPE_MOBILE: return "Mobile";
-                case TYPE_WORK: return "Work";
-                case TYPE_FAX_WORK: return "Fax";
-                case TYPE_FAX_HOME: return "Fax";
-                default: return "Other";
+                case TYPE_HOME:
+                    return "Home";
+                case TYPE_MOBILE:
+                    return "Mobile";
+                case TYPE_WORK:
+                    return "Work";
+                case TYPE_FAX_WORK:
+                    return "Fax";
+                case TYPE_FAX_HOME:
+                    return "Fax";
+                default:
+                    return "Other";
             }
         }
 
@@ -3381,16 +3799,22 @@ public class ContactUtilities {
         private static final int TYPE_WORK_EMAIL = 2;
         private static final int TYPE_OTHER_EMAIL = 3;
         private static final int TYPE_MOBILE_EMAIL = 4;
+
         /**
          * Return the string resource that best describes the given type
          */
         public static final String getEmailType(int type) {
             switch (type) {
-                case TYPE_HOME_EMAIL: return "Personal";
-                case TYPE_WORK_EMAIL: return "Work";
-                case TYPE_OTHER_EMAIL: return "Other";
-                case TYPE_MOBILE_EMAIL: return "Mobile";
-                default: return "Other";
+                case TYPE_HOME_EMAIL:
+                    return "Personal";
+                case TYPE_WORK_EMAIL:
+                    return "Work";
+                case TYPE_OTHER_EMAIL:
+                    return "Other";
+                case TYPE_MOBILE_EMAIL:
+                    return "Mobile";
+                default:
+                    return "Other";
             }
         }
     }

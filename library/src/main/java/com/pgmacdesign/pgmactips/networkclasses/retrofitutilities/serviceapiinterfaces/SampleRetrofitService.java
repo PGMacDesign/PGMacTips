@@ -4,6 +4,7 @@ import com.pgmacdesign.pgmactips.datamodels.SamplePojo;
 
 import java.util.Map;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -27,12 +28,12 @@ public interface SampleRetrofitService {
      * This would be a sample of a post request to a login endpoint that takes in an object
      * of type SamplePojo for the credentials and then returns an object of type SamplePojo
      * @param credentials object of type SamplePojo
-     * @return An object of type SamplePojo
+     * @return An object of type ResponseBody that can be case into type {X}
      * This url request would look like this if printed out:
      * www.baseurl.com/api/v1/login  + the headers  +  the JSON Body of type SamplePojo
      */
     @POST(API_SUFFIX_STRING + VERSION_STRING + "/login")
-    Call<SamplePojo> login(@Body SamplePojo credentials);
+    Call<ResponseBody> login(@Body SamplePojo credentials);
 
     /**
      * This would be a sample of a post request to a sample get user endpoint that takes in a path

@@ -67,7 +67,7 @@ public class RetrofitParser {
      * the {@link retrofit2.Callback#onFailure} method. The response will always
      * be a String of the throwable message.
      */
-    public static final int TAG_RETROFIT_CALL_ERROR = PGMacTipsConstants.TAG_RETROFIT_PARSE_ERROR;
+    public static final int TAG_RETROFIT_CALL_ERROR = PGMacTipsConstants.TAG_RETROFIT_CALL_ERROR;
     public static final String EMPTY_JSON_RESPONSE = "{}";
 
     ////////////////////////

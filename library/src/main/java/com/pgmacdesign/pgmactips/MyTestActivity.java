@@ -19,8 +19,8 @@ import com.pgmacdesign.pgmactips.datamodels.SamplePojo;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitClient;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitParser;
-import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.serviceapiinterfaces.ProfantiyCheckerAPICalls;
-import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.serviceapiinterfaces.ProfantiyCheckerInterface;
+import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.serviceapiinterfaces.ProfanityCheckerAPICalls;
+import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.serviceapiinterfaces.ProfanityCheckerInterface;
 import com.pgmacdesign.pgmactips.stackmanagement.StackManager;
 import com.pgmacdesign.pgmactips.stackmanagement.StackManagerException;
 import com.pgmacdesign.pgmactips.utilities.CameraMediaUtilities;
@@ -244,7 +244,7 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
     private void doWebCall(){
 
 
-        ProfantiyCheckerAPICalls.checkProfanityAsynchronous(this,
+        ProfanityCheckerAPICalls.checkProfanityAsynchronous(this,
                 new OnTaskCompleteListener() {
                     @Override
                     public void onTaskComplete(Object result, int customTag) {
@@ -317,8 +317,8 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
     private void loadTestCall(){
         String BASE_URL = "http://www.purgomalum.com/";
         String tempURL = "http://ec2-52-9-73-238.us-west-1.compute.amazonaws.com/";
-        ProfantiyCheckerInterface serviceInterface = new RetrofitClient.Builder(
-                ProfantiyCheckerInterface.class, tempURL)
+        ProfanityCheckerInterface serviceInterface = new RetrofitClient.Builder(
+                ProfanityCheckerInterface.class, tempURL)
                 .setTimeouts(60000,60000)
                 .setLogLevel(HttpLoggingInterceptor.Level.NONE)
                 .build().buildServiceClient();

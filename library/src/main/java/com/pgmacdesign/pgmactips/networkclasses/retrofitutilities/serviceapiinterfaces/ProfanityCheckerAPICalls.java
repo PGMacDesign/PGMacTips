@@ -25,9 +25,9 @@ import retrofit2.Response;
  * {@link com.pgmacdesign.pgmactips.utilities.PermissionUtilities.permissionsEnum}
  * Created by pmacdowell on 8/29/2016.
  */
-public class ProfantiyCheckerAPICalls {
+public class ProfanityCheckerAPICalls {
 
-    private static ProfantiyCheckerInterface serviceInterface;
+    private static ProfanityCheckerInterface serviceInterface;
     private static final String BASE_URL = "http://www.purgomalum.com/";
 
     static {
@@ -158,7 +158,7 @@ public class ProfantiyCheckerAPICalls {
         if(serviceInterface == null) {
 
             serviceInterface = new RetrofitClient.Builder(
-                    ProfantiyCheckerInterface.class, BASE_URL)
+                    ProfanityCheckerInterface.class, BASE_URL)
                     .setTimeouts(60000,60000)
                     .setLogLevel(HttpLoggingInterceptor.Level.BODY)
                     .build().buildServiceClient();
