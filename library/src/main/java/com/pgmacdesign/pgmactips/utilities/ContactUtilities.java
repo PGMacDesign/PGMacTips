@@ -496,9 +496,15 @@ public class ContactUtilities {
             }
             if (this.classReference.get().shouldUpdateProgress) {
                 if (this.classReference.get().listener != null) {
+                    float toReport = (this.baseFloatToAppendTo + values[0]);
+                    if(toReport < 0){
+                        toReport = 0;
+                    }
+                    if(toReport > 100){
+                        toReport = 100;
+                    }
                     this.classReference.get().listener.onTaskComplete(
-                            (this.baseFloatToAppendTo + values[0]),
-                            PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE);
+                            toReport, PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE);
                 }
             }
         }
