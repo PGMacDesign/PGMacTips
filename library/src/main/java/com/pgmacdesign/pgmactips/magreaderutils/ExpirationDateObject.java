@@ -2,6 +2,7 @@
 package com.pgmacdesign.pgmactips.magreaderutils;
 
 
+import com.google.gson.annotations.SerializedName;
 import com.pgmacdesign.pgmactips.misc.TempString;
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 
@@ -14,6 +15,7 @@ import static com.pgmacdesign.pgmactips.utilities.StringUtilities.keepNumbersOnl
 public final class ExpirationDateObject implements TempStringInterface{
 
 
+    @SerializedName("expirationYearMonth")
     private transient TempString expirationYearMonth;
 
     public ExpirationDateObject() {
@@ -62,6 +64,12 @@ public final class ExpirationDateObject implements TempStringInterface{
         String month = (characters[2] + "") + (characters[3] + "");
         String year = (characters[0] + "") + (characters[1] + "");
         this.expirationYearMonth = new TempString(year + "/" + month);
+    }
+
+    public void dispose(){
+        if(this.expirationYearMonth != null){
+            this.expirationYearMonth.disposeData();
+        }
     }
 
     /**

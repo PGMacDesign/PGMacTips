@@ -32,4 +32,11 @@ public class CardInfo {
     public void setHasChip(Boolean hasChip) {
         this.hasChip = hasChip;
     }
+
+    public void dispose(){
+        this.isInternational = null;
+        this.hasChip = null;
+        this.pinRequirements = null;
+    }
+
 }

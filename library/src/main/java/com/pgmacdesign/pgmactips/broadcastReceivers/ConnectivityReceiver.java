@@ -1,5 +1,6 @@
 package com.pgmacdesign.pgmactips.broadcastReceivers;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -43,11 +44,14 @@ public class ConnectivityReceiver extends BroadcastReceiver {
         super();
     }
 
+    /**
+     * Note! Requires permission to run, will throw exception otherwise
+     */
     @Override
     public void onReceive(Context context, Intent arg1) {
         ConnectivityManager cm = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        @SuppressLint("MissingPermission") NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null
                 && activeNetwork.isConnectedOrConnecting();
 

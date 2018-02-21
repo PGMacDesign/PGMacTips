@@ -4,6 +4,7 @@ package com.pgmacdesign.pgmactips.magreaderutils;
 
 import android.support.annotation.NonNull;
 
+import com.google.gson.annotations.SerializedName;
 import com.pgmacdesign.pgmactips.misc.TempString;
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 
@@ -14,7 +15,9 @@ import static com.pgmacdesign.pgmactips.utilities.StringUtilities.isNullOrEmpty;
  */
 public class Name extends BaseTempData {
 
+    @SerializedName("firstName")
     private transient final TempString firstName;
+    @SerializedName("lastName")
     private transient final TempString lastName;
 
     /**
@@ -134,5 +137,10 @@ public class Name extends BaseTempData {
             }
         }
         return null;
+    }
+
+    public void dispose(){
+        if(this.firstName != null) this.firstName.disposeData();
+        if(this.lastName != null) this.lastName.disposeData();
     }
 }

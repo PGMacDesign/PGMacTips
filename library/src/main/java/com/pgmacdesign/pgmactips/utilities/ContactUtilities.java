@@ -9,6 +9,7 @@ import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.gson.annotations.SerializedName;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConfig;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
@@ -2575,24 +2576,42 @@ public class ContactUtilities {
      * Contact entity object
      */
     public static class Contact {
+        @SerializedName("id")
         private String id;
+        @SerializedName("nameObject")
         private NameObject nameObject;
+        @SerializedName("phone")
         private List<Phone> phone;
+        @SerializedName("email")
         private List<Email> email;
+        @SerializedName("notes")
         private List<String> notes;
+        @SerializedName("addresses")
         private List<Address> addresses = new ArrayList<Address>();
+        @SerializedName("organization")
         private Organization organization;
+        @SerializedName("rawDisplayName")
         private String rawDisplayName;
+        @SerializedName("photoUri")
         private String photoUri;
+        @SerializedName("isStarred")
         private boolean isStarred = false; //Default
+        @SerializedName("isHeader")
         private boolean isHeader = false;
+        @SerializedName("isSelectedInList")
         private boolean isSelectedInList = false; //For implementing in click listeners
+        @SerializedName("headerString")
         private String headerString;
         //These 3 are to 'simplify' the data structure and allow for less work in an onBindView call
+        @SerializedName("simplifiedPhoneNumber")
         private String simplifiedPhoneNumber;
+        @SerializedName("simplifiedPhoneNumberType")
         private String simplifiedPhoneNumberType;
+        @SerializedName("simplifiedEmailType")
         private String simplifiedEmailType;
+        @SerializedName("simplifiedEmail")
         private String simplifiedEmail;
+        @SerializedName("simplifiedAddress")
         private String simplifiedAddress;
 
         public String getSimplifiedPhoneNumberType() {

@@ -2,14 +2,18 @@
 package com.pgmacdesign.pgmactips.magreaderutils;
 
 
+import com.google.gson.annotations.SerializedName;
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 
 import static com.pgmacdesign.pgmactips.utilities.StringUtilities.isNullOrEmpty;
 
 public class ServiceCode extends BaseTempData {
 
+    @SerializedName("serviceCode")
     private String serviceCode;
+    @SerializedName("cardMisc")
     private CardConstants.CardMisc cardMisc;
+    @SerializedName("pinRequirements")
     private CardConstants.PinRequirements pinRequirements;
 
     public ServiceCode() {
@@ -28,6 +32,11 @@ public class ServiceCode extends BaseTempData {
             cardMisc = serviceCode(0, cardMisc.unknown);
             pinRequirements = serviceCode(2, pinRequirements.unknown);
         }
+    }
+
+    public void dispose(){
+        super.clearTempString();
+        serviceCode = null;
     }
 
     public String getServiceCode() {

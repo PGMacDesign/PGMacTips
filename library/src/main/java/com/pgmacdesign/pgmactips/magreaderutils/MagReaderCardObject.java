@@ -2,6 +2,8 @@
 package com.pgmacdesign.pgmactips.magreaderutils;
 
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 
 /**
@@ -9,12 +11,45 @@ import java.util.Date;
  */
 public class MagReaderCardObject {
 
+    @SerializedName("accountNumber")
     private transient AccountNumber accountNumber;
+    @SerializedName("name")
     private transient Name name;
+    @SerializedName("expirationDateObject")
     private transient ExpirationDateObject expirationDateObject;
+    @SerializedName("serviceCode")
     private transient ServiceCode serviceCode;
+    @SerializedName("cardInfo")
     private transient CardConstants.CardMisc cardInfo;
+    @SerializedName("birthDateObject")
     private transient BirthDateObject birthDateObject;
+
+    /**
+     * Clear all data from memory
+     */
+    public void disposeData(){
+        if(accountNumber != null){
+            accountNumber.dispose();
+        }
+        accountNumber = null;
+        if(name != null){
+            name.dispose();
+        }
+        name = null;
+        if(expirationDateObject != null){
+            this.expirationDateObject.dispose();
+        }
+        expirationDateObject = null;
+        if(serviceCode != null){
+            serviceCode.dispose();
+        }
+        serviceCode = null;
+        if(birthDateObject != null){
+            birthDateObject.dispose();
+        }
+        birthDateObject = null;
+        cardInfo = null;
+    }
 
     public void parseRawName(String rawName) {
         String[] fullName = rawName.split("/");

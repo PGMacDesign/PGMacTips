@@ -2,6 +2,7 @@
 package com.pgmacdesign.pgmactips.magreaderutils;
 
 
+import com.google.gson.annotations.SerializedName;
 import com.pgmacdesign.pgmactips.misc.TempString;
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 
@@ -11,8 +12,12 @@ import static com.pgmacdesign.pgmactips.utilities.StringUtilities.isNullOrEmpty;
 
 public class AccountNumber extends BaseTempData implements TempStringInterface {
 
+
+    @SerializedName("accountNumber")
     private TempString accountNumber;
+    @SerializedName("lastFourDigits")
     private TempString lastFourDigits;
+    @SerializedName("accountInfo")
     private AccountInfo accountInfo;
 
     public AccountNumber() {
@@ -82,18 +87,18 @@ public class AccountNumber extends BaseTempData implements TempStringInterface {
         super.clearTempString();
         disposeLastFourDigits();
         disposeIssuerIdentificationNumber();
-        accountNumber.disposeData();
+        if(accountNumber != null) accountNumber.disposeData();
     }
 
     public void disposeIssuerIdentificationNumber() {
         super.clearTempString();
-        accountNumber.disposeData(0, 6);
+        if(accountNumber != null) accountNumber.disposeData(0, 6);
     }
 
     public void disposeLastFourDigits() {
         super.clearTempString();
-        lastFourDigits.disposeData();
-        accountNumber.disposeData(accountNumber.length() - 4);
+        if(lastFourDigits != null) lastFourDigits.disposeData();
+        if(accountNumber != null) accountNumber.disposeData(accountNumber.length() - 4);
     }
 
 

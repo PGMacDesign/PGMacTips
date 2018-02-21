@@ -1,7 +1,5 @@
 package com.pgmacdesign.pgmactips.magreaderutils;
 
-import com.pgmacdesign.pgmactips.utilities.L;
-
 import java.util.regex.Matcher;
 
 import static com.pgmacdesign.pgmactips.utilities.StringUtilities.isNullOrEmpty;
@@ -22,12 +20,10 @@ public class Track3Credit extends MagReaderTrackBase {
                 switch (i) {
                     case 1:
                         rawTrack3Data = getGroup(matcher, 1);
-                        L.m("rawTrack3Data == " + rawTrack3Data);
                         break;
 
                     case 2:
                         discretionaryData = getGroup(matcher, 2);
-                        L.m("discretionaryData == " + discretionaryData);
                         break;
 
                 }

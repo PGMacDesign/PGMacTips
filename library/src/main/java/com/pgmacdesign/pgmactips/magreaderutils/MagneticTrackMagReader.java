@@ -182,4 +182,5 @@ public class MagneticTrackMagReader extends MagReaderTrackBase {
         }
         return false;
     }
+
 }

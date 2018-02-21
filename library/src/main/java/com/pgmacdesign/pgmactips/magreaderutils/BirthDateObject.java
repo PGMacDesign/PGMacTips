@@ -2,6 +2,7 @@ package com.pgmacdesign.pgmactips.magreaderutils;
 
 import android.support.annotation.NonNull;
 
+import com.google.gson.annotations.SerializedName;
 import com.pgmacdesign.pgmactips.misc.TempString;
 import com.pgmacdesign.pgmactips.utilities.DateUtilities;
 
@@ -14,9 +15,13 @@ import java.util.Date;
 
 public final class BirthDateObject {
 
+    @SerializedName("birthDate")
     private transient Date birthDate;
+    @SerializedName("birthYear")
     private transient TempString birthYear;
+    @SerializedName("birthMonth")
     private transient TempString birthMonth;
+    @SerializedName("birthDay")
     private transient TempString birthDay;
 
     public BirthDateObject(@NonNull String year, @NonNull String month, @NonNull String day){
@@ -49,10 +54,20 @@ public final class BirthDateObject {
         this.birthDate = calendar.getTime();
     }
 
+    /**
+     * Overloaded on name due to me never remembering the other method
+     */
+    public void dispose(){
+        clearTempString();
+    }
+
+    /**
+     * Clear all temp strings
+     */
     public void clearTempString() {
-        this.birthYear.disposeData();
-        this.birthMonth.disposeData();
-        this.birthDay.disposeData();
+        if(this.birthYear != null) this.birthYear.disposeData();
+        if(this.birthMonth != null) this.birthMonth.disposeData();
+        if(this.birthDay != null) this.birthDay.disposeData();
     }
 
     public Date getBirthDate() {
