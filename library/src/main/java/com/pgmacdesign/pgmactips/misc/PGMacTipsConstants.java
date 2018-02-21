@@ -143,7 +143,7 @@ public class PGMacTipsConstants {
     public static final int TAG_CONTACT_QUERY_NO_RESULTS = 4471;
     public static final int TAG_CONTACT_QUERY_MISSING_CONTACT_PERMISSION = 4472;
     public static final int TAG_CONTACT_QUERY_UNKNOWN_ERROR = 4473;
-    public static final int TBD4 = 4474;
+    public static final int TAG_CONTACT_QUERY_ALL_MERGED_RESULTS = 4474;
     public static final int TBD5 = 4475;
     public static final int TBD6 = 4476;
     public static final int TBD7 = 4477;

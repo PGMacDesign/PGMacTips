@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConfig;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
+import com.pgmacdesign.pgmactips.misc.Ticker;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
@@ -153,7 +154,8 @@ public class ContactUtilities {
      */
     public static enum SearchQueryFlags {
         ADD_ALPHABET_HEADERS, USE_ALL_ALPHABET_LETTERS,
-        MOVE_FAVORITES_TO_TOP_OF_LIST, REMOVE_BLOCK_LIST_CONTACTS
+        MOVE_FAVORITES_TO_TOP_OF_LIST, REMOVE_BLOCK_LIST_CONTACTS,
+        MERGE_CONTACTS_TO_SINGLE_LIST
     }
 
     ////////////////////
@@ -166,7 +168,8 @@ public class ContactUtilities {
     //private String query;
     //private int maxNumResults;
     private final boolean includeAlphabetHeaders, includeAllLetters,
-            moveFavoritesToTop, removeBlockListItems, shouldUpdateProgress;
+            moveFavoritesToTop, removeBlockListItems, shouldUpdateProgress,
+            mergeContactsTogether;
 
     //Private Constructor
     private ContactUtilities(Context context, Activity activity,
@@ -175,6 +178,7 @@ public class ContactUtilities {
                              boolean includeAllLetters,
                              boolean moveFavoritesToTop,
                              boolean removeBlockListItems,
+                             boolean mergeContactsTogether,
                              boolean shouldUpdateProgress) {
         this.context = context;
         this.activity = activity;
@@ -184,6 +188,8 @@ public class ContactUtilities {
         this.removeBlockListItems = removeBlockListItems;
         this.moveFavoritesToTop = moveFavoritesToTop;
         this.shouldUpdateProgress = shouldUpdateProgress;
+        //this.mergeContactsTogether = mergeContactsTogether;
+        this.mergeContactsTogether = false; //Currently disabling the option to adjust this due to OOM issues
     }
 
     ////////////////
@@ -210,6 +216,7 @@ public class ContactUtilities {
          *                 -Phone: {@link PGMacTipsConstants#TAG_CONTACT_QUERY_PHONE}
          *                 -Name: {@link PGMacTipsConstants#TAG_CONTACT_QUERY_NAME}
          *                 -Address: {@link PGMacTipsConstants#TAG_CONTACT_QUERY_ADDRESS}
+         *                 -All Merged Contacts: {@link PGMacTipsConstants#TAG_CONTACT_QUERY_ALL_MERGED_RESULTS}
          *                 -Progress Update: {@link PGMacTipsConstants#TAG_CONTACT_QUERY_PROGRESS_UPDATE}
          *                 -No Results: {@link PGMacTipsConstants#TAG_CONTACT_QUERY_NO_RESULTS}
          *                 -Missing READ_CONTACTS permission: {@link PGMacTipsConstants#TAG_CONTACT_QUERY_MISSING_CONTACT_PERMISSION}
@@ -320,10 +327,23 @@ public class ContactUtilities {
             return this;
         }
 
+        /**
+         * Merge all contacts into a single return list. SLOWER! so only run if you have the
+         * time to do so as this will run through nested loops to merge contact objects together.
+         * @return this
+         *
+        //Removing this temporarily due to OOM issues
+         */
+        private Builder mergeContactsToSingleList(){
+            searchQueryFlags.add(SearchQueryFlags.MERGE_CONTACTS_TO_SINGLE_LIST);
+            return this;
+        }
+
         public ContactUtilities build() {
 
             boolean includeAlphabetHeaders = false, includeAllLetters = false,
-                    moveFavoritesToTop = false, removeBlockListItems = false;
+                    moveFavoritesToTop = false, removeBlockListItems = false,
+                    mergeContactsTogether = false;
             for (SearchQueryFlags flag : this.searchQueryFlags) {
                 switch (flag) {
                     case ADD_ALPHABET_HEADERS:
@@ -338,11 +358,15 @@ public class ContactUtilities {
                     case MOVE_FAVORITES_TO_TOP_OF_LIST:
                         moveFavoritesToTop = true;
                         break;
+                    case MERGE_CONTACTS_TO_SINGLE_LIST:
+                        //mergeContactsTogether = true;
+                        //Removing this temporarily due to OOM issues
+                        break;
                 }
             }
 
             return new ContactUtilities(context, activity, listener, includeAlphabetHeaders,
-                    includeAllLetters, moveFavoritesToTop, removeBlockListItems,
+                    includeAllLetters, moveFavoritesToTop, removeBlockListItems, mergeContactsTogether,
                     this.shouldUpdateProgressLocal);
         }
     }
@@ -431,6 +455,7 @@ public class ContactUtilities {
         private String query;
         private boolean missingPermissions, useRegex;
         private Pattern regexPattern;
+        private List<Contact> mergedContactsList;
         private SoftReference<ContactUtilities> classReference;
         private OnTaskCompleteListener progressListener;
 
@@ -513,7 +538,8 @@ public class ContactUtilities {
         protected Map<SearchTypes, List<Contact>> doInBackground(Void... args) {
 
             Map<SearchTypes, List<Contact>> toGenerate = new HashMap<>();
-
+            Ticker tick = new Ticker("ContactUtilities Asynctask", null);
+            tick.tick(538);
             if (this.classReference.get().activity != null) {
                 if (!PermissionUtilities.getContactPermissions(this.classReference.get().activity)) {
                     this.missingPermissions = true;
@@ -523,75 +549,150 @@ public class ContactUtilities {
                 }
             }
 
-            for (SearchTypes type : this.typesToQuery) {
-                switch (type) {
-                    case EMAIL:
-                        List<Contact> emailContacts = (this.useRegex) ? ContactUtilities.getEmailQueryRegex(this.progressListener,
-                                this.classReference.get().context, this.regexPattern, this.maxNumResults)
-                                : ContactUtilities.getEmailQuery(this.progressListener,
-                                this.classReference.get().context, this.query, this.maxNumResults);
-                        emailContacts = ContactUtilities.simplifyList(emailContacts);
-                        if (this.classReference.get().includeAlphabetHeaders) {
-                            emailContacts = ContactUtilities.addAlphabetHeadersToList(
-                                    emailContacts, this.classReference.get().includeAllLetters);
-                        }
-                        if (this.classReference.get().moveFavoritesToTop) {
-                            emailContacts = ContactUtilities.moveFavoritesToTop(emailContacts);
-                        }
-                        toGenerate.put(SearchTypes.EMAIL, emailContacts);
-                        break;
+            if(this.classReference.get().mergeContactsTogether){
+                List<Contact> emailContacts = null, phoneContacts = null,
+                        nameContacts = null, addressContacts = null;
+                for (SearchTypes type : this.typesToQuery) {
+                    switch (type) {
+                        case EMAIL:
+                            emailContacts = (this.useRegex) ? ContactUtilities.getEmailQueryRegex(this.progressListener,
+                                    this.classReference.get().context, this.regexPattern, this.maxNumResults)
+                                    : ContactUtilities.getEmailQuery(this.progressListener,
+                                    this.classReference.get().context, this.query, this.maxNumResults);
+                            emailContacts = ContactUtilities.simplifyList(emailContacts);
+                            if(!MiscUtilities.isListNullOrEmpty(emailContacts) && this.mergedContactsList == null){
+                                this.mergedContactsList = emailContacts;
+                            }
+                            break;
 
-                    case PHONE:
-                        List<Contact> phoneContacts = (this.useRegex) ? ContactUtilities.getPhoneQueryRegex(this.progressListener,
-                                this.classReference.get().context, this.regexPattern, this.maxNumResults,
-                                this.classReference.get().removeBlockListItems) :
-                                ContactUtilities.getPhoneQuery(this.progressListener,
-                                this.classReference.get().context, this.query, this.maxNumResults,
-                                this.classReference.get().removeBlockListItems);
-                        phoneContacts = ContactUtilities.simplifyList(phoneContacts);
-                        if (this.classReference.get().includeAlphabetHeaders) {
-                            phoneContacts = ContactUtilities.addAlphabetHeadersToList(
-                                    phoneContacts, this.classReference.get().includeAllLetters);
-                        }
-                        if (this.classReference.get().moveFavoritesToTop) {
-                            phoneContacts = ContactUtilities.moveFavoritesToTop(phoneContacts);
-                        }
-                        toGenerate.put(SearchTypes.PHONE, phoneContacts);
-                        break;
+                        case PHONE:
+                            phoneContacts = (this.useRegex) ? ContactUtilities.getPhoneQueryRegex(this.progressListener,
+                                    this.classReference.get().context, this.regexPattern, this.maxNumResults,
+                                    this.classReference.get().removeBlockListItems) :
+                                    ContactUtilities.getPhoneQuery(this.progressListener,
+                                            this.classReference.get().context, this.query, this.maxNumResults,
+                                            this.classReference.get().removeBlockListItems);
+                            phoneContacts = ContactUtilities.simplifyList(phoneContacts);
+                            if(!MiscUtilities.isListNullOrEmpty(phoneContacts) && this.mergedContactsList == null){
+                                this.mergedContactsList = phoneContacts;
+                            }
+                            break;
 
-                    case ADDRESS:
-                        List<Contact> addressContacts = (this.useRegex) ? ContactUtilities.getAddressQueryRegex(this.progressListener,
-                                this.classReference.get().context, this.regexPattern, this.maxNumResults) :
-                                ContactUtilities.getAddressQuery(this.progressListener,
-                                this.classReference.get().context, this.query, this.maxNumResults);
-                        addressContacts = ContactUtilities.simplifyList(addressContacts);
-                        if (this.classReference.get().includeAlphabetHeaders) {
-                            addressContacts = ContactUtilities.addAlphabetHeadersToList(
-                                    addressContacts, this.classReference.get().includeAllLetters);
-                        }
-                        if (this.classReference.get().moveFavoritesToTop) {
-                            addressContacts = ContactUtilities.moveFavoritesToTop(addressContacts);
-                        }
-                        toGenerate.put(SearchTypes.ADDRESS, addressContacts);
-                        break;
+                        case ADDRESS:
+                            addressContacts = (this.useRegex) ? ContactUtilities.getAddressQueryRegex(this.progressListener,
+                                    this.classReference.get().context, this.regexPattern, this.maxNumResults) :
+                                    ContactUtilities.getAddressQuery(this.progressListener,
+                                            this.classReference.get().context, this.query, this.maxNumResults);
+                            addressContacts = ContactUtilities.simplifyList(addressContacts);
+                            if(!MiscUtilities.isListNullOrEmpty(addressContacts) && this.mergedContactsList == null){
+                                this.mergedContactsList = addressContacts;
+                            }
+                            break;
 
-                    case NAME:
-                        List<Contact> nameContacts = (this.useRegex) ? ContactUtilities.getNameQueryRegex(this.progressListener,
-                                this.classReference.get().context, this.regexPattern, this.maxNumResults) :
-                                ContactUtilities.getNameQuery(this.progressListener,
-                                this.classReference.get().context, this.query, this.maxNumResults);
-                        nameContacts = ContactUtilities.simplifyList(nameContacts);
-                        if (this.classReference.get().includeAlphabetHeaders) {
-                            nameContacts = ContactUtilities.addAlphabetHeadersToList(
-                                    nameContacts, this.classReference.get().includeAllLetters);
-                        }
-                        if (this.classReference.get().moveFavoritesToTop) {
-                            nameContacts = ContactUtilities.moveFavoritesToTop(nameContacts);
-                        }
-                        toGenerate.put(SearchTypes.NAME, nameContacts);
-                        break;
+                        case NAME:
+                            nameContacts = (this.useRegex) ? ContactUtilities.getNameQueryRegex(this.progressListener,
+                                    this.classReference.get().context, this.regexPattern, this.maxNumResults) :
+                                    ContactUtilities.getNameQuery(this.progressListener,
+                                            this.classReference.get().context, this.query, this.maxNumResults);
+                            nameContacts = ContactUtilities.simplifyList(nameContacts);
+                            if(!MiscUtilities.isListNullOrEmpty(nameContacts) && this.mergedContactsList == null){
+                                this.mergedContactsList = nameContacts;
+                            }
+                            break;
+                    }
+                    this.baseFloatToAppendTo += diffAmount;
                 }
-                this.baseFloatToAppendTo += diffAmount;
+                if(MiscUtilities.isListNullOrEmpty(this.mergedContactsList)){
+                    //If this hits, it means all contact lists are empty, no need to combine lists
+
+                } else {
+                    if(!MiscUtilities.isListNullOrEmpty(emailContacts))
+                        this.mergedContactsList = ContactUtilities.mergeContacts(this.mergedContactsList, emailContacts);
+                    if(!MiscUtilities.isListNullOrEmpty(phoneContacts))
+                        this.mergedContactsList = ContactUtilities.mergeContacts(this.mergedContactsList, phoneContacts);
+                    if(!MiscUtilities.isListNullOrEmpty(addressContacts))
+                        this.mergedContactsList = ContactUtilities.mergeContacts(this.mergedContactsList, addressContacts);
+                    if(!MiscUtilities.isListNullOrEmpty(nameContacts))
+                        this.mergedContactsList = ContactUtilities.mergeContacts(this.mergedContactsList, nameContacts);
+                    if (this.classReference.get().includeAlphabetHeaders) {
+                        this.mergedContactsList = ContactUtilities.addAlphabetHeadersToList(
+                                this.mergedContactsList, this.classReference.get().includeAllLetters);
+                    }
+                    if (this.classReference.get().moveFavoritesToTop) {
+                        this.mergedContactsList = ContactUtilities.moveFavoritesToTop(this.mergedContactsList);
+                    }
+                }
+            } else {
+                for (SearchTypes type : this.typesToQuery) {
+                    switch (type) {
+                        case EMAIL:
+                            List<Contact> emailContacts = (this.useRegex) ? ContactUtilities.getEmailQueryRegex(this.progressListener,
+                                    this.classReference.get().context, this.regexPattern, this.maxNumResults)
+                                    : ContactUtilities.getEmailQuery(this.progressListener,
+                                    this.classReference.get().context, this.query, this.maxNumResults);
+                            emailContacts = ContactUtilities.simplifyList(emailContacts);
+                            if (this.classReference.get().includeAlphabetHeaders) {
+                                emailContacts = ContactUtilities.addAlphabetHeadersToList(
+                                        emailContacts, this.classReference.get().includeAllLetters);
+                            }
+                            if (this.classReference.get().moveFavoritesToTop) {
+                                emailContacts = ContactUtilities.moveFavoritesToTop(emailContacts);
+                            }
+                            toGenerate.put(SearchTypes.EMAIL, emailContacts);
+                            break;
+
+                        case PHONE:
+                            List<Contact> phoneContacts = (this.useRegex) ? ContactUtilities.getPhoneQueryRegex(this.progressListener,
+                                    this.classReference.get().context, this.regexPattern, this.maxNumResults,
+                                    this.classReference.get().removeBlockListItems) :
+                                    ContactUtilities.getPhoneQuery(this.progressListener,
+                                            this.classReference.get().context, this.query, this.maxNumResults,
+                                            this.classReference.get().removeBlockListItems);
+                            phoneContacts = ContactUtilities.simplifyList(phoneContacts);
+                            if (this.classReference.get().includeAlphabetHeaders) {
+                                phoneContacts = ContactUtilities.addAlphabetHeadersToList(
+                                        phoneContacts, this.classReference.get().includeAllLetters);
+                            }
+                            if (this.classReference.get().moveFavoritesToTop) {
+                                phoneContacts = ContactUtilities.moveFavoritesToTop(phoneContacts);
+                            }
+                            toGenerate.put(SearchTypes.PHONE, phoneContacts);
+                            break;
+
+                        case ADDRESS:
+                            List<Contact> addressContacts = (this.useRegex) ? ContactUtilities.getAddressQueryRegex(this.progressListener,
+                                    this.classReference.get().context, this.regexPattern, this.maxNumResults) :
+                                    ContactUtilities.getAddressQuery(this.progressListener,
+                                            this.classReference.get().context, this.query, this.maxNumResults);
+                            addressContacts = ContactUtilities.simplifyList(addressContacts);
+                            if (this.classReference.get().includeAlphabetHeaders) {
+                                addressContacts = ContactUtilities.addAlphabetHeadersToList(
+                                        addressContacts, this.classReference.get().includeAllLetters);
+                            }
+                            if (this.classReference.get().moveFavoritesToTop) {
+                                addressContacts = ContactUtilities.moveFavoritesToTop(addressContacts);
+                            }
+                            toGenerate.put(SearchTypes.ADDRESS, addressContacts);
+                            break;
+
+                        case NAME:
+                            List<Contact> nameContacts = (this.useRegex) ? ContactUtilities.getNameQueryRegex(this.progressListener,
+                                    this.classReference.get().context, this.regexPattern, this.maxNumResults) :
+                                    ContactUtilities.getNameQuery(this.progressListener,
+                                            this.classReference.get().context, this.query, this.maxNumResults);
+                            nameContacts = ContactUtilities.simplifyList(nameContacts);
+                            if (this.classReference.get().includeAlphabetHeaders) {
+                                nameContacts = ContactUtilities.addAlphabetHeadersToList(
+                                        nameContacts, this.classReference.get().includeAllLetters);
+                            }
+                            if (this.classReference.get().moveFavoritesToTop) {
+                                nameContacts = ContactUtilities.moveFavoritesToTop(nameContacts);
+                            }
+                            toGenerate.put(SearchTypes.NAME, nameContacts);
+                            break;
+                    }
+                    this.baseFloatToAppendTo += diffAmount;
+                }
             }
             onProgressUpdate(100F); //Trigger complete
             return toGenerate;
@@ -604,6 +705,12 @@ public class ContactUtilities {
             }
             if (this.missingPermissions) {
                 //Do nothing, result already sent back on listener
+                return;
+            }
+            if(!MiscUtilities.isListNullOrEmpty(this.mergedContactsList)
+                    && this.classReference.get().mergeContactsTogether){
+                this.classReference.get().listener.onTaskComplete(
+                        this.mergedContactsList, PGMacTipsConstants.TAG_CONTACT_QUERY_ALL_MERGED_RESULTS);
                 return;
             }
             if (MiscUtilities.isMapNullOrEmpty(contacts)) {
@@ -3287,6 +3394,360 @@ public class ContactUtilities {
     ///////////////////
     //Utility Methods//
     ///////////////////
+
+    /**
+     * Merge 2 lists of contacts together.
+     * @param contactList1 The base contact list
+     * @param contactList2 The secondary list which will be merged into the first
+     * @return {@link Contact} Merged list of contacts
+     */
+    private static List<Contact> mergeContacts(List<Contact> contactList1, List<Contact> contactList2){
+        if(MiscUtilities.isListNullOrEmpty(contactList1) || MiscUtilities.isListNullOrEmpty(contactList2)){
+            return contactList1;
+        }
+        List<Contact> toReturn = new ArrayList<>();
+        for(Contact c1 : contactList1){
+            for(Contact c2 : contactList2){
+                Contact c = mergeContacts(c1, c2);
+                if(c != null){
+                    toReturn.add(c);
+                }
+            }
+        }
+        return toReturn;
+    }
+
+    /**
+     * Merge 2 Contact objects into one
+     * @param c The base contact, this will be the one returned after the other is merged into this one.
+     * @param contactToMerge Contact that will be taken apart and put into the other one
+     * @return {@link Contact} Merged contact. If one is null, it will try to return the non-null
+     *                         one, else, if both are null, it will return null.
+     */
+    private static Contact mergeContacts(Contact c, Contact contactToMerge){
+        if(c == null && contactToMerge != null){
+            return contactToMerge;
+        }
+        if(c != null && contactToMerge == null){
+            return c;
+        }
+        if(c == null && contactToMerge == null){
+            return null;
+        }
+        if(!StringUtilities.doesEqual(c.getId(), contactToMerge.getId())){
+            return c;
+        }
+        //Get from source contact to merge
+        String simplifiedPhone = contactToMerge.getSimplifiedPhoneNumber();
+        String simplifiedPhoneType = contactToMerge.getSimplifiedPhoneNumberType();
+        String simplifiedAddress = contactToMerge.getSimplifiedAddress();
+        String simplifiedEmail = contactToMerge.getSimplifiedEmail();
+        String simplifiedEmailType = contactToMerge.getSimplifiedEmailType();
+        String photoUri = contactToMerge.getPhotoUri();
+        String headerstring = contactToMerge.getHeaderString();
+        String rawDisplayName = contactToMerge.getRawDisplayName();
+        Contact.Organization organization = contactToMerge.getOrganization();
+        List<Contact.Address> addresses = contactToMerge.getAddresses();
+        List<Contact.Email> emails = contactToMerge.getEmail();
+        Contact.NameObject nameObject = contactToMerge.getNameObject();
+        List<String> notes = contactToMerge.getNotes();
+        List<Contact.Phone> phones = contactToMerge.getPhone();
+
+        //Merge into empty fields
+        if(StringUtilities.isNullOrEmpty(c.getSimplifiedPhoneNumber()) &&
+                !StringUtilities.isNullOrEmpty(simplifiedPhone)){
+            c.setSimplifiedPhoneNumber(simplifiedPhone);
+        }
+        if(StringUtilities.isNullOrEmpty(c.getSimplifiedPhoneNumberType()) &&
+                !StringUtilities.isNullOrEmpty(simplifiedPhoneType)){
+            c.setSimplifiedPhoneNumberType(simplifiedPhoneType);
+        }
+        if(StringUtilities.isNullOrEmpty(c.getSimplifiedAddress()) &&
+                !StringUtilities.isNullOrEmpty(simplifiedAddress)){
+            c.setSimplifiedAddress(simplifiedAddress);
+        }
+        if(StringUtilities.isNullOrEmpty(c.getSimplifiedEmail()) &&
+                !StringUtilities.isNullOrEmpty(simplifiedEmail)){
+            c.setSimplifiedEmail(simplifiedEmail);
+        }
+        if(StringUtilities.isNullOrEmpty(c.getSimplifiedEmailType()) &&
+                !StringUtilities.isNullOrEmpty(simplifiedEmailType)) {
+            c.setSimplifiedEmailType(simplifiedEmailType);
+        }
+        if(StringUtilities.isNullOrEmpty(c.getPhotoUri()) &&
+                !StringUtilities.isNullOrEmpty(photoUri)){
+            c.setPhotoUri(photoUri);
+        }
+        if(StringUtilities.isNullOrEmpty(c.getHeaderString()) &&
+                !StringUtilities.isNullOrEmpty(headerstring)){
+            c.setHeaderString(headerstring);
+        }
+        if(StringUtilities.isNullOrEmpty(c.getRawDisplayName()) &&
+                !StringUtilities.isNullOrEmpty(rawDisplayName)){
+            c.setRawDisplayName(rawDisplayName);
+        }
+        if(organization != null){
+            if(c.getOrganization() == null){
+                c.setOrganization(organization);
+            } else {
+                Contact.Organization organization1 = c.getOrganization();
+                if(StringUtilities.isNullOrEmpty(organization1.getTitle()) &&
+                        !StringUtilities.isNullOrEmpty(organization.getTitle())){
+                    organization1.setTitle(organization.getTitle());
+                }
+                if(StringUtilities.isNullOrEmpty(organization1.getOrganization()) &&
+                        !StringUtilities.isNullOrEmpty(organization.getOrganization())){
+                    organization1.setOrganization(organization.getOrganization());
+                }
+            }
+        }
+        //Names
+        if(nameObject != null){
+            if(c.getNameObject() == null){
+                c.setNameObject(nameObject);
+            } else {
+                Contact.NameObject nameObject1 = c.getNameObject();
+                if(StringUtilities.isNullOrEmpty(nameObject1.getDisplayName()) &&
+                        !StringUtilities.isNullOrEmpty(nameObject.getDisplayName())){
+                    nameObject1.setDisplayName(nameObject.getDisplayName());
+                }
+                if(StringUtilities.isNullOrEmpty(nameObject1.getSuffix()) &&
+                        !StringUtilities.isNullOrEmpty(nameObject.getSuffix())){
+                    nameObject1.setSuffix(nameObject.getSuffix());
+                }
+                if(StringUtilities.isNullOrEmpty(nameObject1.getPrefix()) &&
+                        !StringUtilities.isNullOrEmpty(nameObject.getPrefix())){
+                    nameObject1.setPrefix(nameObject.getPrefix());
+                }
+                if(StringUtilities.isNullOrEmpty(nameObject1.getMiddleName()) &&
+                        !StringUtilities.isNullOrEmpty(nameObject.getMiddleName())){
+                    nameObject1.setMiddleName(nameObject.getMiddleName());
+                }
+                if(StringUtilities.isNullOrEmpty(nameObject1.getLastName()) &&
+                        !StringUtilities.isNullOrEmpty(nameObject.getLastName())){
+                    nameObject1.setLastName(nameObject.getLastName());
+                }
+                if(StringUtilities.isNullOrEmpty(nameObject1.getFirstName()) &&
+                        !StringUtilities.isNullOrEmpty(nameObject.getFirstName())){
+                    nameObject1.setFirstName(nameObject.getFirstName());
+                }
+            }
+        }
+        //Addresses
+        if(!MiscUtilities.isListNullOrEmpty(addresses)){
+            if(MiscUtilities.isListNullOrEmpty(c.getAddresses())){
+                c.setAddresses(addresses);
+            } else {
+                Map<String, Contact.Address> toSet = new HashMap<>();
+                List<Contact.Address> addresses1 = c.getAddresses();
+                for(Contact.Address a : addresses1){
+                    if(a != null){
+                        String s = ContactUtilities.convertAddressToString(a);
+                        if(!StringUtilities.isNullOrEmpty(s)) {
+                            toSet.put(s, a);
+                        }
+                    }
+                }
+                for(Contact.Address a : addresses){
+                    if(a != null){
+                        String s = ContactUtilities.convertAddressToString(a);
+                        if(!StringUtilities.isNullOrEmpty(s)) {
+                            toSet.put(s, a);
+                        }
+                    }
+                }
+                if(!MiscUtilities.isMapNullOrEmpty(toSet)){
+                    List<Contact.Address> toSet2 = new ArrayList<>();
+                    for(Map.Entry<String, Contact.Address> m : toSet.entrySet()){
+                        if(m.getValue() != null){
+                            toSet2.add(m.getValue());
+                        }
+                    }
+                    if(!MiscUtilities.isListNullOrEmpty(toSet2)){
+                        c.setAddresses(toSet2);
+                    }
+                }
+            }
+        }
+        //Phones
+        if(!MiscUtilities.isListNullOrEmpty(phones)){
+            if(MiscUtilities.isListNullOrEmpty(c.getPhone())){
+                c.setPhone(phones);
+            } else {
+                Map<String, Contact.Phone> toSet = new HashMap<>();
+                List<Contact.Phone> phones1 = c.getPhone();
+                for(Contact.Phone a : phones1){
+                    if(a != null){
+                        String s = ContactUtilities.convertPhonesToString(a);
+                        if(!StringUtilities.isNullOrEmpty(s)) {
+                            toSet.put(s, a);
+                        }
+                    }
+                }
+                for(Contact.Phone a : phones){
+                    if(a != null){
+                        String s = ContactUtilities.convertPhonesToString(a);
+                        if(!StringUtilities.isNullOrEmpty(s)) {
+                            toSet.put(s, a);
+                        }
+                    }
+                }
+                if(!MiscUtilities.isMapNullOrEmpty(toSet)){
+                    List<Contact.Phone> toSet2 = new ArrayList<>();
+                    for(Map.Entry<String, Contact.Phone> m : toSet.entrySet()){
+                        if(m.getValue() != null){
+                            toSet2.add(m.getValue());
+                        }
+                    }
+                    if(!MiscUtilities.isListNullOrEmpty(toSet2)){
+                        c.setPhone(toSet2);
+                    }
+                }
+            }
+        }
+        //Emails
+        if(!MiscUtilities.isListNullOrEmpty(emails)){
+            if(MiscUtilities.isListNullOrEmpty(c.getEmail())){
+                c.setEmail(emails);
+            } else {
+                Map<String, Contact.Email> toSet = new HashMap<>();
+                List<Contact.Email> emails1 = c.getEmail();
+                for(Contact.Email a : emails1){
+                    if(a != null){
+                        String s = ContactUtilities.convertEmailsToString(a);
+                        if(!StringUtilities.isNullOrEmpty(s)) {
+                            toSet.put(s, a);
+                        }
+                    }
+                }
+                for(Contact.Email a : emails){
+                    if(a != null){
+                        String s = ContactUtilities.convertEmailsToString(a);
+                        if(!StringUtilities.isNullOrEmpty(s)) {
+                            toSet.put(s, a);
+                        }
+                    }
+                }
+                if(!MiscUtilities.isMapNullOrEmpty(toSet)){
+                    List<Contact.Email> toSet2 = new ArrayList<>();
+                    for(Map.Entry<String, Contact.Email> m : toSet.entrySet()){
+                        if(m.getValue() != null){
+                            toSet2.add(m.getValue());
+                        }
+                    }
+                    if(!MiscUtilities.isListNullOrEmpty(toSet2)){
+                        c.setEmail(toSet2);
+                    }
+                }
+            }
+        }
+        //Notes
+        if(!MiscUtilities.isListNullOrEmpty(notes)){
+            if(MiscUtilities.isListNullOrEmpty(c.getNotes())){
+                c.setNotes(notes);
+            } else {
+                Map<String, Integer> toSet = new HashMap<>();
+                List<String> notes1 = c.getNotes();
+                for(String str : notes1){
+                    if(!StringUtilities.isNullOrEmpty(str)){
+                        toSet.put(str, 0);
+                    }
+                }
+                for(String str : notes){
+                    if(!StringUtilities.isNullOrEmpty(str)){
+                        toSet.put(str, 0);
+                    }
+                }
+                if(!MiscUtilities.isMapNullOrEmpty(toSet)){
+                    List<String> toSet2 = new ArrayList<>();
+                    for(Map.Entry<String, Integer> m : toSet.entrySet()){
+                        if(m.getValue() != null){
+                            toSet2.add(m.getKey());
+                        }
+                    }
+                    if(!MiscUtilities.isListNullOrEmpty(toSet2)){
+                        c.setNotes(toSet2);
+                    }
+                }
+            }
+        }
+        return c;
+    }
+
+    /**
+     * Converts a phone to a String for comparing purposes.
+     * Used to prevent duplicates when combining objects.
+     * @param p Phone to convert
+     * @return String of phone (non-eye-friendly, just for comparing)
+     */
+    private static String convertPhonesToString(Contact.Phone p){
+        if(p == null){
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        if(!StringUtilities.isNullOrEmpty(p.getNumber())){
+            sb.append(p.getNumber());
+        }
+        if(!StringUtilities.isNullOrEmpty(p.getType())){
+            sb.append(p.getType());
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Converts an email to a String for comparing purposes.
+     * Used to prevent duplicates when combining objects.
+     * @param e email to convert
+     * @return String of email (non-eye-friendly, just for comparing)
+     */
+    private static String convertEmailsToString(Contact.Email e){
+        if(e == null){
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        if(!StringUtilities.isNullOrEmpty(e.getAddress())){
+            sb.append(e.getAddress());
+        }
+        if(!StringUtilities.isNullOrEmpty(e.getType())){
+            sb.append(e.getType());
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Converts an address to a String for comparing purposes.
+     * Used to prevent duplicates when combining objects.
+     * @param a Address to convert
+     * @return String of address (non-eye-friendly, just for comparing)
+     */
+    private static String convertAddressToString(Contact.Address a){
+        if(a == null){
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        if(!StringUtilities.isNullOrEmpty(a.getPoBox())){
+            sb.append(a.getPoBox());
+        }
+        if(!StringUtilities.isNullOrEmpty(a.getStreet())){
+            sb.append(a.getStreet());
+        }
+        if(!StringUtilities.isNullOrEmpty(a.getType())){
+            sb.append(a.getType());
+        }
+        if(!StringUtilities.isNullOrEmpty(a.getCity())){
+            sb.append(a.getCity());
+        }
+        if(!StringUtilities.isNullOrEmpty(a.getState())){
+            sb.append(a.getState());
+        }
+        if(!StringUtilities.isNullOrEmpty(a.getPostalCode())){
+            sb.append(a.getPostalCode());
+        }
+        if(!StringUtilities.isNullOrEmpty(a.getCountry())){
+            sb.append(a.getCountry());
+        }
+        return sb.toString();
+    }
 
     /**
      * Simple method to remove duplicates. This could happen in that people could request

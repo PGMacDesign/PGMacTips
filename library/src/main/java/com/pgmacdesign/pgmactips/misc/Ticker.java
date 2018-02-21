@@ -1,5 +1,7 @@
 package com.pgmacdesign.pgmactips.misc;
 
+import android.support.annotation.Nullable;
+
 import com.pgmacdesign.pgmactips.utilities.L;
 import com.pgmacdesign.pgmactips.utilities.NumberUtilities;
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
@@ -25,7 +27,7 @@ public class Ticker {
      * @param timeAtInit time (in milliseconds) of init start. use Date().getTime() for long.
      *                   If null is passed, it will auto get time from right now
      */
-    public Ticker (String screenName, Long timeAtInit){
+    public Ticker (@Nullable String screenName, @Nullable Long timeAtInit){
         if(StringUtilities.isNullOrEmpty(screenName)){
             this.screenName = "N/A";
         } else {
