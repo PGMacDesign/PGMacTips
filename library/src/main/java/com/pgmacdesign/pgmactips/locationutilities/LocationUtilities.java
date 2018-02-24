@@ -1,6 +1,15 @@
 package com.pgmacdesign.pgmactips.locationutilities;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
+import android.os.Build;
+import android.provider.Settings;
+import android.support.v4.content.ContextCompat;
+
+import com.pgmacdesign.pgmactips.utilities.PermissionUtilities;
 
 /**
  * This class works with the location API to
@@ -43,4 +52,56 @@ public class LocationUtilities {
         return distance;
     }
 
+    public static boolean hasLocationReadyToGo(Activity activity, Context context){
+        if(context == null || activity == null){
+            return false;
+        }
+        if(ContextCompat.checkSelfPermission(activity,
+                PermissionUtilities.permissionsEnum.ACCESS_FINE_LOCATION
+                        .getPermissionManifestName()) != PackageManager.PERMISSION_GRANTED){
+            return false;
+        }
+        LocationManager locationManager = (LocationManager) context
+                .getSystemService(Context.LOCATION_SERVICE);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            try {
+                int locationMode = Settings.Secure.getInt(context.getContentResolver(),
+                        Settings.Secure.LOCATION_MODE);
+                if(locationMode == Settings.Secure.LOCATION_MODE_OFF){
+                    return false;
+                }
+            } catch (Settings.SettingNotFoundException e) {
+                e.printStackTrace();
+                return false;
+            }
+        } else {
+            try {
+                String locationProviders = Settings.Secure.getString(
+                        context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+                if(!locationManager.isProviderEnabled(locationProviders)){
+                    return false;
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        try {
+            boolean gps_enabled = false;
+            boolean network_enabled = false;
+
+            try {
+                gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            } catch(Exception ex) {}
+
+            try {
+                network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            } catch(Exception ex) {}
+            if(!gps_enabled && !network_enabled){
+                return false;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return true;
+    }
 }
