@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Stack;
 
 /**
- * This class is used fro managing multiple stacks. An example would be if one needed to maintain
+ * This class is used for managing multiple stacks. An example would be if one needed to maintain
  * stacks of fragments for various 'paths' in an app and need to persist a managed list of
  * each of them.
  * Created by Patrick-SSD2 on 11/5/2017.

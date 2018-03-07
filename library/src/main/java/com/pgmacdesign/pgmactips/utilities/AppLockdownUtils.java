@@ -74,12 +74,21 @@ import android.widget.Toast;
  */
 public class AppLockdownUtils {
 
+    private static boolean shouldToastResults = true;
+
     private static final String LOCK_FAIL = "Could not lock app, not device owner";
     private static final String LOCK_SUCCESS = "Successfully locked app";
     private static final String UNLOCK_FAIL = "Could not unlock app, not device owner";
     private static final String UNLOCK_SUCCESS = "Successfully unlocked app";
     private static final String UNKNOWN_ERROR = "Could not perform lock / unlock operation; unknown error";
 
+    /**
+     * Call this to disable toasts (with a false) should you choose to disable / enable them
+     * @param shouldToast Defaults to true, will show toasts unless specified
+     */
+    public static void shouldToastResults(final boolean shouldToast){
+        AppLockdownUtils.shouldToastResults = shouldToast;
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public static void lockApp(final Context context, final Class myClass,
@@ -94,7 +103,9 @@ public class AppLockdownUtils {
                 toastStuff(context, LOCK_FAIL);
             }
         } catch (Exception e){
-            e.printStackTrace();
+            if(AppLockdownUtils.shouldToastResults){
+                e.printStackTrace();
+            }
             toastStuff(context, UNKNOWN_ERROR);
         }
     }
@@ -112,7 +123,9 @@ public class AppLockdownUtils {
                 toastStuff(context, UNLOCK_FAIL);
             }
         } catch (Exception e){
-            e.printStackTrace();
+            if(AppLockdownUtils.shouldToastResults){
+                e.printStackTrace();
+            }
             toastStuff(context, UNKNOWN_ERROR);
         }
     }
@@ -227,14 +240,16 @@ public class AppLockdownUtils {
                 return lockIntent;
             }
         } catch (Exception e){
-            e.printStackTrace();
+            if(AppLockdownUtils.shouldToastResults){
+                e.printStackTrace();
+            }
             toastStuff(context, UNKNOWN_ERROR);
         }
         return null;
     }
 
     private static void toastStuff(Context context, String str){
-        if(context != null && str != null) {
+        if(context != null && str != null && AppLockdownUtils.shouldToastResults) {
             Toast.makeText(context, str, Toast.LENGTH_LONG).show();
         }
     }
