@@ -174,6 +174,19 @@ public class NumberUtilities {
     }
 
     /**
+     * Simple method for getting an Integer and converting it to a non-null number
+     * @param intx
+     * @return Int value, 0 if int is null
+     */
+    public static int getInt(Integer intx){
+        if(intx == null){
+            return 0;
+        } else {
+            return intx;
+        }
+    }
+
+    /**
      * Simple method for preventing Null Pointer Exceptions when working with Floats
      * @param flt
      * @return Float value, 0 if float was null

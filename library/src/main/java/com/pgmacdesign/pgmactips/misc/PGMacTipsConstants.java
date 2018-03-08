@@ -42,33 +42,42 @@ public class PGMacTipsConstants {
     /////////////////////////////////////////////////////////////
 
     //Request codes used for permission requests
-    public static final int TAG_PERMISSIONS_ACCESS_NETWORK_STATE = 4398;
+    public static final int TAG_PERMISSIONS_ACCESS_NETWORK_STATE = 3398;
     //public static final int TAG_PERMISSIONS_REQUEST_GALLERY = 4399;
-    public static final int TAG_PERMISSIONS_REQUEST_BASE_CALL = 4400;
-    public static final int TAG_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 4401;
-    public static final int TAG_PERMISSIONS_REQUEST_CAMERA = 4402;
-    public static final int TAG_PERMISSIONS_REQUEST_ALL = 4403;
-    public static final int TAG_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 4404;
-    public static final int TAG_PERMISSIONS_REQUEST_READ_PHONE_STATE = 4405;
-    public static final int TAG_PERMISSIONS_REQUEST_CONTACTS = 4406;
-    public static final int TAG_PERMISSIONS_ACCESS_WIFI_STATE = 4407;
-    public static final int TAG_PERMISSIONS_ACCESS_FINE_LOCATION = 4408;
-    public static final int TAG_PERMISSIONS_ACCESS_COARSE_LOCATION = 4409;
-    public static final int TAG_PERMISSIONS_RECEIVE_BOOT_COMPLETED = 4410;
-    public static final int TAG_RETROFIT_PARSE_ERROR = 4411;
-    public static final int TAG_RETROFIT_CALL_ERROR = 4412;
-    public static final int TAG_TBD2 = 4413;
-    public static final int TAG_TBD3 = 4414;
-    public static final int TAG_TBD4 = 4415;
-    public static final int TAG_TBD5 = 4416;
-    public static final int TAG_TBD6 = 4417;
-    public static final int TAG_TBD7 = 4418;
-    public static final int TAG_TBD8 = 4419;
-    public static final int TAG_TBD9 = 4420;
+    public static final int TAG_PERMISSIONS_REQUEST_BASE_CALL = 3300;
+    public static final int TAG_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 3301;
+    public static final int TAG_PERMISSIONS_REQUEST_CAMERA = 3302;
+    public static final int TAG_PERMISSIONS_REQUEST_ALL = 3303;
+    public static final int TAG_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 3304;
+    public static final int TAG_PERMISSIONS_REQUEST_READ_PHONE_STATE = 3305;
+    public static final int TAG_PERMISSIONS_REQUEST_CONTACTS = 3306;
+    public static final int TAG_PERMISSIONS_ACCESS_WIFI_STATE = 3307;
+    public static final int TAG_PERMISSIONS_ACCESS_FINE_LOCATION = 3308;
+    public static final int TAG_PERMISSIONS_ACCESS_COARSE_LOCATION = 3309;
+    public static final int TAG_PERMISSIONS_RECEIVE_BOOT_COMPLETED = 3310;
+    public static final int TAG_RETROFIT_PARSE_ERROR = 3311;
+    public static final int TAG_RETROFIT_CALL_ERROR = 3312;
+    public static final int TAG_TBD2 = 3313;
+    public static final int TAG_TBD3 = 3314;
+    public static final int TAG_TBD4 = 3315;
+    public static final int TAG_TBD5 = 3316;
+    public static final int TAG_TBD6 = 3317;
+    public static final int TAG_TBD7 = 3318;
+    public static final int TAG_TBD8 = 3319;
+    public static final int TAG_TBD9 = 3320;
 
     //File Creation Tags
-    public static final int TAG_TXT_FILE_CREATION = 4404;
+    public static final int TAG_TXT_FILE_CREATION = 3400;
     //Date Formatting Tags, used for comparison and formatting
+    /**
+     * Sample: Wed Oct 16 15:21:20 PST 2018
+     */
+    public static final int DATE_EEEE_MMM_dd_HH_mm_ss_z_yyyy = 4403;
+    /**
+     * Sample: 2018-10-16
+     */
+    public static final int DATE_YYYY_MM_DD_T_HH_MM_SS_SSS_Z = 4403;
+    public static final int DATE_YYYY_MM_DD_T_HH_MM_SS_Z = 4404;
     public static final int DATE_MM_DD_YYYY = 4405;
     public static final int DATE_MM_DD_YY = 4406;
     public static final int DATE_MM_DD_YYYY_AMERICANS_NEED_TO_LEARN_TO_FORMAT_CORRECTLY
@@ -82,6 +91,10 @@ public class PGMacTipsConstants {
     public static final int DATE_MILLISECONDS = 4411;
     public static final int DATE_EPOCH = 4412;
     public static final int DATE_MM_DD_YYYY_HH_MM = 4413;
+
+    public static int[] ALL_DATE_TYPES = {DATE_YYYY_MM_DD_T_HH_MM_SS_SSS_Z,
+            DATE_YYYY_MM_DD_T_HH_MM_SS_Z, DATE_MM_DD_YYYY, DATE_MM_DD_YY, DATE_YYYY_MM_DD,
+            DATE_MM_DD, DATE_MM_YY, DATE_MM_YYYY, DATE_MM_DD_YYYY_HH_MM};
     //More Misc Tags
     public static final int TAG_OAUTH_DATA_OBJECT = 4414;
     public static final int TAG_OAUTH_ERROR = 4415;
@@ -180,8 +193,6 @@ public class PGMacTipsConstants {
     public static final long ONE_MONTH = (1000*60*60*24*30);
     public static final long ONE_YEAR = (1000*60*60*24*365);
 
-    public static final int DATE_YYYY_MM_DD_T_HH_MM_SS_SSS_Z = -780;
-    public static final int DATE_YYYY_MM_DD_T_HH_MM_SS_Z = -781;
 
     //Default Date Formats
     public static final String DEFAULT_ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";

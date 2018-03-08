@@ -1,6 +1,7 @@
 package com.pgmacdesign.pgmactips.utilities;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 
 import java.lang.reflect.Type;
 
@@ -61,5 +62,21 @@ public class GsonUtilities {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /**
+     * Convert an object to a JSON Element {@link JsonElement} If cannot convert, will return null
+     * @param o Object to be converted
+     * @return JsonElement to be returned
+     */
+    public static JsonElement convertToJsonElement(Object o){
+        GsonUtilities.init();
+        JsonElement jsonElement = null;
+        try {
+            jsonElement = gson.toJsonTree(o);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return jsonElement;
     }
 }

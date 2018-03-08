@@ -1,6 +1,9 @@
 package com.pgmacdesign.pgmactips.utilities;
 
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
 import java.text.ParseException;
@@ -74,46 +77,54 @@ public class DateUtilities {
      * @param locale     Locale object {@link Locale} . If null, defaults to United States (US)
      * @return SimpleDateFormat
      */
-    public static SimpleDateFormat getSimpleDateFormat(int formatType, String delimiter, Locale locale) {
+    public static SimpleDateFormat getSimpleDateFormat(int formatType, @Nullable String delimiter,
+                                                       @Nullable Locale locale) {
 
         //Object to return
         SimpleDateFormat simpleDateFormat = null;
 
         //Get rid of nulls
         if (delimiter == null) {
-            delimiter = "";
+            delimiter = " ";
         }
         if (locale == null) {
             locale = Locale.US;
         }
 
-        //Format
-        if (formatType == PGMacTipsConstants.DATE_MM_DD_YYYY) {
-            simpleDateFormat = new SimpleDateFormat("MM" + delimiter + "dd" + delimiter + "yyyy", locale);
-        }
-        if (formatType == PGMacTipsConstants.DATE_MM_DD_YY) {
-            simpleDateFormat = new SimpleDateFormat("MM" + delimiter + "dd" + delimiter + "yy", locale);
-        }
-        if (formatType == PGMacTipsConstants.DATE_YYYY_MM_DD) {
-            simpleDateFormat = new SimpleDateFormat("yyyy" + delimiter + "MM" + delimiter + "dd", locale);
-        }
-        if (formatType == PGMacTipsConstants.DATE_MM_DD) {
-            simpleDateFormat = new SimpleDateFormat("MM" + delimiter + "dd", locale);
-        }
-        if (formatType == PGMacTipsConstants.DATE_MM_YY) {
-            simpleDateFormat = new SimpleDateFormat("MM" + delimiter + "yy", locale);
-        }
-        if (formatType == PGMacTipsConstants.DATE_MM_YYYY) {
-            simpleDateFormat = new SimpleDateFormat("MM" + delimiter + "yyyy", locale);
-        }
-        if (formatType == PGMacTipsConstants.DATE_MM_DD_YYYY_HH_MM) {
-            simpleDateFormat = new SimpleDateFormat("MM" + delimiter + "dd" + delimiter + "yyyy" + " HH:mm", locale);
-        }
-        if (formatType == PGMacTipsConstants.DATE_YYYY_MM_DD_T_HH_MM_SS_SSS_Z) {
-            simpleDateFormat = new SimpleDateFormat("yyyy" + delimiter + "MM" + delimiter + "dd" + "'T'" + " HH:mm:ss.SSS'Z", locale);
-        }
-        if (formatType == PGMacTipsConstants.DATE_YYYY_MM_DD_T_HH_MM_SS_Z) {
-            simpleDateFormat = new SimpleDateFormat("yyyy" + delimiter + "MM" + delimiter + "dd" + "'T'" + " HH:mm:ss'Z", locale);
+        try {
+            //Format
+            if (formatType == PGMacTipsConstants.DATE_MM_DD_YYYY) {
+                simpleDateFormat = new SimpleDateFormat("MM" + delimiter + "dd" + delimiter + "yyyy", locale);
+            }
+            if (formatType == PGMacTipsConstants.DATE_MM_DD_YY) {
+                simpleDateFormat = new SimpleDateFormat("MM" + delimiter + "dd" + delimiter + "yy", locale);
+            }
+            if (formatType == PGMacTipsConstants.DATE_YYYY_MM_DD) {
+                simpleDateFormat = new SimpleDateFormat("yyyy" + delimiter + "MM" + delimiter + "dd", locale);
+            }
+            if (formatType == PGMacTipsConstants.DATE_MM_DD) {
+                simpleDateFormat = new SimpleDateFormat("MM" + delimiter + "dd", locale);
+            }
+            if (formatType == PGMacTipsConstants.DATE_MM_YY) {
+                simpleDateFormat = new SimpleDateFormat("MM" + delimiter + "yy", locale);
+            }
+            if (formatType == PGMacTipsConstants.DATE_MM_YYYY) {
+                simpleDateFormat = new SimpleDateFormat("MM" + delimiter + "yyyy", locale);
+            }
+            if (formatType == PGMacTipsConstants.DATE_MM_DD_YYYY_HH_MM) {
+                simpleDateFormat = new SimpleDateFormat("MM" + delimiter + "dd" + delimiter + "yyyy" + " HH:mm", locale);
+            }
+            if (formatType == PGMacTipsConstants.DATE_EEEE_MMM_dd_HH_mm_ss_z_yyyy) {
+                simpleDateFormat = new SimpleDateFormat("yyyy" + delimiter + "MM" + delimiter + "dd" + "'T'" + " HH:mm:ss.SSS'Z", locale);
+            }
+            if (formatType == PGMacTipsConstants.DATE_YYYY_MM_DD_T_HH_MM_SS_SSS_Z) {
+                simpleDateFormat = new SimpleDateFormat("EEEE MMM dd HH:mm:ss z yyyy", locale);
+            }
+            if (formatType == PGMacTipsConstants.DATE_YYYY_MM_DD_T_HH_MM_SS_Z) {
+                simpleDateFormat = new SimpleDateFormat("yyyy" + delimiter + "MM" + delimiter + "dd" + "'T'" + " HH:mm:ss'Z", locale);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
         }
 
         return simpleDateFormat;
@@ -163,6 +174,9 @@ public class DateUtilities {
             if (formatType == PGMacTipsConstants.DATE_MM_DD_YYYY_HH_MM) {
                 convertedString = simpleDateFormat.format(date);
             }
+            if (formatType == PGMacTipsConstants.DATE_EEEE_MMM_dd_HH_mm_ss_z_yyyy) {
+                convertedString = simpleDateFormat.format(date);
+            }
             if (formatType == PGMacTipsConstants.DATE_MILLISECONDS) {
                 long millis = date.getTime();
                 convertedString = Long.toString(millis);
@@ -198,6 +212,61 @@ public class DateUtilities {
         }
     }
 
+    /**
+     * Attempts to convert local time to UTC with passed String date
+     * @param localDateString String to attempt to convert
+     * @return Converted string if successful, otherwise, will return null
+     */
+    public static String convertLocalTimeToUTC(@NonNull String localDateString){
+        TimeZone tz = TimeZone.getDefault();
+        TimeZone utc = TimeZone.getTimeZone("UTC");
+        String[] delimTypes = {"-", "/", " ", null, "*", "_"};
+        for(int pos : PGMacTipsConstants.ALL_DATE_TYPES){
+            for(String delimiter : delimTypes) {
+                try {
+                    SimpleDateFormat sdf = DateUtilities.getSimpleDateFormat(pos, delimiter, null);
+                    sdf.setTimeZone(tz);
+                    Date date = sdf.parse(localDateString);
+                    sdf.setTimeZone(utc);
+                    if(sdf.format(date) != null){
+                        return sdf.format(date);
+                    }
+                } catch (Exception e) {
+                    //Do nothing failed parsing attempt
+                }
+            }
+        }
+        L.m("Could not convert local time to UTC");
+        return null;
+    }
+
+    /**
+     * Attempts to convert UTC to local time with passed String date
+     * @param localDateString String to attempt to convert
+     * @return Converted string if successful, otherwise, will return null
+     */
+    public static String convertUTCToLocalTime(@NonNull String localDateString){
+        TimeZone tz = TimeZone.getDefault();
+        TimeZone utc = TimeZone.getTimeZone("UTC");
+        String[] delimTypes = {"-", "/", " ", null, "*", "_"};
+        for(int pos : PGMacTipsConstants.ALL_DATE_TYPES){
+            for(String delimiter : delimTypes) {
+                try {
+                    SimpleDateFormat sdf = DateUtilities.getSimpleDateFormat(pos, delimiter, null);
+                    sdf.setTimeZone(utc);
+                    Date date = sdf.parse(localDateString);
+                    sdf.setTimeZone(tz);
+                    if(sdf.format(date) != null){
+                        return sdf.format(date);
+                    }
+                } catch (Exception e) {
+                    //Do nothing failed parsing attempt
+                }
+            }
+        }
+        L.m("Could not convert local time to UTC");
+        return null;
+    }
 
     /**
      * Get the current Date

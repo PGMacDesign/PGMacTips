@@ -6,11 +6,5 @@ package com.pgmacdesign.pgmactips.utilities;
 
 public class IntegerUtilities {
 
-    public static int getInt(Integer intx){
-        if(intx == null){
-            return 0;
-        } else {
-            return intx;
-        }
-    }
+
 }
