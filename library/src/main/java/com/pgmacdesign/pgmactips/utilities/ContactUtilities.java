@@ -426,8 +426,8 @@ public class ContactUtilities {
             typesToQuery = new SearchTypes[]{SearchTypes.NAME, SearchTypes.PHONE,
                     SearchTypes.EMAIL, SearchTypes.ADDRESS};
         }
-        int numResults = (IntegerUtilities.getInt(maxNumResults) <= 0) ? 0
-                : (IntegerUtilities.getInt(maxNumResults));
+        int numResults = (NumberUtilities.getInt(maxNumResults) <= 0) ? 0
+                : (NumberUtilities.getInt(maxNumResults));
 
         ContactQueryAsync async = new ContactQueryAsync(this, typesToQuery, numResults, query);
         async.execute();
@@ -440,8 +440,8 @@ public class ContactUtilities {
             typesToQuery = new SearchTypes[]{SearchTypes.NAME, SearchTypes.PHONE,
                     SearchTypes.EMAIL, SearchTypes.ADDRESS};
         }
-        int numResults = (IntegerUtilities.getInt(maxNumResults) <= 0) ? 0
-                : (IntegerUtilities.getInt(maxNumResults));
+        int numResults = (NumberUtilities.getInt(maxNumResults) <= 0) ? 0
+                : (NumberUtilities.getInt(maxNumResults));
 
         ContactQueryAsync async = new ContactQueryAsync(this, typesToQuery, numResults,
                 regularExpressionFilter);
@@ -3828,7 +3828,7 @@ public class ContactUtilities {
         if(cursorSize <= 0){
             return -1;
         }
-        int max = IntegerUtilities.getInt(maxNumResults);
+        int max = NumberUtilities.getInt(maxNumResults);
         if(max < 0){
             max = 0;
         }

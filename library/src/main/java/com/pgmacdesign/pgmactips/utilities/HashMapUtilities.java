@@ -37,8 +37,8 @@ public class HashMapUtilities {
         Collections.sort(entries,
                 new Comparator<Map.Entry<Integer,?>>() {
                     public int compare(Map.Entry<Integer,?> a, Map.Entry<Integer,?> b) {
-                        int inta = IntegerUtilities.getInt(a.getKey());
-                        int intb = IntegerUtilities.getInt(b.getKey());
+                        int inta = NumberUtilities.getInt(a.getKey());
+                        int intb = NumberUtilities.getInt(b.getKey());
                         if(!reverseOrder) {
                             return Integer.compare(inta, intb);
                         } else {
@@ -80,8 +80,8 @@ public class HashMapUtilities {
         Collections.sort(entries,
                 new Comparator<Map.Entry<?,Integer>>() {
                     public int compare(Map.Entry<?,Integer> a, Map.Entry<?,Integer> b) {
-                        int inta = IntegerUtilities.getInt(a.getValue());
-                        int intb = IntegerUtilities.getInt(b.getValue());
+                        int inta = NumberUtilities.getInt(a.getValue());
+                        int intb = NumberUtilities.getInt(b.getValue());
                         if(!reverseOrder) {
                             return Integer.compare(inta, intb);
                         } else {
