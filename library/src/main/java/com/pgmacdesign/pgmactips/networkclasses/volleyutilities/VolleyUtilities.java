@@ -22,9 +22,11 @@ import java.util.Map;
  * Volley Simple request. Code pulled from:
  * https://developer.android.com/training/volley/simple.html
  * Created by PatrickSSD2 on 8/29/2016.
+ *
  */
-public class VolleyRequestSimple {
+public class VolleyUtilities {
 
+    private VolleyUtilities(){}
 
     /**
      * Simple get example
@@ -32,8 +34,8 @@ public class VolleyRequestSimple {
      * @param context context
      * @param url Url to send to
      */
-    public static void simpleGetSample(final OnTaskCompleteListener listener,
-                                       Context context, String url){
+    public static void makeGetRequest(final OnTaskCompleteListener listener,
+                                      Context context, String url){
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
         // Request a string response from the provided URL.
@@ -63,9 +65,9 @@ public class VolleyRequestSimple {
      * @param body body object to be converted into json
      * @param objectClass class type of the body object passed
      */
-    public static void simplePostSample(final OnTaskCompleteListener listener,
-                                        Context context, String url,
-                                        Object body, Class objectClass){
+    public static void makePostRequest(final OnTaskCompleteListener listener,
+                                       Context context, String url,
+                                       Object body, Class objectClass){
         String jsonString = new Gson().toJson(body, objectClass);
         JSONObject object = null;
         try {
@@ -74,7 +76,7 @@ public class VolleyRequestSimple {
             e.printStackTrace();
             return;
         }
-        simplePostSample(listener, context, url, object);
+        makePostRequest(listener, context, url, object);
     }
 
     /**
@@ -84,11 +86,11 @@ public class VolleyRequestSimple {
      * @param url
      * @param params Map<String, Object> to convert to jsonObject
      */
-    public static void simplePostSample(final OnTaskCompleteListener listener,
-                                        Context context, String url,
-                                        Map<String, ?> params){
+    public static void makePostRequest(final OnTaskCompleteListener listener,
+                                       Context context, String url,
+                                       Map<String, ?> params){
         JSONObject object = new JSONObject(params);
-        simplePostSample(listener, context, url, object);
+        makePostRequest(listener, context, url, object);
     }
 
     /**
@@ -98,9 +100,9 @@ public class VolleyRequestSimple {
      * @param url
      * @param jsonObject
      */
-    public static void simplePostSample(final OnTaskCompleteListener listener,
-                                        Context context, String url,
-                                        JSONObject jsonObject){
+    public static void makePostRequest(final OnTaskCompleteListener listener,
+                                       Context context, String url,
+                                       JSONObject jsonObject){
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
         JsonObjectRequest objectRequest = new JsonObjectRequest(

@@ -45,7 +45,7 @@ public class Ticker {
      * @param timeAtNow Time (in milliseconds) of start point. If null is passed, it will
      *                  auto get time from right now
      */
-    public void resetTicker(Long timeAtNow){
+    public void resetTicker(@Nullable Long timeAtNow){
         if(timeAtNow == null){
             timeAtNow = new Date().getTime();
         }
@@ -66,11 +66,14 @@ public class Ticker {
         long now = new Date().getTime();
         long gap = now - this.timeAtInit;
         String appendEnd = "";
-        if(gap < PGMacTipsConstants.ONE_MINUTE){
+        if(gap < 1000){
             appendEnd = "milliseconds";
-        } else if(gap >= PGMacTipsConstants.ONE_MINUTE && gap < PGMacTipsConstants.ONE_HOUR){
+        } else if(gap >= 1000 && gap < PGMacTipsConstants.ONE_MINUTE){
             gap /= 1000;
             appendEnd = "seconds";
+        } else if(gap >= PGMacTipsConstants.ONE_MINUTE && gap < PGMacTipsConstants.ONE_HOUR){
+            gap /= 10000;
+            appendEnd = "minutes";
         } else {
             gap /= 1000000;
             appendEnd = "minutes";
