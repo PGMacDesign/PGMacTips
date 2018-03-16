@@ -118,6 +118,8 @@ android {
         //Android support libs
         api 'com.android.support:design:26.1.0'
 
+        //Annotations
+        api 'com.android.support:support-annotations:24.2.0'
 
     }
 }

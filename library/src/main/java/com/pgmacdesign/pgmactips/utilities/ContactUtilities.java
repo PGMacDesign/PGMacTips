@@ -529,6 +529,7 @@ public class ContactUtilities {
                     if(toReport > 100){
                         toReport = 100;
                     }
+                    // TODO: 2018-03-16 this is crashing apps with large contact lists (>5k). need to refactor
                     this.classReference.get().listener.onTaskComplete(
                             toReport, PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE);
                 }
@@ -544,6 +545,7 @@ public class ContactUtilities {
             if (this.classReference.get().activity != null) {
                 if (!PermissionUtilities.getContactPermissions(this.classReference.get().activity)) {
                     this.missingPermissions = true;
+                    // TODO: 2018-03-16 this is crashing apps with large contact lists (>5k). need to refactor
                     this.classReference.get().listener.onTaskComplete(null,
                             PGMacTipsConstants.TAG_CONTACT_QUERY_MISSING_CONTACT_PERMISSION);
                     return null;
@@ -710,11 +712,13 @@ public class ContactUtilities {
             }
             if(!MiscUtilities.isListNullOrEmpty(this.mergedContactsList)
                     && this.classReference.get().mergeContactsTogether){
+                // TODO: 2018-03-16 this is crashing apps with large contact lists (>5k). need to refactor
                 this.classReference.get().listener.onTaskComplete(
                         this.mergedContactsList, PGMacTipsConstants.TAG_CONTACT_QUERY_ALL_MERGED_RESULTS);
                 return;
             }
             if (MiscUtilities.isMapNullOrEmpty(contacts)) {
+                // TODO: 2018-03-16 this is crashing apps with large contact lists (>5k). need to refactor
                 this.classReference.get().listener.onTaskComplete("No Contacts Found",
                         PGMacTipsConstants.TAG_CONTACT_QUERY_NO_RESULTS);
                 return;
@@ -730,21 +734,25 @@ public class ContactUtilities {
 
                 switch (typeKey) {
                     case EMAIL:
+                        // TODO: 2018-03-16 this is crashing apps with large contact lists (>5k). need to refactor
                         this.classReference.get().listener.onTaskComplete(
                                 contacts1, PGMacTipsConstants.TAG_CONTACT_QUERY_EMAIL);
                         break;
 
                     case PHONE:
+                        // TODO: 2018-03-16 this is crashing apps with large contact lists (>5k). need to refactor
                         this.classReference.get().listener.onTaskComplete(
                                 contacts1, PGMacTipsConstants.TAG_CONTACT_QUERY_PHONE);
                         break;
 
                     case ADDRESS:
+                        // TODO: 2018-03-16 this is crashing apps with large contact lists (>5k). need to refactor
                         this.classReference.get().listener.onTaskComplete(
                                 contacts1, PGMacTipsConstants.TAG_CONTACT_QUERY_ADDRESS);
                         break;
 
                     case NAME:
+                        // TODO: 2018-03-16 this is crashing apps with large contact lists (>5k). need to refactor
                         this.classReference.get().listener.onTaskComplete(
                                 contacts1, PGMacTipsConstants.TAG_CONTACT_QUERY_NAME);
                         break;
