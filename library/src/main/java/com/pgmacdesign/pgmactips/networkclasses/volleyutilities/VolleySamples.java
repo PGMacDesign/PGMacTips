@@ -29,9 +29,9 @@ import org.json.JSONObject;
 /**
  * Created by PatrickSSD2 on 8/29/2016.
  */
-public class VolleyCalls {
+class VolleySamples {
 
-    public static void doStuff2(Context context, StringRequest stringRequest){
+    private static void doStuff2(Context context, StringRequest stringRequest){
         // Get a RequestQueue
         RequestQueue queue = VolleySingleton.getInstance(context).
                 getRequestQueue();
@@ -40,7 +40,7 @@ public class VolleyCalls {
         VolleySingleton.getInstance(context).addToRequestQueue(stringRequest);
     }
 
-    public static void doStuff1(Context context, String url){
+    private static void doStuff1(Context context, String url){
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
         // Request a string response from the provided URL.
@@ -60,7 +60,7 @@ public class VolleyCalls {
         requestQueue.add(stringRequest);
     }
 
-    public static void setupCache(Context context){
+    private static void setupCache(Context context){
         // Instantiate the cache
         Cache cache = new DiskBasedCache(context.getCacheDir(), 1024 * 1024); // 1MB cap
 
@@ -95,7 +95,7 @@ public class VolleyCalls {
         mRequestQueue.add(stringRequest);
     }
 
-    public static void makeImageRequest(Context context){
+    private static void makeImageRequest(Context context){
         ImageView mImageView;
         String url = "http://i.imgur.com/7spzG.png";
 
@@ -117,12 +117,12 @@ public class VolleyCalls {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    public static void setupCache(RequestQueue requestQueue, Context context){
+    private static void setupCache(RequestQueue requestQueue, Context context){
         ImageLoader mImageLoader = new ImageLoader(requestQueue, new VolleyBitmapCache(
                 VolleyBitmapCache.getCacheSize(context)));
     }
 
-    public void startJsonObjectRequest(Context context){
+    private void startJsonObjectRequest(Context context){
         String url = "http://my-json-feed";
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
@@ -145,7 +145,7 @@ public class VolleyCalls {
         VolleySingleton.getInstance(context).addToRequestQueue(jsObjRequest);
     }
 
-    public void startJsonArrayRequest(Context context){
+    private void startJsonArrayRequest(Context context){
         String url = "http://my-json-feed";
 
         JsonArrayRequest jsObjRequest = new JsonArrayRequest
