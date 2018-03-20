@@ -11,20 +11,23 @@ import android.net.NetworkInfo;
  * Connectivity Receiver. Useful for detecting no internet connection (as a listener)
  * Requires Permission: <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
  * Created by pmacdowell on 8/16/2016.
+ * NOTE! This has been deprecated as of Android N and above as of 2018-03-20
  */
-public class ConnectivityReceiver extends BroadcastReceiver {
+public class PGConnectivityReceiver extends BroadcastReceiver {
 
+    // TODO: 2018-03-20 refactor to usable
     /*
     HOW TO USE:
     //1) In your MyApplication class, put this code:
-    public void setConnectivityListener(ConnectivityReceiver.ConnectivityReceiverListener listener) {
-        ConnectivityReceiver.connectivityReceiverListener = listener;
+    public void setConnectivityListener(PGConnectivityReceiver.ConnectivityReceiverListener listener) {
+        PGConnectivityReceiver.connectivityReceiverListener = listener;
+    }
 
     //2) Next, in your activity/ fragment, use this code in the onCreate or onResume:
     MyApplication.getInstance().setConnectivityListener(this);
 
-    //3) Lastly, make that same activity/ fragment implement:
-    ConnectivityReceiver.ConnectivityReceiverListener
+    //3) Make that same activity/ fragment implement:
+    PGConnectivityReceiver.ConnectivityReceiverListener
 
     //4) Which will make you implement this:
     @Override
@@ -37,10 +40,17 @@ public class ConnectivityReceiver extends BroadcastReceiver {
 
     }
 
+    //5) Lastly, add this line to your manifest
+        <receiver android:name="com.pgmacdesign.pgmactips.broadcastReceivers.PGConnectivityReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
      */
     public static ConnectivityReceiverListener connectivityReceiverListener;
 
-    public ConnectivityReceiver() {
+    public PGConnectivityReceiver() {
         super();
     }
 
