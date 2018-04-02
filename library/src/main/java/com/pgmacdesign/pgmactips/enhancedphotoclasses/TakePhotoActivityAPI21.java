@@ -117,7 +117,7 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
     private TextureView.SurfaceTextureListener textureListener;
     private CameraSource mCameraSource = null;
 
-    //Custom UI Features
+    //Custom UI VisionFeatures
     private GraphicOverlay graphic_face_overlay;
     private FaceTrackerWithGraphic faceTracker;
     private TakePhotoWithCountdownAsync async;

@@ -331,7 +331,7 @@ public class PermissionUtilities {
     }
 
     /**
-     * Requests an array of permissions. This assumes that the check for them being
+     * VisionRequests an array of permissions. This assumes that the check for them being
      * denied was already performed
      * @param whichPerms The perms being requested (THAT HAVE ALREADY BEEN DENIED)
      */

@@ -618,7 +618,7 @@ public class CameraMediaUtilities {
     }
 
     /**
-     * Requests Camera Permissions
+     * VisionRequests Camera Permissions
      * @return boolean, true if granted, false if not
      */
     public boolean getCameraPermissions(){
@@ -641,7 +641,7 @@ public class CameraMediaUtilities {
     }
 
     /**
-     * Requests Write Storage Permissions
+     * VisionRequests Write Storage Permissions
      * @return boolean, true if granted, false if not
      */
     public boolean getStoragePermissions(){

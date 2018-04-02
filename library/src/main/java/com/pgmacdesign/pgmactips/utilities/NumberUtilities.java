@@ -174,6 +174,19 @@ public class NumberUtilities {
     }
 
     /**
+     * Simple method for getting a Long and converting it to a non-null number
+     * @param lngX
+     * @return long value, 0 if it is null
+     */
+    public static long getLong(Long lngX){
+        if(lngX == null){
+            return 0;
+        } else {
+            return lngX;
+        }
+    }
+
+    /**
      * Simple method for getting an Integer and converting it to a non-null number
      * @param intx
      * @return Int value, 0 if int is null

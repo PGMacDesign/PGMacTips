@@ -89,7 +89,7 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
     private Camera.Parameters cameraParameters;
 
 
-    //Custom UI Features and face detection
+    //Custom UI VisionFeatures and face detection
     private GraphicOverlay graphic_face_overlay;
     private FaceTrackerWithGraphic faceTracker;
     private TakePhotoWithCountdownAsync async;
