@@ -17,7 +17,7 @@ public interface GoogleVisionServiceInterface {
     final String IMAGES = "/images:annotate";
 
     @POST(API_SUFFIX_STRING + VERSION_STRING + IMAGES)
-    Call<ResponseBody> visionCall(@Query("key=") String authKey,
+    Call<ResponseBody> visionCall(@Query("key") String authKey,
                                   @Body GoogleVisionRequestModel visionDataModel);
 
 }

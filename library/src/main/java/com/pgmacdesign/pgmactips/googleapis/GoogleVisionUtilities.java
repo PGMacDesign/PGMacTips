@@ -55,7 +55,7 @@ public class GoogleVisionUtilities {
      * @param apiKey
      */
     public GoogleVisionUtilities(@NonNull final String apiKey) {
-        this.apiKey = apiKey;
+        this.apiKey = "=" + apiKey;
         init(null, null);
     }
 
@@ -67,7 +67,7 @@ public class GoogleVisionUtilities {
      */
     public GoogleVisionUtilities(@NonNull final String apiKey,
                                  @NonNull Long timeoutInMilliseconds) {
-        this.apiKey = apiKey;
+        this.apiKey = "=" + apiKey;
         init(timeoutInMilliseconds, null);
     }
 
@@ -87,7 +87,7 @@ public class GoogleVisionUtilities {
     public GoogleVisionUtilities(@NonNull final String apiKey,
                                  @NonNull Long timeoutInMilliseconds,
                                  @NonNull HttpLoggingInterceptor.Level level) {
-        this.apiKey = apiKey;
+        this.apiKey = "=" + apiKey;
         init(timeoutInMilliseconds, level);
     }
 
