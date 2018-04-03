@@ -26,17 +26,17 @@ public class GoogleVisionResponseModel {
         private List<TextAnnotations> textAnnotations;
         @SerializedName("fullTextAnnotations")
         private FullTextAnnotations fullTextAnnotations;
-        @SerializedName("cropHints")
-        private List<CropHints> cropHints;
+        @SerializedName("cropHintsAnnotation")
+        private CropHintsAnnotation cropHintsAnnotation;
         @SerializedName("faceAnnotations")
         private List<FaceAnnotations> faceAnnotations;
         @SerializedName("webDetection")
         private WebDetection webDetection;
         @SerializedName("labelAnnotations")
         private LabelAnnotations labelAnnotations;
-        @SerializedName("labelAnnotations")
+        @SerializedName("logoAnnotations")
         private LabelAnnotations logoAnnotations;
-        @SerializedName("labelAnnotations")
+        @SerializedName("landmarkAnnotations")
         private LabelAnnotations landmarkAnnotations;
 
         public LabelAnnotations getLogoAnnotations() {
@@ -79,12 +79,12 @@ public class GoogleVisionResponseModel {
             this.webDetection = webDetection;
         }
 
-        public List<CropHints> getCropHints() {
-            return cropHints;
+        public CropHintsAnnotation getCropHintsAnnotation() {
+            return cropHintsAnnotation;
         }
 
-        public void setCropHints(List<CropHints> cropHints) {
-            this.cropHints = cropHints;
+        public void setCropHintsAnnotation(CropHintsAnnotation cropHintsAnnotation) {
+            this.cropHintsAnnotation = cropHintsAnnotation;
         }
 
         public List<TextAnnotations> getTextAnnotations() {
@@ -101,6 +101,19 @@ public class GoogleVisionResponseModel {
 
         public void setFullTextAnnotations(FullTextAnnotations fullTextAnnotations) {
             this.fullTextAnnotations = fullTextAnnotations;
+        }
+    }
+
+    public static class CropHintsAnnotation {
+        @SerializedName("cropHints")
+        private List<CropHints> cropHints;
+
+        public List<CropHints> getCropHints() {
+            return cropHints;
+        }
+
+        public void setCropHints(List<CropHints> cropHints) {
+            this.cropHints = cropHints;
         }
     }
 
@@ -524,17 +537,17 @@ public class GoogleVisionResponseModel {
 
     public static class CropHints {
         @SerializedName("boundingPoly")
-        private List<BoundingBox> boundingPoly;
+        private BoundingBox boundingPoly;
         @SerializedName("confidence")
         private Float confidence;
         @SerializedName("importanceFraction")
         private Float importanceFraction;
 
-        public List<BoundingBox> getBoundingPoly() {
+        public BoundingBox getBoundingPoly() {
             return boundingPoly;
         }
 
-        public void setBoundingPoly(List<BoundingBox> boundingPoly) {
+        public void setBoundingPoly(BoundingBox boundingPoly) {
             this.boundingPoly = boundingPoly;
         }
 
@@ -561,7 +574,7 @@ public class GoogleVisionResponseModel {
         @SerializedName("description")
         private String description;
         @SerializedName("boundingPoly")
-        private List<BoundingBox> boundingPoly;
+        private BoundingBox boundingPoly;
 
         public String getLocale() {
             return locale;
@@ -579,11 +592,11 @@ public class GoogleVisionResponseModel {
             this.description = description;
         }
 
-        public List<BoundingBox> getBoundingPoly() {
+        public BoundingBox getBoundingPoly() {
             return boundingPoly;
         }
 
-        public void setBoundingPoly(List<BoundingBox> boundingPoly) {
+        public void setBoundingPoly(BoundingBox boundingPoly) {
             this.boundingPoly = boundingPoly;
         }
     }

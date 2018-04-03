@@ -55,7 +55,7 @@ public class GoogleVisionUtilities {
      * @param apiKey
      */
     public GoogleVisionUtilities(@NonNull final String apiKey) {
-        this.apiKey = "=" + apiKey;
+        this.apiKey =  apiKey;
         init(null, null);
     }
 
@@ -67,7 +67,7 @@ public class GoogleVisionUtilities {
      */
     public GoogleVisionUtilities(@NonNull final String apiKey,
                                  @NonNull Long timeoutInMilliseconds) {
-        this.apiKey = "=" + apiKey;
+        this.apiKey =  apiKey;
         init(timeoutInMilliseconds, null);
     }
 
@@ -87,7 +87,7 @@ public class GoogleVisionUtilities {
     public GoogleVisionUtilities(@NonNull final String apiKey,
                                  @NonNull Long timeoutInMilliseconds,
                                  @NonNull HttpLoggingInterceptor.Level level) {
-        this.apiKey = "=" + apiKey;
+        this.apiKey =  apiKey;
         init(timeoutInMilliseconds, level);
     }
 
@@ -347,6 +347,7 @@ public class GoogleVisionUtilities {
                 GoogleVisionRequestModel.VisionFeatures.DetectionTypes.CROP_HINTS);
         model.setRequests(body);
         Call<ResponseBody> call = serviceInterface.visionCall(this.apiKey, model);
+
         RetrofitParser.parse(new OnTaskCompleteListener() {
             @Override
             public void onTaskComplete(Object result, int customTag) {
@@ -370,6 +371,7 @@ public class GoogleVisionUtilities {
                 listener.onTaskComplete(null, TAG_GOOGLE_VISION_UNKNOWN_ERROR);
             }
         }, call, GoogleVisionResponseModel.class, GoogleVisionErrorModel.class, 1, 0, false);
+
     }
 
 

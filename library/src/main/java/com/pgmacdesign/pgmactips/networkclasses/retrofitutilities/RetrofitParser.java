@@ -442,6 +442,8 @@ public class RetrofitParser {
         } else {
             try {
                 return new Gson().fromJson(responseBodyString, successClassDataModel);
+            } catch (IllegalArgumentException ile){
+                RetrofitParser.illegalArgumentHit(successClassDataModel.getName());
             } catch (Exception e) {
             }
         }
@@ -581,6 +583,8 @@ public class RetrofitParser {
         } else {
             try {
                 return new Gson().fromJson(responseBodyString, successClassDataType);
+            } catch (IllegalArgumentException ile){
+                RetrofitParser.illegalArgumentHit(successClassDataType.getClass().getName());
             } catch (Exception e) {
             }
         }
@@ -727,10 +731,14 @@ public class RetrofitParser {
         } else {
             try {
                 return new Gson().fromJson(errorBodyString, errorClassDataModel);
+            } catch (IllegalArgumentException ile){
+                RetrofitParser.illegalArgumentHit(errorClassDataModel.getClass().getName());
             } catch (Exception e) {
             }
             try {
                 return new Gson().fromJson(responseBodyString, errorClassDataModel);
+            } catch (IllegalArgumentException ile){
+                RetrofitParser.illegalArgumentHit(errorClassDataModel.getClass().getName());
             } catch (Exception e) {
             }
         }
@@ -763,6 +771,8 @@ public class RetrofitParser {
         } else {
             try {
                 return new Gson().fromJson(errorBodyString, errorClassDataModel);
+            } catch (IllegalArgumentException ile){
+                RetrofitParser.illegalArgumentHit(errorClassDataModel.getClass().getName());
             } catch (Exception e) {
             }
         }
@@ -795,10 +805,14 @@ public class RetrofitParser {
         } else {
             try {
                 return new Gson().fromJson(errorBodyString, errorClassDataModel);
+            } catch (IllegalArgumentException ile){
+                RetrofitParser.illegalArgumentHit(errorClassDataModel.getClass().getName());
             } catch (Exception e) {
             }
             try {
                 return new Gson().fromJson(responseBodyString, errorClassDataModel);
+            } catch (IllegalArgumentException ile){
+                RetrofitParser.illegalArgumentHit(errorClassDataModel.getClass().getName());
             } catch (Exception e) {
             }
         }
@@ -823,6 +837,8 @@ public class RetrofitParser {
         } else {
             try {
                 return new Gson().fromJson(errorBodyString, errorClassDataModel);
+            } catch (IllegalArgumentException ile){
+                RetrofitParser.illegalArgumentHit(errorClassDataModel.getClass().getName());
             } catch (Exception e) {
             }
         }
@@ -1177,4 +1193,9 @@ public class RetrofitParser {
         }
     }
 
+    private static void illegalArgumentHit(String typeOfModelPassed){
+        L.m("Error while attempting to convert the web response into your passed type: "
+                + typeOfModelPassed +
+                ". This can be caused by having multiple variables with the same '@Serialized' String name. Check your data model for errors and try again. See this link for more information: https://stackoverflow.com/questions/32367469/unable-to-create-converter-for-my-class-in-android-retrofit-library/42517143#42517143");
+    }
 }
