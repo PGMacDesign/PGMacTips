@@ -51,6 +51,7 @@ public class GoogleVisionUtilities {
 
     /**
      * Overloaded to allow for simpler calls
+     *
      * @param apiKey
      */
     public GoogleVisionUtilities(@NonNull final String apiKey) {
@@ -60,6 +61,7 @@ public class GoogleVisionUtilities {
 
     /**
      * Overloaded to allow for simpler calls
+     *
      * @param apiKey
      * @param timeoutInMilliseconds
      */
@@ -121,27 +123,26 @@ public class GoogleVisionUtilities {
 
     /**
      * Call to the Google Vision Detect Text endpoint
+     *
      * @param listener listener to send data back on
-     * @param bitmap Image (bitmap) to be converted into a base64 and sent. Will run on async thread
-     * @param maxNumResults Max number of results; defaults to 1
+     * @param bitmap   Image (bitmap) to be converted into a base64 and sent. Will run on async thread
      */
     public void detectText(@NonNull final OnTaskCompleteListener listener,
-                           @NonNull final Bitmap bitmap,
-                           @Nullable final Integer maxNumResults) {
-        if(listener == null){
+                           @NonNull final Bitmap bitmap) {
+        if (listener == null) {
             return;
         }
-        if(bitmap == null){
+        if (bitmap == null) {
             listener.onTaskComplete(null, TAG_INVALID_BITMAP_IMAGE);
             return;
         }
         ImageUtilities.encodeImage(new OnTaskCompleteListener() {
             @Override
             public void onTaskComplete(Object result, int customTag) {
-                switch (customTag){
+                switch (customTag) {
                     case PGMacTipsConstants.TAG_BASE64_IMAGE_ENCODE_SUCCESS:
                         String base64String = (String) result;
-                        GoogleVisionUtilities.this.detectText(listener, base64String, maxNumResults);
+                        GoogleVisionUtilities.this.detectText(listener, base64String);
                         break;
 
                     default:
@@ -155,16 +156,12 @@ public class GoogleVisionUtilities {
 
     /**
      * Call to the Google Vision Detect Text endpoint
-     * @param listener listener to send data back on
+     *
+     * @param listener    listener to send data back on
      * @param base64Image Base64 encoded image string
-     * @param maxNumResults Max number of results; defaults to 1
      */
     public void detectText(@NonNull final OnTaskCompleteListener listener,
-                           @NonNull final String base64Image,
-                           @Nullable Integer maxNumResults) {
-        if (NumberUtilities.getInt(maxNumResults) <= 0) {
-            maxNumResults = 1;
-        }
+                           @NonNull final String base64Image) {
         if (listener == null) {
             return;
         }
@@ -178,19 +175,19 @@ public class GoogleVisionUtilities {
         }
 
         GoogleVisionRequestModel model = new GoogleVisionRequestModel();
-        List<GoogleVisionRequestModel.VisionRequests> body = buildRequest(base64Image, maxNumResults,
-                GoogleVisionRequestModel.VisionFeatures.DetectionTypes.DOCUMENT_TEXT_DETECTION);
+        List<GoogleVisionRequestModel.VisionRequests> body = buildRequest(base64Image, null,
+                GoogleVisionRequestModel.VisionFeatures.DetectionTypes.TEXT_DETECTION);
         model.setRequests(body);
         Call<ResponseBody> call = serviceInterface.visionCall(this.apiKey, model);
         RetrofitParser.parse(new OnTaskCompleteListener() {
             @Override
             public void onTaskComplete(Object result, int customTag) {
-                if(customTag == 1){
+                if (customTag == 1) {
                     try {
                         GoogleVisionResponseModel successModel = (GoogleVisionResponseModel) result;
                         listener.onTaskComplete(successModel, TAG_GOOGLE_VISION_SUCCESS_RESULT);
                         return;
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 } else {
@@ -198,7 +195,91 @@ public class GoogleVisionUtilities {
                         GoogleVisionErrorModel errorModel = (GoogleVisionErrorModel) result;
                         listener.onTaskComplete(errorModel, TAG_GOOGLE_VISION_FAIL_RESULT);
                         return;
-                    } catch (Exception e){
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                listener.onTaskComplete(null, TAG_GOOGLE_VISION_UNKNOWN_ERROR);
+            }
+        }, call, GoogleVisionResponseModel.class, GoogleVisionErrorModel.class, 1, 0, false);
+    }
+
+
+    /**
+     * Call to the Google Vision Detect Document Text endpoint
+     *
+     * @param listener listener to send data back on
+     * @param bitmap   Image (bitmap) to be converted into a base64 and sent. Will run on async thread
+     */
+    public void detectDocumentText(@NonNull final OnTaskCompleteListener listener,
+                                   @NonNull final Bitmap bitmap) {
+        if (listener == null) {
+            return;
+        }
+        if (bitmap == null) {
+            listener.onTaskComplete(null, TAG_INVALID_BITMAP_IMAGE);
+            return;
+        }
+        ImageUtilities.encodeImage(new OnTaskCompleteListener() {
+            @Override
+            public void onTaskComplete(Object result, int customTag) {
+                switch (customTag) {
+                    case PGMacTipsConstants.TAG_BASE64_IMAGE_ENCODE_SUCCESS:
+                        String base64String = (String) result;
+                        GoogleVisionUtilities.this.detectDocumentText(listener, base64String);
+                        break;
+
+                    default:
+                    case PGMacTipsConstants.TAG_BASE64_IMAGE_ENCODE_FAIL:
+                        listener.onTaskComplete(null, TAG_BITMAP_BASE64_CONVERSION_FAIL);
+                        break;
+                }
+            }
+        }, bitmap);
+    }
+
+    /**
+     * Call to the Google Vision Detect Document Text endpoint
+     *
+     * @param listener    listener to send data back on
+     * @param base64Image Base64 encoded image string
+     */
+    public void detectDocumentText(@NonNull final OnTaskCompleteListener listener,
+                                   @NonNull final String base64Image) {
+        if (listener == null) {
+            return;
+        }
+        if (StringUtilities.isNullOrEmpty(base64Image)) {
+            listener.onTaskComplete(null, TAG_INVALID_BASE_64_IMAGE);
+            return;
+        }
+        if (this.serviceInterface == null) {
+            listener.onTaskComplete(null, TAG_GOOGLE_VISION_UNKNOWN_ERROR);
+            return;
+        }
+
+        GoogleVisionRequestModel model = new GoogleVisionRequestModel();
+        List<GoogleVisionRequestModel.VisionRequests> body = buildRequest(base64Image, null,
+                GoogleVisionRequestModel.VisionFeatures.DetectionTypes.DOCUMENT_TEXT_DETECTION);
+        model.setRequests(body);
+        Call<ResponseBody> call = serviceInterface.visionCall(this.apiKey, model);
+        RetrofitParser.parse(new OnTaskCompleteListener() {
+            @Override
+            public void onTaskComplete(Object result, int customTag) {
+                if (customTag == 1) {
+                    try {
+                        GoogleVisionResponseModel successModel = (GoogleVisionResponseModel) result;
+                        listener.onTaskComplete(successModel, TAG_GOOGLE_VISION_SUCCESS_RESULT);
+                        return;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        GoogleVisionErrorModel errorModel = (GoogleVisionErrorModel) result;
+                        listener.onTaskComplete(errorModel, TAG_GOOGLE_VISION_FAIL_RESULT);
+                        return;
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -210,27 +291,26 @@ public class GoogleVisionUtilities {
 
     /**
      * Call to the Google Vision Crop Hints endpoint
+     *
      * @param listener listener to send data back on
-     * @param bitmap Image (bitmap) to be converted into a base64 and sent. Will run on async thread
-     * @param maxNumResults Max number of results; defaults to 1
+     * @param bitmap   Image (bitmap) to be converted into a base64 and sent. Will run on async thread
      */
     public void getCropHints(@NonNull final OnTaskCompleteListener listener,
-                           @NonNull final Bitmap bitmap,
-                           @Nullable final Integer maxNumResults) {
-        if(listener == null){
+                             @NonNull final Bitmap bitmap) {
+        if (listener == null) {
             return;
         }
-        if(bitmap == null){
+        if (bitmap == null) {
             listener.onTaskComplete(null, TAG_INVALID_BITMAP_IMAGE);
             return;
         }
         ImageUtilities.encodeImage(new OnTaskCompleteListener() {
             @Override
             public void onTaskComplete(Object result, int customTag) {
-                switch (customTag){
+                switch (customTag) {
                     case PGMacTipsConstants.TAG_BASE64_IMAGE_ENCODE_SUCCESS:
                         String base64String = (String) result;
-                        GoogleVisionUtilities.this.getCropHints(listener, base64String, maxNumResults);
+                        GoogleVisionUtilities.this.getCropHints(listener, base64String);
                         break;
 
                     default:
@@ -244,16 +324,12 @@ public class GoogleVisionUtilities {
 
     /**
      * Call to the Google Vision Crop Hints endpoint
-     * @param listener listener to send data back on
+     *
+     * @param listener    listener to send data back on
      * @param base64Image Base64 encoded image string
-     * @param maxNumResults Max number of results; defaults to 1
      */
     public void getCropHints(@NonNull final OnTaskCompleteListener listener,
-                           @NonNull final String base64Image,
-                           @Nullable Integer maxNumResults) {
-        if (NumberUtilities.getInt(maxNumResults) <= 0) {
-            maxNumResults = 1;
-        }
+                             @NonNull final String base64Image) {
         if (listener == null) {
             return;
         }
@@ -267,19 +343,19 @@ public class GoogleVisionUtilities {
         }
 
         GoogleVisionRequestModel model = new GoogleVisionRequestModel();
-        List<GoogleVisionRequestModel.VisionRequests> body = buildRequest(base64Image, maxNumResults,
+        List<GoogleVisionRequestModel.VisionRequests> body = buildRequest(base64Image, null,
                 GoogleVisionRequestModel.VisionFeatures.DetectionTypes.CROP_HINTS);
         model.setRequests(body);
         Call<ResponseBody> call = serviceInterface.visionCall(this.apiKey, model);
         RetrofitParser.parse(new OnTaskCompleteListener() {
             @Override
             public void onTaskComplete(Object result, int customTag) {
-                if(customTag == 1){
+                if (customTag == 1) {
                     try {
                         GoogleVisionResponseModel successModel = (GoogleVisionResponseModel) result;
                         listener.onTaskComplete(successModel, TAG_GOOGLE_VISION_SUCCESS_RESULT);
                         return;
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 } else {
@@ -287,7 +363,7 @@ public class GoogleVisionUtilities {
                         GoogleVisionErrorModel errorModel = (GoogleVisionErrorModel) result;
                         listener.onTaskComplete(errorModel, TAG_GOOGLE_VISION_FAIL_RESULT);
                         return;
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -299,24 +375,25 @@ public class GoogleVisionUtilities {
 
     /**
      * Call to the Google Vision Web Detection endpoint
-     * @param listener listener to send data back on
-     * @param bitmap Image (bitmap) to be converted into a base64 and sent. Will run on async thread
+     *
+     * @param listener      listener to send data back on
+     * @param bitmap        Image (bitmap) to be converted into a base64 and sent. Will run on async thread
      * @param maxNumResults Max number of results; defaults to 1
      */
     public void checkWebDetection(@NonNull final OnTaskCompleteListener listener,
-                             @NonNull final Bitmap bitmap,
-                             @Nullable final Integer maxNumResults) {
-        if(listener == null){
+                                  @NonNull final Bitmap bitmap,
+                                  @Nullable final Integer maxNumResults) {
+        if (listener == null) {
             return;
         }
-        if(bitmap == null){
+        if (bitmap == null) {
             listener.onTaskComplete(null, TAG_INVALID_BITMAP_IMAGE);
             return;
         }
         ImageUtilities.encodeImage(new OnTaskCompleteListener() {
             @Override
             public void onTaskComplete(Object result, int customTag) {
-                switch (customTag){
+                switch (customTag) {
                     case PGMacTipsConstants.TAG_BASE64_IMAGE_ENCODE_SUCCESS:
                         String base64String = (String) result;
                         GoogleVisionUtilities.this.checkWebDetection(listener, base64String, maxNumResults);
@@ -333,13 +410,14 @@ public class GoogleVisionUtilities {
 
     /**
      * Call to the Google Vision Web Detection endpoint
-     * @param listener listener to send data back on
-     * @param base64Image Base64 encoded image string
+     *
+     * @param listener      listener to send data back on
+     * @param base64Image   Base64 encoded image string
      * @param maxNumResults Max number of results; defaults to 1
      */
     public void checkWebDetection(@NonNull final OnTaskCompleteListener listener,
-                             @NonNull final String base64Image,
-                             @Nullable Integer maxNumResults) {
+                                  @NonNull final String base64Image,
+                                  @Nullable Integer maxNumResults) {
         if (NumberUtilities.getInt(maxNumResults) <= 0) {
             maxNumResults = 1;
         }
@@ -363,12 +441,12 @@ public class GoogleVisionUtilities {
         RetrofitParser.parse(new OnTaskCompleteListener() {
             @Override
             public void onTaskComplete(Object result, int customTag) {
-                if(customTag == 1){
+                if (customTag == 1) {
                     try {
                         GoogleVisionResponseModel successModel = (GoogleVisionResponseModel) result;
                         listener.onTaskComplete(successModel, TAG_GOOGLE_VISION_SUCCESS_RESULT);
                         return;
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 } else {
@@ -376,7 +454,7 @@ public class GoogleVisionUtilities {
                         GoogleVisionErrorModel errorModel = (GoogleVisionErrorModel) result;
                         listener.onTaskComplete(errorModel, TAG_GOOGLE_VISION_FAIL_RESULT);
                         return;
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -388,24 +466,25 @@ public class GoogleVisionUtilities {
 
     /**
      * Call to the Google Vision Web Detection endpoint
-     * @param listener listener to send data back on
-     * @param bitmap Image (bitmap) to be converted into a base64 and sent. Will run on async thread
+     *
+     * @param listener      listener to send data back on
+     * @param bitmap        Image (bitmap) to be converted into a base64 and sent. Will run on async thread
      * @param maxNumResults Max number of results; defaults to 1
      */
     public void detectFaces(@NonNull final OnTaskCompleteListener listener,
-                                  @NonNull final Bitmap bitmap,
-                                  @Nullable final Integer maxNumResults) {
-        if(listener == null){
+                            @NonNull final Bitmap bitmap,
+                            @Nullable final Integer maxNumResults) {
+        if (listener == null) {
             return;
         }
-        if(bitmap == null){
+        if (bitmap == null) {
             listener.onTaskComplete(null, TAG_INVALID_BITMAP_IMAGE);
             return;
         }
         ImageUtilities.encodeImage(new OnTaskCompleteListener() {
             @Override
             public void onTaskComplete(Object result, int customTag) {
-                switch (customTag){
+                switch (customTag) {
                     case PGMacTipsConstants.TAG_BASE64_IMAGE_ENCODE_SUCCESS:
                         String base64String = (String) result;
                         GoogleVisionUtilities.this.detectFaces(listener, base64String, maxNumResults);
@@ -422,13 +501,14 @@ public class GoogleVisionUtilities {
 
     /**
      * Call to the Google Vision Web Detection endpoint
-     * @param listener listener to send data back on
-     * @param base64Image Base64 encoded image string
+     *
+     * @param listener      listener to send data back on
+     * @param base64Image   Base64 encoded image string
      * @param maxNumResults Max number of results; defaults to 1
      */
     public void detectFaces(@NonNull final OnTaskCompleteListener listener,
-                                  @NonNull final String base64Image,
-                                  @Nullable Integer maxNumResults) {
+                            @NonNull final String base64Image,
+                            @Nullable Integer maxNumResults) {
         if (NumberUtilities.getInt(maxNumResults) <= 0) {
             maxNumResults = 1;
         }
@@ -452,12 +532,12 @@ public class GoogleVisionUtilities {
         RetrofitParser.parse(new OnTaskCompleteListener() {
             @Override
             public void onTaskComplete(Object result, int customTag) {
-                if(customTag == 1){
+                if (customTag == 1) {
                     try {
                         GoogleVisionResponseModel successModel = (GoogleVisionResponseModel) result;
                         listener.onTaskComplete(successModel, TAG_GOOGLE_VISION_SUCCESS_RESULT);
                         return;
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 } else {
@@ -465,7 +545,7 @@ public class GoogleVisionUtilities {
                         GoogleVisionErrorModel errorModel = (GoogleVisionErrorModel) result;
                         listener.onTaskComplete(errorModel, TAG_GOOGLE_VISION_FAIL_RESULT);
                         return;
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -473,7 +553,6 @@ public class GoogleVisionUtilities {
             }
         }, call, GoogleVisionResponseModel.class, GoogleVisionErrorModel.class, 1, 0, false);
     }
-
 
 
     //////////////////
@@ -485,12 +564,14 @@ public class GoogleVisionUtilities {
      */
     private static List<GoogleVisionRequestModel.VisionRequests> buildRequest(String base64Image,
                                                                               Integer maxNumResults,
-                                                                              GoogleVisionRequestModel.VisionFeatures.DetectionTypes type){
+                                                                              GoogleVisionRequestModel.VisionFeatures.DetectionTypes type) {
         GoogleVisionRequestModel.VisionImage visionImage = new GoogleVisionRequestModel.VisionImage();
         GoogleVisionRequestModel.VisionFeatures visionFeatures = new GoogleVisionRequestModel.VisionFeatures();
         GoogleVisionRequestModel.VisionRequests req = new GoogleVisionRequestModel.VisionRequests();
         visionImage.setBase64ImageString(base64Image);
-        visionFeatures.setMaxResults(maxNumResults);
+        if (NumberUtilities.getInt(maxNumResults) > 0) {
+            visionFeatures.setMaxResults(maxNumResults);
+        }
         visionFeatures.setType(type);
         req.setFeatures(visionFeatures);
         req.setImage(visionImage);

@@ -22,7 +22,6 @@ public class GoogleVisionRequestModel {
     }
 
 
-
     /**
      * VisionRequests
      */
@@ -70,7 +69,8 @@ public class GoogleVisionRequestModel {
      */
     public static class VisionFeatures {
         public static enum DetectionTypes {
-            DOCUMENT_TEXT_DETECTION, CROP_HINTS, FACE_DETECTION, WEB_DETECTION
+            DOCUMENT_TEXT_DETECTION, CROP_HINTS, FACE_DETECTION, WEB_DETECTION,
+            TEXT_DETECTION, LANDMARK_DETECTION, LOGO_DETECTION, LABEL_DETECTION
         }
 
         @SerializedName("type")

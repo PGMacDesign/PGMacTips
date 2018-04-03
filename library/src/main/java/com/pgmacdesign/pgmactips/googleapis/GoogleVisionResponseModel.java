@@ -32,7 +32,36 @@ public class GoogleVisionResponseModel {
         private List<FaceAnnotations> faceAnnotations;
         @SerializedName("webDetection")
         private WebDetection webDetection;
+        @SerializedName("labelAnnotations")
+        private LabelAnnotations labelAnnotations;
+        @SerializedName("labelAnnotations")
+        private LabelAnnotations logoAnnotations;
+        @SerializedName("labelAnnotations")
+        private LabelAnnotations landmarkAnnotations;
 
+        public LabelAnnotations getLogoAnnotations() {
+            return logoAnnotations;
+        }
+
+        public void setLogoAnnotations(LabelAnnotations logoAnnotations) {
+            this.logoAnnotations = logoAnnotations;
+        }
+
+        public LabelAnnotations getLandmarkAnnotations() {
+            return landmarkAnnotations;
+        }
+
+        public void setLandmarkAnnotations(LabelAnnotations landmarkAnnotations) {
+            this.landmarkAnnotations = landmarkAnnotations;
+        }
+
+        public LabelAnnotations getLabelAnnotations() {
+            return labelAnnotations;
+        }
+
+        public void setLabelAnnotations(LabelAnnotations labelAnnotations) {
+            this.labelAnnotations = labelAnnotations;
+        }
 
         public List<FaceAnnotations> getFaceAnnotations() {
             return faceAnnotations;
@@ -72,6 +101,99 @@ public class GoogleVisionResponseModel {
 
         public void setFullTextAnnotations(FullTextAnnotations fullTextAnnotations) {
             this.fullTextAnnotations = fullTextAnnotations;
+        }
+    }
+
+    public static class LabelAnnotations {
+        @SerializedName("mid")
+        private String mid;
+        @SerializedName("locale")
+        private String locale;
+        @SerializedName("description")
+        private String description;
+        @SerializedName("score")
+        private Float score;
+        @SerializedName("topicality")
+        private Float topicality;
+        @SerializedName("confidence")
+        private Float confidence;
+        @SerializedName("boundingPoly")
+        private BoundingBox boundingPoly;
+        @SerializedName("locations")
+        private VisionLocation locations;
+        @SerializedName("properties")
+        private VisionProperty properties;
+
+        public VisionLocation getLocations() {
+            return locations;
+        }
+
+        public void setLocations(VisionLocation locations) {
+            this.locations = locations;
+        }
+
+        public VisionProperty getProperties() {
+            return properties;
+        }
+
+        public void setProperties(VisionProperty properties) {
+            this.properties = properties;
+        }
+
+        public String getLocale() {
+            return locale;
+        }
+
+        public void setLocale(String locale) {
+            this.locale = locale;
+        }
+
+        public Float getConfidence() {
+            return confidence;
+        }
+
+        public void setConfidence(Float confidence) {
+            this.confidence = confidence;
+        }
+
+        public BoundingBox getBoundingPoly() {
+            return boundingPoly;
+        }
+
+        public void setBoundingPoly(BoundingBox boundingPoly) {
+            this.boundingPoly = boundingPoly;
+        }
+
+        public String getMid() {
+            return mid;
+        }
+
+        public void setMid(String mid) {
+            this.mid = mid;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public Float getScore() {
+            return score;
+        }
+
+        public void setScore(Float score) {
+            this.score = score;
+        }
+
+        public Float getTopicality() {
+            return topicality;
+        }
+
+        public void setTopicality(Float topicality) {
+            this.topicality = topicality;
         }
     }
 
@@ -230,7 +352,8 @@ public class GoogleVisionResponseModel {
 
     public static class VisionLandmarks {
         /**
-         * Enum of values, IE: LEFT_EYE, LEFT_OF_LEFT_EYEBROW, NOSE_TIP, UPPER_LIP, etc
+         * Enum of values, IE: LEFT_EYE, LEFT_OF_LEFT_EYEBROW, NOSE_TIP, UPPER_LIP, etc. Full list here:
+         * https://cloud.google.com/vision/docs/reference/rest/v1/images/annotate#Type
          */
         @SerializedName("type")
         private String type;
@@ -643,9 +766,65 @@ public class GoogleVisionResponseModel {
         }
     }
 
+    public static class VisionLocation {
+        @SerializedName("latlng")
+        private VisionLatLng latlng;
+
+        public VisionLatLng getLatlng() {
+            return latlng;
+        }
+
+        public void setLatlng(VisionLatLng latlng) {
+            this.latlng = latlng;
+        }
+    }
+
+    public static class VisionLatLng {
+        @SerializedName("latitude")
+        private Double latitude;
+        @SerializedName("longitude")
+        private Double longitude;
+
+        public Double getLatitude() {
+            return latitude;
+        }
+
+        public void setLatitude(Double latitude) {
+            this.latitude = latitude;
+        }
+
+        public Double getLongitude() {
+            return longitude;
+        }
+
+        public void setLongitude(Double longitude) {
+            this.longitude = longitude;
+        }
+    }
+
     public static class VisionProperty {
         @SerializedName("detectedLanguages")
         private List<DetectedLanguages> detectedLanguages;
+        @SerializedName("name")
+        private String name;
+        @SerializedName("value")
+        private String value;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
 
         public List<DetectedLanguages> getDetectedLanguages() {
             return detectedLanguages;
