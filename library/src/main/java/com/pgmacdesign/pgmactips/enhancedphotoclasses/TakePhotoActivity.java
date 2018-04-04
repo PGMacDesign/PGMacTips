@@ -612,7 +612,7 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
                 }
 
                 int amountToRotate = (360 - displayOrientation) % 360;
-                realImage = ImageUtilities.rotate(realImage, amountToRotate);
+                realImage = ImageUtilities.rotateImage(realImage, amountToRotate);
 
                 //Note, I am not compressing these to full quality on purpose
                 boolean bo = realImage.compress(Bitmap.CompressFormat.JPEG, 92, fos);

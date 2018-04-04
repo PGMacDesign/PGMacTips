@@ -15,6 +15,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -523,7 +524,7 @@ public class ImageUtilities {
                 int w = bitmap.getWidth();
                 int h = bitmap.getHeight();
 
-                // Setting pre rotate
+                // Setting pre rotateImage
                 Matrix mtx = new Matrix();
                 mtx.preRotate(rotate);
 
@@ -539,16 +540,46 @@ public class ImageUtilities {
     }
 
     /**
-     * For rotating images
+     * Rotates an image 90 degrees counter-clockwise
      *
-     * @param bitmap Bitmap to rotate
-     * @param degree Degree amount to rotate
+     * @param bitmap Bitmap to rotateImage
      * @return
      */
-    public static Bitmap rotate(Bitmap bitmap, int degree) {
+    public static Bitmap rotateImageCounterClockwise(@NonNull Bitmap bitmap) {
         if (bitmap == null) {
             return null;
         }
+        return rotateImage(bitmap, 270);
+    }
+
+    /**
+     * Rotates an image 90 degrees clockwise
+     *
+     * @param bitmap Bitmap to rotateImage
+     * @return
+     */
+    public static Bitmap rotateImageClockwise(@NonNull Bitmap bitmap) {
+        if (bitmap == null) {
+            return null;
+        }
+        return rotateImage(bitmap, 90);
+    }
+
+    /**
+     * For rotating images
+     *
+     * @param bitmap Bitmap to rotateImage
+     * @param degree Degree amount to rotateImage. If <0 or >360, will set to 90 degrees.
+     *               (Range is 0-360)
+     * @return
+     */
+    public static Bitmap rotateImage(@NonNull Bitmap bitmap,
+                                     @IntRange(from = 0, to = 360) int degree) {
+        if (bitmap == null) {
+            return null;
+        }
+        //Shouldn't be possible, but, you know... reasons.
+        degree = (degree < 0 || degree > 360) ? 90 : degree;
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
 
@@ -566,13 +597,13 @@ public class ImageUtilities {
      * @return Drawable
      * @throws NullPointerException, if it fails, throws a null pointer
      */
-    public static Drawable colorDrawable(Drawable drawable, int colorToSet) {
+    public static Drawable colorDrawable(@NonNull Drawable drawable, int colorToSet) {
         try {
             drawable.mutate().setColorFilter(colorToSet, PorterDuff.Mode.MULTIPLY);
             return drawable;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new NullPointerException();
+            return drawable;
         }
     }
 
@@ -591,7 +622,7 @@ public class ImageUtilities {
             return drawable;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new NullPointerException();
+            return null;
         }
     }
 
@@ -1234,6 +1265,35 @@ public class ImageUtilities {
 
     private static int getBottomSideYCoord(int bottomLeftY, int bottomRightY){
         return (bottomLeftY > bottomRightY) ? bottomLeftY : bottomRightY;
+    }
+
+    /**
+     * Get the Left, Top, Right, and Bottom sides of an image.
+     * @param topLeftX topLeft X position (from x,y coordinates)
+     * @param topLeftY topLeft Y position (from x,y coordinates)
+     * @param bottomLeftX bottomLeft X position (from x,y coordinates)
+     * @param bottomLeftY bottomRight Y position (from x,y coordinates)
+     * @param topRightX topRight X position (from x,y coordinates)
+     * @param topRightY topRight Y position (from x,y coordinates)
+     * @param bottomRightX bottomRight X position (from x,y coordinates)
+     * @param bottomRightY bottomRight Y position (from x,y coordinates)
+     * @return
+     */
+    public static int[] getLTRBSidesOfImage(int topLeftX, int topLeftY,
+                                            int bottomLeftX, int bottomLeftY,
+                                            int topRightX, int topRightY,
+                                            int bottomRightX, int bottomRightY){
+        if(topLeftX < 0 || topRightX < 0 || topLeftY < 0 || topRightY < 0 || bottomLeftX < 0 ||
+                bottomLeftY < 0 || bottomRightX < 0 || bottomRightY < 0) {
+            L.m(INVALID_PIXEL_POSITIONS);
+            return null;
+        }
+        return new int[]{
+                ImageUtilities.getLeftSideXCoord(topLeftX, bottomLeftX),
+                ImageUtilities.getTopSideYCoord(topLeftY, topRightY),
+                ImageUtilities.getRightSideXCoord(topRightX, bottomRightX),
+                ImageUtilities.getBottomSideYCoord(bottomLeftY, bottomRightY)
+        };
     }
 
     /**

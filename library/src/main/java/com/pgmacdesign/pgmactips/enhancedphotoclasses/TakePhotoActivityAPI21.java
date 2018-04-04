@@ -537,9 +537,9 @@ public class TakePhotoActivityAPI21 extends AppCompatActivity implements View.On
     }
     /*
     *   Sensor orientation is 90 for most devices, or 270 for some devices (eg. Nexus 5X)
-    *   We have to take that into account and rotate JPEG properly.
+    *   We have to take that into account and rotateImage JPEG properly.
     *   For devices with orientation of 90, we simply return our mapping from ORIENTATIONS.
-    *   For devices with orientation of 270, we need to rotate the JPEG 180 degrees.
+    *   For devices with orientation of 270, we need to rotateImage the JPEG 180 degrees.
     */
     private int getOrientation(int rotation) {
         int orient1 = ORIENTATIONS.get(rotation);
