@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.widget.ImageView;
@@ -47,6 +48,8 @@ import java.util.List;
  */
 public class ImageUtilities {
 
+    public static final String INVALID_PIXEL_POSITIONS =
+            "Invalid pixel positions. Please check the passed params and start again";
     /**
      * Set a circular image into a view and set caching.
      *
@@ -1215,6 +1218,159 @@ public class ImageUtilities {
                 }
             }
         }.execute();
+    }
+
+    private static int getLeftSideXCoord(int topLeftX, int bottomLeftX){
+        return (topLeftX < bottomLeftX) ? topLeftX : bottomLeftX;
+    }
+
+    private static int getRightSideXCoord(int topRightX, int bottomRightX){
+        return (topRightX > bottomRightX) ? topRightX : bottomRightX;
+    }
+
+    private static int getTopSideYCoord(int topLeftY, int topRightY){
+        return (topLeftY < topRightY) ? topLeftY : topRightY;
+    }
+
+    private static int getBottomSideYCoord(int bottomLeftY, int bottomRightY){
+        return (bottomLeftY > bottomRightY) ? bottomLeftY : bottomRightY;
+    }
+
+    /**
+     * Crop an image to the positions passed. If any # <0 is passed or an error occurs, it will
+     * return the original bitmap passed
+     * @param imageToBeCropped Image to be cropped
+     * @param topLeftX topLeft X position (from x,y coordinates)
+     * @param topLeftY topLeft Y position (from x,y coordinates)
+     * @param bottomLeftX bottomLeft X position (from x,y coordinates)
+     * @param bottomLeftY bottomRight Y position (from x,y coordinates)
+     * @param topRightX topRight X position (from x,y coordinates)
+     * @param topRightY topRight Y position (from x,y coordinates)
+     * @param bottomRightX bottomRight X position (from x,y coordinates)
+     * @param bottomRightY bottomRight Y position (from x,y coordinates)
+     * @return Cropped image. Will return same passed bitmap if operation fails
+     */
+    public static Bitmap cropImage(@NonNull Bitmap imageToBeCropped,
+                                   int topLeftX, int topLeftY,
+                                   int bottomLeftX, int bottomLeftY,
+                                   int topRightX, int topRightY,
+                                   int bottomRightX, int bottomRightY){
+        if(topLeftX < 0 || topRightX < 0 || topLeftY < 0 || topRightY < 0 || bottomLeftX < 0 ||
+                bottomLeftY < 0 || bottomRightX < 0 || bottomRightY < 0){
+            L.m(INVALID_PIXEL_POSITIONS);
+            return imageToBeCropped;
+        }
+
+        return cropImage(imageToBeCropped, ImageUtilities.getLeftSideXCoord(topLeftX, bottomLeftX),
+                ImageUtilities.getTopSideYCoord(topLeftY, topRightY),
+                ImageUtilities.getRightSideXCoord(topRightX, bottomRightX),
+                ImageUtilities.getBottomSideYCoord(bottomLeftY, bottomRightY));
+    }
+
+    /**
+     * Crop an image to the positions passed. If any # <0 is passed or an error occurs, it will
+     * return the original bitmap passed
+     * @param imageToBeCropped Image to be cropped
+     * @param topLeftX topLeft X position (from x,y coordinates)
+     * @param topLeftY topLeft Y position (from x,y coordinates)
+     * @param bottomLeftX bottomLeft X position (from x,y coordinates)
+     * @param bottomLeftY bottomRight Y position (from x,y coordinates)
+     * @param topRightX topRight X position (from x,y coordinates)
+     * @param topRightY topRight Y position (from x,y coordinates)
+     * @param bottomRightX bottomRight X position (from x,y coordinates)
+     * @param bottomRightY bottomRight Y position (from x,y coordinates)
+     * @param sidesBufferPercent Float percentage to allow buffer on sides for cropping. IE, sending
+     *                           in 0.10 would add a 10% buffer on each side to 'zoom out' on
+     *                           the cropped image. Useful if you want some extra side room
+     * @return Cropped image. Will return same passed bitmap if operation fails
+     */
+    public static Bitmap cropImage(@NonNull Bitmap imageToBeCropped,
+                                   int topLeftX, int topLeftY,
+                                   int bottomLeftX, int bottomLeftY,
+                                   int topRightX, int topRightY,
+                                   int bottomRightX, int bottomRightY,
+                                   @Nullable Float sidesBufferPercent){
+        if(topLeftX < 0 || topRightX < 0 || topLeftY < 0 || topRightY < 0 || bottomLeftX < 0 ||
+                bottomLeftY < 0 || bottomRightX < 0 || bottomRightY < 0){
+            L.m(INVALID_PIXEL_POSITIONS);
+            return imageToBeCropped;
+        }
+
+        return cropImage(imageToBeCropped, ImageUtilities.getLeftSideXCoord(topLeftX, bottomLeftX),
+                ImageUtilities.getTopSideYCoord(topLeftY, topRightY),
+                ImageUtilities.getRightSideXCoord(topRightX, bottomRightX),
+                ImageUtilities.getBottomSideYCoord(bottomLeftY, bottomRightY), sidesBufferPercent);
+    }
+
+    /**
+     * Crop an image to the positions passed. If any # <0 is passed or an error occurs, it will
+     * return the original bitmap passed
+     * @param imageToBeCropped Image to be cropped
+     * @param startingXPos Starting X position (left side of the image)
+     * @param startingYPos Starting Y position (Top side of the image)
+     * @param endingXPos Ending X position (Right side of the image)
+     * @param endingYPos Ending Y position (Bottom side of the image)
+     * @return Cropped image. Will return same passed bitmap if operation fails
+     */
+    public static Bitmap cropImage(@NonNull Bitmap imageToBeCropped,
+                                   int startingXPos, int startingYPos,
+                                   int endingXPos, int endingYPos){
+        if(startingYPos < 0 || startingXPos < 0 || endingYPos < 0 || endingXPos < 0){
+            L.m(INVALID_PIXEL_POSITIONS);
+            return imageToBeCropped;
+        }
+        try {
+            return Bitmap.createBitmap(imageToBeCropped, startingXPos, startingYPos,
+                    (endingXPos - startingXPos), (endingYPos - startingYPos));
+        } catch (IllegalArgumentException ile){
+            ile.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return imageToBeCropped;
+    }
+
+    /**
+     * Crop an image to the positions passed. If any # <0 is passed or an error occurs, it will
+     * return the original bitmap passed
+     * @param imageToBeCropped Image to be cropped
+     * @param startingXPos Starting X position (left side of the image)
+     * @param startingYPos Starting Y position (Top side of the image)
+     * @param endingXPos Ending X position (Right side of the image)
+     * @param endingYPos Ending Y position (Bottom side of the image)
+     * @param sidesBufferPercent Float percentage to allow buffer on sides for cropping. IE, sending
+     *                           in 0.10 would add a 10% buffer on each side to 'zoom out' on
+     *                           the cropped image. Useful if you want some extra side room
+     * @return Cropped image. Will return same passed bitmap if operation fails
+     */
+    public static Bitmap cropImage(@NonNull Bitmap imageToBeCropped,
+                                   int startingXPos, int startingYPos,
+                                   int endingXPos, int endingYPos,
+                                   @Nullable Float sidesBufferPercent){
+        if(startingYPos < 0 || startingXPos < 0 || endingYPos < 0 || endingXPos < 0){
+            L.m(INVALID_PIXEL_POSITIONS);
+            return imageToBeCropped;
+        }
+        if(sidesBufferPercent == null){
+            sidesBufferPercent = 0F;
+        }
+        if(sidesBufferPercent < 0 || sidesBufferPercent >= 1){
+            sidesBufferPercent = 0F;
+        }
+        startingXPos = (int)(startingXPos - (startingXPos * sidesBufferPercent));
+        endingXPos = (int)(endingXPos + (endingXPos * sidesBufferPercent));
+        startingYPos = (int)(startingYPos - (startingYPos * sidesBufferPercent));
+        endingYPos = (int)(endingYPos + (endingYPos * sidesBufferPercent));
+
+        startingXPos = (startingXPos < 0) ? 0 : startingXPos;
+        startingYPos = (startingYPos < 0) ? 0 : startingYPos;
+        endingXPos = (endingXPos > imageToBeCropped.getWidth()) ?
+                imageToBeCropped.getWidth() : endingXPos;
+        endingYPos = (endingYPos > imageToBeCropped.getHeight()) ?
+                imageToBeCropped.getHeight() : endingYPos;
+
+        return ImageUtilities.cropImage(imageToBeCropped,
+                startingXPos, startingYPos, endingXPos, endingYPos);
     }
 
 }
