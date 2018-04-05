@@ -126,7 +126,9 @@ public class MiscUtilities {
      * bool if not null
      * @param bool boolean to check
      * @return Boolean, true if it is null or empty, false it if is not
+     * @Deprecated moved to {@link BoolUtilities#isTrue(Boolean)}
      */
+    @Deprecated
     public static boolean isBooleanNullTrueFalse(Boolean bool){
         if(bool == null){
             return false;

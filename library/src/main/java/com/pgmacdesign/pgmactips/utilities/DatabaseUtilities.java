@@ -174,7 +174,7 @@ public class DatabaseUtilities {
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
-                    if (MiscUtilities.isBooleanNullTrueFalse(appendToObject)) {
+                    if (BoolUtilities.isTrue(appendToObject)) {
                         realm.copyToRealmOrUpdate(objectToWrite);
                     } else {
                         realm.copyToRealm(objectToWrite);
@@ -225,7 +225,7 @@ public class DatabaseUtilities {
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
-                    if (MiscUtilities.isBooleanNullTrueFalse(appendToObject)) {
+                    if (BoolUtilities.isTrue(appendToObject)) {
                         realm.createOrUpdateObjectFromJson(myClass, jsonString);
                     } else {
                         realm.createObjectFromJson(myClass, jsonString);
@@ -277,7 +277,7 @@ public class DatabaseUtilities {
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
-                    if (MiscUtilities.isBooleanNullTrueFalse(appendToObject)) {
+                    if (BoolUtilities.isTrue(appendToObject)) {
                         try {
                             realm.createOrUpdateObjectFromJson(myClass, is);
                         } catch (IOException e) {
@@ -340,7 +340,7 @@ public class DatabaseUtilities {
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
-                    if (MiscUtilities.isBooleanNullTrueFalse(appendToObject)) {
+                    if (BoolUtilities.isTrue(appendToObject)) {
                         realm.createOrUpdateObjectFromJson(myClass, jsonObject);
                     } else {
                         realm.createObjectFromJson(myClass, jsonObject);

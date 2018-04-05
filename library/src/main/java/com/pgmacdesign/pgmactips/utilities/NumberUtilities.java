@@ -302,10 +302,8 @@ public class NumberUtilities {
         if(ending.equalsIgnoreCase(".")){
             str = str + "0";
         }
-        if(addDollarSign != null){
-            if(addDollarSign){
-                str = "$"+str;
-            }
+        if(BoolUtilities.isTrue(addDollarSign)){
+            str = "$"+str;
         }
         return str;
     }
