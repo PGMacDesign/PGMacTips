@@ -22,10 +22,9 @@ buildscript{
 android {
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
-
     defaultConfig {
         //applicationId "com.pgmacdesign.pgmactips" //Remove this when switching from lib to app
-        minSdkVersion 17
+        minSdkVersion 15
         targetSdkVersion 25
         //multiDexEnabled true
         versionCode 1
