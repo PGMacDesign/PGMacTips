@@ -1,5 +1,7 @@
 package com.pgmacdesign.pgmactips.utilities;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -8,12 +10,12 @@ import android.os.AsyncTask;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresPermission;
 
 import com.google.gson.annotations.SerializedName;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConfig;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
-import com.pgmacdesign.pgmactips.misc.Ticker;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
@@ -156,7 +158,7 @@ public class ContactUtilities {
     public static enum SearchQueryFlags {
         ADD_ALPHABET_HEADERS, USE_ALL_ALPHABET_LETTERS,
         MOVE_FAVORITES_TO_TOP_OF_LIST, REMOVE_BLOCK_LIST_CONTACTS,
-        MERGE_CONTACTS_TO_SINGLE_LIST
+        ONLY_INCLUDE_CONTACTS_WITH_PHOTOS
     }
 
     ////////////////////
@@ -170,7 +172,7 @@ public class ContactUtilities {
     //private int maxNumResults;
     private final boolean includeAlphabetHeaders, includeAllLetters,
             moveFavoritesToTop, removeBlockListItems, shouldUpdateProgress,
-            mergeContactsTogether;
+            onlyKeepContactsWithPhotos;
 
     //Private Constructor
     private ContactUtilities(Context context, Activity activity,
@@ -179,8 +181,8 @@ public class ContactUtilities {
                              boolean includeAllLetters,
                              boolean moveFavoritesToTop,
                              boolean removeBlockListItems,
-                             boolean mergeContactsTogether,
-                             boolean shouldUpdateProgress) {
+                             boolean shouldUpdateProgress,
+                             boolean onlyKeepContactsWithPhotos) {
         this.context = context;
         this.activity = activity;
         this.listener = listener;
@@ -189,8 +191,7 @@ public class ContactUtilities {
         this.removeBlockListItems = removeBlockListItems;
         this.moveFavoritesToTop = moveFavoritesToTop;
         this.shouldUpdateProgress = shouldUpdateProgress;
-        //this.mergeContactsTogether = mergeContactsTogether;
-        this.mergeContactsTogether = false; //Currently disabling the option to adjust this due to OOM issues
+        this.onlyKeepContactsWithPhotos = onlyKeepContactsWithPhotos;
     }
 
     ////////////////
@@ -316,27 +317,26 @@ public class ContactUtilities {
             searchQueryFlags.add(SearchQueryFlags.MOVE_FAVORITES_TO_TOP_OF_LIST);
             return this;
         }
-
+	
+	    /**
+	     * This flag will only return contacts if they have a photo with their contact object.
+	     * If there is no photo, it will be omitted from the return results
+	     *
+	     * @return this
+	     */
+        public Builder onlyIncludeContactsWithPhotos(){
+            searchQueryFlags.add(SearchQueryFlags.ONLY_INCLUDE_CONTACTS_WITH_PHOTOS);
+            return this;
+        }
+        
         /**
          * This flag will remove the contacts that appear on the global
          * block list below. {@link ContactUtilities#BLOCK_LIST_NUMBERS}
          *
-         * @return
+         * @return this
          */
         public Builder removeBlockListContacts() {
             searchQueryFlags.add(SearchQueryFlags.REMOVE_BLOCK_LIST_CONTACTS);
-            return this;
-        }
-
-        /**
-         * Merge all contacts into a single return list. SLOWER! so only run if you have the
-         * time to do so as this will run through nested loops to merge contact objects together.
-         * @return this
-         *
-        //Removing this temporarily due to OOM issues
-         */
-        private Builder mergeContactsToSingleList(){
-            searchQueryFlags.add(SearchQueryFlags.MERGE_CONTACTS_TO_SINGLE_LIST);
             return this;
         }
 
@@ -344,9 +344,12 @@ public class ContactUtilities {
 
             boolean includeAlphabetHeaders = false, includeAllLetters = false,
                     moveFavoritesToTop = false, removeBlockListItems = false,
-                    mergeContactsTogether = false;
+                    onlyIncludeContactsWithPhotos = false;
             for (SearchQueryFlags flag : this.searchQueryFlags) {
                 switch (flag) {
+	                case ONLY_INCLUDE_CONTACTS_WITH_PHOTOS:
+	                	onlyIncludeContactsWithPhotos = true;
+	                	break;
                     case ADD_ALPHABET_HEADERS:
                         includeAlphabetHeaders = true;
                         break;
@@ -359,38 +362,62 @@ public class ContactUtilities {
                     case MOVE_FAVORITES_TO_TOP_OF_LIST:
                         moveFavoritesToTop = true;
                         break;
-                    case MERGE_CONTACTS_TO_SINGLE_LIST:
-                        //mergeContactsTogether = true;
-                        //Removing this temporarily due to OOM issues
-                        break;
                 }
             }
 
             return new ContactUtilities(context, activity, listener, includeAlphabetHeaders,
-                    includeAllLetters, moveFavoritesToTop, removeBlockListItems, mergeContactsTogether,
-                    this.shouldUpdateProgressLocal);
+                    includeAllLetters, moveFavoritesToTop, removeBlockListItems,
+                    this.shouldUpdateProgressLocal, onlyIncludeContactsWithPhotos);
         }
     }
 
     /////////////////////////////////////////////
     //Async Query Methods for Single table pull//
     /////////////////////////////////////////////
-
-    /**
-     * Perform a contact query on an asynchronous background thread. Data is passed back
-     * on the {@link OnTaskCompleteListener}
-     *
-     * @param typesToQuery  Array of SearchTypes enum objects. These are the types of items
-     *                      to actually make a query to. Sending multiple will return multiple
-     *                      See {@link SearchTypes}
-     * @param maxNumResults The int max number of results per search type.
-     *                      If null or zero is passed, it will
-     *                      simply have no limit on the max number of results.
-     */
-    public void getContacts(@Nullable SearchTypes[] typesToQuery, @Nullable Integer maxNumResults) {
-        queryContacts(typesToQuery, maxNumResults, "");
+	
+	/**
+	 * Query to get all of the contacts.
+	 * NOTE! This call is slower than the other, more specific calls as this one does nested
+	 * database queries. If you want a faster approach, use
+	 * {@link ContactUtilities#queryContacts(SearchTypes[], Integer)} or any other variations on
+	 * the queryContacts(vars) methods.
+	 */
+    @SuppressLint("MissingPermission")
+    @RequiresPermission(Manifest.permission.READ_CONTACTS)
+    public void getAllContacts() {
+	    this.getAllContacts("");
     }
-
+	
+	/**
+	 * Query to get all of the contacts.
+	 * NOTE! This call is slower than the other, more specific calls as this one does nested
+	 * database queries. If you want a faster approach, use
+	 * {@link ContactUtilities#queryContacts(SearchTypes[], Integer)} or any other variations on
+	 * the queryContacts(vars) methods.
+	 * @param query Query to search for (will ping off of name initially)
+	 */
+	@SuppressLint("MissingPermission")
+	@RequiresPermission(Manifest.permission.READ_CONTACTS)
+	public void getAllContacts(String query) {
+		ContactQueryAsync async = new ContactQueryAsync(this, query);
+		async.execute();
+	}
+	
+	/**
+	 * Query to get all of the contacts.
+	 * NOTE! This call is slower than the other, more specific calls as this one does nested
+	 * database queries. If you want a faster approach, use
+	 * {@link ContactUtilities#queryContacts(SearchTypes[], Integer)} or any other variations on
+	 * the queryContacts(vars) methods.
+	 * @param regularExpressionFilter Regular Expression to filter for
+	 */
+	@SuppressLint("MissingPermission")
+	@RequiresPermission(Manifest.permission.READ_CONTACTS)
+	public void getAllContacts(@Nullable Pattern regularExpressionFilter) {
+		ContactQueryAsync async = new ContactQueryAsync(this, regularExpressionFilter);
+		async.execute();
+	}
+	
     /**
      * Perform a contact query on an asynchronous background thread. Data is passed back
      * on the {@link OnTaskCompleteListener}. This is overloaded to allow no query string to be
@@ -403,6 +430,8 @@ public class ContactUtilities {
      *                      If null or zero is passed, it will
      *                      simply have no limit on the max number of results.
      */
+    @SuppressLint("MissingPermission")
+    @RequiresPermission(Manifest.permission.READ_CONTACTS)
     public void queryContacts(@Nullable SearchTypes[] typesToQuery, @Nullable Integer maxNumResults) {
         queryContacts(typesToQuery, maxNumResults, "");
     }
@@ -419,6 +448,7 @@ public class ContactUtilities {
      *                      simply have no limit on the max number of results.
      * @param query         The query to be included (in String format)
      */
+    @RequiresPermission(Manifest.permission.READ_CONTACTS)
     public void queryContacts(@Nullable SearchTypes[] typesToQuery,
                               @Nullable Integer maxNumResults,
                               @Nullable String query) {
@@ -429,10 +459,11 @@ public class ContactUtilities {
         int numResults = (NumberUtilities.getInt(maxNumResults) <= 0) ? 0
                 : (NumberUtilities.getInt(maxNumResults));
 
-        ContactQueryAsync async = new ContactQueryAsync(this, typesToQuery, numResults, query);
+        ContactQueryAsync async = new ContactQueryAsync(this, typesToQuery, numResults, onlyKeepContactsWithPhotos, query);
         async.execute();
     }
-
+	
+	@RequiresPermission(Manifest.permission.READ_CONTACTS)
     public void queryContacts(@Nullable SearchTypes[] typesToQuery,
                               @Nullable Integer maxNumResults,
                               @Nullable Pattern regularExpressionFilter) {
@@ -444,46 +475,77 @@ public class ContactUtilities {
                 : (NumberUtilities.getInt(maxNumResults));
 
         ContactQueryAsync async = new ContactQueryAsync(this, typesToQuery, numResults,
-                regularExpressionFilter);
+                onlyKeepContactsWithPhotos, regularExpressionFilter);
         async.execute();
     }
 
+    
     private static class ContactQueryAsync extends AsyncTask<Void, Float, Map<SearchTypes, List<Contact>>> {
 
         private SearchTypes[] typesToQuery;
         private int maxNumResults;
         private float divisor, diffAmount, baseFloatToAppendTo;
         private String query;
-        private boolean missingPermissions, useRegex;
+        private boolean missingPermissions, useRegex, onlyKeepContactsWithPhotos, getAllContactsAndFields;
         private Pattern regexPattern;
-        private List<Contact> mergedContactsList;
         private SoftReference<ContactUtilities> classReference;
         private OnTaskCompleteListener progressListener;
 
         private ContactQueryAsync(@NonNull ContactUtilities referent,
+                                  String query){
+	        this.classReference = new SoftReference<ContactUtilities>(referent);
+	        this.getAllContactsAndFields = true;
+	        this.missingPermissions = false;
+	        this.regexPattern = null;
+	        this.useRegex = false;
+	        this.query = (StringUtilities.isNullOrEmpty(query) ? null : query);
+	        this.init();
+        }
+	
+	    private ContactQueryAsync(@NonNull ContactUtilities referent,
+	                              @Nullable Pattern regularExpressionFilter){
+		    this.classReference = new SoftReference<ContactUtilities>(referent);
+		    this.getAllContactsAndFields = true;
+		    this.missingPermissions = false;
+		    this.regexPattern = null;
+		    this.useRegex = false;
+		    this.query = null;
+		    if(regularExpressionFilter == null){
+			    this.useRegex = false;
+		    } else {
+			    this.useRegex = true;
+		    }
+		    this.init();
+	    }
+	    
+        private ContactQueryAsync(@NonNull ContactUtilities referent,
                                   @NonNull SearchTypes[] typesToQuery,
-                                  int maxNumResults,
+                                  int maxNumResults, boolean onlyKeepContactsWithPhotos,
                                   @Nullable String query) {
             this.typesToQuery = ContactUtilities.removeDuplicateTypes(typesToQuery);
             this.query = query;
             this.regexPattern = null;
             this.maxNumResults = maxNumResults;
             this.missingPermissions = false;
+            this.onlyKeepContactsWithPhotos = onlyKeepContactsWithPhotos;
             this.classReference = new SoftReference<ContactUtilities>(referent);
             this.useRegex = false;
+	        this.getAllContactsAndFields = false;
             this.init();
         }
 
         private ContactQueryAsync(@NonNull ContactUtilities referent,
                                   @NonNull SearchTypes[] typesToQuery,
-                                  int maxNumResults,
+                                  int maxNumResults, boolean onlyKeepContactsWithPhotos,
                                   @Nullable Pattern regularExpressionFilter) {
             this.typesToQuery = ContactUtilities.removeDuplicateTypes(typesToQuery);
             this.query = null;
             this.regexPattern = regularExpressionFilter;
             this.maxNumResults = maxNumResults;
             this.missingPermissions = false;
+	        this.onlyKeepContactsWithPhotos = onlyKeepContactsWithPhotos;
             this.classReference = new SoftReference<ContactUtilities>(referent);
+	        this.getAllContactsAndFields = false;
             if(regularExpressionFilter == null){
                 this.useRegex = false;
             } else {
@@ -494,7 +556,8 @@ public class ContactUtilities {
 
         private void init(){
             this.baseFloatToAppendTo = 0;
-            this.divisor = (float)this.typesToQuery.length;
+            this.divisor = (float)(MiscUtilities.isArrayNullOrEmpty(this.typesToQuery) ? (float)1
+		            : (float)this.typesToQuery.length);
             this.diffAmount = (divisor == 0) ? 100 : ((float)(100 / divisor));
             this.progressListener = new OnTaskCompleteListener() {
                 @Override
@@ -540,8 +603,6 @@ public class ContactUtilities {
         protected Map<SearchTypes, List<Contact>> doInBackground(Void... args) {
 
             Map<SearchTypes, List<Contact>> toGenerate = new HashMap<>();
-            Ticker tick = new Ticker("ContactUtilities Asynctask", null);
-            tick.tick(538);
             if (this.classReference.get().activity != null) {
                 if (!PermissionUtilities.getContactPermissions(this.classReference.get().activity)) {
                     this.missingPermissions = true;
@@ -551,151 +612,94 @@ public class ContactUtilities {
                     return null;
                 }
             }
-
-            if(this.classReference.get().mergeContactsTogether){
-                List<Contact> emailContacts = null, phoneContacts = null,
-                        nameContacts = null, addressContacts = null;
-                for (SearchTypes type : this.typesToQuery) {
-                    switch (type) {
-                        case EMAIL:
-                            emailContacts = (this.useRegex) ? ContactUtilities.getEmailQueryRegex(this.progressListener,
-                                    this.classReference.get().context, this.regexPattern, this.maxNumResults)
-                                    : ContactUtilities.getEmailQuery(this.progressListener,
-                                    this.classReference.get().context, this.query, this.maxNumResults);
-                            emailContacts = ContactUtilities.simplifyList(emailContacts);
-                            if(!MiscUtilities.isListNullOrEmpty(emailContacts) && this.mergedContactsList == null){
-                                this.mergedContactsList = emailContacts;
-                            }
-                            break;
-
-                        case PHONE:
-                            phoneContacts = (this.useRegex) ? ContactUtilities.getPhoneQueryRegex(this.progressListener,
-                                    this.classReference.get().context, this.regexPattern, this.maxNumResults,
-                                    this.classReference.get().removeBlockListItems) :
-                                    ContactUtilities.getPhoneQuery(this.progressListener,
-                                            this.classReference.get().context, this.query, this.maxNumResults,
-                                            this.classReference.get().removeBlockListItems);
-                            phoneContacts = ContactUtilities.simplifyList(phoneContacts);
-                            if(!MiscUtilities.isListNullOrEmpty(phoneContacts) && this.mergedContactsList == null){
-                                this.mergedContactsList = phoneContacts;
-                            }
-                            break;
-
-                        case ADDRESS:
-                            addressContacts = (this.useRegex) ? ContactUtilities.getAddressQueryRegex(this.progressListener,
-                                    this.classReference.get().context, this.regexPattern, this.maxNumResults) :
-                                    ContactUtilities.getAddressQuery(this.progressListener,
-                                            this.classReference.get().context, this.query, this.maxNumResults);
-                            addressContacts = ContactUtilities.simplifyList(addressContacts);
-                            if(!MiscUtilities.isListNullOrEmpty(addressContacts) && this.mergedContactsList == null){
-                                this.mergedContactsList = addressContacts;
-                            }
-                            break;
-
-                        case NAME:
-                            nameContacts = (this.useRegex) ? ContactUtilities.getNameQueryRegex(this.progressListener,
-                                    this.classReference.get().context, this.regexPattern, this.maxNumResults) :
-                                    ContactUtilities.getNameQuery(this.progressListener,
-                                            this.classReference.get().context, this.query, this.maxNumResults);
-                            nameContacts = ContactUtilities.simplifyList(nameContacts);
-                            if(!MiscUtilities.isListNullOrEmpty(nameContacts) && this.mergedContactsList == null){
-                                this.mergedContactsList = nameContacts;
-                            }
-                            break;
-                    }
-                    this.baseFloatToAppendTo += diffAmount;
-                }
-                if(MiscUtilities.isListNullOrEmpty(this.mergedContactsList)){
-                    //If this hits, it means all contact lists are empty, no need to combine lists
-
-                } else {
-                    if(!MiscUtilities.isListNullOrEmpty(emailContacts))
-                        this.mergedContactsList = ContactUtilities.mergeContacts(this.mergedContactsList, emailContacts);
-                    if(!MiscUtilities.isListNullOrEmpty(phoneContacts))
-                        this.mergedContactsList = ContactUtilities.mergeContacts(this.mergedContactsList, phoneContacts);
-                    if(!MiscUtilities.isListNullOrEmpty(addressContacts))
-                        this.mergedContactsList = ContactUtilities.mergeContacts(this.mergedContactsList, addressContacts);
-                    if(!MiscUtilities.isListNullOrEmpty(nameContacts))
-                        this.mergedContactsList = ContactUtilities.mergeContacts(this.mergedContactsList, nameContacts);
-                    if (this.classReference.get().includeAlphabetHeaders) {
-                        this.mergedContactsList = ContactUtilities.addAlphabetHeadersToList(
-                                this.mergedContactsList, this.classReference.get().includeAllLetters);
-                    }
-                    if (this.classReference.get().moveFavoritesToTop) {
-                        this.mergedContactsList = ContactUtilities.moveFavoritesToTop(this.mergedContactsList);
-                    }
-                }
+	
+            if(this.getAllContactsAndFields){
+	            List<Contact> allContacts = (this.useRegex) ? ContactUtilities.getAllDataQueryRegex(this.progressListener,
+			            this.classReference.get().context, this.regexPattern, this.maxNumResults,
+			            this.classReference.get().removeBlockListItems, this.onlyKeepContactsWithPhotos)
+			            : ContactUtilities.getAllDataQuery(this.progressListener, this.classReference.get().context,
+			            this.query, this.maxNumResults, this.classReference.get().removeBlockListItems, this.onlyKeepContactsWithPhotos);
+	            allContacts = ContactUtilities.simplifyList(allContacts);
+	            if (this.classReference.get().includeAlphabetHeaders) {
+		            allContacts = ContactUtilities.addAlphabetHeadersToList(
+				            allContacts, this.classReference.get().includeAllLetters);
+	            }
+	            if (this.classReference.get().moveFavoritesToTop) {
+		            allContacts = ContactUtilities.moveFavoritesToTop(allContacts);
+	            }
+	            toGenerate.put(SearchTypes.PHONE, allContacts);
+	            
             } else {
-                for (SearchTypes type : this.typesToQuery) {
-                    switch (type) {
-                        case EMAIL:
-                            List<Contact> emailContacts = (this.useRegex) ? ContactUtilities.getEmailQueryRegex(this.progressListener,
-                                    this.classReference.get().context, this.regexPattern, this.maxNumResults)
-                                    : ContactUtilities.getEmailQuery(this.progressListener,
-                                    this.classReference.get().context, this.query, this.maxNumResults);
-                            emailContacts = ContactUtilities.simplifyList(emailContacts);
-                            if (this.classReference.get().includeAlphabetHeaders) {
-                                emailContacts = ContactUtilities.addAlphabetHeadersToList(
-                                        emailContacts, this.classReference.get().includeAllLetters);
-                            }
-                            if (this.classReference.get().moveFavoritesToTop) {
-                                emailContacts = ContactUtilities.moveFavoritesToTop(emailContacts);
-                            }
-                            toGenerate.put(SearchTypes.EMAIL, emailContacts);
-                            break;
-
-                        case PHONE:
-                            List<Contact> phoneContacts = (this.useRegex) ? ContactUtilities.getPhoneQueryRegex(this.progressListener,
-                                    this.classReference.get().context, this.regexPattern, this.maxNumResults,
-                                    this.classReference.get().removeBlockListItems) :
-                                    ContactUtilities.getPhoneQuery(this.progressListener,
-                                            this.classReference.get().context, this.query, this.maxNumResults,
-                                            this.classReference.get().removeBlockListItems);
-                            phoneContacts = ContactUtilities.simplifyList(phoneContacts);
-                            if (this.classReference.get().includeAlphabetHeaders) {
-                                phoneContacts = ContactUtilities.addAlphabetHeadersToList(
-                                        phoneContacts, this.classReference.get().includeAllLetters);
-                            }
-                            if (this.classReference.get().moveFavoritesToTop) {
-                                phoneContacts = ContactUtilities.moveFavoritesToTop(phoneContacts);
-                            }
-                            toGenerate.put(SearchTypes.PHONE, phoneContacts);
-                            break;
-
-                        case ADDRESS:
-                            List<Contact> addressContacts = (this.useRegex) ? ContactUtilities.getAddressQueryRegex(this.progressListener,
-                                    this.classReference.get().context, this.regexPattern, this.maxNumResults) :
-                                    ContactUtilities.getAddressQuery(this.progressListener,
-                                            this.classReference.get().context, this.query, this.maxNumResults);
-                            addressContacts = ContactUtilities.simplifyList(addressContacts);
-                            if (this.classReference.get().includeAlphabetHeaders) {
-                                addressContacts = ContactUtilities.addAlphabetHeadersToList(
-                                        addressContacts, this.classReference.get().includeAllLetters);
-                            }
-                            if (this.classReference.get().moveFavoritesToTop) {
-                                addressContacts = ContactUtilities.moveFavoritesToTop(addressContacts);
-                            }
-                            toGenerate.put(SearchTypes.ADDRESS, addressContacts);
-                            break;
-
-                        case NAME:
-                            List<Contact> nameContacts = (this.useRegex) ? ContactUtilities.getNameQueryRegex(this.progressListener,
-                                    this.classReference.get().context, this.regexPattern, this.maxNumResults) :
-                                    ContactUtilities.getNameQuery(this.progressListener,
-                                            this.classReference.get().context, this.query, this.maxNumResults);
-                            nameContacts = ContactUtilities.simplifyList(nameContacts);
-                            if (this.classReference.get().includeAlphabetHeaders) {
-                                nameContacts = ContactUtilities.addAlphabetHeadersToList(
-                                        nameContacts, this.classReference.get().includeAllLetters);
-                            }
-                            if (this.classReference.get().moveFavoritesToTop) {
-                                nameContacts = ContactUtilities.moveFavoritesToTop(nameContacts);
-                            }
-                            toGenerate.put(SearchTypes.NAME, nameContacts);
-                            break;
-                    }
-                    this.baseFloatToAppendTo += diffAmount;
-                }
+	            for (SearchTypes type : this.typesToQuery) {
+		            switch (type) {
+			            case EMAIL:
+				            List<Contact> emailContacts = (this.useRegex) ? ContactUtilities.getEmailQueryRegex(this.progressListener,
+						            this.classReference.get().context, this.regexPattern, this.maxNumResults, this.onlyKeepContactsWithPhotos)
+						            : ContactUtilities.getEmailQuery(this.progressListener, this.classReference.get().context,
+						            this.query, this.maxNumResults, this.onlyKeepContactsWithPhotos);
+				            emailContacts = ContactUtilities.simplifyList(emailContacts);
+				            if (this.classReference.get().includeAlphabetHeaders) {
+					            emailContacts = ContactUtilities.addAlphabetHeadersToList(
+							            emailContacts, this.classReference.get().includeAllLetters);
+				            }
+				            if (this.classReference.get().moveFavoritesToTop) {
+					            emailContacts = ContactUtilities.moveFavoritesToTop(emailContacts);
+				            }
+				            toGenerate.put(SearchTypes.EMAIL, emailContacts);
+				            break;
+			
+			            case PHONE:
+				            List<Contact> phoneContacts = (this.useRegex) ? ContactUtilities.getPhoneQueryRegex(this.progressListener,
+						            this.classReference.get().context, this.regexPattern, this.maxNumResults,
+						            this.classReference.get().removeBlockListItems, this.onlyKeepContactsWithPhotos) :
+						            ContactUtilities.getPhoneQuery(this.progressListener,
+								            this.classReference.get().context, this.query, this.maxNumResults,
+								            this.classReference.get().removeBlockListItems, this.onlyKeepContactsWithPhotos);
+				            phoneContacts = ContactUtilities.simplifyList(phoneContacts);
+				            if (this.classReference.get().includeAlphabetHeaders) {
+					            phoneContacts = ContactUtilities.addAlphabetHeadersToList(
+							            phoneContacts, this.classReference.get().includeAllLetters);
+				            }
+				            if (this.classReference.get().moveFavoritesToTop) {
+					            phoneContacts = ContactUtilities.moveFavoritesToTop(phoneContacts);
+				            }
+				            toGenerate.put(SearchTypes.PHONE, phoneContacts);
+				            break;
+			
+			            case ADDRESS:
+				            List<Contact> addressContacts = (this.useRegex) ? ContactUtilities.getAddressQueryRegex(this.progressListener,
+						            this.classReference.get().context, this.regexPattern, this.maxNumResults, this.onlyKeepContactsWithPhotos) :
+						            ContactUtilities.getAddressQuery(this.progressListener,
+								            this.classReference.get().context, this.query, this.maxNumResults, this.onlyKeepContactsWithPhotos);
+				            addressContacts = ContactUtilities.simplifyList(addressContacts);
+				            if (this.classReference.get().includeAlphabetHeaders) {
+					            addressContacts = ContactUtilities.addAlphabetHeadersToList(
+							            addressContacts, this.classReference.get().includeAllLetters);
+				            }
+				            if (this.classReference.get().moveFavoritesToTop) {
+					            addressContacts = ContactUtilities.moveFavoritesToTop(addressContacts);
+				            }
+				            toGenerate.put(SearchTypes.ADDRESS, addressContacts);
+				            break;
+			
+			            case NAME:
+				            List<Contact> nameContacts = (this.useRegex) ? ContactUtilities.getNameQueryRegex(this.progressListener,
+						            this.classReference.get().context, this.regexPattern, this.maxNumResults, this.onlyKeepContactsWithPhotos) :
+						            ContactUtilities.getNameQuery(this.progressListener,
+								            this.classReference.get().context, this.query, this.maxNumResults, this.onlyKeepContactsWithPhotos);
+				            nameContacts = ContactUtilities.simplifyList(nameContacts);
+				            if (this.classReference.get().includeAlphabetHeaders) {
+					            nameContacts = ContactUtilities.addAlphabetHeadersToList(
+							            nameContacts, this.classReference.get().includeAllLetters);
+				            }
+				            if (this.classReference.get().moveFavoritesToTop) {
+					            nameContacts = ContactUtilities.moveFavoritesToTop(nameContacts);
+				            }
+				            toGenerate.put(SearchTypes.NAME, nameContacts);
+				            break;
+		            }
+		            this.baseFloatToAppendTo += diffAmount;
+	            }
             }
             onProgressUpdate(100F); //Trigger complete
             return toGenerate;
@@ -710,53 +714,61 @@ public class ContactUtilities {
                 //Do nothing, result already sent back on listener
                 return;
             }
-            if(!MiscUtilities.isListNullOrEmpty(this.mergedContactsList)
-                    && this.classReference.get().mergeContactsTogether){
-                // TODO: 2018-03-16 this is crashing apps with large contact lists (>5k). need to refactor
-                this.classReference.get().listener.onTaskComplete(
-                        this.mergedContactsList, PGMacTipsConstants.TAG_CONTACT_QUERY_ALL_MERGED_RESULTS);
-                return;
-            }
             if (MiscUtilities.isMapNullOrEmpty(contacts)) {
                 // TODO: 2018-03-16 this is crashing apps with large contact lists (>5k). need to refactor
                 this.classReference.get().listener.onTaskComplete("No Contacts Found",
                         PGMacTipsConstants.TAG_CONTACT_QUERY_NO_RESULTS);
                 return;
             }
-            for (Map.Entry<SearchTypes, List<Contact>> myMap : contacts.entrySet()) {
-                SearchTypes typeKey = myMap.getKey();
-                List<Contact> contacts1 = myMap.getValue();
-
-                //Skip the loop if null
-                if (typeKey == null || contacts1 == null) {
-                    continue;
-                }
-
-                switch (typeKey) {
-                    case EMAIL:
-                        // TODO: 2018-03-16 this is crashing apps with large contact lists (>5k). need to refactor
-                        this.classReference.get().listener.onTaskComplete(
-                                contacts1, PGMacTipsConstants.TAG_CONTACT_QUERY_EMAIL);
-                        break;
-
-                    case PHONE:
-                        // TODO: 2018-03-16 this is crashing apps with large contact lists (>5k). need to refactor
-                        this.classReference.get().listener.onTaskComplete(
-                                contacts1, PGMacTipsConstants.TAG_CONTACT_QUERY_PHONE);
-                        break;
-
-                    case ADDRESS:
-                        // TODO: 2018-03-16 this is crashing apps with large contact lists (>5k). need to refactor
-                        this.classReference.get().listener.onTaskComplete(
-                                contacts1, PGMacTipsConstants.TAG_CONTACT_QUERY_ADDRESS);
-                        break;
-
-                    case NAME:
-                        // TODO: 2018-03-16 this is crashing apps with large contact lists (>5k). need to refactor
-                        this.classReference.get().listener.onTaskComplete(
-                                contacts1, PGMacTipsConstants.TAG_CONTACT_QUERY_NAME);
-                        break;
-                }
+            if(this.getAllContactsAndFields){
+	            for (Map.Entry<SearchTypes, List<Contact>> myMap : contacts.entrySet()) {
+		            SearchTypes typeKey = myMap.getKey();
+		            List<Contact> contacts1 = myMap.getValue();
+		            //Skip if null
+		            if (typeKey == null || contacts1 == null) {
+			            continue;
+		            }
+		            if(typeKey == SearchTypes.PHONE){
+			            this.classReference.get().listener.onTaskComplete(
+					            contacts1, PGMacTipsConstants.TAG_CONTACT_QUERY_ALL_MERGED_RESULTS);
+		            }
+	            }
+            } else {
+	            for (Map.Entry<SearchTypes, List<Contact>> myMap : contacts.entrySet()) {
+		            SearchTypes typeKey = myMap.getKey();
+		            List<Contact> contacts1 = myMap.getValue();
+		
+		            //Skip the loop if null
+		            if (typeKey == null || contacts1 == null) {
+			            continue;
+		            }
+		
+		            switch (typeKey) {
+			            case EMAIL:
+				            // TODO: 2018-03-16 this is crashing apps with large contact lists (>5k). need to refactor
+				            this.classReference.get().listener.onTaskComplete(
+						            contacts1, PGMacTipsConstants.TAG_CONTACT_QUERY_EMAIL);
+				            break;
+			
+			            case PHONE:
+				            // TODO: 2018-03-16 this is crashing apps with large contact lists (>5k). need to refactor
+				            this.classReference.get().listener.onTaskComplete(
+						            contacts1, PGMacTipsConstants.TAG_CONTACT_QUERY_PHONE);
+				            break;
+			
+			            case ADDRESS:
+				            // TODO: 2018-03-16 this is crashing apps with large contact lists (>5k). need to refactor
+				            this.classReference.get().listener.onTaskComplete(
+						            contacts1, PGMacTipsConstants.TAG_CONTACT_QUERY_ADDRESS);
+				            break;
+			
+			            case NAME:
+				            // TODO: 2018-03-16 this is crashing apps with large contact lists (>5k). need to refactor
+				            this.classReference.get().listener.onTaskComplete(
+						            contacts1, PGMacTipsConstants.TAG_CONTACT_QUERY_NAME);
+				            break;
+		            }
+	            }
             }
             super.onPostExecute(contacts);
         }
@@ -766,13 +778,303 @@ public class ContactUtilities {
     ///////////////////////////////////////
     //Query Methods for Single table pull//
     ///////////////////////////////////////
-
+	
+	/**
+	 * Overloaded to allow for progress listener to be omitted
+	 */
+	public static List<Contact> getAllDataQuery(Context context, String query,
+	                                            int maxNumResults, boolean removeBlockListItems,
+	                                            boolean onlyKeepContactsWithPhotos){
+    	return getAllDataQuery(null, context, query, maxNumResults, removeBlockListItems, onlyKeepContactsWithPhotos);
+	}
+	
+	/**
+	 * Query that will pull all data.
+	 * NOTE! This is a much slower call as it is doing multiple nested queries
+	 * @param progressListener Listener to send progress back upon. If null, no progress to be sent back
+	 * @param context          Context used to obtain the contentResolver
+	 * @param query            Query to be searched
+	 * @param maxNumResults    max number of results to return. if 0, no limit
+	 * @param removeBlockListItems    remove contacts that are on the {@link ContactUtilities#BLOCK_LIST_NUMBERS} list
+	 * @param onlyKeepContactsWithPhotos    Only return those contacts with photos.
+	 * @return A List of {@link ContactUtilities.Contact}
+	 */
+	public static List<Contact> getAllDataQuery(@Nullable OnTaskCompleteListener progressListener,
+	                                            Context context, String query,
+	                                            int maxNumResults, boolean removeBlockListItems,
+	                                            boolean onlyKeepContactsWithPhotos){
+		List<Contact> contacts = new ArrayList<>();
+		if (context == null) {
+			try {
+				context = PGMacTipsConfig.getInstance().getContext();
+			} catch (Exception e) {
+			}
+		}
+		boolean shouldUpdateProgress = false;
+		ContentResolver cr;
+		try {
+			cr = context.getContentResolver();
+		} catch (NullPointerException npe) {
+			return contacts;
+		}
+		
+		if (query != null) {
+			query = "%" + query + "%";
+		}
+		
+		try {
+			String phoneWhere = null;
+			String[] phoneWhereParams = null;
+			if (query != null) {
+				phoneWhere = ContactsContract.Data.MIMETYPE +
+						" = ? AND " +
+						"(" +
+						ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME +
+						" LIKE ? COLLATE NOCASE " +
+						"OR " +
+						ContactsContract.CommonDataKinds.Phone.NUMBER +
+						" LIKE ? " +
+						")";
+				phoneWhereParams = new String[]{
+						ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE, query, query};
+			} else {
+				phoneWhere = ContactsContract.Data.MIMETYPE + " = ?";
+				phoneWhereParams = new String[]{
+						ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE};
+			}
+			
+			Cursor pCur = cr.query(
+					ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+					PHONE_PROJECTION_V2,
+					phoneWhere,
+					phoneWhereParams,
+					SORT_BY_DISPLAY_NAME);
+			
+			if (pCur == null) {
+				return contacts;
+			}
+			
+			int updateProgressMaxInt = ContactUtilities.getMaxForProgressUpdates(
+					progressListener, maxNumResults, pCur.getCount());
+			shouldUpdateProgress = (updateProgressMaxInt != -1);
+			int counter = 0, totalCounter = -1;
+			while (pCur.moveToNext()) {
+				totalCounter++;
+				if (counter < maxNumResults || maxNumResults == 0) {
+					
+					
+					String id = getColumnData(pCur, ContactsContract.Contacts._ID);
+					String photoUri = getColumnData(pCur, ContactsContract.Contacts.PHOTO_URI);
+					String displayName = getColumnData(pCur, ContactsContract.Contacts.DISPLAY_NAME);
+					String starred = getColumnData(pCur, ContactsContract.Contacts.STARRED);
+					
+					Contact contact = new Contact();
+					contact.setId(id);
+					contact.setRawDisplayName(displayName);
+					contact.setPhotoUri(photoUri);
+					if (!StringUtilities.isNullOrEmpty(starred)) {
+						int starredInt = 0;
+						try {
+							starredInt = Integer.parseInt(starred);
+						} catch (Exception e){}
+						if (starredInt == 1) {
+							contact.setStarred(true);
+						} else {
+							contact.setStarred(false);
+						}
+					} else {
+						contact.setStarred(false);
+					}
+					
+					String phoneNumberType = getColumnData(pCur,
+							ContactsContract.CommonDataKinds.Phone.TYPE);
+					String phoneNumber = getColumnData(pCur,
+							ContactsContract.CommonDataKinds.Phone.NUMBER);
+					
+					Contact.Phone phone;
+					if (phoneNumberType != null) {
+						int x = Integer.parseInt(phoneNumberType);
+						phoneNumberType = ContactsContractSourceCodeStuff.getPhoneType(x);
+						phone = new Contact.Phone(phoneNumber, phoneNumberType);
+					} else {
+						phone = new Contact.Phone(phoneNumber, phoneNumberType);
+					}
+					
+					if (removeBlockListItems) {
+						if (numberOnBlockList(phoneNumber)) {
+							continue;
+						}
+					}
+					
+					List<Contact.Phone> phones = new ArrayList<>();
+					phones.add(phone);
+					contact.setPhone(phones);
+					
+					//Nested Queries//
+					if(!StringUtilities.isNullOrEmpty(id)){
+						
+						//Email Cursor:
+						String nestedWhere = ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?";
+						String[] nestedWhereParams = new String[]{id};
+						
+						Cursor emailCur = cr.query(
+								ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+								EMAIL_PROJECTION_V2,
+								nestedWhere,
+								nestedWhereParams,
+								SORT_BY_DISPLAY_NAME);
+						
+						while (emailCur.moveToNext()) {
+							
+							String photoUri2 = getColumnData(emailCur, ContactsContract.Contacts.PHOTO_URI);
+							if(StringUtilities.isNullOrEmpty(contact.getPhotoUri()) &&
+									!StringUtilities.isNullOrEmpty(photoUri2)){
+								contact.setPhotoUri(photoUri2);
+							}
+							String email = getColumnData(emailCur,
+									ContactsContract.CommonDataKinds.Email.DATA);
+							String emailType = getColumnData(emailCur,
+									ContactsContract.CommonDataKinds.Email.TYPE);
+							
+							Contact.Email myEmail;
+							
+							if (emailType != null) {
+								int x = Integer.parseInt(emailType);
+								emailType = ContactsContractSourceCodeStuff.getEmailType(x);
+								myEmail = new Contact.Email(email, emailType);
+							} else {
+								myEmail = new Contact.Email(email, null);
+							}
+							
+							List<Contact.Email> emails = new ArrayList<>();
+							emails.add(myEmail);
+							contact.setEmail(emails);
+						}
+						emailCur.close();
+						
+						//Address Cursor
+						Cursor addrCur = cr.query(ContactsContract.Data.CONTENT_URI,
+								ADDRESS_PROJECTION_V2,
+								nestedWhere,
+								nestedWhereParams,
+								SORT_BY_DISPLAY_NAME);
+						
+						while (addrCur.moveToNext()) {
+							
+							String photoUri2 = getColumnData(addrCur, ContactsContract.Contacts.PHOTO_URI);
+							if(StringUtilities.isNullOrEmpty(contact.getPhotoUri()) &&
+									!StringUtilities.isNullOrEmpty(photoUri2)){
+								contact.setPhotoUri(photoUri2);
+							}
+							
+							List<Contact.Address> myAddress = new ArrayList<>();
+							
+							String poBox = getColumnData(addrCur,
+									ContactsContract.CommonDataKinds.StructuredPostal.POBOX);
+							String street = getColumnData(addrCur,
+									ContactsContract.CommonDataKinds.StructuredPostal.STREET);
+							String city = getColumnData(addrCur,
+									ContactsContract.CommonDataKinds.StructuredPostal.CITY);
+							String state = getColumnData(addrCur,
+									ContactsContract.CommonDataKinds.StructuredPostal.REGION);
+							String postalCode = getColumnData(addrCur,
+									ContactsContract.CommonDataKinds.StructuredPostal.POSTCODE);
+							String country = getColumnData(addrCur,
+									ContactsContract.CommonDataKinds.StructuredPostal.COUNTRY);
+							String type = getColumnData(addrCur,
+									ContactsContract.CommonDataKinds.StructuredPostal.TYPE);
+							
+							Contact.Address address = new Contact.Address(poBox, street, city, state,
+									postalCode, country, type);
+							
+							myAddress.add(address);
+							
+							contact.setAddresses(myAddress);
+						}
+						addrCur.close();
+						
+						//Name Cursor
+						Cursor nameCur = cr.query(ContactsContract.Data.CONTENT_URI,
+								NAME_PROJECTION_V2,
+								nestedWhere,
+								nestedWhereParams,
+								SORT_BY_DISPLAY_NAME);
+						
+						
+						while (nameCur.moveToNext()) {
+							
+							String photoUri2 = getColumnData(nameCur, ContactsContract.Contacts.PHOTO_URI);
+							if(StringUtilities.isNullOrEmpty(contact.getPhotoUri()) &&
+									!StringUtilities.isNullOrEmpty(photoUri2)){
+								contact.setPhotoUri(photoUri2);
+							}
+							
+							String displayName2 = getColumnData(nameCur,
+									ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME);
+							String suffix = getColumnData(nameCur,
+									ContactsContract.CommonDataKinds.StructuredName.SUFFIX);
+							String prefix = getColumnData(nameCur,
+									ContactsContract.CommonDataKinds.StructuredName.PREFIX);
+							String middleName = getColumnData(nameCur,
+									ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME);
+							String lastName = getColumnData(nameCur,
+									ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME);
+							String firstName = getColumnData(nameCur,
+									ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
+							
+							Contact.NameObject nameObject = new Contact.NameObject();
+							nameObject.setFirstName(firstName);
+							nameObject.setLastName(lastName);
+							nameObject.setMiddleName(middleName);
+							nameObject.setPrefix(prefix);
+							nameObject.setSuffix(suffix);
+							nameObject.setDisplayName(displayName2);
+							contact.setNameObject(nameObject);
+							
+						}
+						nameCur.close();
+					}
+					
+					if(onlyKeepContactsWithPhotos){
+						if(StringUtilities.isNullOrEmpty(contact.getPhotoUri())){
+							continue;
+						}
+					}
+					
+					contacts.add(contact);
+					counter++;
+					if(shouldUpdateProgress){
+						progressListener.onTaskComplete(
+								ContactUtilities.getProgressCount(
+										(float)counter, (float)updateProgressMaxInt),
+								PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE);
+					}
+					
+				}
+			}
+			pCur.close();
+			//End Phone Number
+			
+		} catch (IllegalStateException e) {
+			//This will get thrown on contacts without a phone number. No reason to stress over it
+			//e.printStackTrace();
+		} catch (android.database.StaleDataException sde){
+			//If this is hit, it means that the cursor was closed before it should have been
+			sde.printStackTrace();
+		}
+		if(shouldUpdateProgress){
+			progressListener.onTaskComplete(100, PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE);
+		}
+		return contacts;
+	}
+	
     /**
      * Overloaded to allow for null progressListener
      */
     public static List<Contact> getPhoneQuery(Context context, String query,
-                                              int maxNumResults, boolean removeBlockListItems) {
-        return getPhoneQuery(null, context, query, maxNumResults, removeBlockListItems);
+                                              int maxNumResults, boolean removeBlockListItems,
+                                              boolean onlyKeepContactsWithPhotos) {
+        return getPhoneQuery(null, context, query, maxNumResults, removeBlockListItems, onlyKeepContactsWithPhotos);
     }
 
     /**
@@ -785,7 +1087,8 @@ public class ContactUtilities {
      */
     public static List<Contact> getPhoneQuery(@Nullable OnTaskCompleteListener progressListener,
                                               Context context, String query,
-                                              int maxNumResults, boolean removeBlockListItems) {
+                                              int maxNumResults, boolean removeBlockListItems,
+                                              boolean onlyKeepContactsWithPhotos) {
         List<Contact> contacts = new ArrayList<>();
         if (context == null) {
             try {
@@ -845,18 +1148,27 @@ public class ContactUtilities {
                 totalCounter++;
                 if (counter < maxNumResults || maxNumResults == 0) {
 
-                    Contact contact = new Contact();
 
                     String id = getColumnData(pCur, ContactsContract.Contacts._ID);
                     String photoUri = getColumnData(pCur, ContactsContract.Contacts.PHOTO_URI);
                     String displayName = getColumnData(pCur, ContactsContract.Contacts.DISPLAY_NAME);
                     String starred = getColumnData(pCur, ContactsContract.Contacts.STARRED);
 
+                    if(onlyKeepContactsWithPhotos){
+                    	if(StringUtilities.isNullOrEmpty(photoUri)){
+                    		continue;
+	                    }
+                    }
+	
+	                Contact contact = new Contact();
                     contact.setId(id);
                     contact.setRawDisplayName(displayName);
                     contact.setPhotoUri(photoUri);
-                    if (starred != null) {
-                        int starredInt = Integer.parseInt(starred);
+                    if (!StringUtilities.isNullOrEmpty(starred)) {
+                    	int starredInt = 0;
+                    	try {
+		                    starredInt = Integer.parseInt(starred);
+	                    } catch (Exception e){}
                         if (starredInt == 1) {
                             contact.setStarred(true);
                         } else {
@@ -917,8 +1229,9 @@ public class ContactUtilities {
     /**
      * Overloaded to allow for null progressListener
      */
-    public static List<Contact> getEmailQuery(Context context, String query, int maxNumResults) {
-        return getEmailQuery(null, context, query, maxNumResults);
+    public static List<Contact> getEmailQuery(Context context, String query, int maxNumResults,
+                                              boolean onlyKeepContactsWithPhotos) {
+        return getEmailQuery(null, context, query, maxNumResults, onlyKeepContactsWithPhotos);
     }
 
     /**
@@ -930,7 +1243,8 @@ public class ContactUtilities {
      * @param maxNumResults max number of results to return. if 0, no limit
      */
     public static List<Contact> getEmailQuery(@Nullable OnTaskCompleteListener progressListener,
-                                              Context context, String query, int maxNumResults) {
+                                              Context context, String query, int maxNumResults,
+                                              boolean onlyKeepContactsWithPhotos) {
 
         List<Contact> contacts = new ArrayList<>();
         if (context == null) {
@@ -986,18 +1300,26 @@ public class ContactUtilities {
                 totalCounter++;
                 if (counter < maxNumResults || maxNumResults == 0) {
 
-                    Contact contact = new Contact();
-
                     String id = getColumnData(emailCur, ContactsContract.Contacts._ID);
                     String photoUri = getColumnData(emailCur, ContactsContract.Contacts.PHOTO_URI);
                     String displayName = getColumnData(emailCur, ContactsContract.Contacts.DISPLAY_NAME);
                     String starred = getColumnData(emailCur, ContactsContract.Contacts.STARRED);
 
+                    if(onlyKeepContactsWithPhotos){
+                        if(StringUtilities.isNullOrEmpty(photoUri)){
+                        	continue;
+                        }
+                    }
+	
+	                Contact contact = new Contact();
                     contact.setId(id);
                     contact.setRawDisplayName(displayName);
                     contact.setPhotoUri(photoUri);
-                    if (starred != null) {
-                        int starredInt = Integer.parseInt(starred);
+                    if (!StringUtilities.isNullOrEmpty(starred)) {
+                        int starredInt = 0;
+                        try {
+                        	starredInt = Integer.parseInt(starred);
+                        } catch (Exception e){}
                         if (starredInt == 1) {
                             contact.setStarred(true);
                         } else {
@@ -1052,8 +1374,9 @@ public class ContactUtilities {
     /**
      * Overloaded to allow for null progressListener
      */
-    public static List<Contact> getAddressQuery(Context context, String query, int maxNumResults) {
-        return getAddressQuery(null, context, query, maxNumResults);
+    public static List<Contact> getAddressQuery(Context context, String query, int maxNumResults,
+                                                boolean onlyKeepContactsWithPhotos) {
+        return getAddressQuery(null, context, query, maxNumResults, onlyKeepContactsWithPhotos);
     }
 
     /**
@@ -1065,7 +1388,8 @@ public class ContactUtilities {
      * @param maxNumResults max number of results to return. if 0, no limit
      */
     public static List<Contact> getAddressQuery(@Nullable OnTaskCompleteListener progressListener,
-                                                Context context, String query, int maxNumResults) {
+                                                Context context, String query, int maxNumResults,
+                                                boolean onlyKeepContactsWithPhotos) {
 
         List<Contact> contacts = new ArrayList<>();
         if (context == null) {
@@ -1123,18 +1447,26 @@ public class ContactUtilities {
                 totalCounter++;
                 if (counter < maxNumResults || maxNumResults == 0) {
 
-                    Contact contact = new Contact();
-
                     String id = getColumnData(addrCur, ContactsContract.Contacts._ID);
                     String photoUri = getColumnData(addrCur, ContactsContract.Contacts.PHOTO_URI);
                     String displayName = getColumnData(addrCur, ContactsContract.Contacts.DISPLAY_NAME);
                     String starred = getColumnData(addrCur, ContactsContract.Contacts.STARRED);
-
+	
+	                if(onlyKeepContactsWithPhotos){
+		                if(StringUtilities.isNullOrEmpty(photoUri)){
+			                continue;
+		                }
+	                }
+	
+	                Contact contact = new Contact();
                     contact.setId(id);
                     contact.setRawDisplayName(displayName);
                     contact.setPhotoUri(photoUri);
-                    if (starred != null) {
-                        int starredInt = Integer.parseInt(starred);
+                    if (!StringUtilities.isNullOrEmpty(starred)) {
+                    	int starredInt = 0;
+                    	try {
+		                    starredInt = Integer.parseInt(starred);
+	                    } catch (Exception e){}
                         if (starredInt == 1) {
                             contact.setStarred(true);
                         } else {
@@ -1190,8 +1522,9 @@ public class ContactUtilities {
     /**
      * Overloaded to allow for null progressListener
      */
-    public static List<Contact> getNameQuery(Context context, String query, int maxNumResults) {
-        return getNameQuery(null, context, query, maxNumResults);
+    public static List<Contact> getNameQuery(Context context, String query, int maxNumResults,
+                                             boolean onlyKeepContactsWithPhotos) {
+        return getNameQuery(null, context, query, maxNumResults, onlyKeepContactsWithPhotos);
     }
 
     /**
@@ -1203,7 +1536,8 @@ public class ContactUtilities {
      * @param maxNumResults max number of results to return. if 0, no limit
      */
     public static List<Contact> getNameQuery(@Nullable OnTaskCompleteListener progressListener,
-                                             Context context, String query, int maxNumResults) {
+                                             Context context, String query, int maxNumResults,
+                                             boolean onlyKeepContactsWithPhotos) {
 
         List<Contact> contacts = new ArrayList<>();
         if (context == null) {
@@ -1258,13 +1592,18 @@ public class ContactUtilities {
                 totalCounter++;
                 if (counter < maxNumResults || maxNumResults == 0) {
 
-                    Contact contact = new Contact();
-
                     String id = getColumnData(nameCur, ContactsContract.Contacts._ID);
                     String photoUri = getColumnData(nameCur, ContactsContract.Contacts.PHOTO_URI);
                     String displayName = getColumnData(nameCur, ContactsContract.Contacts.DISPLAY_NAME);
                     String starred = getColumnData(nameCur, ContactsContract.Contacts.STARRED);
-
+	
+	                if(onlyKeepContactsWithPhotos){
+		                if(StringUtilities.isNullOrEmpty(photoUri)){
+			                continue;
+		                }
+	                }
+	
+	                Contact contact = new Contact();
                     contact.setId(id);
                     contact.setRawDisplayName(displayName);
                     contact.setPhotoUri(photoUri);
@@ -1327,13 +1666,283 @@ public class ContactUtilities {
     /////////////////////////////////////////////////////////////
     //Custom Query utilizing Regex. Mostly just testing for now//
     /////////////////////////////////////////////////////////////
-
+	
+	/**
+	 * Overloaded to allow for progress listener to be omitted
+	 */
+	public static List<Contact> getAllDataQueryRegex(Context context, Pattern regexPattern,
+	                                            int maxNumResults, boolean removeBlockListItems,
+	                                            boolean onlyKeepContactsWithPhotos){
+		return getAllDataQueryRegex(null, context, regexPattern, maxNumResults, removeBlockListItems, onlyKeepContactsWithPhotos);
+	}
+	
+	/**
+	 * Query that will pull all data.
+	 * NOTE! This is a much slower call as it is doing multiple nested queries
+	 * @param progressListener Listener to send progress back upon. If null, no progress to be sent back
+	 * @param context          Context used to obtain the contentResolver
+	 * @param regexPattern            Pattern Query to be searched
+	 * @param maxNumResults    max number of results to return. if 0, no limit
+	 * @param removeBlockListItems    remove contacts that are on the {@link ContactUtilities#BLOCK_LIST_NUMBERS} list
+	 * @param onlyKeepContactsWithPhotos    Only return those contacts with photos.
+	 * @return A List of {@link ContactUtilities.Contact}
+	 */
+	public static List<Contact> getAllDataQueryRegex(@Nullable OnTaskCompleteListener progressListener,
+	                                            Context context, Pattern regexPattern,
+	                                            int maxNumResults, boolean removeBlockListItems,
+	                                            boolean onlyKeepContactsWithPhotos){
+		List<Contact> contacts = new ArrayList<>();
+		if (context == null) {
+			try {
+				context = PGMacTipsConfig.getInstance().getContext();
+			} catch (Exception e) {
+			}
+		}
+		boolean shouldUpdateProgress = false;
+		ContentResolver cr;
+		try {
+			cr = context.getContentResolver();
+		} catch (NullPointerException npe) {
+			return contacts;
+		}
+		
+		try {
+			String phoneWhere = null;
+			String[] phoneWhereParams = null;
+			phoneWhere = ContactsContract.Data.MIMETYPE + " = ?";
+			phoneWhereParams = new String[]{
+					ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE};
+			
+			Cursor pCur = cr.query(
+					ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+					PHONE_PROJECTION_V2,
+					phoneWhere,
+					phoneWhereParams,
+					SORT_BY_DISPLAY_NAME);
+			
+			if (pCur == null) {
+				return contacts;
+			}
+			
+			int updateProgressMaxInt = ContactUtilities.getMaxForProgressUpdates(
+					progressListener, maxNumResults, pCur.getCount());
+			shouldUpdateProgress = (updateProgressMaxInt != -1);
+			int counter = 0, totalCounter = -1;
+			while (pCur.moveToNext()) {
+				totalCounter++;
+				if (counter < maxNumResults || maxNumResults == 0) {
+					
+					
+					String id = getColumnData(pCur, ContactsContract.Contacts._ID);
+					String photoUri = getColumnData(pCur, ContactsContract.Contacts.PHOTO_URI);
+					String displayName = getColumnData(pCur, ContactsContract.Contacts.DISPLAY_NAME);
+					String starred = getColumnData(pCur, ContactsContract.Contacts.STARRED);
+					
+					Contact contact = new Contact();
+					contact.setId(id);
+					contact.setRawDisplayName(displayName);
+					contact.setPhotoUri(photoUri);
+					if (!StringUtilities.isNullOrEmpty(starred)) {
+						int starredInt = 0;
+						try {
+							starredInt = Integer.parseInt(starred);
+						} catch (Exception e){}
+						if (starredInt == 1) {
+							contact.setStarred(true);
+						} else {
+							contact.setStarred(false);
+						}
+					} else {
+						contact.setStarred(false);
+					}
+					
+					String phoneNumberType = getColumnData(pCur,
+							ContactsContract.CommonDataKinds.Phone.TYPE);
+					String phoneNumber = getColumnData(pCur,
+							ContactsContract.CommonDataKinds.Phone.NUMBER);
+					
+					Contact.Phone phone;
+					if (phoneNumberType != null) {
+						int x = Integer.parseInt(phoneNumberType);
+						phoneNumberType = ContactsContractSourceCodeStuff.getPhoneType(x);
+						phone = new Contact.Phone(phoneNumber, phoneNumberType);
+					} else {
+						phone = new Contact.Phone(phoneNumber, phoneNumberType);
+					}
+					
+					if (removeBlockListItems) {
+						if (numberOnBlockList(phoneNumber)) {
+							continue;
+						}
+					}
+					
+					List<Contact.Phone> phones = new ArrayList<>();
+					phones.add(phone);
+					contact.setPhone(phones);
+					
+					//Nested Queries//
+					if(!StringUtilities.isNullOrEmpty(id)){
+						
+						//Email Cursor:
+						String nestedWhere = ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?";
+						String[] nestedWhereParams = new String[]{id};
+						
+						Cursor emailCur = cr.query(
+								ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+								EMAIL_PROJECTION_V2,
+								nestedWhere,
+								nestedWhereParams,
+								SORT_BY_DISPLAY_NAME);
+						
+						while (emailCur.moveToNext()) {
+							
+							String photoUri2 = getColumnData(emailCur, ContactsContract.Contacts.PHOTO_URI);
+							if(StringUtilities.isNullOrEmpty(contact.getPhotoUri()) &&
+									!StringUtilities.isNullOrEmpty(photoUri2)){
+								contact.setPhotoUri(photoUri2);
+							}
+							String email = getColumnData(emailCur,
+									ContactsContract.CommonDataKinds.Email.DATA);
+							String emailType = getColumnData(emailCur,
+									ContactsContract.CommonDataKinds.Email.TYPE);
+							
+							Contact.Email myEmail;
+							
+							if (emailType != null) {
+								int x = Integer.parseInt(emailType);
+								emailType = ContactsContractSourceCodeStuff.getEmailType(x);
+								myEmail = new Contact.Email(email, emailType);
+							} else {
+								myEmail = new Contact.Email(email, null);
+							}
+							
+							List<Contact.Email> emails = new ArrayList<>();
+							emails.add(myEmail);
+							contact.setEmail(emails);
+						}
+						emailCur.close();
+						
+						//Address Cursor
+						Cursor addrCur = cr.query(ContactsContract.Data.CONTENT_URI,
+								ADDRESS_PROJECTION_V2,
+								nestedWhere,
+								nestedWhereParams,
+								SORT_BY_DISPLAY_NAME);
+						
+						while (addrCur.moveToNext()) {
+							
+							String photoUri2 = getColumnData(emailCur, ContactsContract.Contacts.PHOTO_URI);
+							if(StringUtilities.isNullOrEmpty(contact.getPhotoUri()) &&
+									!StringUtilities.isNullOrEmpty(photoUri2)){
+								contact.setPhotoUri(photoUri2);
+							}
+							
+							List<Contact.Address> myAddress = new ArrayList<>();
+							
+							String poBox = getColumnData(addrCur,
+									ContactsContract.CommonDataKinds.StructuredPostal.POBOX);
+							String street = getColumnData(addrCur,
+									ContactsContract.CommonDataKinds.StructuredPostal.STREET);
+							String city = getColumnData(addrCur,
+									ContactsContract.CommonDataKinds.StructuredPostal.CITY);
+							String state = getColumnData(addrCur,
+									ContactsContract.CommonDataKinds.StructuredPostal.REGION);
+							String postalCode = getColumnData(addrCur,
+									ContactsContract.CommonDataKinds.StructuredPostal.POSTCODE);
+							String country = getColumnData(addrCur,
+									ContactsContract.CommonDataKinds.StructuredPostal.COUNTRY);
+							String type = getColumnData(addrCur,
+									ContactsContract.CommonDataKinds.StructuredPostal.TYPE);
+							
+							Contact.Address address = new Contact.Address(poBox, street, city, state,
+									postalCode, country, type);
+							
+							myAddress.add(address);
+							
+							contact.setAddresses(myAddress);
+						}
+						addrCur.close();
+						
+						//Name Cursor
+						Cursor nameCur = cr.query(ContactsContract.Data.CONTENT_URI,
+								NAME_PROJECTION_V2,
+								nestedWhere,
+								nestedWhereParams,
+								SORT_BY_DISPLAY_NAME);
+						
+						
+						while (nameCur.moveToNext()) {
+							
+							String photoUri2 = getColumnData(emailCur, ContactsContract.Contacts.PHOTO_URI);
+							if(StringUtilities.isNullOrEmpty(contact.getPhotoUri()) &&
+									!StringUtilities.isNullOrEmpty(photoUri2)){
+								contact.setPhotoUri(photoUri2);
+							}
+							
+							String displayName2 = getColumnData(nameCur,
+									ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME);
+							String suffix = getColumnData(nameCur,
+									ContactsContract.CommonDataKinds.StructuredName.SUFFIX);
+							String prefix = getColumnData(nameCur,
+									ContactsContract.CommonDataKinds.StructuredName.PREFIX);
+							String middleName = getColumnData(nameCur,
+									ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME);
+							String lastName = getColumnData(nameCur,
+									ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME);
+							String firstName = getColumnData(nameCur,
+									ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
+							
+							Contact.NameObject nameObject = new Contact.NameObject();
+							nameObject.setFirstName(firstName);
+							nameObject.setLastName(lastName);
+							nameObject.setMiddleName(middleName);
+							nameObject.setPrefix(prefix);
+							nameObject.setSuffix(suffix);
+							nameObject.setDisplayName(displayName2);
+							contact.setNameObject(nameObject);
+							
+						}
+						nameCur.close();
+					}
+					
+					if(onlyKeepContactsWithPhotos){
+						if(StringUtilities.isNullOrEmpty(contact.getPhotoUri())){
+							continue;
+						}
+					}
+					
+					if (ContactUtilities.matchesCustomQuery(regexPattern, contact)) {
+						contacts.add(contact);
+						counter++;
+						if(shouldUpdateProgress){
+							progressListener.onTaskComplete(
+									ContactUtilities.getProgressCount(
+											(float)counter, (float)updateProgressMaxInt),
+									PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE);
+						}
+					}
+				}
+			}
+			pCur.close();
+			//End Phone Number
+			
+		} catch (IllegalStateException e) {
+			//This will get thrown on contacts without a phone number. No reason to stress over it
+			//e.printStackTrace();
+		}
+		if(shouldUpdateProgress){
+			progressListener.onTaskComplete(100, PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE);
+		}
+		return contacts;
+	}
+	
     /**
      * Overloaded to allow for null progressListener
      */
     public static List<Contact> getPhoneQueryRegex(Context context, Pattern regexPattern,
-                                                   int maxNumResults, boolean removeBlockListItems){
-        return getPhoneQueryRegex(null, context, regexPattern, maxNumResults, removeBlockListItems);
+                                                   int maxNumResults, boolean removeBlockListItems,
+                                                   boolean onlyKeepContactsWithPhotos){
+        return getPhoneQueryRegex(null, context, regexPattern, maxNumResults, removeBlockListItems, onlyKeepContactsWithPhotos);
     }
 
     /**
@@ -1345,7 +1954,8 @@ public class ContactUtilities {
      */
     public static List<Contact> getPhoneQueryRegex(@Nullable OnTaskCompleteListener progressListener,
                                                    Context context, Pattern regexPattern,
-                                                   int maxNumResults, boolean removeBlockListItems) {
+                                                   int maxNumResults, boolean removeBlockListItems,
+                                                   boolean onlyKeepContactsWithPhotos) {
 
         List<Contact> contacts = new ArrayList<>();
         if (context == null) {
@@ -1389,13 +1999,18 @@ public class ContactUtilities {
                 totalCounter++;
                 if (counter < maxNumResults || maxNumResults == 0) {
 
-                    Contact contact = new Contact();
-
                     String id = getColumnData(pCur, ContactsContract.Contacts._ID);
                     String photoUri = getColumnData(pCur, ContactsContract.Contacts.PHOTO_URI);
                     String displayName = getColumnData(pCur, ContactsContract.Contacts.DISPLAY_NAME);
                     String starred = getColumnData(pCur, ContactsContract.Contacts.STARRED);
-
+                    
+	                if(onlyKeepContactsWithPhotos){
+		                if(StringUtilities.isNullOrEmpty(photoUri)){
+			                continue;
+		                }
+	                }
+	
+	                Contact contact = new Contact();
                     contact.setId(id);
                     contact.setRawDisplayName(displayName);
                     contact.setPhotoUri(photoUri);
@@ -1462,8 +2077,9 @@ public class ContactUtilities {
     /**
      * Overloaded to allow for null progressListener
      */
-    public static List<Contact> getEmailQueryRegex(Context context, Pattern regexPattern, int maxNumResults){
-        return getEmailQueryRegex(null, context, regexPattern, maxNumResults);
+    public static List<Contact> getEmailQueryRegex(Context context, Pattern regexPattern, int maxNumResults,
+                                                   boolean onlyKeepContactsWithPhotos){
+        return getEmailQueryRegex(null, context, regexPattern, maxNumResults, onlyKeepContactsWithPhotos);
     }
 
     /**
@@ -1475,7 +2091,8 @@ public class ContactUtilities {
      * @param maxNumResults max number of results to return. if 0, no limit
      */
     public static List<Contact> getEmailQueryRegex(@Nullable OnTaskCompleteListener progressListener,
-                                                   Context context, Pattern regexPattern, int maxNumResults) {
+                                                   Context context, Pattern regexPattern, int maxNumResults,
+                                                   boolean onlyKeepContactsWithPhotos) {
 
         List<Contact> contacts = new ArrayList<>();
         if (context == null) {
@@ -1519,13 +2136,19 @@ public class ContactUtilities {
             while (emailCur.moveToNext()) {
                 totalCounter++;
                 if (counter < maxNumResults || maxNumResults == 0) {
-                    Contact contact = new Contact();
 
                     String id = getColumnData(emailCur, ContactsContract.Contacts._ID);
                     String photoUri = getColumnData(emailCur, ContactsContract.Contacts.PHOTO_URI);
                     String displayName = getColumnData(emailCur, ContactsContract.Contacts.DISPLAY_NAME);
                     String starred = getColumnData(emailCur, ContactsContract.Contacts.STARRED);
-
+	
+	                if(onlyKeepContactsWithPhotos){
+		                if(StringUtilities.isNullOrEmpty(photoUri)){
+			                continue;
+		                }
+	                }
+	
+	                Contact contact = new Contact();
                     contact.setId(id);
                     contact.setRawDisplayName(displayName);
                     contact.setPhotoUri(photoUri);
@@ -1587,8 +2210,9 @@ public class ContactUtilities {
     /**
      * Overloaded to allow for null progressListener
      */
-    public static List<Contact> getAddressQueryRegex(Context context, Pattern regexPattern, int maxNumResults){
-        return getAddressQueryRegex(null, context, regexPattern, maxNumResults);
+    public static List<Contact> getAddressQueryRegex(Context context, Pattern regexPattern, int maxNumResults,
+                                                     boolean onlyKeepContactsWithPhotos){
+        return getAddressQueryRegex(null, context, regexPattern, maxNumResults, onlyKeepContactsWithPhotos);
     }
 
     /**
@@ -1600,7 +2224,8 @@ public class ContactUtilities {
      * @param maxNumResults max number of results to return. if 0, no limit
      */
     public static List<Contact> getAddressQueryRegex(@Nullable OnTaskCompleteListener progressListener,
-                                                     Context context, Pattern regexPattern, int maxNumResults) {
+                                                     Context context, Pattern regexPattern, int maxNumResults,
+                                                     boolean onlyKeepContactsWithPhotos) {
 
         List<Contact> contacts = new ArrayList<>();
         if (context == null) {
@@ -1645,13 +2270,18 @@ public class ContactUtilities {
                 totalCounter++;
                 if (counter < maxNumResults || maxNumResults == 0) {
 
-                    Contact contact = new Contact();
-
                     String id = getColumnData(addrCur, ContactsContract.Contacts._ID);
                     String photoUri = getColumnData(addrCur, ContactsContract.Contacts.PHOTO_URI);
                     String displayName = getColumnData(addrCur, ContactsContract.Contacts.DISPLAY_NAME);
                     String starred = getColumnData(addrCur, ContactsContract.Contacts.STARRED);
-
+	
+	                if(onlyKeepContactsWithPhotos){
+		                if(StringUtilities.isNullOrEmpty(photoUri)){
+			                continue;
+		                }
+	                }
+	
+	                Contact contact = new Contact();
                     contact.setId(id);
                     contact.setRawDisplayName(displayName);
                     contact.setPhotoUri(photoUri);
@@ -1714,8 +2344,9 @@ public class ContactUtilities {
     /**
      * Overloaded to allow for null progressListener
      */
-    public static List<Contact> getNameQueryRegex(Context context, Pattern regexPattern, int maxNumResults){
-        return getNameQueryRegex(null, context, regexPattern, maxNumResults);
+    public static List<Contact> getNameQueryRegex(Context context, Pattern regexPattern, int maxNumResults,
+                                                  boolean onlyKeepContactsWithPhotos){
+        return getNameQueryRegex(null, context, regexPattern, maxNumResults, onlyKeepContactsWithPhotos);
     }
 
     /**
@@ -1727,7 +2358,8 @@ public class ContactUtilities {
      * @param maxNumResults max number of results to return. if 0, no limit
      */
     public static List<Contact> getNameQueryRegex(@Nullable OnTaskCompleteListener progressListener,
-                                                  Context context, Pattern regexPattern, int maxNumResults) {
+                                                  Context context, Pattern regexPattern, int maxNumResults,
+                                                  boolean onlyKeepContactsWithPhotos) {
 
         List<Contact> contacts = new ArrayList<>();
         if (context == null) {
@@ -1767,13 +2399,18 @@ public class ContactUtilities {
                 totalCounter++;
                 if (counter < maxNumResults || maxNumResults == 0) {
 
-                    Contact contact = new Contact();
-
                     String id = getColumnData(nameCur, ContactsContract.Contacts._ID);
                     String photoUri = getColumnData(nameCur, ContactsContract.Contacts.PHOTO_URI);
                     String displayName = getColumnData(nameCur, ContactsContract.Contacts.DISPLAY_NAME);
                     String starred = getColumnData(nameCur, ContactsContract.Contacts.STARRED);
-
+	
+	                if(onlyKeepContactsWithPhotos){
+		                if(StringUtilities.isNullOrEmpty(photoUri)){
+			                continue;
+		                }
+	                }
+	
+	                Contact contact = new Contact();
                     contact.setId(id);
                     contact.setRawDisplayName(displayName);
                     contact.setPhotoUri(photoUri);

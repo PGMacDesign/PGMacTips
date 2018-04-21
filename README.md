@@ -15,11 +15,11 @@ To install, insert this into your build.gradle file
 ```java
 
 allprojects {
-	repositories {
-		jcenter()
-		maven { url "https://jitpack.io" }
-		maven { url "https://maven.google.com" } // Google's Maven repository 
-	}
+    repositories {
+        jcenter()
+        maven { url "https://jitpack.io" }
+        maven { url "https://maven.google.com" } // Google's Maven repository 
+    }
 }
 
 ```

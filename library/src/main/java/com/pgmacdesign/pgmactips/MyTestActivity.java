@@ -1,5 +1,6 @@
 package com.pgmacdesign.pgmactips;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -29,6 +30,7 @@ import com.pgmacdesign.pgmactips.utilities.DatabaseUtilities;
 import com.pgmacdesign.pgmactips.utilities.L;
 import com.pgmacdesign.pgmactips.utilities.MalwareUtilities;
 import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
+import com.pgmacdesign.pgmactips.utilities.NumberUtilities;
 import com.pgmacdesign.pgmactips.utilities.PermissionUtilities;
 import com.pgmacdesign.pgmactips.utilities.ProgressBarUtilities;
 
@@ -52,6 +54,8 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
     private RecyclerView testing_layout_recyclerview;
    // private MultipurposeEditText et;
     private static final String CUSTOM_STRING = "-PAT";
+    private ContactUtilities contactUtilities;
+    private OnTaskCompleteListener contactUtilsListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,9 +73,10 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
 	    testing_layout_recyclerview = (RecyclerView) this.findViewById(
 	    		R.id.testing_layout_recyclerview);
 	    testing_layout_recyclerview.setLayoutManager(new LinearLayoutManager(this));
-
+	    
         //init();
-        init2();
+        //init2();
+	    
     }
 
     private void init2(){
@@ -196,23 +201,85 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
     public String getPackageName(Context context) {
         return context.getPackageName();
     }
+    
+    @SuppressLint("MissingPermission")
     private void contactQuery(){
-        ContactUtilities.Builder builder = new ContactUtilities.Builder(this, new OnTaskCompleteListener() {
-            @Override
-            public void onTaskComplete(Object result, int customTag) {
-                L.m("contact query complete");
-            }
-        });
-        builder.setSearchQueryFlags(new ContactUtilities.SearchQueryFlags[]{
-                ContactUtilities.SearchQueryFlags.ADD_ALPHABET_HEADERS,
-                ContactUtilities.SearchQueryFlags.USE_ALL_ALPHABET_LETTERS,
-                ContactUtilities.SearchQueryFlags.MOVE_FAVORITES_TO_TOP_OF_LIST});
-        builder.setActivity(this);
-        ContactUtilities c = builder.build();
-        c.queryContacts(new ContactUtilities.SearchTypes[]{
-                ContactUtilities.SearchTypes.NAME, ContactUtilities.SearchTypes.PHONE,
-                ContactUtilities.SearchTypes.EMAIL}, 100);
-        L.m("async started");
+	    this.contactUtilsListener = new OnTaskCompleteListener() {
+		    @Override
+		    public void onTaskComplete(Object result, int customTag) {
+			    switch (customTag){
+				
+				    case PGMacTipsConstants.TAG_CONTACT_QUERY_EMAIL:
+					    List<ContactUtilities.Contact> allContacts5 = (List<ContactUtilities.Contact>) result;
+					    L.m("size of returned list (Email) == " +
+							    (MiscUtilities.isListNullOrEmpty(allContacts5) ? 0
+									    : allContacts5.size()));
+					    break;
+				
+				    case PGMacTipsConstants.TAG_CONTACT_QUERY_PHONE:
+					    List<ContactUtilities.Contact> allContacts4 = (List<ContactUtilities.Contact>) result;
+					    L.m("size of returned list (phone) == " +
+							    (MiscUtilities.isListNullOrEmpty(allContacts4) ? 0
+									    : allContacts4.size()));
+					    break;
+				
+				    case PGMacTipsConstants.TAG_CONTACT_QUERY_ADDRESS:
+					    List<ContactUtilities.Contact> allContacts3 = (List<ContactUtilities.Contact>) result;
+					    L.m("size of returned list (address) == " +
+							    (MiscUtilities.isListNullOrEmpty(allContacts3) ? 0
+									    : allContacts3.size()));
+					    break;
+				
+				    case PGMacTipsConstants.TAG_CONTACT_QUERY_NAME:
+					    List<ContactUtilities.Contact> allContacts2 = (List<ContactUtilities.Contact>) result;
+					    L.m("size of returned list (name) == " +
+							    (MiscUtilities.isListNullOrEmpty(allContacts2) ? 0
+									    : allContacts2.size()));
+					    break;
+				
+				    case PGMacTipsConstants.TAG_CONTACT_QUERY_PROGRESS_UPDATE:
+					    //L.m("TAG_CONTACT_QUERY_PROGRESS_UPDATE");
+					    Float flt = (Float) result;
+					    if(flt != null){
+					    	L.m("Progress Update: " + NumberUtilities.getFloat(flt) + "%");
+					    }
+					    break;
+				
+				    case PGMacTipsConstants.TAG_CONTACT_QUERY_NO_RESULTS:
+					    L.m("TAG_CONTACT_QUERY_NO_RESULTS");
+					    break;
+				
+				    case PGMacTipsConstants.TAG_CONTACT_QUERY_MISSING_CONTACT_PERMISSION:
+					    L.m("TAG_CONTACT_QUERY_MISSING_CONTACT_PERMISSION");
+					    break;
+				
+				    case PGMacTipsConstants.TAG_CONTACT_QUERY_UNKNOWN_ERROR:
+					    L.m("TAG_CONTACT_QUERY_UNKNOWN_ERROR");
+					    break;
+				
+				    case PGMacTipsConstants.TAG_CONTACT_QUERY_ALL_MERGED_RESULTS:
+					    List<ContactUtilities.Contact> allContacts = (List<ContactUtilities.Contact>) result;
+					    L.m("size of returned list == " +
+							    (MiscUtilities.isListNullOrEmpty(allContacts) ? 0
+									    : allContacts.size()));
+					    break;
+				
+			    }
+		    }
+	    };
+	    this.contactUtilities = new ContactUtilities
+			    .Builder(this, contactUtilsListener)
+			    .onlyIncludeContactsWithPhotos()
+			    .shouldUpdateSearchProgress()
+			    .build();
+	
+//	    this.contactUtilities.queryContacts(
+//	    		new ContactUtilities.SearchTypes[]{ContactUtilities.SearchTypes.ADDRESS,
+//					    ContactUtilities.SearchTypes.EMAIL, ContactUtilities.SearchTypes.NAME,
+//					    ContactUtilities.SearchTypes.PHONE}, null);
+	    
+	    this.contactUtilities.getAllContacts();
+	    //this.contactUtilities.getAllContacts("Pat");
     }
 
 
@@ -269,6 +336,7 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
         L.m("Number of infections: " + mylist.size());
         L.Toast(this, "Number of infections: " + mylist.size());
     }
+    @SuppressLint("MissingPermission")
     @Override
     public void onClick(View view) {
         //doWebCall();
@@ -283,7 +351,14 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
         */
         //doWebCall();
         //showGIFLoader();
-        loadTestCall();
+        //loadTestCall();
+	    
+	    if(PermissionUtilities.permissionsRequestShortcutReturn(this,
+			    new PermissionUtilities.permissionsEnum[]{
+	    		PermissionUtilities.permissionsEnum.READ_CONTACTS})) {
+	    	contactQuery();
+	    }
+	    
     }
 
     private void makeMultiColorLine() {
