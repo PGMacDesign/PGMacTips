@@ -106,6 +106,8 @@ Error:Execution failed for task ':app:processDebugManifest'.
 	Suggestion: add 'tools:replace="android:value"' to <meta-data> element at AndroidManifest.xml:26:9-28:38 to override.
 ```
 
+Or an error indicating that "Multiple dex files define...".
+
 Or something along those lines. If you do, simply add this line of code to your build.gradle file underneath the Android Tag
 
 ```java
@@ -114,7 +116,7 @@ Or something along those lines. If you do, simply add this line of code to your 
             def requested = details.requested
             if (requested.group == 'com.android.support') { //Replace String here with whichever error is thrown
                 if (!requested.name.startsWith("multidex")) {
-                    details.useVersion '26.0.2' //Replace version here with whatever you are using
+                    details.useVersion '26.0.2' //Replace version here with whatever you are using; this will override the other one
                 }
             }
         }
