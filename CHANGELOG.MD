@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+Version 0.0.55 *(2018-04-23)*
+----------------------------
+
+ * New: Added in the getContactData() method to ContactUtilities which allows a single call to pull all data from the contact in one call as opposed to the only other way being the nested cursors call, which can be very slow. 
+ 
+ 
 Version 0.0.54 *(2018-04-20)*
 ----------------------------
 
