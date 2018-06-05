@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -1423,6 +1424,79 @@ public class StringUtilities {
             }
         }
         return false;
+    }
+
+    /**
+     * Determine the size (in bytes) of the base64 String.
+     * From: http://www.siddharthpandey.net/how-to-calculate-the-size-of-a-base64-encoded-string/
+     * @param base64String
+     * @return Returns size in long. If null or unable to determine, returns -1
+     */
+    public static double getSizeOfBase64String(@NonNull String base64String){
+        if(StringUtilities.isNullOrEmpty(base64String)){
+            return -1;
+        }
+        try {
+            double length =  (4 * (Math.ceil(((double)(base64String.length())/3))));
+            try {
+                String last2 = base64String.suIbstring(base64String.length() - 2, base64String.length());
+                if (StringUtilities.doesEqual(last2, "==")) {
+                    length -= 2;
+                } else {
+                    String last1 = base64String.substring(base64String.length() - 1, base64String.length());
+                    if (StringUtilities.doesEqual(last1, "=")) {
+                        length -= 2;
+                    }
+                }
+            } catch (Exception e1){
+                e1.printStackTrace();
+            }
+            return length;
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    /**
+     * Decode a base64 String
+     * @param base64String
+     * @return decoded base 64 string. Null if it fails
+     */
+    public static byte[] decodeBase64String(@NonNull String base64String){
+        try {
+            if(Build.VERSION.SDK_INT >= 26){
+                byte[] decoded = Base64.getDecoder().decode(base64String);
+                return decoded;
+            } else {
+                byte[] decoded = android.util.Base64.decode(base64String, android.util.Base64.DEFAULT);
+                return decoded;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Encode a base64 String
+     * @param base64String
+     * @return encoded base 64 string into byte array. Null if it fails
+     */
+    public static String encodeBase64String(@NonNull String base64String){
+        try {
+            byte[] bytes = base64String.getBytes(PGMacTipsConstants.UTF8);
+            if(Build.VERSION.SDK_INT >= 26){
+                String encoded = Base64.getEncoder().encodeToString(bytes);
+                return encoded;
+            } else {
+                String encoded = android.util.Base64.encodeToString(bytes, android.util.Base64.DEFAULT);
+                return encoded;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**

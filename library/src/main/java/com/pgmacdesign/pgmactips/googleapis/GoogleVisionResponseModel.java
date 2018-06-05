@@ -870,4 +870,17 @@ public class GoogleVisionResponseModel {
             this.confidence = confidence;
         }
     }
+
+    /**
+     * Returns the summary where usually this is the full text annotation of the scan if
+     * document text data has been read
+     * @return String of data, null if it could not be found
+     */
+    public String getTextSummary(){
+        try {
+            return this.responses.get(0).getTextAnnotations().get(0).description;
+        } catch (Exception e){
+            return null;
+        }
+    }
 }

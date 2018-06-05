@@ -356,4 +356,166 @@ public class PGMacTipsConstants {
             "org.mbj.sticker"
     };
 
+    //////////////////////
+    //Misc Useful Values//
+    //////////////////////
+
+    /**
+     * List of States for dropdown menus or other GUI-related uses
+     */
+    public static final String[] ALL_STATES = {"California", "Alabama", "Arkansas", "Arizona", "Alaska",
+            "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois",
+            "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts",
+            "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire",
+            "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon",
+            "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont",
+            "Virginia", "Washington", "Washington DC", "West Virginia", "Wisconsin", "Wyoming"
+    };
+
+    /**
+     * USA Territories. List obtained from:
+     *   https://www.50states.com/abbreviations.htm
+     */
+    public static enum USATerritories {
+        Alabama("Alabama", "AL"),
+        Alaska("Alaska", "AK"),
+        Arizona("Arizona", "AZ"),
+        Arkansas("Arkansas", "AR"),
+        California("California", "CA"),
+        Colorado("Colorado", "CO"),
+        Connecticut("Connecticut", "CT"),
+        Delaware("Delaware", "DE"),
+        Florida("Florida", "FL"),
+        Georgia("Georgia", "GA"),
+        Hawaii("Hawaii", "HI"),
+        Idaho("Idaho", "ID"),
+        Illinois("Illinois", "IL"),
+        Indiana("Indiana", "IN"),
+        Iowa("Iowa", "IA"),
+        Kansas("Kansas", "KS"),
+        Kentucky("Kentucky", "KY"),
+        Louisiana("Louisiana", "LA"),
+        Maine("Maine", "ME"),
+        Maryland("Maryland", "MD"),
+        Massachusetts("Massachusetts", "MA"),
+        Michigan("Michigan", "MI"),
+        Minnesota("Minnesota", "MN"),
+        Mississippi("Mississippi", "MS"),
+        Missouri("Missouri", "MO"),
+        Montana("Montana", "MT"),
+        Nebraska("Nebraska", "NE"),
+        Nevada("Nevada", "NV"),
+        New_Hampshire("New Hampshire", "NH"),
+        New_Jersey("New Jersey", "NJ"),
+        New_Mexico("New Mexico", "NM"),
+        New_York("New York", "NY"),
+        North_Carolina("North Carolina", "NC"),
+        North_Dakota("North Dakota", "ND"),
+        Ohio("Ohio", "OH"),
+        Oklahoma("Oklahoma", "OK"),
+        Oregon("Oregon", "OR"),
+        Pennsylvania("Pennsylvania", "PA"),
+        Rhode_Island("Rhode Island", "RI"),
+        South_Carolina("South Carolina", "SC"),
+        South_Dakota("South Dakota", "SD"),
+        Tennessee("Tennessee", "TN"),
+        Texas("Texas", "TX"),
+        Utah("Utah", "UT"),
+        Vermont("Vermont", "VT"),
+        Virginia("Virginia", "VA"),
+        Washington("Washington", "WA"),
+        West_Virginia("West Virginia", "WV"),
+        Wisconsin("Wisconsin", "WI"),
+        Wyoming("Wyoming", "WY"),
+        //Commonwealth / Territories
+        American_Samoa("American Samoa", "AS"),
+        District_of_Columbia("District of Columbia", "DC"),
+        Federated_States_of_Micronesia("Federated States of Micronesia", "FM"),
+        Guam("Guam", "GU"),
+        Marshall_Islands("Marshall Islands", "MH"),
+        Northern_Mariana_Islands("Northern Mariana Islands", "MP"),
+        Palau("Palau", "PW"),
+        Puerto_Rico("Puerto Rico", "PR"),
+        Virgin_Islands("Virgin Islands", "VI"),
+        //Military State
+        Armed_Forces_Africa("Armed Forces Africa", "AE"),
+        Armed_Forces_Americas("Armed Forces Americas", "AA"),
+        Armed_Forces_Canada("Armed Forces Canada", "AE"),
+        Armed_Forces_Europe("Armed Forces Europe", "AE"),
+        Armed_Forces_Middle_East("Armed Forces Middle East", "AE"),
+        Armed_Forces_Pacific("Armed Forces Pacific", "AP"),
+        //Unknown
+        Unknown("Unknown", "N/A");
+
+        String name;
+        String abbreviation;
+
+        USATerritories(String name, String abbreviation){
+            this.name = name;
+            this.abbreviation = abbreviation;
+        }
+
+        public String getName(){
+            return this.name;
+        }
+
+        public String getAbbreviation(){
+            return abbreviation;
+        }
+
+        public static String getName(USATerritories state){
+            return state.name;
+        }
+
+        public static String getAbbreviation(USATerritories state){
+            return state.abbreviation;
+        }
+
+        public static USATerritories parseName(String name){
+            if(name == null){
+                return USATerritories.Unknown;
+            }
+            if(name.isEmpty()){
+                return USATerritories.Unknown;
+            }
+            name = name.trim();
+            for(USATerritories e : USATerritories.values()){
+                String stateName = e.getName();
+                if(name.equalsIgnoreCase(stateName)){
+                    return e;
+                }
+                stateName = stateName.replace(" ", "");
+                if(name.equalsIgnoreCase(stateName)){
+                    return e;
+                }
+                stateName = e.toString(); //For parsing underscore name like New_York
+                if(name.equalsIgnoreCase(stateName)){
+                    return e;
+                }
+            }
+            return USATerritories.Unknown;
+        }
+
+        public static USATerritories parseAbbreviation(String abbreviation){
+            if(abbreviation == null){
+                return USATerritories.Unknown;
+            }
+            if(abbreviation.isEmpty()){
+                return USATerritories.Unknown;
+            }
+            abbreviation = abbreviation.trim();
+            for(USATerritories e : USATerritories.values()){
+                String stateAbbreviation = e.getAbbreviation();
+                if(abbreviation.equalsIgnoreCase(stateAbbreviation)){
+                    return e;
+                }
+                stateAbbreviation = stateAbbreviation.replace(" ", "");
+                if(abbreviation.equalsIgnoreCase(stateAbbreviation)){
+                    return e;
+                }
+            }
+            return USATerritories.Unknown;
+        }
+    }
+
 }

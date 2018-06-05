@@ -95,6 +95,21 @@ This library utilizes many others within it. Below is a listing of all of the ne
 
 ```
 
+If you want to utilize the DatabaseUtilities class, you will also need to implement [Realm](https://github.com/realm/realm-java), which is done at the top level gradle file like this:
+
+```java
+buildscript {
+    dependencies {
+        //classpath 'com.android.tools.build:gradle:3.0.1' //Your version here
+        classpath "io.realm:realm-gradle-plugin:3.0.0" 
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+```
+
+Please note that I started deviating from Realm's updates once they started requiring accounts to use. I utilize the code found in [this release](https://github.com/realm/realm-java/releases/tag/v3.0.0). I am unsure of forwards compatibility, but if newer versions will work, please let me know and I will update to the highest possible one without making changes to the source code. 
+
 ## Known Issues
 
 Depending on your version of Google's Libraries, you may run into this error:
