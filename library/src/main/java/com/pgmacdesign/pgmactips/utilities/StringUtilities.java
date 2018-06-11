@@ -22,8 +22,10 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -65,10 +67,53 @@ public class StringUtilities {
      * @return
      */
     public static String keepLettersOnly(CharSequence s) {
+        return keepLettersOnly(s, false);
+    }
+
+    /**
+     * Keep letters (A-Z & a-z) only. Remove anything else. Note, this will
+     * remove letters like: ä, ñ, ж or λ, too, which, depending on who you ask, are letters too
+     * @param s
+     * @return
+     */
+    public static String keepLettersOnly(CharSequence s, boolean keepSpaces) {
         try {
-            return s.toString().replaceAll("[^A-Za-z]", "");
+            if(keepSpaces) {
+                return s.toString().replaceAll("[^A-Za-z\\s]", "");
+            } else {
+                return s.toString().replaceAll("[^A-Za-z]", "");
+            }
         } catch (Exception e){
             return null;
+        }
+    }
+
+    /**
+     * Remove String duplicates. IE, "I want to go go home" --> "I want to go home".
+     * Note that this will replace strings in unintentional ways!
+     * IE: "I want to go to the home" --> "I want to go the home".
+     * @param strToFix String to fix
+     * @return Fixed / changed String. IF Null or empty, will return original
+     */
+    public static String removeStringDuplicates(@NonNull String strToFix){
+        if(StringUtilities.isNullOrEmpty(strToFix)){
+            return strToFix;
+        }
+        LinkedHashSet<String> lset = new LinkedHashSet<String>(Arrays.asList(strToFix.split(" ")));
+        int k = lset.size();
+        String[] s = lset.toArray(new String[k]);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("");
+        for(int i=0;i<s.length;i++) {
+            sb.append(s[i]);
+            sb.append(" ");
+        }
+
+        if(sb.length() > 1){
+            return (sb.toString().substring(0, (sb.length()-1)));
+        } else {
+            return sb.toString();
         }
     }
 
@@ -137,7 +182,8 @@ public class StringUtilities {
     }
 
     /**
-     * Simple checker whether the first string contains the second string within positions passed
+     * Simple checker whether the first string contains the second string
+     * within a certain position within the String
      * @param originalString String to check: IE, Patrick
      * @param posStart POS to start: IE, 0
      * @param posEnd POS to end: IE, 4
@@ -156,16 +202,113 @@ public class StringUtilities {
         }
         try {
             String s1 = otherStringToCheckFor.substring(posStart, posEnd);
-            return originalString.contains(s1);
+            return Pattern.compile(Pattern.quote(originalString)).matcher(s1).find();
         } catch (Exception e){}
         return false;
     }
 
-    public static boolean doesStringContain(@NonNull String originalString,
-                                            @NonNull String otherStringToCheckFor){
-        return doesStringContain(originalString, 0, (originalString.length()), otherStringToCheckFor);
+    /**
+     * Checks if the one String contains another while ignoring case
+     * within a certain position within the String
+     * @param originalString
+     * @param posStart
+     * @param posEnd
+     * @param otherStringToCheckFor
+     * @return
+     */
+    public static boolean doesStringContainIgnoreCase(@NonNull String originalString, int posStart,
+                                            int posEnd, @NonNull String otherStringToCheckFor){
+        if(StringUtilities.isNullOrEmpty(originalString) ||
+                StringUtilities.isNullOrEmpty(otherStringToCheckFor)){
+            return false;
+        }
+        if(originalString.length() < posEnd){
+            return false;
+        }
+        try {
+            String s1 = otherStringToCheckFor.substring(posStart, posEnd);
+            return Pattern.compile(Pattern.quote(originalString), Pattern.CASE_INSENSITIVE)
+                    .matcher(s1).find();
+        } catch (Exception e){}
+        return false;
     }
 
+    /**
+     * Checks if the second String is contained within first
+     * @param originalString
+     * @param otherStringToCheckFor
+     * @return
+     */
+    public static boolean doesStringContain(@NonNull String originalString,
+                                            @NonNull String otherStringToCheckFor){
+        try {
+            return Pattern.compile(Pattern.quote(originalString)).matcher(otherStringToCheckFor).find();
+        } catch (Exception e){}
+        return false;
+    }
+
+    /**
+     * Checks if the second String is contained within first while ignoring case
+     * @param originalString
+     * @param otherStringToCheckFor
+     * @return
+     */
+    public static boolean doesStringContainIgnoreCase(@NonNull String originalString,
+                                            @NonNull String otherStringToCheckFor){
+        try {
+            return Pattern.compile(Pattern.quote(originalString), Pattern.CASE_INSENSITIVE)
+                    .matcher(otherStringToCheckFor).find();
+        } catch (Exception e){}
+        return false;
+    }
+
+    /**
+     * Replace a String using the str to replace (Will accept regex). This is ignore case
+     * so passing in different case Strings will replace successfully
+     * @param originalString Original String (IE, June 20)
+     * @param toRemove To remove (IE, june)
+     * @param toReplace To Replace (IE, june)
+     * @return Altered String (IE june 20) or original String if null or empty
+     */
+    public static String replaceStringIgnoreCase(@NonNull String originalString,
+                                                 @NonNull String toRemove,
+                                                 @NonNull String toReplace){
+        if(StringUtilities.isNullOrEmpty(originalString)){
+            return originalString;
+        }
+        if(StringUtilities.isNullOrEmpty(toRemove)){
+            return originalString;
+        }
+        try {
+            String str = "(?i)" + Pattern.quote(toRemove);
+            return originalString.replace(str, toReplace);
+        } catch (Exception e){
+            return originalString;
+        }
+    }
+
+    /**
+     * Replace a String using the literal (no regex) str to replace
+     * @param originalString Original String (IE, June 20)
+     * @param toRemove To remove (IE, 20)
+     * @param toReplace To Replace (IE, 21)
+     * @return Altered String (IE June 21) or original String if null or empty
+     */
+    public static String replaceString(@NonNull String originalString,
+                                                 @NonNull String toRemove,
+                                                 @NonNull String toReplace){
+        if(StringUtilities.isNullOrEmpty(originalString)){
+            return originalString;
+        }
+        if(StringUtilities.isNullOrEmpty(toRemove)){
+            return originalString;
+        }
+        try {
+            return originalString.replace(Pattern.quote(toRemove), toReplace);
+        } catch (Exception e){
+            return originalString;
+        }
+    }
 
     /**
      * This will format a String passed in (7145551234) and convert it into standard US phone
@@ -1439,7 +1582,7 @@ public class StringUtilities {
         try {
             double length =  (4 * (Math.ceil(((double)(base64String.length())/3))));
             try {
-                String last2 = base64String.suIbstring(base64String.length() - 2, base64String.length());
+                String last2 = base64String.substring(base64String.length() - 2, base64String.length());
                 if (StringUtilities.doesEqual(last2, "==")) {
                     length -= 2;
                 } else {
