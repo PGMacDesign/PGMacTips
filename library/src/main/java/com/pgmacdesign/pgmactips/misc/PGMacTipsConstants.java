@@ -185,13 +185,13 @@ public class PGMacTipsConstants {
     ////////////////
 
     //Time values in milliseconds
-    public static final long ONE_SECOND = (1000);
-    public static final long ONE_MINUTE = (1000*60);
-    public static final long ONE_HOUR = (1000*60*60);
-    public static final long ONE_DAY = (1000*60*60*24);
-    public static final long ONE_WEEK = (1000*60*60*24*7);
-    public static final long ONE_MONTH = (1000*60*60*24*30);
-    public static final long ONE_YEAR = (1000*60*60*24*365);
+    public static final long ONE_SECOND = (long)(1000L);
+    public static final long ONE_MINUTE = (long)(1000L*60L);
+    public static final long ONE_HOUR = (long)(1000L*60L*60L);
+    public static final long ONE_DAY = (long)(1000L*60L*60L*24L);
+    public static final long ONE_WEEK = (long)(1000L*60L*60L*24L*7L);
+    public static final long ONE_MONTH = (long)(1000L*60L*60L*24L*30L);
+    public static final long ONE_YEAR = (long)(1000L*60L*60L*24L*365L);
 
 
     //Default Date Formats
