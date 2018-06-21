@@ -3,7 +3,7 @@
 [![API](https://img.shields.io/badge/API-15%2B-green.svg?style=flat)](https://android-arsenal.com/api?level=15)
 [![JitPack](https://jitpack.io/v/pgmacdesign/PGMacTips.svg)](https://jitpack.io/#pgmacdesign/PGMacTips)
 [![Build Status](https://travis-ci.org/PGMacDesign/PGMacTips.svg?branch=master)](https://travis-ci.org/PGMacDesign/PGMacTips)
-
+![GitHub last commit](https://img.shields.io/github/last-commit/google/skia.svg)
 
 # PGMacTips
 This will be a collection of utility methods that I use in nearly all of my projects
