@@ -165,8 +165,8 @@ public class FirebaseMessagingUtilities {
     /*
     IOS Sample code for obtaining from "data" field:
         func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-            if let messageID = userInfo[“gcm.message_id”] {
-                print(“message id is \(messageID)“)
+            if let messageID = userInfo["gcm.message_id"] {
+                print("message id is \(messageID)")
             }
             Messaging.messaging().appDidReceiveMessage(userInfo)
             completionHandler(.newData)
