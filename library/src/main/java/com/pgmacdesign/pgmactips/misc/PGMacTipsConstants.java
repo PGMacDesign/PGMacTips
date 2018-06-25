@@ -1,6 +1,5 @@
 package com.pgmacdesign.pgmactips.misc;
 
-import com.daimajia.androidanimations.library.Techniques;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -279,8 +278,15 @@ public class PGMacTipsConstants {
     //Animation Constants and Tags//
     ////////////////////////////////
 
-    //Animation Techniques (From the library com.daimajia.androidanimations:library:1.1.3@aar).
-    //Prefix: In means it brings them into sight while out takes them out of sight
+    /**
+     * Animation Techniques (From the library com.daimajia.androidanimations:library:1.1.3@aar).
+     * In means it brings them into sight while out takes them out of sight
+     *
+     * Note, removing these for now as they are causing an exception to be thrown if the end developer
+     * does not include the animations library
+     *
+     *
+
     public static final Techniques IN_ZOOM_UP = Techniques.ZoomInUp; //Fun one, opposite of ZoomOutDown, zooms it up and then in
     public static final Techniques OUT_ZOOM_DOWN = Techniques.ZoomOutDown; //Fun one, zooms away (back) and then down, useful for getting rid of things
     public static final Techniques IN_ROLL = Techniques.RollIn;//Fly in effect looks nice for new views popping in
@@ -301,6 +307,8 @@ public class PGMacTipsConstants {
     public static final Techniques OUT_ROLL = Techniques.RollOut;
     public static final Techniques OUT_ZOOM = Techniques.ZoomOut;
     public static final Techniques IN_FLASH = Techniques.Flash; //Quick flash
+
+    */
 
     ////////////////////////////////
     //Known Malware Package Names //

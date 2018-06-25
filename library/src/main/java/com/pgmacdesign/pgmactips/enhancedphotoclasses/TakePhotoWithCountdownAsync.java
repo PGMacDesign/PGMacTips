@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.widget.TextView;
 
+import com.daimajia.androidanimations.library.Techniques;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.AnimationUtilities;
 import com.pgmacdesign.pgmactips.utilities.L;
@@ -84,7 +85,7 @@ public class TakePhotoWithCountdownAsync <T extends TextView> extends AsyncTask<
         if(textView != null) {
             AnimationUtilities.animateMyView(textView,
                     (int) (PGMacTipsConstants.ONE_SECOND * 0.75),
-                    PGMacTipsConstants.OUT_ZOOM);
+                    Techniques.ZoomOut);
         }
     }
 

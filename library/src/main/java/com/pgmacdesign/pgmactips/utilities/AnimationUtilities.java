@@ -6,7 +6,6 @@ import android.view.View;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
-import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
 /**
  * Created by pmacdowell on 8/16/2016.
@@ -26,19 +25,33 @@ public class AnimationUtilities {
             Constants.ANIM_ANDROID_FRAGMENT_CLOSE_EXIT
     };
     */
+//    private static final Techniques[] ENTER_ANIMATIONS = {
+//            PGMacTipsConstants.IN_ZOOM_UP, PGMacTipsConstants.IN_ROLL,
+//            PGMacTipsConstants.IN_PULSE, PGMacTipsConstants.IN_RUBBERBAND,
+//            PGMacTipsConstants.IN_FLIP_X, PGMacTipsConstants.IN_RIGHT_SLIDE,
+//            PGMacTipsConstants.IN_LEFT_SLIDE, PGMacTipsConstants.IN_SLIDE,
+//            PGMacTipsConstants.IN_FADE_DOWN, PGMacTipsConstants.IN_FADE_UP,
+//            PGMacTipsConstants.IN_DROP, PGMacTipsConstants.IN_TADA
+//    };
     private static final Techniques[] ENTER_ANIMATIONS = {
-            PGMacTipsConstants.IN_ZOOM_UP, PGMacTipsConstants.IN_ROLL,
-            PGMacTipsConstants.IN_PULSE, PGMacTipsConstants.IN_RUBBERBAND,
-            PGMacTipsConstants.IN_FLIP_X, PGMacTipsConstants.IN_RIGHT_SLIDE,
-            PGMacTipsConstants.IN_LEFT_SLIDE, PGMacTipsConstants.IN_SLIDE,
-            PGMacTipsConstants.IN_FADE_DOWN, PGMacTipsConstants.IN_FADE_UP,
-            PGMacTipsConstants.IN_DROP, PGMacTipsConstants.IN_TADA
+            Techniques.ZoomInUp, Techniques.RollIn,
+            Techniques.Pulse, Techniques.RubberBand,
+            Techniques.FlipInX, Techniques.SlideInRight,
+            Techniques.SlideInLeft, Techniques.SlideInUp,
+            Techniques.FadeInDown, Techniques.FadeInUp,
+            Techniques.Tada
     };
+//    private static final Techniques[] EXIT_ANIMATIONS = {
+//            PGMacTipsConstants.OUT_ZOOM_DOWN, PGMacTipsConstants.OUT_HINGE,
+//            PGMacTipsConstants.OUT_FLIP_Y, PGMacTipsConstants.OUT_SLIDE,
+//            PGMacTipsConstants.OUT_FLIP_X, PGMacTipsConstants.OUT_ROLL,
+//            PGMacTipsConstants.OUT_ZOOM
+//    };
     private static final Techniques[] EXIT_ANIMATIONS = {
-            PGMacTipsConstants.OUT_ZOOM_DOWN, PGMacTipsConstants.OUT_HINGE,
-            PGMacTipsConstants.OUT_FLIP_Y, PGMacTipsConstants.OUT_SLIDE,
-            PGMacTipsConstants.OUT_FLIP_X, PGMacTipsConstants.OUT_ROLL,
-            PGMacTipsConstants.OUT_ZOOM
+            Techniques.ZoomOutDown, Techniques.Hinge,
+            Techniques.FlipOutY, Techniques.SlideOutDown,
+            Techniques.FlipOutX, Techniques.RollOut,
+            Techniques.ZoomOut
     };
 
     /**
