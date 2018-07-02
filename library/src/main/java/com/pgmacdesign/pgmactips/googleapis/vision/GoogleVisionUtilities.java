@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmactips.googleapis;
+package com.pgmacdesign.pgmactips.googleapis.vision;
 
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
@@ -21,6 +21,8 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 
 /**
+ * Google Vision Utilities that interact with the Google Vision API
+ * Link: (https://cloud.google.com/vision/docs/)
  * Created by pmacdowell on 2018-04-02.
  */
 

@@ -34,7 +34,7 @@ import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
 import com.pgmacdesign.pgmactips.R;
-import com.pgmacdesign.pgmactips.graphicsanddrawing.CircleOverlayView;
+import com.pgmacdesign.pgmactips.customui.CircleOverlayView;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.AnimationUtilities;
 import com.pgmacdesign.pgmactips.utilities.CameraMediaUtilities;

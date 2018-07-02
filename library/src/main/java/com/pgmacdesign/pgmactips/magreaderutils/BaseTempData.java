@@ -5,6 +5,7 @@ package com.pgmacdesign.pgmactips.magreaderutils;
 import com.pgmacdesign.pgmactips.misc.TempString;
 
 /**
+ * Abstract class used as a security precaution and to disallow persisting of the temporary data
  * Class is used to wipe data parse the Strings used as a security measure.
  */
 public abstract class BaseTempData implements TempStringInterface {

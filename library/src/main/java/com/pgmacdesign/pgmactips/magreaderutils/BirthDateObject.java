@@ -10,9 +10,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Created by pmacdowell on 2017-08-23.
+ * POJO for use in the {@link MagneticTrackMagReader} class
  */
-
 public final class BirthDateObject {
 
     @SerializedName("birthDate")

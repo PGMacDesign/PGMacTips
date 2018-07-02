@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
+ * Custom Grid layout manager {@link RecyclerView.LayoutManager} that can be used for a normal Recyclerview Layout
  * This class is here because of the current bug wherein you call wrap_content on a recyclerview
  * and it will NOT expand out fully. This solves by calling the onMeasure() method against it.
  * http://stackoverflow.com/questions/27475178/how-do-i-make-wrap-content-work-on-a-recyclerview

@@ -2,6 +2,7 @@ package com.pgmacdesign.pgmactips.utilities;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.securepreferences.SecurePreferences;
 
@@ -15,7 +16,6 @@ import java.util.Set;
  * compile 'com.scottyab:secure-preferences-lib:0.1.4'
  * Created by pmacdowell on 2017-07-13.
  */
-
 public class SharedPrefsEncrypted {
 
     //Secured Shared Prefs Objects
@@ -28,13 +28,13 @@ public class SharedPrefsEncrypted {
     /**
      * Method for building an encrypted set of shared prefs
      * @param context Context
-     * @param sharedPrefsName prefs name
+     * @param sharedPrefsName prefs name. If null, will use default as package name + '.sp'
      * @param encryptionPassword the password. If null, it will not have a password
      * @return Shared Prefs (encrypted) object
      */
     public static SharedPrefsEncrypted getEncryptedSharedPrefsInstance(@NonNull Context context,
-                                                              String sharedPrefsName,
-                                                              String encryptionPassword){
+                                                                       @Nullable String sharedPrefsName,
+                                                                       @Nullable String encryptionPassword){
         String str;
         if(StringUtilities.isNullOrEmpty(sharedPrefsName)){
             String packageName = MiscUtilities.getPackageName(context);
@@ -69,7 +69,7 @@ public class SharedPrefsEncrypted {
      * @param sharedPrefsName prefs name
      * @param password the password. If null, it will not have a password
      */
-    private SharedPrefsEncrypted(@NonNull Context context, @NonNull String sharedPrefsName, String password){
+    private SharedPrefsEncrypted(@NonNull Context context, @NonNull String sharedPrefsName, @Nullable String password){
         if(StringUtilities.isNullOrEmpty(password)){
             //Eliminates any empty Strings as passwords
             password = null;

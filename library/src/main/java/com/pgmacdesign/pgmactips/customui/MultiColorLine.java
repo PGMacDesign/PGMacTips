@@ -21,58 +21,57 @@ import java.util.ConcurrentModificationException;
 import java.util.List;
 
 /**
+ * This Multi-color line is drawn dynamically as per the params passed. Sample of how to use:
+ *     Sample of how to use:
+ *          multiColorLine = (MultiColorLine) view.findViewById(R.id.multiColorLine);
+ *          multiColorLine.setDrawDiagonally(false);
+ *          multiColorLine.setDrawAsSingleLine(true);
+ *          multiColorLine.setReverseDrawingAnimation(true);
+ *          multiColorLine.setAnimateStrokes(true, 750);
+ *          multiColorLine.setColorOfBoarderStroke(ContextCompat.getColor(context, R.color.Black));
+ *          multiColorLine.setDrawBoarderWithLine(false);
+ *          multiColorLine.setFps(MultiColorLine.FPS.FPS_120);
+ *          multiColorLine.setWidthOfBoarderStroke(1);
+ *          multiColorLine.setRoundCapPaddingAddition(0.04F);
+ *          float flt = this.dmu.convertToPixels(DisplayManagerUtilities.ComplexUnits
+ *          .COMPLEX_UNIT_DIP, 19F);
+ *          multiColorLine.setWidthOfLineStroke((int) flt);
+ *          float percentComplete1 = 45F;
+ *          float percentComplete2 = 55F;
+ *
+ *          //Line 1
+ *          int colorBlue = ContextCompat.getColor(context, R.color.Blue);
+ *          MultiColorLine.CustomStrokeObject obj1 = new MultiColorLine.CustomStrokeObject(
+ *          percentComplete1, 0, colorBlue);
+ *          Paint paint1 = new Paint();
+ *          paint1.setAntiAlias(true);
+ *          paint1.setColor(colorBlue); //Depending on your color, this may be necessary.
+ *          paint1.setStyle(Paint.Style.STROKE);
+ *          paint1.setStrokeCap(Paint.Cap.ROUND);
+ *          //Set shading here if need be. IE: paint1.setShader(new LinearGradient())
+ *          obj1.setPaint(paint1);
+ *
+ *          //Line 2
+ *          int colorRed = ContextCompat.getColor(context, R.color.Red);
+ *          MultiColorLine.CustomStrokeObject obj2 = new MultiColorLine.CustomStrokeObject(
+ *              (100 - percentComplete), percentComplete2, colorRed)
+ *          );
+ *          Paint paint2 = obj2.getPaint();
+ *          paint2.setAntiAlias(true);
+ *          paint2.setColor(colorRed); //Depending on your color, this may be necessary.
+ *          paint2.setStyle(Paint.Style.STROKE);
+ *          paint2.setStrokeCap(Paint.Cap.ROUND);
+ *          //Set shading here if need be. IE: paint2.setShader(new LinearGradient())
+ *          obj2.setPaint(paint2);
+ *
+ *          List<MultiColorLine.CustomStrokeObject> objects = new ArrayList<>();
+ *          objects.add(obj1);
+ *          objects.add(obj2);
+ *         multiColorLine.setLineStrokes(objects);
  * Created by pmacdowell on 2017-06-20.
  */
 public class MultiColorLine extends View {
 
-    /*
-    Sample of how to use:
-        multiColorLine = (MultiColorLine) view.findViewById(R.id.multiColorLine);
-        multiColorLine.setDrawDiagonally(false);
-        multiColorLine.setDrawAsSingleLine(true);
-        multiColorLine.setReverseDrawingAnimation(true);
-        multiColorLine.setAnimateStrokes(true, 750);
-        multiColorLine.setColorOfBoarderStroke(ContextCompat.getColor(context, R.color.Black));
-        multiColorLine.setDrawBoarderWithLine(false);
-        multiColorLine.setFps(MultiColorLine.FPS.FPS_120);
-        multiColorLine.setWidthOfBoarderStroke(1);
-        multiColorLine.setRoundCapPaddingAddition(0.04F);
-        float flt = this.dmu.convertToPixels(DisplayManagerUtilities.ComplexUnits
-                .COMPLEX_UNIT_DIP, 19F);
-        multiColorLine.setWidthOfLineStroke((int) flt);
-        float percentComplete1 = 45F;
-        float percentComplete2 = 55F;
-
-        //Line 1
-        int colorBlue = ContextCompat.getColor(context, R.color.Blue);
-        MultiColorLine.CustomStrokeObject obj1 = new MultiColorLine.CustomStrokeObject(
-                percentComplete1, 0, colorBlue);
-        Paint paint1 = new Paint();
-        paint1.setAntiAlias(true);
-        paint1.setColor(colorBlue); //Depending on your color, this may be necessary.
-        paint1.setStyle(Paint.Style.STROKE);
-        paint1.setStrokeCap(Paint.Cap.ROUND);
-        //Set shading here if need be. IE: paint1.setShader(new LinearGradient())
-        obj1.setPaint(paint1);
-
-        //Line 2
-        int colorRed = ContextCompat.getColor(context, R.color.Red);
-        MultiColorLine.CustomStrokeObject obj2 = new MultiColorLine.CustomStrokeObject(
-                (100 - percentComplete), percentComplete2, colorRed)
-        );
-        Paint paint2 = obj2.getPaint();
-        paint2.setAntiAlias(true);
-        paint2.setColor(colorRed); //Depending on your color, this may be necessary.
-        paint2.setStyle(Paint.Style.STROKE);
-        paint2.setStrokeCap(Paint.Cap.ROUND);
-        //Set shading here if need be. IE: paint2.setShader(new LinearGradient())
-        obj2.setPaint(paint2);
-
-        List<MultiColorLine.CustomStrokeObject> objects = new ArrayList<>();
-        objects.add(obj1);
-        objects.add(obj2);
-        multiColorLine.setLineStrokes(objects);
-     */
     
     
     /**

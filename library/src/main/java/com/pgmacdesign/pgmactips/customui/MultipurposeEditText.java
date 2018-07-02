@@ -2,6 +2,7 @@ package com.pgmacdesign.pgmactips.customui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.widget.EditText;
@@ -43,18 +44,24 @@ public class MultipurposeEditText extends EditText { //AppCompatEditText
     public void setState(EditTextState state){
         switch (state){
             case FOCUSED:
-                this.setBackground(ContextCompat.getDrawable(
-                        context, R.drawable.custom_background_white_back_black_edges));
+                if(Build.VERSION.SDK_INT >= 16) {
+                    this.setBackground(ContextCompat.getDrawable(
+                            context, R.drawable.custom_background_white_back_black_edges));
+                }
                 break;
 
             case NOT_FOCUSED:
-                this.setBackground(ContextCompat.getDrawable(
-                        context, R.drawable.custom_background_white_back_lightgrey_edges));
+                if(Build.VERSION.SDK_INT >= 16) {
+                    this.setBackground(ContextCompat.getDrawable(
+                            context, R.drawable.custom_background_white_back_lightgrey_edges));
+                }
                 break;
 
             case ERROR:
-                this.setBackground(ContextCompat.getDrawable(
-                        context, R.drawable.custom_background_white_back_red_edges));
+                if(Build.VERSION.SDK_INT >= 16) {
+                    this.setBackground(ContextCompat.getDrawable(
+                            context, R.drawable.custom_background_white_back_red_edges));
+                }
                 break;
         }
     }

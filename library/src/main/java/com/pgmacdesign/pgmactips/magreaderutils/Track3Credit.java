@@ -4,6 +4,10 @@ import java.util.regex.Matcher;
 
 import static com.pgmacdesign.pgmactips.utilities.StringUtilities.isNullOrEmpty;
 
+/**
+ * POJO for use in the {@link MagneticTrackMagReader} class. This track class mirrors the
+ * track 3 data on a standard 3 track card.
+ */
 public class Track3Credit extends MagReaderTrackBase {
 
     public static Track3Credit parse(final String rawTrackData) {

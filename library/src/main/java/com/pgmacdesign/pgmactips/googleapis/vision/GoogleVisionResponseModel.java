@@ -1,10 +1,11 @@
-package com.pgmacdesign.pgmactips.googleapis;
+package com.pgmacdesign.pgmactips.googleapis.vision;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 /**
+ * POJO (JSON response model) For use with the Google Vision API Calls
  * Created by pmacdowell on 2018-04-02.
  */
 

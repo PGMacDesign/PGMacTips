@@ -6,6 +6,7 @@ import static com.pgmacdesign.pgmactips.utilities.StringUtilities.isNullOrEmpty;
 
 /**
  * Temp String class used for Strings being wiped and not stored in memory.
+ * Calling {@link TempString#disposeData()} will erase the String from memory
  * Created by pmacdowell on 2017-08-03.
  */
 public class TempString implements CharSequence{

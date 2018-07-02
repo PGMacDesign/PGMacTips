@@ -5,7 +5,9 @@ package com.pgmacdesign.pgmactips.magreaderutils;
 import com.pgmacdesign.pgmactips.misc.TempString;
 
 import java.util.regex.Matcher;
-
+/**
+ * Base abstract class used by the {@link MagneticTrackMagReader} class.
+ */
 abstract class MagReaderTrackBase extends BaseTempData implements TempStringInterface {
 
     private transient TempString tempString;

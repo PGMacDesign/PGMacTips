@@ -9,8 +9,11 @@ import android.os.IBinder;
 import android.util.Log;
 
 /**
+ * Service for utilizing the Flash on a camera
+ * (Currently not working)
  * Created by pmacdowell on 9/2/2016.
  */
+@Deprecated
 public class ServiceFlash extends Service {
     private boolean isFlashOn = false;
     private Camera camera;

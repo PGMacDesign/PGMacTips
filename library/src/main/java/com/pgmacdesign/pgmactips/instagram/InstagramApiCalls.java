@@ -11,6 +11,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
+ * Instagram API SDK since as of this date there is no Instagram SDK
  * Created by pmacdowell on 2017-04-19.
  */
 

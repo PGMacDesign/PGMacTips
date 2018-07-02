@@ -8,7 +8,7 @@ import android.support.annotation.NonNull;
  * Currently used in the following classes:
  *   1){@link com.pgmacdesign.pgmactips.utilities.L}
  *
- *
+ * Please note that this will be a default for config changes in the future.
  * Created by pmacdowell on 2017-07-03.
  */
 public class PGMacTipsConfig {

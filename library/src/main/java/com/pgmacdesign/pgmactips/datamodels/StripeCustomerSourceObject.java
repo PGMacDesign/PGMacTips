@@ -3,6 +3,7 @@ package com.pgmacdesign.pgmactips.datamodels;
 import com.google.gson.annotations.Expose;
 
 /**
+ * POJO For use with the Stripe SDK
  * Created by pmacdowell on 2018-02-23.
  */
 

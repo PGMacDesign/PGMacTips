@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Instagram Utilities that utilize all classes in this package
  * Created by pmacdowell on 2017-04-19.
  */
 

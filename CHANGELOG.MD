@@ -1,6 +1,23 @@
 Change Log
 ==========
 
+Version 0.0.57 *(2018-07-03)*
+----------------------------
+
+ * Improvement: Updated PermissionUtilities to add overloaded methods to take in String arrays for permissions instead of the dedicated enum. 
+ * Fix: Updated the SharedPrefsEncrypted class to designate better 
+ * Improvement: Moved the larger .gif files to a separate folder so that they won't take up space in the build files. They can now be found in the **sample_gifs** directory in the root. 
+ * Update: Changed the logo icons as well as deleting the old ic images. 
+ * Update: Changed the documentation for the SMSBroadcastReceiver to clarify some things and make sure the manifest sample info gets included with the javadoc files.
+ * Fix: Updated multiple portions of the app with if checks on the version so as to prevent exceptions from arising when hitting them with API levels <16.
+ * Update: Refactored the package naming for multiple directories (Google Vision, customUI, etc) and moved files around to make for a more logical hierarchy. 
+ 
+Version 0.0.56 *(2018-06-25)*
+----------------------------
+
+ * Fix: Multiple bug fixes across the library to catch unique bugs that may be cause by omitting certain libraries but maintaining this one. 
+ * New: Added in Javadoc zip file for documentation purposes. 
+ 
 Version 0.0.55 *(2018-04-23)*
 ----------------------------
 

@@ -1,7 +1,9 @@
 
 package com.pgmacdesign.pgmactips.magreaderutils;
 
-
+/**
+ * POJO for use in the {@link MagneticTrackMagReader} class
+ */
 public class AccountInfo {
 
 

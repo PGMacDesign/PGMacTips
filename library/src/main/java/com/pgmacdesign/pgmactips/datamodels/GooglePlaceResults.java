@@ -7,6 +7,7 @@ import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 import java.util.List;
 
 /**
+ * Data model that mirrors the GooglePlaceResults object for JSON Parsing
  * Created by pmacdowell on 2017-11-13.
  */
 

@@ -16,6 +16,7 @@ import android.widget.SearchView;
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 
 /**
+ * Simple custom search view
  * Created by pmacdowell on 2017-10-18.
  */
 

@@ -7,6 +7,9 @@ import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 
 import static com.pgmacdesign.pgmactips.utilities.StringUtilities.isNullOrEmpty;
 
+/**
+ * POJO for use in the {@link MagneticTrackMagReader} class
+ */
 public class ServiceCode extends BaseTempData {
 
     @SerializedName("serviceCode")

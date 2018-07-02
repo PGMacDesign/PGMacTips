@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Data model that mirrors the Facebook Data objects for JSON Parsing
  * Created by pmacdowell on 2017-11-13.
  */
 

@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmactips.graphicsanddrawing;
+package com.pgmacdesign.pgmactips.customui;
 
 import android.annotation.TargetApi;
 import android.content.Context;

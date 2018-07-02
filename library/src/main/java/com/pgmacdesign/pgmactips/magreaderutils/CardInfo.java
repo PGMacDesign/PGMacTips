@@ -1,9 +1,8 @@
 package com.pgmacdesign.pgmactips.magreaderutils;
 
 /**
- * Created by pmacdowell on 2017-08-02.
+ * POJO for use in the {@link MagneticTrackMagReader} class
  */
-
 public class CardInfo {
     private CardConstants.PinRequirements pinRequirements;
     private Boolean isInternational;

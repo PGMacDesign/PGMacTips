@@ -2,6 +2,7 @@ package com.pgmacdesign.pgmactips.customui;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -35,9 +36,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
+ * Multi-purpose choice dialog to allow for modular usage
  * Created by Patrick-SSD2 on 11/4/2017.
  */
-
 public class MultipurposeChoiceDialog extends AlertDialog implements
 		TextWatcher, View.OnClickListener, CustomClickCallbackLink, CustomLongClickCallbackLink {
 	
@@ -152,7 +153,9 @@ public class MultipurposeChoiceDialog extends AlertDialog implements
 	public void setRecyclerviewScrollbarVisible(boolean showScrollbar){
 		if(multipurpose_choice_dialog_recyclerview != null){
 			if(!showScrollbar) {
-				multipurpose_choice_dialog_recyclerview.setScrollBarSize(0);
+				if(Build.VERSION.SDK_INT >= 16) {
+					multipurpose_choice_dialog_recyclerview.setScrollBarSize(0);
+				}
 			}
 		}
 	}

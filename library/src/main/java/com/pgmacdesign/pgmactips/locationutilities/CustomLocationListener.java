@@ -1,5 +1,6 @@
 package com.pgmacdesign.pgmactips.locationutilities;
 
+import android.Manifest;
 import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
@@ -7,13 +8,14 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresPermission;
 
 import com.pgmacdesign.pgmactips.utilities.L;
 
 /**
+ * Location Listener for use in obtaining {@link Location}
  * Created by pmacdowell on 2017-10-16.
  */
-
 public class CustomLocationListener implements LocationListener {
 
     private Context context;
@@ -65,6 +67,7 @@ public class CustomLocationListener implements LocationListener {
      * @param minimumDistanceBetweenUpdates The minimum distance (in meters) to update a user's
      *                                      location. (Sample, 10 == 10 meters)
      */
+    @RequiresPermission(Manifest.permission.ACCESS_FINE_LOCATION)
     public void startListeningForLocation(long minimumTimeBetweenUpdates,
                                           float minimumDistanceBetweenUpdates){
         try {
@@ -106,6 +109,7 @@ public class CustomLocationListener implements LocationListener {
     /**
      * Overloaded, allows for auto clearing of the instance
      */
+    @RequiresPermission(Manifest.permission.ACCESS_FINE_LOCATION)
     public void stopListeningForLocation(){
         stopListeningForLocation(false);
     }
@@ -117,6 +121,7 @@ public class CustomLocationListener implements LocationListener {
      *                     pass true, let it clear the instance, and use the static builder to
      *                     rebuild it when using it again.
      */
+    @RequiresPermission(Manifest.permission.ACCESS_FINE_LOCATION)
     public void stopListeningForLocation(boolean keepInstance){
         try {
             if(locationManager != null){

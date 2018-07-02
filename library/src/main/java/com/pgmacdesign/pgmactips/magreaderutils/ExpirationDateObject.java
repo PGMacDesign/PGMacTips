@@ -12,6 +12,9 @@ import java.util.Date;
 import static com.pgmacdesign.pgmactips.utilities.StringUtilities.isNullOrEmpty;
 import static com.pgmacdesign.pgmactips.utilities.StringUtilities.keepNumbersOnly;
 
+/**
+ * POJO for use in the {@link MagneticTrackMagReader} class
+ */
 public final class ExpirationDateObject implements TempStringInterface{
 
 

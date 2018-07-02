@@ -17,9 +17,9 @@ import java.util.ConcurrentModificationException;
 import java.util.List;
 
 /**
+ * This Multi-color circle is drawn dynamically as per the params passed
  * Created by pmacdowell on 2017-05-22.
  */
-
 public class MultiColorCircle extends View  {
 
     /**

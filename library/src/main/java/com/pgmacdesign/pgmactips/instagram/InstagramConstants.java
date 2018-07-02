@@ -1,6 +1,7 @@
 package com.pgmacdesign.pgmactips.instagram;
 
 /**
+ * Instagram Constants
  * From Docs:
  * https://www.instagram.com/developer/authorization/
  * Created by pmacdowell on 2017-04-19.

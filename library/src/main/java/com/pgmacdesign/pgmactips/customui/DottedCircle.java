@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 
 /**
+ * This dotted circle is drawn dynamically as per the params passed
  * Created by pmacdowell on 2017-05-31.
  */
 

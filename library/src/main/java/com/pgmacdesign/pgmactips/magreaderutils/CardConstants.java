@@ -5,9 +5,11 @@ import java.util.regex.Pattern;
 import static com.pgmacdesign.pgmactips.utilities.StringUtilities.isNullOrEmpty;
 
 /**
+ * Constants class for use in the various Utilities that need to access regular expressions,
+ * patterns, or cards.
+ *
  * Created by pmacdowell on 2017-08-02.
  */
-
 public class CardConstants {
 
 

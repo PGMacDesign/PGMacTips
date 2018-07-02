@@ -3,6 +3,7 @@ package com.pgmacdesign.pgmactips.datamodels;
 import com.google.gson.annotations.SerializedName;
 
 /**
+ * Sample POJO that demonstrates serialization
  * Created by pmacdowell on 8/18/2016.
  */
 public class SamplePojo {

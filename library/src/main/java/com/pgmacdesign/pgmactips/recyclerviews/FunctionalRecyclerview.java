@@ -10,9 +10,10 @@ import android.view.ViewGroup;
 import java.util.List;
 
 /**
+ * Unused for now, will reset in the future
  * Created by pmacdowell on 2017-08-23.
  */
-
+@Deprecated
 public class FunctionalRecyclerview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     //Dataset List

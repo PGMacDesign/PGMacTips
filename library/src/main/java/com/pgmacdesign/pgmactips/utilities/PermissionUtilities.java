@@ -80,9 +80,12 @@ public class PermissionUtilities {
     private int numRequests, currentAttemptNumber;
 
     private static PermissionUtilities staticPermissionUtility;
+
     /**
      * Static shortcut to allow for quick calls if a recurring call is not needed
-     * NOTE! Does make the actual permissions request
+     * NOTE! Does make the actual permissions request.
+     *                   Also, if requesting these permissions in the onResume, it can cause
+     *                   a perma-loop to occur.
      * @param activity Activity in context
      * @param perms Permissions array being requested
      */
@@ -92,16 +95,49 @@ public class PermissionUtilities {
     }
 
     /**
+     * Static shortcut to allow for quick calls if a recurring call is not needed
+     * NOTE! Does make the actual permissions request.
+     *                   Also, if requesting these permissions in the onResume, it can cause
+     *                   a perma-loop to occur.
+     * @param activity Activity in context
+     * @param perms Permissions array being requested
+     */
+    public static void permissionsRequestShortcut(@NonNull Activity activity,
+                                                  @NonNull String[] perms){
+        getInstance(activity).startPermissionsRequest(perms);
+    }
+
+    /**
      * Static shortcut to allow for quick calls if a recurring call is not needed. It also
      * returns a boolean if the perms have already been granted. This is a hybrid call of the
      * Shortcut request above and the check granted permissions call below.
      * NOTE! Does make the actual permissions request
+     *                   Also, if requesting these permissions in the onResume, it can cause
+     *                   a perma-loop to occur.
      * @param activity Activity in context
      * @param perms Permissions array being requested
      */
     public static boolean permissionsRequestShortcutReturn(
             @NonNull Activity activity,
             @NonNull PermissionUtilities.permissionsEnum[] perms){
+        return (getInstance(activity).startPermissionsRequest(perms));
+    }
+
+    /**
+     * Static shortcut to allow for quick calls if a recurring call is not needed. It also
+     * returns a boolean if the perms have already been granted. This is a hybrid call of the
+     * Shortcut request above and the check granted permissions call below.
+     * NOTE! Does make the actual permissions request
+     *                   Also, if requesting these permissions in the onResume, it can cause
+     *                   a perma-loop to occur.
+     * @param activity Activity in context
+     * @param perms Permissions array being requested {@link android.Manifest.permission}
+     * @return Returns a boolean as to whether all permissions are allowed. If >= 1 has not
+     *         been allowed, it will return false.
+     */
+    public static boolean permissionsRequestShortcutReturn(
+            @NonNull Activity activity,
+            @NonNull String[] perms){
         return (getInstance(activity).startPermissionsRequest(perms));
     }
 
@@ -147,7 +183,7 @@ public class PermissionUtilities {
                 MY_PERMISSIONS_ACCESS_FINE_LOCATION, false),
         WRITE_EXTERNAL_STORAGE("Write External Storage", "Allows the ability to write to external " +
                 "storage. An example of this would be to save data so that it won't be erased when " +
-                "leaving the application and coming back in.",
+                "closing the application re-opening it.",
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 TAG_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE, false),
         CAMERA("Camera", "Allows pictures to be taken with the camera.",
@@ -238,7 +274,9 @@ public class PermissionUtilities {
     };
 
     /**
-     * Overloaded method to allow for one permissions
+     * Overloaded method to allow for one permissions.
+     *                   Also, if requesting these permissions in the onResume, it can cause
+     *                   a perma-loop to occur.
      * @param whichPerm single permission to request
      * @return Returns a boolean, true if all permissions are set to true, false if not
      */
@@ -250,7 +288,9 @@ public class PermissionUtilities {
     }
 
     /**
-     * Request permissions
+     * Request permissions.
+     *                   Also, if requesting these permissions in the onResume, it can cause
+     *                   a perma-loop to occur.
      * @param whichPerms array of permissions to request. NOTE! If you send permissions
      *                   which are not requested in the manifest, you will get a ANR
      *                   error and the screen will freeze entirely, IE:
@@ -298,6 +338,58 @@ public class PermissionUtilities {
     }
 
     /**
+     * Request permissions. Overloaded to allow for String array.
+     *                   Also, if requesting these permissions in the onResume, it can cause
+     *                   a perma-loop to occur.
+     * @param whichPerms array of permissions to request. NOTE! If you send permissions
+     *                   which are not requested in the manifest, you will get a ANR
+     *                   error and the screen will freeze entirely, IE:
+     *                   ( Wrote stack traces to '/data/anr/traces.txt' ). This same error
+     *                   will be thrown if this is called in an activity before the
+     *                   view is set (setContentView()).
+     *                   Also, if requesting these permissions in the onResume, it can cause
+     *                   a perma-loop to occur.
+     * @return Returns a boolean, true if all permissions are set to true, false if not
+     */
+    public boolean startPermissionsRequest(@NonNull String[] whichPerms){
+        //If build version is less than marshmallow, can return true and assume yes
+        if(Build.VERSION.SDK_INT < 23){
+            return true;
+        }
+
+
+        //Vars to use
+        int numPermsDenied, numPermsGranted;
+        String[] deniedPerms = null;
+        List<String> deniedPermsList = new ArrayList<>();
+
+        //Iterate to check which perms have been allowed already and add them to a list
+        for(String currentPerm : whichPerms){
+            if(ContextCompat.checkSelfPermission(activity,
+                    currentPerm)
+                    != PackageManager.PERMISSION_GRANTED){
+                deniedPermsList.add(currentPerm);
+            }
+        }
+
+        //If no perms have been denied, return true, else, add them to the list / array
+        if(deniedPermsList.size() <= 0){
+            return true;
+        } else {
+            deniedPerms = new String[deniedPermsList.size()];
+            for(int x = 0; x < deniedPermsList.size(); x++){
+                deniedPerms[x] = deniedPermsList.get(x);
+            }
+        }
+
+        //Actual requests
+        this.requestPermissions(deniedPerms);
+
+        //If this is reached, there are at least 1 denied perm
+        return false;
+    }
+
+    /**
      * Class that checks if all the permissions passed in have been grated.
      * @param whichPerms  Which perms to check
      * @return True if all have been granted, false if not
@@ -332,6 +424,57 @@ public class PermissionUtilities {
 
     /**
      * VisionRequests an array of permissions. This assumes that the check for them being
+     * denied was already performed
+     * @param whichPerms The perms being requested (THAT HAVE ALREADY BEEN DENIED)
+     */
+    private void requestPermissions(@NonNull String[] whichPerms){
+        //Handler Thread and handlers initialize:
+        HandlerThread handlerThread = new HandlerThread("PermissionUtilitiesThread");
+        handlerThread.start();
+        Looper looper = handlerThread.getLooper();
+        Handler handler = new Handler(looper);
+
+        //List to add to if they want an explanation
+        List<String> permsToShowExplanation = new ArrayList<>();
+        List<String> permStrings = new ArrayList<>();
+
+        for(String currentPerm : whichPerms){
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity,
+                    currentPerm)) {
+                permsToShowExplanation.add(currentPerm);
+            }
+            permStrings.add(currentPerm);
+        }
+
+        final String[] permStringArray = permStrings.toArray(new String[permStrings.size()]);
+
+        if(permsToShowExplanation.size() <= 0 || bypassShowRationale){
+            bypassShowRationale = false;
+            //No explanation needed, make the request
+            try {
+                handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                ActivityCompat.requestPermissions(activity, permStringArray,
+                                        PERMISSIONS_REQUEST_BASE_CALL);
+                            }
+                        }
+                );
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+
+        } else {
+            bypassShowRationale = true;
+            //Request explanations needed, show
+            //Insert here if used (marker **)
+            PermissionUtilities.makeDialogForSettings(activity, whichPerms);
+
+        }
+    }
+
+    /**
+     * whichPerms an array of permissions. This assumes that the check for them being
      * denied was already performed
      * @param whichPerms The perms being requested (THAT HAVE ALREADY BEEN DENIED)
      */
@@ -384,6 +527,64 @@ public class PermissionUtilities {
                 PermissionUtilities.makeDialogForSettings(activity, whichPerms);
             }
 
+        }
+    }
+
+    /**
+     * Makes a dialog popup where if the user clicks the affirmative it will take them to
+     * the settings of the phone so they can adjust the settings
+     * @param activity
+     * @param perms
+     */
+    public static void makeDialogForSettings(@NonNull final Activity activity, @NonNull String[] perms){
+        String message = null;
+        if(perms != null){
+            if(perms.length > 0){
+                StringBuilder sb = new StringBuilder();
+                sb.append("This app requires the following permissions in order to function properly:");
+                sb.append("\n\n");
+                int pos = 0;
+                for(String aPerm: perms){
+
+                    if(StringUtilities.isNullOrEmpty(aPerm)){
+                        continue;
+                    }
+                    String name = aPerm.toString();
+                    sb.append(name);
+
+                    if(pos < (perms.length - 2)) {
+                        sb.append("\n\n");
+                    }
+                    pos++;
+                }
+                sb.append("\nTo enable these permissions, click on the 'Grant Permissions'" +
+                        " button below and turn them on in settings ");
+                message = sb.toString();
+            }
+        }
+        final Dialog dialog = DialogUtilities.buildOptionDialog(
+                activity, new DialogUtilities.DialogFinishedListener() {
+                    @Override
+                    public void dialogFinished(Object object, int tag) {
+                        if(tag == DialogUtilities.SUCCESS_RESPONSE) {
+                            try {
+                                Uri uri = Uri.parse("package:" + activity.getPackageName());
+                                Intent intent = new Intent();
+                                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                intent.addCategory(Intent.CATEGORY_DEFAULT);
+                                intent.setData(uri);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                                activity.startActivityForResult(intent,
+                                        PERMISSIONS_REQUEST_BASE_CALL);
+                            } catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }, "Grant Permissions", null, "Later", "Permissions Authorization Needed", message
+        );
+        if(dialog != null) {
+            dialog.show();
         }
     }
 

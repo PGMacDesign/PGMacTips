@@ -1,8 +1,9 @@
-package com.pgmacdesign.pgmactips.googleapis;
+package com.pgmacdesign.pgmactips.googleapis.vision;
 
 import com.google.gson.annotations.SerializedName;
 
 /**
+ * POJO (Error response model) For use with the Google Vision API Calls
  * Created by pmacdowell on 2018-04-02.
  */
 

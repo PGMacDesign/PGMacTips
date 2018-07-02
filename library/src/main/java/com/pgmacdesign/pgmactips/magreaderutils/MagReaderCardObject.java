@@ -5,8 +5,8 @@ package com.pgmacdesign.pgmactips.magreaderutils;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
-
 /**
+ * POJO for use in the {@link MagneticTrackMagReader} class
  * Represents a card (IE Credit, Debit) and contains information about the card
  */
 public class MagReaderCardObject {

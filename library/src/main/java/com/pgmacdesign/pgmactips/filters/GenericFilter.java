@@ -16,9 +16,9 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
+ * A Generic Filter
  * Created by pmacdowell on 2017-11-20.
  */
-
 public class GenericFilter <T extends FilterInterface> {
 
     private List<T> objectsToFilter, filteredList;

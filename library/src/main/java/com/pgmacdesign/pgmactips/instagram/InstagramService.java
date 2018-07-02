@@ -7,6 +7,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
+ * Instagram interface that maps to the Instagram web api
  * Created by pmacdowell on 2017-04-19.
  */
 

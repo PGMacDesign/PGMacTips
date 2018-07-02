@@ -9,6 +9,8 @@ import android.graphics.RectF;
 import com.squareup.picasso.Transformation;
 
 /**
+ * Circle Transformation that can be used to make images into circles.
+ * Very useful in conjunction with {@link com.squareup.picasso.Picasso}
  * Created by pmacdowell on 2017-11-13.
  */
 

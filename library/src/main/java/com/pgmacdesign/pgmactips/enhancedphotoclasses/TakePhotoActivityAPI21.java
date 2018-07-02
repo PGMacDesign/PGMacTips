@@ -50,7 +50,7 @@ import com.daimajia.androidanimations.library.*;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.face.FaceDetector;
 import com.pgmacdesign.pgmactips.R;
-import com.pgmacdesign.pgmactips.graphicsanddrawing.CircleOverlayView;
+import com.pgmacdesign.pgmactips.customui.CircleOverlayView;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.AnimationUtilities;
 import com.pgmacdesign.pgmactips.utilities.CameraMediaUtilities;

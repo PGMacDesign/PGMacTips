@@ -16,7 +16,24 @@ import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.L;
 
 /**
- * SMS Broadcast Receiver. See bottom for required Manifest Params
+ * SMS Broadcast Receiver.
+ *     IMPORTANT: This must be put into the Manifest for this to work:
+ *
+ *  <!-- Main Manifest -->
+ *   <manifest
+ *       ...>
+ *       <uses-permission android:name="android.permission.RECEIVE_SMS" />
+ *       <application
+ *       ...
+ *       <!-- SMS Broadcast Receiver -->
+ *       <receiver android:name="linkto.yourlocal.copyand.package.SMSBroadcastReceiver">
+ *       <intent-filter>
+ *       <action android:name="android.provider.Telephony.SMS_RECEIVED"></action>
+ *       </intent-filter>
+ *       </receiver>
+ *       ...
+ *       </application>
+ *   </manifest>
  * Created by pmacdowell on 2017-06-13.
  */
 public class SMSBroadcastReceiver  extends BroadcastReceiver {
@@ -82,22 +99,4 @@ public class SMSBroadcastReceiver  extends BroadcastReceiver {
             listener.onTaskComplete(null, TAG_SMS_RECEIVED_BROADCAST_RECEIVER_EMPTY);
         }
     }
-
-    /*
-    IMPORTANT: This must be put into the Manifest for this to work:
-    <manifest
-        ...>
-        <uses-permission android:name="android.permission.RECEIVE_SMS" />
-        <application
-            ...
-            <!-- SMS Broadcast Receiver -->
-            <receiver android:name=".SMSBroadcastReceiver">
-                <intent-filter>
-                    <action android:name="android.provider.Telephony.SMS_RECEIVED"></action>
-                </intent-filter>
-            </receiver>
-            ...
-        </application>
-    </manifest>
-     */
 }

@@ -10,6 +10,9 @@ import java.util.Arrays;
 
 import static com.pgmacdesign.pgmactips.utilities.StringUtilities.isNullOrEmpty;
 
+/**
+ * POJO for use in the {@link MagneticTrackMagReader} class
+ */
 public class AccountNumber extends BaseTempData implements TempStringInterface {
 
 

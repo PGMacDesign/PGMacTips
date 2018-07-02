@@ -12,7 +12,8 @@ import android.support.v4.content.ContextCompat;
 import com.pgmacdesign.pgmactips.utilities.PermissionUtilities;
 
 /**
- * This class works with the location API to
+ * Utilities class for use with various Location method calls as well as some local functions for
+ * simple arithmetic.
  * Created by pmacdowell on 2017-01-18.
  */
 public class LocationUtilities {

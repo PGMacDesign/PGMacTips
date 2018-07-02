@@ -79,10 +79,6 @@ public class PGMacTipsConstants {
     public static final int DATE_YYYY_MM_DD_T_HH_MM_SS_Z = 4404;
     public static final int DATE_MM_DD_YYYY = 4405;
     public static final int DATE_MM_DD_YY = 4406;
-    public static final int DATE_MM_DD_YYYY_AMERICANS_NEED_TO_LEARN_TO_FORMAT_CORRECTLY
-            = 4405; //AKA DATE_STUPID_AMERICAN_WAY
-    public static final int DATE_MM_DD_YY_AMERICANS_NEED_TO_LEARN_TO_FORMAT_CORRECTLY
-            = 4406; //AKA DATE_STUPID_AMERICAN_WAY
     public static final int DATE_YYYY_MM_DD = 4407;
     public static final int DATE_MM_DD = 4408;
     public static final int DATE_MM_YY = 4409;
@@ -94,6 +90,7 @@ public class PGMacTipsConstants {
     public static int[] ALL_DATE_TYPES = {DATE_YYYY_MM_DD_T_HH_MM_SS_SSS_Z,
             DATE_YYYY_MM_DD_T_HH_MM_SS_Z, DATE_MM_DD_YYYY, DATE_MM_DD_YY, DATE_YYYY_MM_DD,
             DATE_MM_DD, DATE_MM_YY, DATE_MM_YYYY, DATE_MM_DD_YYYY_HH_MM};
+
     //More Misc Tags
     public static final int TAG_OAUTH_DATA_OBJECT = 4414;
     public static final int TAG_OAUTH_ERROR = 4415;

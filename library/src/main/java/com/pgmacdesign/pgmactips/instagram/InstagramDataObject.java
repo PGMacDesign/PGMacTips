@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Map;
 
 /**
+ * POJO For use with the Instagram API {@link InstagramApiCalls}
  * Created by pmacdowell on 2017-04-19.
  */
 

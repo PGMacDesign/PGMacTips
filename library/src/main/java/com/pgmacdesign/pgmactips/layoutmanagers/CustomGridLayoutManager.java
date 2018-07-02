@@ -8,6 +8,7 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
 /**
+ * Custom Grid layout manager {@link RecyclerView.LayoutManager} that can be used like a grid layout
  * Created by pmacdowell on 2017-08-23.
  */
 

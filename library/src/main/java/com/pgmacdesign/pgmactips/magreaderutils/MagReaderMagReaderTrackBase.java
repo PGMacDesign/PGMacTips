@@ -1,7 +1,9 @@
 
 package com.pgmacdesign.pgmactips.magreaderutils;
 
-
+/**
+ * Base abstract class used by the various Track classes.
+ */
 abstract class MagReaderMagReaderTrackBase extends MagReaderTrackBase {
 
 

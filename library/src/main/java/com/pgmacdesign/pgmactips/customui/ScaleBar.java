@@ -18,6 +18,7 @@ import com.pgmacdesign.pgmactips.utilities.NumberUtilities;
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 
 /**
+ * Scale bar to match Google Maps that shows the scale on the map
  * Created by pmacdowell on 2017-02-21.
  * From: http://stackoverflow.com/a/29076258/2480714
  */

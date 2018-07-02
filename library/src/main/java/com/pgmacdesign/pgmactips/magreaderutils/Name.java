@@ -10,8 +10,9 @@ import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 
 import static com.pgmacdesign.pgmactips.utilities.StringUtilities.isNullOrEmpty;
 
+
 /**
- * Parses and represents the cardholder's name.
+ * POJO for use in the {@link MagneticTrackMagReader} class
  */
 public class Name extends BaseTempData {
 

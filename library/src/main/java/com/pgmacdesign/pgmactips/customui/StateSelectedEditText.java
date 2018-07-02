@@ -6,9 +6,9 @@ import android.util.AttributeSet;
 import android.widget.EditText;
 
 /**
+ * A State Selected Edit text (change state changes the background among other things)
  * Created by pmacdowell on 2017-02-16.
  */
-
 @SuppressLint("AppCompatCustomView")
 public class StateSelectedEditText extends EditText { //android.support.v7.widget.AppCompatEditText {
 

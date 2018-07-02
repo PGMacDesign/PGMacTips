@@ -32,7 +32,6 @@ import com.pgmacdesign.pgmactips.utilities.MalwareUtilities;
 import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
 import com.pgmacdesign.pgmactips.utilities.NumberUtilities;
 import com.pgmacdesign.pgmactips.utilities.PermissionUtilities;
-import com.pgmacdesign.pgmactips.utilities.ProgressBarUtilities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +42,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 
 /**
+ * Test activity for experimenting, please ignore
  * Created by pmacdowell on 8/12/2016.
  */
 public class MyTestActivity extends Activity implements View.OnClickListener {
@@ -385,15 +385,14 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
     }
 
     private void showGIFLoader(){
-        ProgressBarUtilities.showGIFProgressDialog(this, R.drawable.got_fighttex_house_stark);
+        //ProgressBarUtilities.showGIFProgressDialog(this, R.drawable.got_fighttex_house_stark); //<-- Reference the gif you want here
         //ProgressBarUtilities.showGIFProgressDialog(this, R.drawable.but_why_gif);
     }
 
     private void loadTestCall(){
         String BASE_URL = "http://www.purgomalum.com/";
-        String tempURL = "http://ec2-52-9-73-238.us-west-1.compute.amazonaws.com/";
         ProfanityCheckerInterface serviceInterface = new RetrofitClient.Builder(
-                ProfanityCheckerInterface.class, tempURL)
+                ProfanityCheckerInterface.class, BASE_URL)
                 .setTimeouts(60000,60000)
                 .setLogLevel(HttpLoggingInterceptor.Level.NONE)
                 .build().buildServiceClient();

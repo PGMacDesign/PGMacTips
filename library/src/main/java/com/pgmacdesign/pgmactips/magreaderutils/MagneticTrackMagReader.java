@@ -1,6 +1,10 @@
 
 package com.pgmacdesign.pgmactips.magreaderutils;
 
+/**
+ * This class is used to parse magnetic tracks and convert them into objects resembling
+ * credit cards for use in payment-style applications.
+ */
 public class MagneticTrackMagReader extends MagReaderTrackBase {
 
     private final Track1Credit track1Credit;
