@@ -1,6 +1,7 @@
 package com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.serviceapiinterfaces;
 
 import com.pgmacdesign.pgmactips.datamodels.SamplePojo;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -14,6 +15,8 @@ import retrofit2.http.Query;
  * if there are bad (curse/ swear) words in a String.
  * Created by pmacdowell on 8/29/2016.
  */
+@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+        CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON})
 public interface ProfanityCheckerInterface {
 
     //Not used here, but left for example. Could technically use this if empty String is passed to Client class

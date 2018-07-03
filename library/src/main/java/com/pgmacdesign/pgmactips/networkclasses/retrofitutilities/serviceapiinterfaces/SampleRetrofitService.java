@@ -1,6 +1,7 @@
 package com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.serviceapiinterfaces;
 
 import com.pgmacdesign.pgmactips.datamodels.SamplePojo;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 
 import java.util.Map;
 
@@ -16,9 +17,11 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
- * SAMPLE SERVICE EXAMPLE
+ * Sample Retrofit Service
  * Created by pmacdowell on 8/25/2016.
  */
+@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+        CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON})
 public interface SampleRetrofitService {
 
     public static final String VERSION_STRING = "/v1";

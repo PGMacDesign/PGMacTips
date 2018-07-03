@@ -1,12 +1,21 @@
 package com.pgmacdesign.pgmactips.maputilities;
 
 
-
 import com.google.android.gms.maps.model.LatLng;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 
 import java.util.List;
 
-import static java.lang.Math.*;
+import static java.lang.Math.PI;
+import static java.lang.Math.abs;
+import static java.lang.Math.asin;
+import static java.lang.Math.atan2;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
+import static java.lang.Math.tan;
+import static java.lang.Math.toDegrees;
+import static java.lang.Math.toRadians;
 
 /**
  * From: https://github.com/googlemaps/android-maps-utils/blob/master/library/src/com/google/maps/android/SphericalUtil.java
@@ -21,6 +30,7 @@ public class SphericalUtils {
      * expressed in degrees clockwise from North within the range [-180,180).
      * @return The heading in degrees clockwise from north.
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
     public static double computeHeading(LatLng from, LatLng to) {
         // http://williams.best.vwh.net/avform.htm#Crs
         double fromLat = toRadians(from.latitude);
@@ -41,6 +51,7 @@ public class SphericalUtils {
      * @param distance The distance to travel.
      * @param heading  The heading in degrees clockwise from north.
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
     public static LatLng computeOffset(LatLng from, double distance, double heading) {
         distance /= EARTH_RADIUS;
         heading = toRadians(heading);
@@ -67,6 +78,7 @@ public class SphericalUtils {
      * @param distance The distance travelled, in meters.
      * @param heading  The heading in degrees clockwise from north.
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
     public static LatLng computeOffsetOrigin(LatLng to, double distance, double heading) {
         heading = toRadians(heading);
         distance /= EARTH_RADIUS;
@@ -110,6 +122,7 @@ public class SphericalUtils {
      * @param fraction A fraction of the distance to travel.
      * @return The interpolated LatLng.
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
     public static LatLng interpolate(LatLng from, LatLng to, double fraction) {
         // http://en.wikipedia.org/wiki/Slerp
         double fromLat = toRadians(from.latitude);
@@ -175,6 +188,7 @@ public class SphericalUtils {
      * Returns the angle between two LatLngs, in radians. This is the same as the distance
      * on the unit sphere.
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
     public static double computeAngleBetween(LatLng from, LatLng to) {
         return distanceRadians(toRadians(from.latitude), toRadians(from.longitude),
                 toRadians(to.latitude), toRadians(to.longitude));
@@ -183,6 +197,7 @@ public class SphericalUtils {
     /**
      * Returns the distance between two LatLngs, in meters.
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
     public static double computeDistanceBetween(LatLng from, LatLng to) {
         return computeAngleBetween(from, to) * EARTH_RADIUS;
     }
@@ -190,6 +205,7 @@ public class SphericalUtils {
     /**
      * Returns the length of the given path, in meters, on Earth.
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
     public static double computeLength(List<LatLng> path) {
         if (path.size() < 2) {
             return 0;
@@ -213,6 +229,7 @@ public class SphericalUtils {
      * @param path A closed path.
      * @return The path's area in square meters.
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
     public static double computeArea(List<LatLng> path) {
         return abs(computeSignedArea(path));
     }
@@ -224,6 +241,7 @@ public class SphericalUtils {
      * @param path A closed path.
      * @return The loop's area in square meters.
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
     public static double computeSignedArea(List<LatLng> path) {
         return computeSignedArea(path, EARTH_RADIUS);
     }
@@ -233,6 +251,7 @@ public class SphericalUtils {
      * The computed area uses the same units as the radius squared.
      * Used by SphericalUtilTest.
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
     public static double computeSignedArea(List<LatLng> path, double radius) {
         int size = path.size();
         if (size < 3) { return 0; }

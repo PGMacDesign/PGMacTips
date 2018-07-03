@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.google.gson.reflect.TypeToken;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.datamodels.SamplePojo;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitClient;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitParser;
 import com.pgmacdesign.pgmactips.utilities.L;
@@ -19,6 +20,9 @@ import retrofit2.Call;
  * This class is a sample of sample API calls and how to use them.
  * Created by pmacdowell on 8/29/2016.
  */
+@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+        CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON,
+        CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
 public class SampleRetrofitAPICalls {
 
     private static SampleRetrofitService retrofitService;
@@ -46,6 +50,9 @@ public class SampleRetrofitAPICalls {
      * @param listener {@link OnTaskCompleteListener}
      * @param pojo Object to be sent in as body for POST call
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+            CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON,
+            CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
     public static void sampleCall(@NonNull final OnTaskCompleteListener listener, SamplePojo pojo){
         init();
         Call<ResponseBody> call = retrofitService.login(pojo);

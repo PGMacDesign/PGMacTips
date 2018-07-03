@@ -5,6 +5,7 @@ import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.squareup.picasso.Transformation;
 
 /**
@@ -12,6 +13,7 @@ import com.squareup.picasso.Transformation;
  * From: https://stackoverflow.com/a/27236821/2480714
  * Created by pmacdowell on 8/15/2016.
  */
+@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
 public class CircleTransform implements Transformation {
 
     private Integer circleFrameColor, circleFrameWidth;
@@ -30,6 +32,7 @@ public class CircleTransform implements Transformation {
      *                         If null, no circular frame boarder will be drawn.
      * @param circleFrameWidth Width of the frame to use. If null, will default to 2 (pixels)
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
     public CircleTransform(Integer circleFrameColor, Integer circleFrameWidth){
         this.circleFrameColor = circleFrameColor;
         this.circleFrameWidth = circleFrameWidth;

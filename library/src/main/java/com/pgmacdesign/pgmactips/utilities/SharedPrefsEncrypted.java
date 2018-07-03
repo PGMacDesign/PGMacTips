@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.securepreferences.SecurePreferences;
 
 import java.util.Map;
@@ -16,6 +17,7 @@ import java.util.Set;
  * compile 'com.scottyab:secure-preferences-lib:0.1.4'
  * Created by pmacdowell on 2017-07-13.
  */
+@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.SecurePreferences)
 public class SharedPrefsEncrypted {
 
     //Secured Shared Prefs Objects
@@ -32,6 +34,7 @@ public class SharedPrefsEncrypted {
      * @param encryptionPassword the password. If null, it will not have a password
      * @return Shared Prefs (encrypted) object
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.SecurePreferences)
     public static SharedPrefsEncrypted getEncryptedSharedPrefsInstance(@NonNull Context context,
                                                                        @Nullable String sharedPrefsName,
                                                                        @Nullable String encryptionPassword){

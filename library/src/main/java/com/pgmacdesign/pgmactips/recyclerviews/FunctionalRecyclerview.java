@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
+
 import java.util.List;
 
 /**
@@ -14,6 +16,7 @@ import java.util.List;
  * Created by pmacdowell on 2017-08-23.
  */
 @Deprecated
+@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.AndroidSupport_Design)
 public class FunctionalRecyclerview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     //Dataset List
@@ -30,6 +33,7 @@ public class FunctionalRecyclerview extends RecyclerView.Adapter<RecyclerView.Vi
     private int COLOR_BLACK;
     private Class<? extends RecyclerView.ViewHolder> holderClass;
 
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.AndroidSupport_Design)
     public FunctionalRecyclerview(@NonNull Context context, int layoutResourceId,
                                    Class<? extends RecyclerView.ViewHolder> holderClass) {
         this.context = context;

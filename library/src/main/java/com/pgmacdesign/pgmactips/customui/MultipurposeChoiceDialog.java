@@ -21,6 +21,7 @@ import com.pgmacdesign.pgmactips.adaptersandlisteners.CustomClickCallbackLink;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.CustomLongClickCallbackLink;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.MultipurposeChoiceAdapter;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.HashMapUtilities;
 import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
@@ -39,6 +40,7 @@ import java.util.TimerTask;
  * Multi-purpose choice dialog to allow for modular usage
  * Created by Patrick-SSD2 on 11/4/2017.
  */
+@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.AndroidSupport_Design)
 public class MultipurposeChoiceDialog extends AlertDialog implements
 		TextWatcher, View.OnClickListener, CustomClickCallbackLink, CustomLongClickCallbackLink {
 	
@@ -73,7 +75,8 @@ public class MultipurposeChoiceDialog extends AlertDialog implements
 	private Map<String, Integer> userSelectedItems;
 	
 	private int selectedIconImageResource, unselectedIconImageResource;
-	
+
+	@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.AndroidSupport_Design)
 	public MultipurposeChoiceDialog(@NonNull Context context,
 	                                @Nullable String title,
 	                                @NonNull String[] values,
@@ -91,7 +94,8 @@ public class MultipurposeChoiceDialog extends AlertDialog implements
 		this.unselectedIconImageResource = (unselectedIconImageResource == null)
 				? 0 : unselectedIconImageResource;
 	}
-	
+
+	@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.AndroidSupport_Design)
 	public MultipurposeChoiceDialog(@NonNull Context context,
 	                                @Nullable String title,
 	                                @NonNull List<String> values,
@@ -109,7 +113,8 @@ public class MultipurposeChoiceDialog extends AlertDialog implements
 		this.unselectedIconImageResource = (unselectedIconImageResource == null)
 				? 0 : unselectedIconImageResource;
 	}
-	
+
+	@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.AndroidSupport_Design)
 	public MultipurposeChoiceDialog(@NonNull Context context,
 	                                @Nullable String title,
 	                                @NonNull String[] values,
@@ -129,7 +134,8 @@ public class MultipurposeChoiceDialog extends AlertDialog implements
 		this.unselectedIconImageResource = (unselectedIconImageResource == null)
 				? 0 : unselectedIconImageResource;
 	}
-	
+
+	@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.AndroidSupport_Design)
 	public MultipurposeChoiceDialog(@NonNull Context context,
 	                                @Nullable String title,
 	                                @NonNull List<String> values,

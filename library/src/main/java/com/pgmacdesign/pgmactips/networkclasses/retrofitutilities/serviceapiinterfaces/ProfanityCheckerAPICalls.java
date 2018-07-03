@@ -5,9 +5,10 @@ import android.os.NetworkOnMainThreadException;
 import android.support.annotation.NonNull;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitClient;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitErrorHandling;
-import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.NetworkUtilities;
 
 import java.io.IOException;
@@ -25,6 +26,9 @@ import retrofit2.Response;
  * {@link com.pgmacdesign.pgmactips.utilities.PermissionUtilities.permissionsEnum}
  * Created by pmacdowell on 8/29/2016.
  */
+@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+        CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON,
+        CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
 public class ProfanityCheckerAPICalls {
 
     private static ProfanityCheckerInterface serviceInterface;
@@ -42,6 +46,9 @@ public class ProfanityCheckerAPICalls {
      * @param listener Listener to send the data back on {@link OnTaskCompleteListener}
      * @param curseWordToCheck String word to check if it contains profanity
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+            CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON,
+            CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
     public static void checkProfanityAsynchronous(@NonNull Context context,
                                                  @NonNull final OnTaskCompleteListener listener,
                                                  String curseWordToCheck){
@@ -118,6 +125,9 @@ public class ProfanityCheckerAPICalls {
      * @return True or false if parsed correctly, null if it parses incorrectly
      * @throws NetworkOnMainThreadException Will throw if not run on an Asynchronous thread
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+            CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON,
+            CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
     public static Boolean checkProfanity(@NonNull Context context, String curseWordToCheck) {
         //Check on internet connectivity before making call
         if (!canIProceed(context)) {

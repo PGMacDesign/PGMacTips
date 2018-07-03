@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.LatLng;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.utilities.DisplayManagerUtilities;
 import com.pgmacdesign.pgmactips.utilities.NumberUtilities;
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
@@ -23,6 +24,7 @@ import com.pgmacdesign.pgmactips.utilities.StringUtilities;
  * From: http://stackoverflow.com/a/29076258/2480714
  */
 @SuppressLint("AppCompatCustomView")
+@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
 public class ScaleBar extends ImageView { //public class ScaleBar extends ImageView { android.support.v7.widget.AppCompatImageView {
 	private float mXOffset = 10;
     private float mYOffset = 10;
@@ -51,6 +53,7 @@ public class ScaleBar extends ImageView { //public class ScaleBar extends ImageV
 
     private DisplayManagerUtilities dmu;
 
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
     public ScaleBar(Context context, GoogleMap map) {
         super(context);
         this.dmu = new DisplayManagerUtilities(context);

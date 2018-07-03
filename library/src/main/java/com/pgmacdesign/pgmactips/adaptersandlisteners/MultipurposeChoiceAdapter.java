@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.pgmacdesign.pgmactips.R;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.AnimationUtilities;
 import com.pgmacdesign.pgmactips.utilities.DisplayManagerUtilities;
@@ -25,12 +26,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Multi-purpose Recyclerview adapter that allows for use with different choice options.
+ * Currently allows for {@link MultipurposeChoiceType}
  * Created by pmacdowell on 2017-11-13.
  */
-
+@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.AndroidSupport_Design,
+    CustomAnnotationsBase.Dependencies.AndroidAnimations, CustomAnnotationsBase.Dependencies.AndroidAnimationsEasing})
 public class MultipurposeChoiceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-
 
 
     //Type of Adapter
@@ -42,7 +44,6 @@ public class MultipurposeChoiceAdapter extends RecyclerView.Adapter<RecyclerView
     private Integer selectedCircleResource, unselectedCircleResource;
 
     //Vars
-    private OnTaskCompleteListener listener;
     private CustomClickCallbackLink clickLink;
     private CustomLongClickCallbackLink longClickLink;
     private MultipurposeChoiceType type;
@@ -59,6 +60,8 @@ public class MultipurposeChoiceAdapter extends RecyclerView.Adapter<RecyclerView
     private DisplayManagerUtilities dmu;
     private int customClickLinkTag, customLongClickLinkTag;
 
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.AndroidSupport_Design,
+            CustomAnnotationsBase.Dependencies.AndroidAnimations, CustomAnnotationsBase.Dependencies.AndroidAnimationsEasing})
     public MultipurposeChoiceAdapter(@NonNull Context context,
                                      @NonNull MultipurposeChoiceType type1,
                                      CustomClickCallbackLink clickLink,

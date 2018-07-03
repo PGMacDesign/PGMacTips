@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.reflect.TypeToken;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.CustomConverterFactory;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitClient;
@@ -23,6 +24,9 @@ import retrofit2.Call;
  * This class is designed to be used with Firebase messaging.
  * Created by pmacdowell on 2017-09-29.
  */
+@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+        CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON,
+        CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
 public class FirebaseMessagingUtilities {
 
     //Base URL
@@ -67,6 +71,9 @@ public class FirebaseMessagingUtilities {
      * For more info, see
      * {@link FirebaseMessagingUtilities#sendPushNotification(Context, OnTaskCompleteListener, String, PushNotificationsPojo)}
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+            CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON,
+            CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
     public static void sendAndroidPushNotification(@NonNull Context context,
                                                    @NonNull final OnTaskCompleteListener listener,
                                                    @NonNull String firebaseApiKey,
@@ -83,6 +90,9 @@ public class FirebaseMessagingUtilities {
      * For more info, see
      * {@link FirebaseMessagingUtilities#sendPushNotification(Context, OnTaskCompleteListener, String, PushNotificationsPojo)}
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+            CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON,
+            CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
     public static void sendIOSPushNotification(@NonNull Context context,
                                                @NonNull final OnTaskCompleteListener listener,
                                                @NonNull String firebaseApiKey,
@@ -126,6 +136,9 @@ public class FirebaseMessagingUtilities {
      *                         2) https://stackoverflow.com/questions/40026528/how-do-i-send-fcm-messages-from-an-android-device-to-the-server
      *                         3) https://stackoverflow.com/questions/45286202/how-does-one-distinguish-between-android-and-ios-firebase-ids-for-push-notificat
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+            CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON,
+            CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
     public static void sendPushNotification(@NonNull Context context,
                                             @NonNull final OnTaskCompleteListener listener,
                                             @NonNull String firebaseApiKey,

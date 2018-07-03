@@ -1,5 +1,7 @@
 package com.pgmacdesign.pgmactips.googleapis.vision;
 
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -11,6 +13,8 @@ import retrofit2.http.Query;
  * Created by pmacdowell on 2018-04-02.
  */
 
+@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+        CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON})
 public interface GoogleVisionServiceInterface {
 
     final String API_SUFFIX_STRING = "";

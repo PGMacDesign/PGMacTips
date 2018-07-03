@@ -22,6 +22,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -29,6 +30,8 @@ import org.json.JSONObject;
 /**
  * Created by PatrickSSD2 on 8/29/2016.
  */
+@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Volley,
+        CustomAnnotationsBase.Dependencies.GSON})
 class VolleySamples {
 
     private static void doStuff2(Context context, StringRequest stringRequest){

@@ -6,16 +6,20 @@ import android.util.DisplayMetrics;
 import android.util.LruCache;
 
 import com.android.volley.toolbox.ImageLoader;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 
 /**
  * Created by PatrickSSD2 on 8/29/2016.
  */
+@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Volley)
 public class VolleyBitmapCache extends LruCache<String, Bitmap> implements ImageLoader.ImageCache {
 
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Volley)
     public VolleyBitmapCache(int maxSize) {
         super(maxSize);
     }
 
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Volley)
     public VolleyBitmapCache(Context ctx) {
         this(getCacheSize(ctx));
     }

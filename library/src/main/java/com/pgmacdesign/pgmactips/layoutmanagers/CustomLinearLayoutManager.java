@@ -6,6 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
+
 /**
  * Custom Grid layout manager {@link RecyclerView.LayoutManager} that can be used for a normal Recyclerview Layout
  * This class is here because of the current bug wherein you call wrap_content on a recyclerview
@@ -13,6 +15,7 @@ import android.view.ViewGroup;
  * http://stackoverflow.com/questions/27475178/how-do-i-make-wrap-content-work-on-a-recyclerview
  * Created by pmacdowell on 8/15/2016.
  */
+@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.AndroidSupport_Design)
 public class CustomLinearLayoutManager extends LinearLayoutManager {
 
     public CustomLinearLayoutManager(Context context, int orientation, boolean reverseLayout)    {

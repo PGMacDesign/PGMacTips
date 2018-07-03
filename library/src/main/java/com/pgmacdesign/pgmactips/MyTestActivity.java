@@ -17,6 +17,7 @@ import com.pgmacdesign.pgmactips.adaptersandlisteners.GenericRecyclerviewAdapter
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.customui.MultiColorLine;
 import com.pgmacdesign.pgmactips.datamodels.SamplePojo;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitClient;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitParser;
@@ -45,6 +46,9 @@ import retrofit2.Call;
  * Test activity for experimenting, please ignore
  * Created by pmacdowell on 8/12/2016.
  */
+@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+        CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON,
+        CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
 public class MyTestActivity extends Activity implements View.OnClickListener {
 
     // TODO: 2017-03-07 need to rewrite ripples to be within bounds

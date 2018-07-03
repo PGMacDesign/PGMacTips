@@ -24,6 +24,7 @@ import android.widget.ImageView;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.transformations.CircleTransform;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.LruCache;
@@ -64,10 +65,11 @@ public class ImageUtilities {
      * @param context               circularFrameWidth Circular frame width (in pixels)
      * @param <T>                   {T extends View}
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
     public static <T extends ImageView> void setCircularImageWithPicasso(String urlThumbnail,
                                                                          final T viewToSet,
                                                                          final int backupImageResourceId,
-                                                                         Context context,
+                                                                         @NonNull Context context,
                                                                          final Float percentMaxCache,
                                                                          final Integer circularFrameColor,
                                                                          final Integer circularFrameWidth) {
@@ -173,6 +175,7 @@ public class ImageUtilities {
      * @param context               Context
      * @param <T>                   {T extends View}
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
     public static <T extends ImageView> void setCircularImageWithPicasso(String urlThumbnail,
                                                                          final T viewToSet,
                                                                          final int backupImageResourceId,
@@ -191,6 +194,7 @@ public class ImageUtilities {
      * @param context               Context
      * @param <T>                   {T extends View}
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
     public static <T extends ImageView> void setCircularImageWithPicasso(String urlThumbnail,
                                                                          final T viewToSet,
                                                                          final int backupImageResourceId,
@@ -211,6 +215,7 @@ public class ImageUtilities {
      * @param context               Context
      * @param <T>                   {T extends View}
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
     public static <T extends ImageView> void setCircularImageWithPicassoNoCache(String urlThumbnail,
                                                                                 final T viewToSet,
                                                                                 final int backupImageResourceId,
@@ -260,6 +265,7 @@ public class ImageUtilities {
      * @param context               Context
      * @param <T>                   {T extends View}
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
     public static <T extends ImageView> void setCircularImageWithPicassoNoCache(String urlThumbnail,
                                                                                 final T viewToSet,
                                                                                 final int backupImageResourceId,
@@ -279,6 +285,7 @@ public class ImageUtilities {
      * @param context               Context
      * @param <T>                   {T extends View}
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
     public static <T extends ImageView> void setImageWithPicasso(String urlThumbnail,
                                                                  final T viewToSet,
                                                                  final int backupImageResourceId,
@@ -297,6 +304,7 @@ public class ImageUtilities {
      *                              cache. Note that Picasso defaults to 14.3% of max cache if null sent
      * @param <T>                   {T extends View}
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
     public static <T extends ImageView> void setImageWithPicasso(String urlThumbnail,
                                                                  final T viewToSet,
                                                                  final int backupImageResourceId,
@@ -386,6 +394,7 @@ public class ImageUtilities {
      * @param context               Context
      * @param <T>                   {T extends View}
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
     public static <T extends ImageView> void setImageWithPicassoNoCache(String urlThumbnail,
                                                                         final T viewToSet,
                                                                         final int backupImageResourceId,
@@ -421,6 +430,7 @@ public class ImageUtilities {
      * Loads images into the picasso cache by using the fetch() call. Reference:
      * http://stackoverflow.com/questions/23978828/how-do-i-use-disk-caching-in-picasso
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
     public static class LoadImagesIntoPicassoCache extends AsyncTask<Void, Void, Void> {
         private List<String> imageURLs;
         private Context context;
@@ -1006,7 +1016,10 @@ public class ImageUtilities {
         }
     }
 
-    public static void zoomAView() {
+    /**
+     * TBD in the future
+     */
+    static void zoomAView() {
         //https://developer.android.com/training/animation/zoom.html
     }
 

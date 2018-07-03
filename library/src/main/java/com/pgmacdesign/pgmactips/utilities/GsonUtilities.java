@@ -2,12 +2,14 @@ package com.pgmacdesign.pgmactips.utilities;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 
 import java.lang.reflect.Type;
 
 /**
  * Created by pmacdowell on 8/18/2016.
  */
+@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
 public class GsonUtilities {
 
     private static Gson gson;
@@ -18,6 +20,13 @@ public class GsonUtilities {
         }
     }
 
+    /**
+     * Convert an object to a json string using the {@link Class}
+     * @param object
+     * @param objectSourceClass
+     * @return
+     */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
     public static String convertObjectToJson(Object object, Class objectSourceClass){
         GsonUtilities.init();
         String str = null;
@@ -29,6 +38,13 @@ public class GsonUtilities {
         return(str);
     }
 
+    /**
+     * Convert an object to a json string using the {@link Type}
+     * @param object
+     * @param objectSourceClass
+     * @return
+     */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
     public static String convertObjectToJson(Object object, Type objectSourceClass){
         GsonUtilities.init();
         String str = null;
@@ -40,6 +56,13 @@ public class GsonUtilities {
         return(str);
     }
 
+    /**
+     * Convert a json string to an object using the {@link Class}
+     * @param jsonString
+     * @param objectSourceClass
+     * @return
+     */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
     public static Object convertJsonToObject(String jsonString, Class objectSourceClass){
         GsonUtilities.init();
         try {
@@ -52,6 +75,13 @@ public class GsonUtilities {
         }
     }
 
+    /**
+     * Convert a json string to an object using the {@link Type}
+     * @param jsonString
+     * @param objectSourceClass
+     * @return
+     */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
     public static Object convertJsonToObject(String jsonString, Type objectSourceClass){
         GsonUtilities.init();
         try {
@@ -69,6 +99,7 @@ public class GsonUtilities {
      * @param o Object to be converted
      * @return JsonElement to be returned
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
     public static JsonElement convertToJsonElement(Object o){
         GsonUtilities.init();
         JsonElement jsonElement = null;

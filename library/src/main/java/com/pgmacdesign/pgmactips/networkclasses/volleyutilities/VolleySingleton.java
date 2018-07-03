@@ -8,12 +8,14 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 
 /**
  * Volley Singleton. Code pulled from:
  * https://developer.android.com/training/volley/requestqueue.html
  * Created by PatrickSSD2 on 8/29/2016.
  */
+@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Volley)
 public class VolleySingleton {
 
     private static VolleySingleton mInstance;
@@ -42,6 +44,7 @@ public class VolleySingleton {
                 });
     }
 
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Volley)
     public static synchronized VolleySingleton getInstance(Context context) {
         if (mInstance == null) {
             mInstance = new VolleySingleton(context);
@@ -49,6 +52,7 @@ public class VolleySingleton {
         return mInstance;
     }
 
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Volley)
     public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
             // getApplicationContext() is key, it keeps you from leaking the
@@ -58,10 +62,12 @@ public class VolleySingleton {
         return mRequestQueue;
     }
 
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Volley)
     public <T> void addToRequestQueue(Request<T> req) {
         getRequestQueue().add(req);
     }
 
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Volley)
     public ImageLoader getImageLoader() {
         return mImageLoader;
     }

@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConfig;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitClient;
@@ -25,7 +26,9 @@ import retrofit2.Call;
  * Link: (https://cloud.google.com/vision/docs/)
  * Created by pmacdowell on 2018-04-02.
  */
-
+@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+        CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON,
+        CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
 public class GoogleVisionUtilities {
 
     public static final String BASE_URL_FOR_GOOGLE_VISION = "https://vision.googleapis.com/";
@@ -86,6 +89,9 @@ public class GoogleVisionUtilities {
      *                              {@link PGMacTipsConfig#isLiveBuild} where a live build means logging
      *                              and non-live means no logging.
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+            CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON,
+            CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
     public GoogleVisionUtilities(@NonNull final String apiKey,
                                  @NonNull Long timeoutInMilliseconds,
                                  @NonNull HttpLoggingInterceptor.Level level) {

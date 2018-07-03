@@ -14,6 +14,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
 
 import org.json.JSONException;
@@ -23,11 +24,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Volley Simple request. Code pulled from:
+ * Volley Utilities to shorthand calls. Code pulled from:
  * https://developer.android.com/training/volley/simple.html
  * Created by PatrickSSD2 on 8/29/2016.
- *
  */
+@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Volley,
+        CustomAnnotationsBase.Dependencies.GSON})
 public class VolleyUtilities {
 
     //Tags to be returned on a successful or failed Volley call
@@ -43,6 +45,8 @@ public class VolleyUtilities {
      * @param context context
      * @param url Url to send to
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Volley,
+            CustomAnnotationsBase.Dependencies.GSON})
     public static void makeGetRequest(@NonNull final OnTaskCompleteListener listener,
                                       @NonNull Context context, @NonNull String url,
                                       @Nullable final Map<String, String> headers){
@@ -91,6 +95,8 @@ public class VolleyUtilities {
      * @param body body object to be converted into json
      * @param objectClass class type of the body object passed
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Volley,
+            CustomAnnotationsBase.Dependencies.GSON})
     public static void makePostRequest(@NonNull final OnTaskCompleteListener listener,
                                        @NonNull Context context, @NonNull String url,
                                        Object body, Class objectClass,
@@ -113,6 +119,8 @@ public class VolleyUtilities {
      * @param url
      * @param params Map<String, Object> to convert to jsonObject
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Volley,
+            CustomAnnotationsBase.Dependencies.GSON})
     public static void makePostRequest(final OnTaskCompleteListener listener,
                                        Context context, String url,
                                        Map<String, ?> params,
@@ -128,6 +136,8 @@ public class VolleyUtilities {
      * @param url
      * @param jsonObject
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Volley,
+            CustomAnnotationsBase.Dependencies.GSON})
     public static void makePostRequest(final OnTaskCompleteListener listener,
                                        Context context, String url,
                                        JSONObject jsonObject,

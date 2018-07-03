@@ -1,5 +1,7 @@
 package com.pgmacdesign.pgmactips.instagram;
 
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
@@ -10,7 +12,8 @@ import retrofit2.http.Query;
  * Instagram interface that maps to the Instagram web api
  * Created by pmacdowell on 2017-04-19.
  */
-
+@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+        CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON})
 public interface InstagramService {
 
     public static final String VERSION = "/v1";

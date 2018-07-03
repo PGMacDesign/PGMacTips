@@ -3,6 +3,7 @@ package com.pgmacdesign.pgmactips.networkclasses.retrofitutilities;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 
@@ -33,8 +34,14 @@ import retrofit2.Converter;
 import retrofit2.Retrofit;
 
 /**
+ * Retrofit Client that is used for Retrofit calls. The builder method allows for more customized
+ * uses and cases rather than using the regular {@link Retrofit}
  * Created by pmacdowell on 8/25/2016.
  */
+@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+        CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.OkHttp3,
+        CustomAnnotationsBase.Dependencies.GSON, CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor,
+        CustomAnnotationsBase.Dependencies.Okio})
 public class RetrofitClient {
 
     private static final String APPLICATION_JSON = "application/json";
@@ -78,6 +85,10 @@ public class RetrofitClient {
      *                                  (/), this will throw an illegal argument exception.
      */
     @SuppressWarnings("unchecked")
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+            CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.OkHttp3,
+            CustomAnnotationsBase.Dependencies.GSON, CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor,
+            CustomAnnotationsBase.Dependencies.Okio})
     public <T> T buildServiceClient() throws IllegalArgumentException{
         T t = this.buildRetrofitClient();
         return t;
@@ -104,6 +115,7 @@ public class RetrofitClient {
             return builder.build();
         }
     }
+
     /**
      * This builds a client that will be used for network calls
      */
@@ -242,12 +254,20 @@ public class RetrofitClient {
         return builder;
     }
 
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+            CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.OkHttp3,
+            CustomAnnotationsBase.Dependencies.GSON, CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor,
+            CustomAnnotationsBase.Dependencies.Okio})
     public <T> Builder newBuilder(@NonNull final Class<T> serviceInterface,
                                   @NonNull String urlBase){
         return new Builder(serviceInterface, urlBase);
     }
 
     //Builder class below
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+            CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.OkHttp3,
+            CustomAnnotationsBase.Dependencies.GSON, CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor,
+            CustomAnnotationsBase.Dependencies.Okio})
     public static final class Builder <T> {
 
         String builder_urlBase;

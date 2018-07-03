@@ -2,6 +2,7 @@ package com.pgmacdesign.pgmactips.networkclasses.retrofitutilities;
 
 import com.google.gson.reflect.TypeToken;
 import com.pgmacdesign.pgmactips.datamodels.SamplePojo;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.L;
 
@@ -18,8 +19,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 /**
+ * Custom Converter factory that can handle GSON objects, String objects, and raw types (Like boolean, int, double, float)
  * Created by pmacdowell on 11/7/2016.
  */
+@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+        CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.OkHttp3,
+        CustomAnnotationsBase.Dependencies.GSON, CustomAnnotationsBase.Dependencies.Okio})
 public class CustomConverterFactory extends Converter.Factory  {
 
     //How to make custom type converters
@@ -34,6 +39,9 @@ public class CustomConverterFactory extends Converter.Factory  {
         super();
     }
 
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+            CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.OkHttp3,
+            CustomAnnotationsBase.Dependencies.GSON, CustomAnnotationsBase.Dependencies.Okio})
     @Override
     public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
         if(type == PGMacTipsConstants.TYPE_BOOLEAN){
@@ -106,6 +114,9 @@ public class CustomConverterFactory extends Converter.Factory  {
         return super.responseBodyConverter(type, annotations, retrofit);
     }
 
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+            CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.OkHttp3,
+            CustomAnnotationsBase.Dependencies.GSON, CustomAnnotationsBase.Dependencies.Okio})
     @Override
     public Converter<?, RequestBody> requestBodyConverter(Type type,
                                                           Annotation[] parameterAnnotations,
@@ -117,6 +128,9 @@ public class CustomConverterFactory extends Converter.Factory  {
         return gsonConverter;
     }
 
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+            CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.OkHttp3,
+            CustomAnnotationsBase.Dependencies.GSON, CustomAnnotationsBase.Dependencies.Okio})
     @Override
     public Converter<?, String> stringConverter(Type type, Annotation[] annotations,
                                                 Retrofit retrofit) {

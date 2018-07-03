@@ -7,17 +7,19 @@ import android.support.annotation.NonNull;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 
 /**
  * Created by pmacdowell on 2017-07-18.
  */
-
+@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
 public class OAuthUtilities implements GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleSignInOptions gso;
     private GoogleApiClient mGoogleApiClient;
     private Activity activity;
 
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
     public OAuthUtilities(Activity activity){
         this.activity = activity;
     }

@@ -34,6 +34,7 @@ public class PGMacCustomProgressBar extends ProgressDialog {
      * @return ProgressDialog
      * todo come back and refactor this in
     ----/
+     @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.AnimatedSVGView)
     public static Dialog buildSVGDialog(Context context, boolean cancelable,
                                                 Integer imageSizeX, Integer imageSizeY,
                                                 String[] svgArray,
@@ -79,6 +80,7 @@ public class PGMacCustomProgressBar extends ProgressDialog {
      * @param context
      * @return
      ----/
+     @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.AnimatedSVGView)
     public static Dialog buildSVGDialog(Context context){
         return (PGMacCustomProgressBar.buildSVGDialog(context, false, 40, 40, null, null, null));
     }
@@ -107,6 +109,7 @@ public class PGMacCustomProgressBar extends ProgressDialog {
      * @param cancelable Cancelable or not; defaults to false
      * @return
      ----/
+     @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.ElasticDownload)
     public static ProgressDialog buildElasticDialog(Context context, boolean cancelable){
         PGMacCustomProgressBar customAlertDialog = new PGMacCustomProgressBar(
                 context, ELASTIC_DIALOG);
@@ -129,6 +132,7 @@ public class PGMacCustomProgressBar extends ProgressDialog {
      * @param context
      * @return
     ----/
+     @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.ElasticDownload)
     public static ProgressDialog buildElasticDialog(Context context){
         return (buildElasticDialog(context, false));
     }

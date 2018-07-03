@@ -1,5 +1,7 @@
 package com.pgmacdesign.pgmactips.firebaseutilities;
 
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -7,9 +9,11 @@ import retrofit2.http.Header;
 import retrofit2.http.POST;
 
 /**
+ * Firebase Endpoints api interface
  * Created by pmacdowell on 2017-09-29.
  */
-
+@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+        CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON})
 public interface FirebaseEndpoints {
 
     public static final String API_ENDPOINT = "/fcm";

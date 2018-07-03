@@ -1,13 +1,17 @@
 package com.pgmacdesign.pgmactips.mapzen;
 
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 /**
+ * Mapzen API interface
  * Created by pmacdowell on 2017-02-17.
  */
-
+@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+        CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON})
 public interface MapzenInterface {
 
     static final String VERSION_STRING = "/v1";

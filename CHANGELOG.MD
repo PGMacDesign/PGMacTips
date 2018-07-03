@@ -11,6 +11,9 @@ Version 0.0.57 *(2018-07-03)*
  * Update: Changed the documentation for the SMSBroadcastReceiver to clarify some things and make sure the manifest sample info gets included with the javadoc files.
  * Fix: Updated multiple portions of the app with if checks on the version so as to prevent exceptions from arising when hitting them with API levels <16.
  * Update: Refactored the package naming for multiple directories (Google Vision, customUI, etc) and moved files around to make for a more logical hierarchy. 
+ * Update: Removed dup class GPSTracker
+ * New: Custom Annotations. Added in new custom 'requiresDependency' and 'requiresDependencies' annotations that indicate which classes and methods use certain dependencies so as to prevent crashes when they are excluded. 
+ * Update: Added in new documentation to many classes to help clear up ambiguity
  
 Version 0.0.56 *(2018-06-25)*
 ----------------------------

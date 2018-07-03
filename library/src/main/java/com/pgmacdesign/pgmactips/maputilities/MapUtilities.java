@@ -10,6 +10,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.VisibleRegion;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.utilities.DisplayManagerUtilities;
 
 /**
@@ -22,6 +23,7 @@ public class MapUtilities {
     final static int ZOOM_MAX = 21;
 
 
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
     public static float calculateRadius(GoogleMap googleMap){
         VisibleRegion visibleRegion = googleMap.getProjection().getVisibleRegion();
 
@@ -64,6 +66,7 @@ public class MapUtilities {
      * @param map Map to check against
      * @return {@link LatLng}
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
     public static LatLng getCenterOfMap(GoogleMap map){
         try {
             return map.getCameraPosition().target;
@@ -79,6 +82,7 @@ public class MapUtilities {
      * @param radius
      * @return
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
     public static LatLngBounds calculateBounds(@NonNull LatLng center, double radius) {
         return new LatLngBounds.Builder().
                 include(SphericalUtils.computeOffset(center, radius, 0)).
@@ -95,6 +99,7 @@ public class MapUtilities {
      * @param dmu {@link DisplayManagerUtilities}
      * @return {@link CameraUpdate}
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
     public static CameraUpdate calculateZoomLevel(@NonNull LatLng latLng, float radiusInMeters,
                                                    @NonNull DisplayManagerUtilities dmu){
         if(radiusInMeters < 0){
@@ -124,12 +129,18 @@ public class MapUtilities {
      * @param zoom
      * @return
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
     public static float getMetersPerPixel(LatLng latLng, float zoom){
         float metersPerPx = (float)(156543.03392 * Math.cos(
                 latLng.latitude * Math.PI / 180) / Math.pow(2, zoom));
         return metersPerPx;
     }
 
+    /**
+     * Calculate the zoom level using the screen width in pixels
+     * @param screenWidthPixels
+     * @return
+     */
     public static int calculateZoomLevel(int screenWidthPixels) {
         double equatorLength = 40075004; // in meters
         double widthInPixels = screenWidthPixels;
@@ -142,7 +153,15 @@ public class MapUtilities {
         return zoomLevel;
     }
 
-
+    /**
+     * Get the zoom level using the bounds passed
+     * @param northeast North East LatLng
+     * @param southwest South West LatLng
+     * @param width Area Width
+     * @param height Area Height
+     * @return
+     */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
     public static int getBoundsZoomLevel(LatLng northeast,LatLng southwest,
                                          int width, int height) {
         double latFraction = (latRad(northeast.latitude) - latRad(southwest.latitude)) / Math.PI;
@@ -167,6 +186,13 @@ public class MapUtilities {
         return (Math.log(widthOrHeightInPixels / globeWidth / latOrLngFraction) / LN2);
     }
 
+    /**
+     * Get the LatLng of the location on the screen where the map is located
+     * @param map
+     * @param point
+     * @return
+     */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
     public static LatLng getScreenLocation(@NonNull GoogleMap map, @NonNull Point point){
         return map.getProjection().fromScreenLocation(point);
     }

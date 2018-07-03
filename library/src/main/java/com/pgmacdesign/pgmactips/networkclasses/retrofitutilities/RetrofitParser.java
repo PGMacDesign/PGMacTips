@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.L;
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
@@ -38,6 +39,10 @@ import retrofit2.Response;
  * Note: If you want to send in a Type {@link Type} for these overloaded methods, use one of
  * the examples shown in {@link CustomConverterFactory} at the top of the class
  */
+@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+        CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.OkHttp3,
+        CustomAnnotationsBase.Dependencies.GSON, CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor,
+        CustomAnnotationsBase.Dependencies.Okio})
 public class RetrofitParser {
 
     private static final String PARSE_FAILED_STR_1 =
@@ -104,6 +109,10 @@ public class RetrofitParser {
      *                                are unsure as to wether this applies to you, start by
      *                                sending false and check the responses.
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+            CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.OkHttp3,
+            CustomAnnotationsBase.Dependencies.GSON, CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor,
+            CustomAnnotationsBase.Dependencies.Okio})
     public static void parse(@NonNull final OnTaskCompleteListener listener,
                              @NonNull final Call<ResponseBody> call,
                              final Class successClassDataModel,
@@ -243,6 +252,10 @@ public class RetrofitParser {
      * (<uses-permission android:name="android.permission.INTERNET"/>)
      * in your manifest will throw the java.lang.SecurityException exception
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+            CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.OkHttp3,
+            CustomAnnotationsBase.Dependencies.GSON, CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor,
+            CustomAnnotationsBase.Dependencies.Okio})
     public static void parse(@NonNull final OnTaskCompleteListener listener,
                              @NonNull final Call<ResponseBody> call,
                              @NonNull final Type successClassDataModel,
@@ -382,6 +395,10 @@ public class RetrofitParser {
      * in your manifest will throw the java.lang.SecurityException exception
      * For full documentation
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+            CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.OkHttp3,
+            CustomAnnotationsBase.Dependencies.GSON, CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor,
+            CustomAnnotationsBase.Dependencies.Okio})
     public static void parse(@NonNull final OnTaskCompleteListener listener,
                              @NonNull final Call<ResponseBody> call,
                              final Class successClassDataModel,
@@ -398,6 +415,10 @@ public class RetrofitParser {
      * (<uses-permission android:name="android.permission.INTERNET"/>)
      * in your manifest will throw the java.lang.SecurityException exception
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+            CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.OkHttp3,
+            CustomAnnotationsBase.Dependencies.GSON, CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor,
+            CustomAnnotationsBase.Dependencies.Okio})
     public static void parse(@NonNull final OnTaskCompleteListener listener,
                              @NonNull final Call<ResponseBody> call,
                              @NonNull final Type successClassDataModel,

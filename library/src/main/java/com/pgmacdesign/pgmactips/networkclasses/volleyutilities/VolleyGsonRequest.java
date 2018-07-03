@@ -8,13 +8,17 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
  * Created by PatrickSSD2 on 8/29/2016.
  */
+@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Volley,
+        CustomAnnotationsBase.Dependencies.GSON})
 class VolleyGsonRequest <T> extends Request<T> {
     private final Gson gson = new Gson();
     private final Class<T> clazz;
@@ -28,6 +32,8 @@ class VolleyGsonRequest <T> extends Request<T> {
      * @param clazz Relevant class object, for Gson's reflection
      * @param headers Map of request headers
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Volley,
+            CustomAnnotationsBase.Dependencies.GSON})
     public VolleyGsonRequest(String url, Class<T> clazz, Map<String, String> headers,
                              Response.Listener<T> listener, Response.ErrorListener errorListener) {
         super(Method.GET, url, errorListener);

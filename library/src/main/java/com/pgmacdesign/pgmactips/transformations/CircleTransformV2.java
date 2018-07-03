@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.squareup.picasso.Transformation;
 
 /**
@@ -13,7 +14,7 @@ import com.squareup.picasso.Transformation;
  * Very useful in conjunction with {@link com.squareup.picasso.Picasso}
  * Created by pmacdowell on 2017-11-13.
  */
-
+@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
 public class CircleTransformV2 implements Transformation {
 
     private Integer circleFrameColor, circleFrameWidth, areaMargin;
@@ -21,6 +22,7 @@ public class CircleTransformV2 implements Transformation {
     /**
      * Simple circlular transform
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
     public CircleTransformV2(){
         this.circleFrameColor = null;
         this.circleFrameWidth = null;

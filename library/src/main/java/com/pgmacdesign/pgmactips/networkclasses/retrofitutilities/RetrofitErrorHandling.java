@@ -1,5 +1,6 @@
 package com.pgmacdesign.pgmactips.networkclasses.retrofitutilities;
 
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.utilities.GsonUtilities;
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 
@@ -12,6 +13,9 @@ import retrofit2.Response;
  * This class will handle Retrofit errors (ErrorBodies)
  * Created by pmacdowell on 8/29/2016.
  */
+@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+        CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON,
+        CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
 public class RetrofitErrorHandling {
 
 
@@ -20,6 +24,9 @@ public class RetrofitErrorHandling {
      * @param response Response from Retrofit. {@link Response}
      * @return ResponseBody (Error body) from OKHttp {@link ResponseBody}
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+            CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON,
+            CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
     public static ResponseBody getErrorBody(Response response){
         try {
             ResponseBody rb = response.errorBody();
@@ -38,6 +45,9 @@ public class RetrofitErrorHandling {
      * @param response The Retrofit Reponse to parse {@link Response}
      * @return String with the error body String. If a parsing error occurrs, it will return null
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+            CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON,
+            CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
     public static Boolean parseBooleanResponse(Response response){
         String str = parseErrorResponse(response);
         return StringUtilities.convertStringToBoolean(str);
@@ -49,6 +59,9 @@ public class RetrofitErrorHandling {
      * @param response The Retrofit Reponse to parse {@link Response}
      * @return String with the error body String. If a parsing error occurrs, it will return null
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+            CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON,
+            CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
     public static String parseErrorResponse(Response response){
         ResponseBody body = getErrorBody(response);
         if(body == null){
@@ -71,6 +84,9 @@ public class RetrofitErrorHandling {
      * @return Returns an Object matching the parsingClass structure if it parses correctly. If not,
      *         it will send back null.
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+            CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON,
+            CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
     public static Object parseErrorResponse(Response response, Class parsingClass){
         ResponseBody body = getErrorBody(response);
         if(body == null || parsingClass == null){
@@ -91,6 +107,9 @@ public class RetrofitErrorHandling {
      * @param response {@link Response}
      * @return integer
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+            CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON,
+            CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
     public static int getReturnCode(Response response){
         return response.code();
     }

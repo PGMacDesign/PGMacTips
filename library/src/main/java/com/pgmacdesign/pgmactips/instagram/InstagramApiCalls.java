@@ -3,6 +3,7 @@ package com.pgmacdesign.pgmactips.instagram;
 import android.content.Context;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.utilities.NetworkUtilities;
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 
@@ -14,7 +15,9 @@ import retrofit2.Response;
  * Instagram API SDK since as of this date there is no Instagram SDK
  * Created by pmacdowell on 2017-04-19.
  */
-
+@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+        CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON,
+        CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
 public class InstagramApiCalls {
 
     private InstagramService myService;
@@ -27,6 +30,9 @@ public class InstagramApiCalls {
      * @param myService
      * @param instagramAccessToken
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
+            CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON,
+            CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
     public InstagramApiCalls(Context context, InstagramService myService,
                              String instagramAccessToken){
         this.myService = myService;

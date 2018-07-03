@@ -24,6 +24,7 @@ import android.support.v4.content.FileProvider;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.enhancedphotoclasses.TakePhotoActivity;
 import com.pgmacdesign.pgmactips.enhancedphotoclasses.TakePhotoActivityAPI21;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.yalantis.ucrop.UCrop;
 
@@ -37,6 +38,7 @@ import java.util.List;
  * in your project, https://github.com/Yalantis/uCrop.
  * Created by pmacdowell on 8/16/2016.
  */
+@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.uCrop)
 public class CameraMediaUtilities {
 
     /*
@@ -177,11 +179,11 @@ public class CameraMediaUtilities {
     /**
      * Class for handling Photo Objects
      */
-    public class PhotoObject{
-        public URI javaUri;
-        public Uri androidUri;
-        public String stringPath;
-        public File photoFile;
+    public static class PhotoObject{
+        URI javaUri;
+        Uri androidUri;
+        String stringPath;
+        File photoFile;
     }
 
     /**
@@ -263,6 +265,7 @@ public class CameraMediaUtilities {
     /**
      * Flags and options class for specific things to happen within the Camera Utilities calls
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.uCrop)
     public static class CameraUtilityOptionsAndFlags {
         private Integer maxVideoRecordingTime;
         private String nameOfFile;
@@ -449,6 +452,7 @@ public class CameraMediaUtilities {
      * @param activity Activity
      * @param listener listener to send data back on
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.uCrop)
     public CameraMediaUtilities(Context context, Activity activity, OnTaskCompleteListener listener){
         if(context == null){
             return;
@@ -460,6 +464,7 @@ public class CameraMediaUtilities {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.uCrop)
     public CameraMediaUtilities(@NonNull Context context, @NonNull Activity activity,
                                 @NonNull OnTaskCompleteListener listener,
                                 @NonNull String fileProviderStr){
@@ -480,6 +485,7 @@ public class CameraMediaUtilities {
      * @param listener
      * @param optionsAndFlags {@link CameraUtilityOptionsAndFlags}
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.uCrop)
     public CameraMediaUtilities(Context context, Activity activity, OnTaskCompleteListener listener,
                                 CameraUtilityOptionsAndFlags optionsAndFlags){
         this.context = context;
@@ -982,6 +988,7 @@ public class CameraMediaUtilities {
      * @param toolbarColor int color for the toolbar. Pass -100 to default them to regular colors
      * @return Return UCrop.Options object
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.uCrop)
     public static UCrop.Options buildUCropOptions(int frameColor, int statusBarColor,
                                                              int toolbarColor){
         UCrop.Options options = new UCrop.Options();
@@ -1001,6 +1008,10 @@ public class CameraMediaUtilities {
         return options;
     }
 
+    /**
+     * Build uCrop Options, overloaded
+     */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.uCrop)
     public static UCrop.Options buildUCropOptions(@NonNull final Context context,
                                                    int frameColor, int statusBarColor,
                                                    int toolbarColor){
@@ -1031,6 +1042,7 @@ public class CameraMediaUtilities {
      *                     regular colors
      * @return Return UCrop.Options object
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.uCrop)
     public static UCrop.Options buildUCropOptions(String frameColor, String statusBarColor,
                                                              String toolbarColor){
         int frameColorInt, statusBarColorInt, toolbarColorInt;
@@ -1041,7 +1053,12 @@ public class CameraMediaUtilities {
 
         return (CameraMediaUtilities.buildUCropOptions(frameColorInt, statusBarColorInt, toolbarColorInt));
     }
-    //Overloaded method
+
+    /**
+     * Build uCrop options, Overloaded
+     * @return
+     */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.uCrop)
     private static UCrop.Options buildUCropOptions(){
         return (CameraMediaUtilities.buildUCropOptions(
                 null, null, null));
