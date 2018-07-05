@@ -25,18 +25,23 @@ allprojects {
 And include this in your dependencies section of your module .gradle file:
 
 ```java
-implementation ('com.github.PGMacDesign:PGMacTips:0.0.58')
+implementation ('com.github.PGMacDesign:PGMacTips:0.0.59')
 ```
 
 Having trouble with Jitpack? [This link](https://jitpack.io/#pgmacdesign/PGMacTips) here will show what is going on with the current build as well as give you instructions on integrating Jitpack into your project. 
 
+<!-- 
+//Removed for now due to Jitpack issues 
+
 ## Javadoc
 
-Javadoc info can be found [here](https://jitpack.io/com/github/pgmacdesign/PGMacTips/0.0.58/javadoc/): 
+Javadoc info can be found [here](https://jitpack.io/com/github/pgmacdesign/PGMacTips/0.0.59/javadoc/): 
 
-If you would like to view docs for older version, just replace the version code in this url:
+If you would like to view docs for older version (supported versions are those >= 0.0.59), just replace the version code in this url:
 
 https://jitpack.io/com/github/pgmacdesign/PGMacTips/[VERSION-GOES-HERE]/javadoc/
+
+-->
 
 
 ## Nested Libraries & Dependencies
