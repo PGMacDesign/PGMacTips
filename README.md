@@ -10,10 +10,9 @@ This will be a collection of utility methods that I use in nearly all of my proj
 
 ## Installation
 
-To install, insert this into your build.gradle file 
+To install, insert this into your projects root build.gradle file 
 
 ```java
-
 allprojects {
     repositories {
         jcenter()
@@ -21,86 +20,54 @@ allprojects {
         maven { url "https://maven.google.com" } // Google's Maven repository 
     }
 }
-
 ```
 
-And include this in your dependencies section:
+And include this in your dependencies section of your module .gradle file:
 
 ```java
-
-implementation ('com.github.PGMacDesign:PGMacTips:0.0.57')
-
+implementation ('com.github.PGMacDesign:PGMacTips:0.0.58')
 ```
 
 Having trouble with Jitpack? [This link](https://jitpack.io/#pgmacdesign/PGMacTips) here will show what is going on with the current build as well as give you instructions on integrating Jitpack into your project. 
 
-## Nested Libraries
+## Javadoc
 
-This library utilizes many others within it. Below is a listing of all of the nested libraries this project utilizes under the hood. If you wish to use a class, method, or function that uses one of these other libraries, make sure to include it in your project.
+Javadoc info can be found [here](https://jitpack.io/com/github/pgmacdesign/PGMacTips/0.0.58/javadoc/): 
+
+If you would like to view docs for older version, just replace the version code in this url:
+
+https://jitpack.io/com/github/pgmacdesign/PGMacTips/[VERSION-GOES-HERE]/javadoc/
+
+
+## Nested Libraries & Dependencies
+
+This library utilizes many others within it; the full list of dependencies, links to their reposotiry pages, and the version used can be found under the [*CustomAnnotationsBase*](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/misc/CustomAnnotationsBase.java) class.
+
+### RequiredDependencies
+
+Under this same [*CustomAnnotationsBase*](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/misc/CustomAnnotationsBase.java) class, There is an interface that is used throughout the library. This is the annotation base which helps to identify which classes use or require a dependency. The use of some classes requires the dependency for any methods to be used while others only require the dependency if a specific method or function is used. 
+
+For example, if you reference the [*ImageUtilities*](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ImageUtilities.java) class and want to use the *resizePhoto()* method, it uses all native Android classes and requires no custom dependencies to work properly. If you instead wanted to use the *setImageWithPicasso()* method, this uses Picasso as a required dependency to operate and is so marked with said annotation above the method itself. Note that the class does not have such an annotation, but the method does. 
 
 ```java
-
-        //Secure Shared Prefs. Link: https://github.com/scottyab/secure-preferences
-        implementation 'com.scottyab:secure-preferences-lib:0.1.4'
-
-        //Progress bar animator. This one is better for longer processes, IE uploading photos.
-        //Link: https://github.com/Tibolte/ElasticDownload
-        implementation 'com.github.tibolte:elasticdownload:1.0.4'
-
-        //Image Cropper. https://github.com/Yalantis/uCrop
-        implementation 'com.yalantis:ucrop:2.2.0'
-
-        //Animated SVG View (Custom, takes an SVG To work).
-        //Link: https://github.com/jaredrummler/AnimatedSvgView
-        implementation 'com.jaredrummler:animated-svg-view:1.0.5'
-
-        //Volley. Link: https://github.com/google/volley
-        implementation 'com.android.volley:volley:1.0.0'
-
-        //GSON. Link https://github.com/google/gson
-        implementation 'com.google.code.gson:gson:2.8.1'
-
-        //Picasso. Link: https://github.com/square/picasso
-        implementation 'com.squareup.picasso:picasso:2.5.2'
-
-        //Animations Base. Link: https://github.com/JakeWharton/NineOldAndroids
-        implementation 'com.nineoldandroids:library:2.4.0'
-
-        //Retrofit, Retrofit Converters, and OKHTTP.
-        //Retrofit - https://github.com/square/retrofit
-        //OKHttp - https://github.com/square/okhttp
-        implementation 'com.squareup.retrofit2:retrofit:2.3.0'
-        implementation 'com.squareup.okhttp3:okhttp:3.9.0'
-        implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
-        //Type-safe HTTP client for Android and Java: https://github.com/square/retrofit
-        implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
-        //OKIO. Link: https://github.com/square/okio
-        implementation 'com.squareup.okio:okio:1.13.0'
-
-        //Part of The Android Animations collection below
-        implementation 'com.daimajia.easing:library:2.0@aar'
-        //Android Animations. Link: https://github.com/daimajia/AndroidViewAnimations
-        implementation 'com.daimajia.androidanimations:library:2.2@aar'
-
-        //Text View + Animations. Link: https://github.com/hanks-zyh/HTextView
-        implementation 'hanks.xyz:htextview-library:0.1.5'
-
-
-        //////////////////////////////////////////////////////
-        //Recommended to use if utilizing multiple libraries//
-        //////////////////////////////////////////////////////
-
-        //Multi-dex. For more info: https://developer.android.com/studio/build/multidex.html
-        implementation 'com.android.support:multidex:1.0.1'
-
+@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
 ```
 
-If you want to utilize the DatabaseUtilities class, you will also need to implement [Realm](https://github.com/realm/realm-java), which is done at the top level gradle file like this:
+On the other hand, if you want to use the [*DatabaseUtilities*](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/DatabaseUtilities.java) and any of its subsequent methods, you must include both the Gson and Realm dependencies so the class itself has the annotation indicating such. 
 
 ```java
+@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Realm,
+        CustomAnnotationsBase.Dependencies.GSON})
+```
+
+### Realm 
+
+Note that one of the dependencies [Realm](https://github.com/realm/realm-java) is added to your project in the base build.gradle file and is done so with these two code snippets: , which is done at the top level gradle file like this:
+
+```java
+//This goes in your base, root .gradle file
 buildscript {
     dependencies {
-        //classpath 'com.android.tools.build:gradle:3.0.1' //Your version here
         classpath "io.realm:realm-gradle-plugin:3.0.0" 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -108,7 +75,12 @@ buildscript {
 }
 ```
 
-Please note that I started deviating from Realm's updates once they started requiring accounts to use. I utilize the code found in [this release](https://github.com/realm/realm-java/releases/tag/v3.0.0). I am unsure of forwards compatibility, but if newer versions will work, please let me know and I will update to the highest possible one without making changes to the source code. 
+```java
+//This goes in your module level .gradle file
+apply plugin: 'realm-android'
+```
+
+Please note that I started deviating from Realm's updates once they started requiring accounts / credentials to use. I utilize the code found in [this release](https://github.com/realm/realm-java/releases/tag/v3.0.0). I am unsure of forwards compatibility, but if newer versions will work, please let me know and I will update to the highest possible one without making changes to the source code. 
 
 ## Known Issues
 

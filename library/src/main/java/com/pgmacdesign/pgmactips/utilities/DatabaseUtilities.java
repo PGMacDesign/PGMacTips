@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.pgmacdesign.pgmactips.datamodels.MasterDatabaseObject;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConfig;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
@@ -42,6 +43,8 @@ import io.realm.RealmResults;
  *    http://stackoverflow.com/questions/18723596/no-exception-while-type-casting-with-a-null-in-java
  * 2)
  */
+@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Realm,
+        CustomAnnotationsBase.Dependencies.GSON})
 public class DatabaseUtilities {
 
     //Misc Type and Typetoken samples
@@ -69,7 +72,7 @@ public class DatabaseUtilities {
     /**
      * Test constructor
      */
-    public DatabaseUtilities() {
+    DatabaseUtilities() {
         if(PGMacTipsConfig.getInstance() == null){
             L.m(PGMACTIPS_NOT_INITIALIZED);
             return;
@@ -89,6 +92,8 @@ public class DatabaseUtilities {
      *
      * @param context Context. Cannot be null
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Realm,
+            CustomAnnotationsBase.Dependencies.GSON})
     public DatabaseUtilities(@NonNull Context context) {
         this.context = context;
         if(this.context == null){
@@ -104,6 +109,8 @@ public class DatabaseUtilities {
      * Constructor. For more explanation of the input params, see:
      * {@link DatabaseUtilities#buildRealmConfig(Context, String, Integer, Boolean)}
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Realm,
+            CustomAnnotationsBase.Dependencies.GSON})
     public DatabaseUtilities(@NonNull Context context, @Nullable String dbName,
                              @Nullable Integer dbSchemaVersion, @Nullable Boolean deleteDBIfNeeded) {
         this.context = context;
@@ -124,6 +131,8 @@ public class DatabaseUtilities {
      *                           build the default version with hard coded info listed here in
      *                           this class.
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Realm,
+            CustomAnnotationsBase.Dependencies.GSON})
     public DatabaseUtilities(@NonNull Context context, RealmConfiguration realmConfiguration) {
         this.context = context;
         if(this.context == null){
