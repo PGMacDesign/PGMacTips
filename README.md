@@ -62,7 +62,7 @@ On the other hand, if you want to use the [*DatabaseUtilities*](https://github.c
 
 ### Realm 
 
-Note that one of the dependencies [Realm](https://github.com/realm/realm-java) is added to your project in the base build.gradle file and is done so with these two code snippets: , which is done at the top level gradle file like this:
+Note that one of the dependencies [Realm](https://github.com/realm/realm-java) is added to your project in the base build.gradle file and is done so with these two code snippets: 
 
 ```java
 //This goes in your base, root .gradle file
