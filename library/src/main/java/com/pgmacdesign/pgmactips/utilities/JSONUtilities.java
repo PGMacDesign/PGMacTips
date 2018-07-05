@@ -2,6 +2,7 @@ package com.pgmacdesign.pgmactips.utilities;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 
 /**
  * Created by pmacdowell on 8/15/2016.
@@ -99,6 +100,7 @@ public class JSONUtilities {
         return longValue;
     }
 
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
     public static <T> T convertToObject(String t, Class<T> to) {
         Gson gson = new GsonBuilder().setDateFormat(
                 "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").create();

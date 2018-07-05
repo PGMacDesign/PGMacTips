@@ -1,5 +1,6 @@
 package com.pgmacdesign.pgmactips.utilities;
 
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -48,7 +49,84 @@ public class EncryptionUtilities {
     private static final String CIPHER_INSTANCE_TYPE = "AES/CBC/PKCS5Padding";
     private static final String AES = "AES";
     private static final String MD5 = "MD5";
-    public final static String UTF8 = StandardCharsets.UTF_8.toString();
+
+    /**
+     * Simple getter for UTF-8 since it is recommended to use StandardCharsets after SDK level 19,
+     * but this library currently supports 15 as the minimum.
+     * @return
+     */
+    public static String getUTF8(){
+        if(Build.VERSION.SDK_INT >= 19){
+            return StandardCharsets.UTF_8.toString();
+        } else {
+            return "UTF-8";
+        }
+    }
+
+    /**
+     * Simple getter for ISO_8859-1 since it is recommended to use StandardCharsets after SDK level 19,
+     * but this library currently supports 15 as the minimum.
+     * @return
+     */
+    public static String getISO8859(){
+        if(Build.VERSION.SDK_INT >= 19){
+            return StandardCharsets.ISO_8859_1.toString();
+        } else {
+            return "ISO-8859-1";
+        }
+    }
+
+    /**
+     * Simple getter for US_ASCII since it is recommended to use StandardCharsets after SDK level 19,
+     * but this library currently supports 15 as the minimum.
+     * @return
+     */
+    public static String getASCII(){
+        if(Build.VERSION.SDK_INT >= 19){
+            return StandardCharsets.US_ASCII.toString();
+        } else {
+            return "US-ASCII";
+        }
+    }
+
+    /**
+     * Simple getter for UTF-16 since it is recommended to use StandardCharsets after SDK level 19,
+     * but this library currently supports 15 as the minimum.
+     * @return
+     */
+    public static String getUTF16(){
+        if(Build.VERSION.SDK_INT >= 19){
+            return StandardCharsets.UTF_16.toString();
+        } else {
+            return "UTF-16";
+        }
+    }
+
+    /**
+     * Simple getter for UTF-16BE since it is recommended to use StandardCharsets after SDK level 19,
+     * but this library currently supports 15 as the minimum.
+     * @return
+     */
+    public static String getUTF16BE(){
+        if(Build.VERSION.SDK_INT >= 19){
+            return StandardCharsets.UTF_16BE.toString();
+        } else {
+            return "UTF-16BE";
+        }
+    }
+
+    /**
+     * Simple getter for UTF-16LE since it is recommended to use StandardCharsets after SDK level 19,
+     * but this library currently supports 15 as the minimum.
+     * @return
+     */
+    public static String getUTF16LE(){
+        if(Build.VERSION.SDK_INT >= 19){
+            return StandardCharsets.UTF_16LE.toString();
+        } else {
+            return "UTF-16LE";
+        }
+    }
 
     /**
      * The charset preference to be used throughout the class. {@link StandardCharsets}
@@ -61,7 +139,7 @@ public class EncryptionUtilities {
      * {@link java.nio.charset.StandardCharsets#UTF_16BE}
      * {@link java.nio.charset.StandardCharsets#UTF_16LE}
      */
-    private static String charSetPreference = UTF8;
+    private static String charSetPreference = getUTF8();
 
     /**
      * If this is true and a salt of length 16 is passed in, the string / byte[] will not be
@@ -85,23 +163,17 @@ public class EncryptionUtilities {
      */
     public static void setCharSetPreference(@NonNull Charset charSetPreference) {
         boolean okToUse;
-        if (StringUtilities.doesEqual(charSetPreference.toString(),
-                StandardCharsets.UTF_8.toString())) {
+        if (StringUtilities.doesEqual(charSetPreference.toString(), getUTF8())) {
             okToUse = true;
-        } else if (StringUtilities.doesEqual(charSetPreference.toString(),
-                StandardCharsets.ISO_8859_1.toString())) {
+        } else if (StringUtilities.doesEqual(charSetPreference.toString(), getISO8859())) {
             okToUse = true;
-        } else if (StringUtilities.doesEqual(charSetPreference.toString(),
-                StandardCharsets.US_ASCII.toString())) {
+        } else if (StringUtilities.doesEqual(charSetPreference.toString(), getASCII())) {
             okToUse = true;
-        } else if (StringUtilities.doesEqual(charSetPreference.toString(),
-                StandardCharsets.UTF_16.toString())) {
+        } else if (StringUtilities.doesEqual(charSetPreference.toString(), getUTF16())) {
             okToUse = false;
-        } else if (StringUtilities.doesEqual(charSetPreference.toString(),
-                StandardCharsets.UTF_16BE.toString())) {
+        } else if (StringUtilities.doesEqual(charSetPreference.toString(), getUTF16BE())) {
             okToUse = false;
-        } else if (StringUtilities.doesEqual(charSetPreference.toString(),
-                StandardCharsets.UTF_16LE.toString())) {
+        } else if (StringUtilities.doesEqual(charSetPreference.toString(), getUTF16LE())) {
             okToUse = false;
         } else {
             okToUse = false;
@@ -110,7 +182,7 @@ public class EncryptionUtilities {
             EncryptionUtilities.charSetPreference = charSetPreference.toString();
         } else {
             Log.d(TAG, EncryptionUtilities.INVALID_CHARSET_ERROR);
-            EncryptionUtilities.charSetPreference = StandardCharsets.UTF_8.toString();
+            EncryptionUtilities.charSetPreference = getUTF8();
         }
     }
 

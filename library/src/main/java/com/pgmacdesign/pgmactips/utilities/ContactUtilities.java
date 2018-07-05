@@ -14,6 +14,7 @@ import android.support.annotation.RequiresPermission;
 
 import com.google.gson.annotations.SerializedName;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConfig;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
@@ -411,10 +412,11 @@ public class ContactUtilities {
      * {@link ContactUtilities#queryContacts(SearchTypes[], Integer)} or any other variations on
      * the queryContacts(vars) methods.
      *
-     * @param regularExpressionFilter Regular Expression to filter for
+     * @param regularExpressionFilter The regex query to be included as a {@link Pattern}
      */
     @SuppressLint("MissingPermission")
     @RequiresPermission(Manifest.permission.READ_CONTACTS)
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
     public void getAllContacts(@Nullable Pattern regularExpressionFilter) {
         ContactQueryAsync async = new ContactQueryAsync(this, regularExpressionFilter);
         async.execute();
@@ -465,7 +467,20 @@ public class ContactUtilities {
         async.execute();
     }
 
+    /**
+     * Perform a contact query on an asynchronous background thread. Data is passed back
+     * on the {@link OnTaskCompleteListener}
+     *
+     * @param typesToQuery  Array of SearchTypes enum objects. These are the types of items
+     *                      to actually make a query to. Sending multiple will return multiple
+     *                      See {@link SearchTypes}. If null is passed, it will query all 4 types.
+     * @param maxNumResults The int max number of results per search type.
+     *                      If null or zero is passed, it will
+     *                      simply have no limit on the max number of results.
+     * @param regularExpressionFilter         The regex query to be included as a {@link Pattern}
+     */
     @RequiresPermission(Manifest.permission.READ_CONTACTS)
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
     public void queryContacts(@Nullable SearchTypes[] typesToQuery,
                               @Nullable Integer maxNumResults,
                               @Nullable Pattern regularExpressionFilter) {
@@ -1921,6 +1936,7 @@ public class ContactUtilities {
     /**
      * Overloaded to allow for progress listener to be omitted
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
     public static List<Contact> getAllDataQueryRegex(Context context, Pattern regexPattern,
                                                      int maxNumResults, boolean removeBlockListItems,
                                                      boolean onlyKeepContactsWithPhotos) {
@@ -1939,6 +1955,7 @@ public class ContactUtilities {
      * @param onlyKeepContactsWithPhotos Only return those contacts with photos.
      * @return A List of {@link ContactUtilities.Contact}
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
     public static List<Contact> getAllDataQueryRegex(@Nullable OnTaskCompleteListener progressListener,
                                                      Context context, Pattern regexPattern,
                                                      int maxNumResults, boolean removeBlockListItems,
@@ -2192,6 +2209,7 @@ public class ContactUtilities {
     /**
      * Overloaded to allow for null progressListener
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
     public static List<Contact> getPhoneQueryRegex(Context context, Pattern regexPattern,
                                                    int maxNumResults, boolean removeBlockListItems,
                                                    boolean onlyKeepContactsWithPhotos) {
@@ -2205,6 +2223,7 @@ public class ContactUtilities {
      * @param regexPattern  Regular Expression Pattern to use in the filtering
      * @param maxNumResults max number of results to return. if 0, no limit
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
     public static List<Contact> getPhoneQueryRegex(@Nullable OnTaskCompleteListener progressListener,
                                                    Context context, Pattern regexPattern,
                                                    int maxNumResults, boolean removeBlockListItems,
@@ -2330,6 +2349,7 @@ public class ContactUtilities {
     /**
      * Overloaded to allow for null progressListener
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
     public static List<Contact> getEmailQueryRegex(Context context, Pattern regexPattern, int maxNumResults,
                                                    boolean onlyKeepContactsWithPhotos) {
         return getEmailQueryRegex(null, context, regexPattern, maxNumResults, onlyKeepContactsWithPhotos);
@@ -2343,6 +2363,7 @@ public class ContactUtilities {
      * @param regexPattern  Regular Expression Pattern to use in the filtering
      * @param maxNumResults max number of results to return. if 0, no limit
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
     public static List<Contact> getEmailQueryRegex(@Nullable OnTaskCompleteListener progressListener,
                                                    Context context, Pattern regexPattern, int maxNumResults,
                                                    boolean onlyKeepContactsWithPhotos) {
@@ -2463,6 +2484,7 @@ public class ContactUtilities {
     /**
      * Overloaded to allow for null progressListener
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
     public static List<Contact> getAddressQueryRegex(Context context, Pattern regexPattern, int maxNumResults,
                                                      boolean onlyKeepContactsWithPhotos) {
         return getAddressQueryRegex(null, context, regexPattern, maxNumResults, onlyKeepContactsWithPhotos);
@@ -2476,6 +2498,7 @@ public class ContactUtilities {
      * @param regexPattern  Regular Expression Pattern to use in the filtering
      * @param maxNumResults max number of results to return. if 0, no limit
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
     public static List<Contact> getAddressQueryRegex(@Nullable OnTaskCompleteListener progressListener,
                                                      Context context, Pattern regexPattern, int maxNumResults,
                                                      boolean onlyKeepContactsWithPhotos) {
@@ -2597,6 +2620,7 @@ public class ContactUtilities {
     /**
      * Overloaded to allow for null progressListener
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
     public static List<Contact> getNameQueryRegex(Context context, Pattern regexPattern, int maxNumResults,
                                                   boolean onlyKeepContactsWithPhotos) {
         return getNameQueryRegex(null, context, regexPattern, maxNumResults, onlyKeepContactsWithPhotos);
@@ -2610,6 +2634,7 @@ public class ContactUtilities {
      * @param regexPattern  Regular Expression Pattern to use in the filtering
      * @param maxNumResults max number of results to return. if 0, no limit
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
     public static List<Contact> getNameQueryRegex(@Nullable OnTaskCompleteListener progressListener,
                                                   Context context, Pattern regexPattern, int maxNumResults,
                                                   boolean onlyKeepContactsWithPhotos) {

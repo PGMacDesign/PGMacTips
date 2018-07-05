@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
+
 /**
  * Created by pmacdowell on 9/20/2016.
  */
@@ -18,6 +20,7 @@ public class ErrorHandlingUtilities {
     /**
      * Shows an error message dialog.
      */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.AndroidSupport_Design)
     public static class ErrorDialog extends DialogFragment {
         private static final String ARG_MESSAGE = "message";
         public static ErrorDialog newInstance(String message) {

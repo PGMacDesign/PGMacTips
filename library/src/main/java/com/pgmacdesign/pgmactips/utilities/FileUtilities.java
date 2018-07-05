@@ -71,7 +71,10 @@ public class FileUtilities {
     }
 
     /**
-     * Convert a byte type to a different byte type
+     * Convert a byte type to a different byte type.
+     * IE, making this call:
+     * convertSize(4096, ByteSizeNames.Kilobytes, ByteSizeNames.Megabytes)
+     * will return 4.0 (megabytes)
      * @param bytesInput Bytes being input for conversion
      * @param inputType the input type in the ByteSizeNames enum
      * @param outputType the output types in the ByteSizeNames enum
@@ -87,7 +90,10 @@ public class FileUtilities {
     }
 
     /**
-     * Converts bytes into the type you want. So you would pass in bytes and get back Megabytes (IE)
+     * Converts bytes into the type you want. So you would pass in bytes and get back Megabytes
+     * IE, making this call:
+     * convertToByteType(4096, ByteSizeNames.Megabytes)
+     * will return 4.0 (megabytes)
      * @param bytesSize Bytes being converted. This is bytes, not kilobytes, megabytes, etc
      * @param whichToConvertTo of type enum BytesizeNames, convert output
      * @return
@@ -122,7 +128,10 @@ public class FileUtilities {
     }
 
     /**
-     * Converts the input double into bytes
+     * Converts the input double into bytes.
+     * IE, making this call:
+     * convertToBytes(4, ByteSizeNames.Megabytes)
+     * will return 4096 (bytes)
      * @param inputAmount double amount. Could be 10, 544.44, 9999.99999
      * @param inputType The type being input, matches the ByteSizeNames enum
      * @return Returns the double bytes after conversion
@@ -154,6 +163,24 @@ public class FileUtilities {
             default:
                 return inputAmount;
         }
+    }
+
+    /**
+     * Simple calculation to convert bits to bytes
+     * @param bits
+     * @return
+     */
+    public static double convertBitsToBytes(double bits){
+        return (bits * 8);
+    }
+
+    /**
+     * Simple calculation to convert bytes to bits
+     * @param bytes
+     * @return
+     */
+    public static double convertBytesToBits(double bytes){
+        return (bytes / 8);
     }
 
     /**

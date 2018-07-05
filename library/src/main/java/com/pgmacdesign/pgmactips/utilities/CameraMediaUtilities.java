@@ -728,9 +728,15 @@ public class CameraMediaUtilities {
             return;
         }
         if(useFrontFacingCamera){
-            int frontFacing = this.doesUserHaveFrontFacingCamera(context);
-            if(frontFacing != -1){
-                takePictureIntent.putExtra("android.intent.extras.CAMERA_FACING", frontFacing);
+            if(Build.VERSION.SDK_INT >= 21) {
+                int frontFacing = this.doesUserHaveFrontFacingCamera(context);
+                if (frontFacing != -1) {
+                    takePictureIntent.putExtra("android.intent.extras.CAMERA_FACING", frontFacing);
+                }
+            } else {
+                try {
+                    takePictureIntent.putExtra("android.intent.extras.CAMERA_FACING", 0);
+                } catch (Exception e){}
             }
         }
         if (takePictureIntent.resolveActivity(context.getPackageManager()) != null) {
