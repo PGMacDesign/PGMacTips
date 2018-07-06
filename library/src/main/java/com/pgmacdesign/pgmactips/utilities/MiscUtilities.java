@@ -269,22 +269,17 @@ public class MiscUtilities {
      * @return
      */
     public static String getPackageName(Context context){
-
         String packageName = null;
-
         try {
             packageName = context.getPackageManager().getPackageInfo(
                     getPackageName(), 0).packageName;
+            if(!StringUtilities.isNullOrEmpty(packageName)){
+                return packageName;
+            }
         } catch (Exception e){}
-
-        if(packageName != null){
-            return packageName;
-        }
-
         try{
             packageName = context.getPackageName();
-        } catch (Exception e){}
-
+        } catch (Exception e){e.printStackTrace();}
         return packageName;
     }
 
