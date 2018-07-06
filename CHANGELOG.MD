@@ -1,7 +1,12 @@
 Change Log
 ==========
 
-Version 0.0.57 *(2018-07-03)*
+Version 0.0.60 *(2018-07-06)*
+----------------------------
+
+ * New: Added in FingerprintUtilities, which allows access to fingerprint checking. 
+ 
+Version 0.0.57-59 *(2018-07-03)*
 ----------------------------
 
  * Improvement: Updated PermissionUtilities to add overloaded methods to take in String arrays for permissions instead of the dedicated enum. 
