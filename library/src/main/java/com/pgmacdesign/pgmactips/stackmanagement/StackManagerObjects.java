@@ -1,0 +1,371 @@
+package com.pgmacdesign.pgmactips.stackmanagement;
+
+/**
+ * This is a stack manager where the list of items is a list of objects instead of Enums
+ * todo at a later date
+ * Created by pmacdowell on 7/6/2018.
+ */
+public class StackManagerObjects <E extends Object> {
+
+//    private static final String BAD_ENUM = "The enum you passed was null, please check your params and try again";
+//    private static final String INSTANTIATION_ERROR = "No stack was created; please check your params and re-instantiate the object";
+//    private static final String INVALID_KEY = "The key (int) you passed did not return a managed stack. Please check your key (See the ones sent in the constructor)";
+//    private static final String NO_NEGATIVE_NUMBERS_TO_POP = "Number of items to pop off the stack is <0. Number must be >0";
+//
+//    private Map<Integer, StackManagerObjects.CustomStackManagerPOJO> managedStacks;
+//    private boolean maintainMinimumOneItemInStack, logChangesInStacks, allowEnumStackDuplicates;
+//
+//    ///////////////
+//    //Constructor//
+//    ///////////////
+//
+//    public StackManagerObjects(@NonNull Map<Integer, List<E>> enumTagsAndTypes,
+//                        @NonNull Map<Integer, E> firstItemInStack) {
+//        this.maintainMinimumOneItemInStack = false;
+//        this.allowEnumStackDuplicates = false;
+//        init(enumTagsAndTypes, firstItemInStack);
+//    }
+//
+//    public StackManagerObjects(@NonNull Map<Integer, List<E>> enumTagsAndTypes,
+//                        @NonNull Map<Integer, E> firstItemInStack,
+//                        boolean maintainMinimumOneItemInStack) {
+//        this.maintainMinimumOneItemInStack = maintainMinimumOneItemInStack;
+//        this.allowEnumStackDuplicates = false;
+//        init(enumTagsAndTypes, firstItemInStack);
+//    }
+//
+//    public StackManagerObjects(@NonNull Map<Integer, List<E>> enumTagsAndTypes,
+//                        @NonNull Map<Integer, E> firstItemInStack,
+//                        boolean maintainMinimumOneItemInStack,
+//                        boolean allowEnumStackDuplicates) {
+//        this.maintainMinimumOneItemInStack = maintainMinimumOneItemInStack;
+//        this.allowEnumStackDuplicates = allowEnumStackDuplicates;
+//        init(enumTagsAndTypes, firstItemInStack);
+//    }
+//
+//    public void enableLogging(boolean enable){
+//        this.logChangesInStacks = enable;
+//    }
+//
+//    private void init(@NonNull Map<Integer, List<E>> enumTagsAndTypes,
+//                      @NonNull Map<Integer, E> firstItemInStack){
+//        this.enableLogging(false);
+//        this.managedStacks = new HashMap<>();
+//        for(Map.Entry<Integer, List<E>> map : enumTagsAndTypes.entrySet()){
+//            if(map == null){
+//                continue;
+//            }
+//            Integer key = map.getKey();
+//            List<E> values = map.getValue();
+//            if(key == null || MiscUtilities.isListNullOrEmpty(values)){
+//                continue;
+//            }
+//            E firstItem = firstItemInStack.get(key);
+//            if(firstItem == null){
+//                continue;
+//            }
+//            Stack<E> stackToManage = new Stack<>();
+//            stackToManage.push(firstItem);
+//            StackManagerObjects.CustomStackManagerPOJO pojo = new StackManagerObjects.CustomStackManagerPOJO();
+//            pojo.setEnumTypes(values);
+//            pojo.setKey(key);
+//            pojo.setManagedStack(stackToManage);
+//            managedStacks.put(key, pojo);
+//        }
+//        if(MiscUtilities.isMapNullOrEmpty(managedStacks)){
+//            throw buildException(INSTANTIATION_ERROR, null, null);
+//        }
+//    }
+//
+//    ///////////////////////////////////////////
+//    //Public methods for managing Stack State//
+//    ///////////////////////////////////////////
+//
+//    /**
+//     * Clear one stack via the tag sent. Follows the boolean rule set via constructor about maintaining
+//     * 1 left in the stack if the boolean {@link StackManagerObjects#maintainMinimumOneItemInStack}
+//     * is set to true
+//     * @ {@link StackManagerException}
+//     */
+//    public void clearOneStack(int tag) {
+//        StackManagerObjects.CustomStackManagerPOJO pojo = getStackPOJO(tag);
+//        if(pojo != null){
+//            Stack<E> myStack = pojo.getManagedStack();
+//            if(myStack != null) {
+//                popTheStack(tag, myStack.size());
+//            }
+//        }
+//    }
+//
+//    /**
+//     * Clear all stacks. Follows the boolean rule set via constructor about maintaining
+//     * 1 left in the stack if the boolean {@link StackManagerObjects#maintainMinimumOneItemInStack}
+//     * is set to true
+//     * @ {@link StackManagerException}
+//     */
+//    public void clearAllStacks() {
+//        for(Map.Entry<Integer, StackManagerObjects.CustomStackManagerPOJO> map : managedStacks.entrySet()){
+//            Integer key = map.getKey();
+//            StackManagerObjects.CustomStackManagerPOJO pojo = map.getValue();
+//            if(key != null && pojo != null){
+//                Stack<E> myStack = pojo.getManagedStack();
+//                if(myStack != null) {
+//                    popTheStack(key, myStack.size());
+//                }
+//            }
+//        }
+//    }
+//
+//    /**
+//     * Append enums to the stack
+//     * @param tagToMatchToEnums Int tag to match the map in the constructor
+//     * @param enumToAdd Enum to add / append to the stack
+//     * @return Enum Enum of the one at the top of the stack
+//     * @ {@link StackManagerException}
+//     */
+//    public E appendToTheStack(int tagToMatchToEnums, E enumToAdd) {
+//        manageNullEnums(enumToAdd);
+//        StackManagerObjects.CustomStackManagerPOJO pojo = getStackPOJO(tagToMatchToEnums);
+//        List<E> enums = pojo.getEnumTypes();
+//        Stack stack = pojo.getManagedStack();
+//        for(Enum e : enums){
+//            if(e == null){
+//                continue;
+//            }
+//            if(e == enumToAdd){
+//                if(allowEnumStackDuplicates){
+//                    stack.push(enumToAdd);
+//                } else {
+//                    if(!stackContainsEnum(stack, enumToAdd)){
+//                        stack.push(enumToAdd);
+//                    }
+//                }
+//            }
+//        }
+//        if(logChangesInStacks){
+//            L.m("stack matching tag " + tagToMatchToEnums + " enum: " + stack.toString());
+//        }
+//        return ((E) stack.peek());
+//    }
+//
+//    /**
+//     * Append enums to the stack
+//     * @param tagToMatchToEnums Int tag to match the map in the constructor
+//     * @param objectsToAdd List of Enums to add / append to the stack
+//     * @return Enum of the one at the top of the stack
+//     * @ {@link StackManagerException}
+//     */
+//    public E appendToTheStack(int tagToMatchToEnums, List<E> objectsToAdd) {
+//        for(E e : objectsToAdd){
+//            manageNullEnums(e);
+//        }
+//        StackManagerObjects.CustomStackManagerPOJO pojo = getStackPOJO(tagToMatchToEnums);
+//        List<E> enums = pojo.getEnumTypes();
+//        Stack stack = pojo.getManagedStack();
+//        for(Enum e : enums){
+//            if(e == null){
+//                continue;
+//            }
+//            for(E e1 : objectsToAdd) {
+//                if (e == e1) {
+//                    if(allowEnumStackDuplicates){
+//                        stack.push(e1);
+//                    } else {
+//                        if(!stackContainsEnum(stack, e1)){
+//                            stack.push(e1);
+//                        }
+//                    }
+//
+//                }
+//            }
+//        }
+//        if(logChangesInStacks){
+//            L.m("stack matching tag " + tagToMatchToEnums + " enum: " + stack.toString());
+//        }
+//        return ((E) stack.peek());
+//    }
+//
+//    /**
+//     * Pop the stack matching the int enum used.
+//     * @param tagToMatchToEnums Int tag to match the map in the constructor
+//     * @return Returns the enum at the top of the stack. If the stack is empty, returns null
+//     * @ {@link StackManagerException}
+//     */
+//    public E popTheStack(int tagToMatchToEnums) {
+//        StackManagerObjects.CustomStackManagerPOJO pojo = getStackPOJO(tagToMatchToEnums);
+//        Stack stack = pojo.getManagedStack();
+//        int size = stack.size();
+//        if(maintainMinimumOneItemInStack){
+//            if(size > 1){
+//                stack.pop();
+//            }
+//        } else {
+//            if(size > 0){
+//                stack.pop();
+//            }
+//        }
+//        if(logChangesInStacks){
+//            L.m("stack matching tag " + tagToMatchToEnums + " enum: " + stack.toString());
+//        }
+//        if(size > 0) {
+//            return ((E) stack.peek());
+//        } else {
+//            return null;
+//        }
+//    }
+//
+//    /**
+//     * Pop the stack matching the int enum used.
+//     * @param tagToMatchToEnums Int tag to match the map in the constructor
+//     * @param numToPop Number to pop off the stack
+//     * @return Returns the enum at the top of the stack. If the stack is empty, returns null
+//     * @ {@link StackManagerException}
+//     */
+//    public E popTheStack(int tagToMatchToEnums, int numToPop) {
+//        if(numToPop <= 0){
+//            throw buildException(NO_NEGATIVE_NUMBERS_TO_POP, null, tagToMatchToEnums);
+//        }
+//        StackManagerObjects.CustomStackManagerPOJO pojo = getStackPOJO(tagToMatchToEnums);
+//        Stack stack = pojo.getManagedStack();
+//        int size = stack.size();
+//        while(numToPop > 0) {
+//            if (maintainMinimumOneItemInStack) {
+//                if (size > 1) {
+//                    stack.pop();
+//                }
+//            } else {
+//                if (size > 0) {
+//                    stack.pop();
+//                }
+//            }
+//            numToPop--;
+//        }
+//        if(logChangesInStacks){
+//            L.m("stack matching tag " + tagToMatchToEnums + " enum: " + stack.toString());
+//        }
+//        if(size > 0) {
+//            return ((E) stack.peek());
+//        } else {
+//            return null;
+//        }
+//    }
+//
+//    /**
+//     * Gets the Stack<E>. If no stack is found, will throw exception
+//     * @param tag Tag matches one(s) passed in Constructor
+//     * @return {@link Stack<E>}
+//     * @ {@link StackManagerException}
+//     */
+//    private Stack<E> getStack(int tag)  {
+//        StackManagerObjects.CustomStackManagerPOJO pojo = getStackPOJO(tag);
+//        Stack<E> stackToManage = pojo.getManagedStack();
+//        return stackToManage;
+//    }
+//
+//    //////////////////////////////////////
+//    //Private classes for arg management//
+//    //////////////////////////////////////
+//
+//    /**
+//     * Checker for whether or not the stack already contains the enum passed
+//     * @param stack Stack containing current enums
+//     * @param enumToCheck Enum to check if it is already included in the stack
+//     * @return boolean, if true, stack already contains the enum object
+//     */
+//    private boolean stackContainsEnum(Stack<E> stack, E enumToCheck){
+//        try {
+//            for(E e : stack){
+//                if(e == enumToCheck){
+//                    return true;
+//                }
+//            }
+//        } catch (Exception e){
+//            return false;
+//        }
+//        return false;
+//    }
+//
+//    /**
+//     * Manage null enums passed. If null is passed, will throw exception
+//     * @param enumWorkingOn Matches one(s) passed in Constructor
+//     * @ {@link StackManagerException}
+//     */
+//    private void manageNullEnums(E enumWorkingOn)  {
+//        if(enumWorkingOn == null){
+//            throw buildException(BAD_ENUM, enumWorkingOn, null);
+//        }
+//    }
+//
+//    /**
+//     * Gets the POJO. If null is returned, will throw exception
+//     * @param tag Tag matches one(s) passed in Constructor
+//     * @return {@link StackManagerObjects.CustomStackManagerPOJO}
+//     * @ {@link StackManagerException}
+//     */
+//    private StackManagerObjects.CustomStackManagerPOJO getStackPOJO(int tag)  {
+//        StackManagerObjects.CustomStackManagerPOJO pojo = managedStacks.get(tag);
+//        if(pojo == null){
+//            throw buildException(INVALID_KEY, null, tag);
+//        }
+//        return pojo;
+//    }
+//
+//    ///////////////////////////////
+//    //Object for Stack Management//
+//    ///////////////////////////////
+//
+//    /**
+//     * Private class used to manage stacks
+//     */
+//    private class CustomStackManagerPOJO {
+//        private int key;
+//        private List<E> enumTypes;
+//        private Stack<E> managedStack;
+//
+//        int getKey() {
+//            return key;
+//        }
+//
+//        void setKey(int key) {
+//            this.key = key;
+//        }
+//
+//        List<E> getEnumTypes() {
+//            return enumTypes;
+//        }
+//
+//        void setEnumTypes(List<E> enumTypes) {
+//            this.enumTypes = enumTypes;
+//        }
+//
+//        Stack getManagedStack() {
+//            return managedStack;
+//        }
+//
+//        void setManagedStack(Stack managedStack) {
+//            this.managedStack = managedStack;
+//        }
+//    }
+//
+//
+//    //////////////////
+//    //Misc Utilities//
+//    //////////////////
+//
+//    /**
+//     * Build the the exception to throw
+//     * @return {@link StackManagerException}
+//     */
+//    private StackManagerException buildException(String desc, E enumPassed, Integer keyPassed){
+//        StackManagerException e = new StackManagerException();
+//        if(StringUtilities.isNullOrEmpty(desc)){
+//            desc = "An unknown error has occurred";
+//        }
+//        e.setErrorMessage(desc);
+//        e.setKey(keyPassed);
+//        String enumString = (enumPassed != null) ? enumPassed.toString() : "Null";
+//        e.setEnumToString(enumString);
+//        return e;
+//    }
+}
+
