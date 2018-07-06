@@ -65,16 +65,32 @@ public class FingerprintVerification {
 
     private static final String ANDROID_KEYSTORE = "AndroidKeyStore";
     private static final String FINGERPRINT_SUFFIX_STRING = ".fingerprint";
-
+    /**
+     * Will trigger upon authentication success, IE, fingerprint matches those stored in phone.
+     * When using {@link OnTaskCompleteListener#onTaskComplete(Object, int)}, the object will always be passed as a boolean
+     */
     public static final int TAG_AUTHENTICATION_SUCCESS = 9322;
+    /**
+     * Will trigger upon authentication fail, IE, fingerprint does not match any stored in phone.
+     * When using {@link OnTaskCompleteListener#onTaskComplete(Object, int)}, the object will always be passed as a boolean
+     */
     public static final int TAG_AUTHENTICATION_FAIL = 9323;
+    /**
+     * Will trigger upon an error, IE, manual call to {@link FingerprintHandler#stopAuth()} or
+     * when the app goes into the background unexpectedly.
+     * When using {@link OnTaskCompleteListener#onTaskComplete(Object, int)}, the object will always be passed as a String
+     */
     public static final int TAG_AUTHENTICATION_ERROR = 9324;
+    /**
+     * Will trigger upon helpful hints, IE, if you move the finger too quickly, you will see this text:
+     * "Finger moved too fast. Please try again".
+     * When using {@link OnTaskCompleteListener#onTaskComplete(Object, int)}, the object will always be passed as a String
+     */
     public static final int TAG_AUTHENTICATION_HELP = 9325;
 
 
     //For FingerprintManager.AuthenticationCallback Extension:
     private CancellationSignal cancellationSignal;
-
     //Vars
     private FingerprintManager.CryptoObject cryptoObject;
     private FingerprintManager fingerprintManager;
@@ -84,7 +100,6 @@ public class FingerprintVerification {
     private KeyGenerator keyGenerator;
     private SecretKey secretKey;
     private FingerprintHandler fingerprintHandler;
-
     //Standard Vars
     private OnTaskCompleteListener listener;
     private Context context;
@@ -270,8 +285,8 @@ public class FingerprintVerification {
         }
 
         try {
-            this.keyStore.load(null);
             this.secretKey = generateKey();
+            this.keyStore.load(null);
 //            key = (SecretKey) this.keyStore.getKey(keyName, null); todo needed?
             this.cipher.init(Cipher.ENCRYPT_MODE, this.secretKey);
             //Return true if the cipher has been initialized successfully//
