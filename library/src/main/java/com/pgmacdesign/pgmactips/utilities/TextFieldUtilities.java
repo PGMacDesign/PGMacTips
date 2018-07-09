@@ -1,5 +1,6 @@
 package com.pgmacdesign.pgmactips.utilities;
 
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.Html;
@@ -21,8 +22,10 @@ public class TextFieldUtilities {
     public static <T extends TextView>  void setShadow(@NonNull T textView,
                                                        float translationZ, float elevation){
         try {
-            textView.setTranslationZ(translationZ);
-            textView.setElevation(elevation);
+            if(Build.VERSION.SDK_INT >= 21) {
+                textView.setTranslationZ(translationZ);
+                textView.setElevation(elevation);
+            }
         } catch (Exception e){}//Can trigger on apis < 21
     }
 
@@ -130,7 +133,7 @@ public class TextFieldUtilities {
         if(viewToSet == null || StringUtilities.isNullOrEmpty(stringToSet)){
             return;
         }
-        if(SystemUtilities.userHasNougatOrHigher()){
+        if(Build.VERSION.SDK_INT >= 24) {
             viewToSet.setText(Html.fromHtml(stringToSet, Html.FROM_HTML_MODE_LEGACY));
         } else {
             viewToSet.setText(Html.fromHtml(stringToSet));

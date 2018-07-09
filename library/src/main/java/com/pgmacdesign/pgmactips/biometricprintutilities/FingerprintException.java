@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmactips.authenticationutilities;
+package com.pgmacdesign.pgmactips.biometricprintutilities;
 
 /**
  * Simple class for Exceptions. Leaving here for expanding it in the future

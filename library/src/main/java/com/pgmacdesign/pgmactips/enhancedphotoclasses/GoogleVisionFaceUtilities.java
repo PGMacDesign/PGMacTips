@@ -6,7 +6,7 @@ package com.pgmacdesign.pgmactips.enhancedphotoclasses;
  * Created by pmacdowell on 9/1/2016.
  */
 @Deprecated
-public class GoogleVisionFaceUtilities {
+class GoogleVisionFaceUtilities {
 //
 //    /*
 //    (0, 0) represents the top-left of the camera field of view,

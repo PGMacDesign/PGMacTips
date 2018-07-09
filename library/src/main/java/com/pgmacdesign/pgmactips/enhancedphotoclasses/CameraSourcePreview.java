@@ -4,7 +4,7 @@ package com.pgmacdesign.pgmactips.enhancedphotoclasses;
  * Created by pmacdowell on 8/31/2016.
  */
 @Deprecated
-public class CameraSourcePreview {
+class CameraSourcePreview {
 //        extends ViewGroup {
 //
 //    private static final String TAG = "CameraSourcePreview";

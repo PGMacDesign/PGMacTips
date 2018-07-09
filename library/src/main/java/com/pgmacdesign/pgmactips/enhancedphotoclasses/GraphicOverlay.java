@@ -12,7 +12,7 @@ package com.pgmacdesign.pgmactips.enhancedphotoclasses;
  * Samples pulled from: https://github.com/googlesamples/android-vision
  */
 @Deprecated
-public class GraphicOverlay { //<T extends GraphicOverlay.Graphic> extends View {
+class GraphicOverlay { //<T extends GraphicOverlay.Graphic> extends View {
 
 //    private final Object mLock = new Object();
 //    private int mPreviewWidth;

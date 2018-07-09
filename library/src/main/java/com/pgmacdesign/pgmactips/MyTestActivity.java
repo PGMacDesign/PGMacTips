@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +18,8 @@ import com.pgmacdesign.pgmactips.adaptersandlisteners.GenericRecyclerviewAdapter
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.customui.MultiColorLine;
 import com.pgmacdesign.pgmactips.datamodels.SamplePojo;
+import com.pgmacdesign.pgmactips.biometricprintutilities.BiometricVerification;
+import com.pgmacdesign.pgmactips.biometricprintutilities.FingerprintException;
 import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitClient;
@@ -28,11 +31,13 @@ import com.pgmacdesign.pgmactips.stackmanagement.StackManagerException;
 import com.pgmacdesign.pgmactips.utilities.CameraMediaUtilities;
 import com.pgmacdesign.pgmactips.utilities.ContactUtilities;
 import com.pgmacdesign.pgmactips.utilities.DatabaseUtilities;
+import com.pgmacdesign.pgmactips.utilities.EncryptionUtilities;
 import com.pgmacdesign.pgmactips.utilities.L;
 import com.pgmacdesign.pgmactips.utilities.MalwareUtilities;
 import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
 import com.pgmacdesign.pgmactips.utilities.NumberUtilities;
 import com.pgmacdesign.pgmactips.utilities.PermissionUtilities;
+import com.pgmacdesign.pgmactips.utilities.SharedPrefsEncrypted;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,6 +61,7 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
     private CameraMediaUtilities cam;
     private Button button;
     private RecyclerView testing_layout_recyclerview;
+    private BiometricVerification biometricVerification;
    // private MultipurposeEditText et;
     private static final String CUSTOM_STRING = "-PAT";
     private ContactUtilities contactUtilities;
@@ -80,7 +86,83 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
 	    
         //init();
         //init2();
-	    
+        //init3();
+	    //init4();
+        init5();
+
+    }
+
+    private void init5(){
+        L.m("init shared prefs encrypted");
+        SharedPrefsEncrypted sp = SharedPrefsEncrypted.getEncryptedSharedPrefsInstance(this, "pattest1", "password1");
+//        init5Save(sp);
+        init5Get(sp);
+    }
+
+    private static void init5Save(SharedPrefsEncrypted sp){
+        L.m("save shared prefs encrypted");
+        sp.save("TEST", "worked?");
+        sp.save("BOOL_TEST", true);
+    }
+
+    private static void init5Get(SharedPrefsEncrypted sp){
+        L.m("get shared prefs encrypted");
+        String test = sp.getString("TEST", "nope");
+        boolean worked = sp.getBoolean("BOOL_TEST", false);
+        L.m("TEST == " + test);
+        L.m("worked == " + worked);
+    }
+
+    private void init4(){
+        byte[] bb = EncryptionUtilities.convertSaltTo16Digits("my_test");
+        String s = EncryptionUtilities.convertToMD5Hash("pattest1");
+        L.m("s == " + s);
+    }
+
+    @SuppressLint("MissingPermission")
+    private void init3(){
+        if(Build.VERSION.SDK_INT >= 23) {
+            this.biometricVerification = new BiometricVerification(
+                    new OnTaskCompleteListener() {
+                        @SuppressLint("NewApi")
+                        @Override
+                        public void onTaskComplete(Object result, int customTag) {
+                            switch (customTag){
+                                case BiometricVerification.TAG_AUTHENTICATION_FAIL:
+                                    //Authentication failed / finger does not match
+                                    boolean fail = (boolean) result;
+                                    break;
+
+                                case BiometricVerification.TAG_AUTHENTICATION_SUCCESS:
+                                    //Authentication success / finger matches
+                                    boolean success = (boolean) result;
+                                    break;
+
+                                case BiometricVerification.TAG_AUTHENTICATION_ERROR:
+                                    //Error (IE called stopFingerprintAuth() or onStop() triggered)
+                                    String knownAuthenticationError = (String) result;
+                                    break;
+
+                                case BiometricVerification.TAG_AUTHENTICATION_HELP:
+                                    //Authentication did not work, help string passed
+                                    String helpString = (String) result;
+                                    break;
+
+                                case BiometricVerification.TAG_GENERIC_ERROR:
+                                    //Some error has occurred
+                                    String genericError = (String) result;
+                                    break;
+                            }
+                        }
+                    }, this, "my_key_name");
+            try {
+                if(this.biometricVerification.isCriteriaMet()) {
+                    this.biometricVerification.startFingerprintAuth();
+                }
+            } catch (FingerprintException e){
+                e.printStackTrace();
+            }
+        }
     }
 
     private void init2(){
@@ -303,7 +385,7 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
                 L.m("custom tag = " + customTag);
             }
         });
-        cam.startPhotoProcess(CameraMediaUtilities.SourceType.CAMERA_SELF_PHOTO);
+        cam.startPhotoProcess(CameraMediaUtilities.SourceType.GALLERY);
     }
 
     private void testLoadingAnimation(){
@@ -343,6 +425,7 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
     @SuppressLint("MissingPermission")
     @Override
     public void onClick(View view) {
+
         //doWebCall();
         /*
         TimerUtilities.startTimer(new OnTaskCompleteListener() {

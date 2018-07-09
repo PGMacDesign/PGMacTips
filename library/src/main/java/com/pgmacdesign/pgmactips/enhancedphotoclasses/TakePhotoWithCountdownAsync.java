@@ -4,7 +4,7 @@ package com.pgmacdesign.pgmactips.enhancedphotoclasses;
  * Created by PatrickSSD2 on 9/21/2016.
  */
 @Deprecated
-public class TakePhotoWithCountdownAsync { // <T extends TextView> extends AsyncTask<Void, Integer, Void> {
+class TakePhotoWithCountdownAsync { // <T extends TextView> extends AsyncTask<Void, Integer, Void> {
 //
 //    private int numSecondsCountdown;
 //    private boolean bailOut;

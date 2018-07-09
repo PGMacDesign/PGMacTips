@@ -5,7 +5,7 @@ package com.pgmacdesign.pgmactips.enhancedphotoclasses;
  * Created by pmacdowell on 8/31/2016.
  */
 @Deprecated
-public class FilterOverlay { // <T extends FilterOverlay.Graphic> extends View {
+class FilterOverlay { // <T extends FilterOverlay.Graphic> extends View {
 //    private final Object mLock = new Object();
 //    private int mPreviewWidth;
 //    private float mWidthScaleFactor = 1.0f;

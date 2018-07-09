@@ -22,8 +22,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
-import com.pgmacdesign.pgmactips.enhancedphotoclasses.TakePhotoActivity;
-import com.pgmacdesign.pgmactips.enhancedphotoclasses.TakePhotoActivityAPI21;
 import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.yalantis.ucrop.UCrop;
@@ -190,7 +188,7 @@ public class CameraMediaUtilities {
      * Source Type enum to be used for photo setting / getting
      */
     public enum SourceType {
-        CAMERA, VIDEO, GALLERY, WEB_URL, CAMERA_SELF_PHOTO
+        CAMERA, VIDEO, GALLERY, WEB_URL; //, CAMERA_SELF_PHOTO
     }
 
     /**
@@ -617,9 +615,9 @@ public class CameraMediaUtilities {
                 this.cropPhotoFromWeb();
                 break;
 
-            case CAMERA_SELF_PHOTO:
-                this.startSelfPhoto();
-                break;
+//            case CAMERA_SELF_PHOTO:
+//                this.startSelfPhoto();
+//                break;
         }
     }
 
@@ -750,21 +748,22 @@ public class CameraMediaUtilities {
     /**
      * Take a self photo (Again, I refuse to say selfie)
      */
+    @Deprecated
     private void startSelfPhoto(){
-        //Get their build version first
-        Intent intent;
-        if(SystemUtilities.userHasMarshmallowOrHigher()){
-            intent = new Intent(activity, TakePhotoActivityAPI21.class);
-        } else {
-            intent = new Intent(activity, TakePhotoActivity.class);
-        }
-
-        //intent.putExtra(CameraMediaUtilities.TAG_FILE_PATH, userSentPathToFile);
-        intent.putExtra(CameraMediaUtilities.TAG_FILE_NAME, userSentNameOfFile);
-        intent.putExtra(CameraMediaUtilities.TAG_FILE_EXTENSION, photoExtension);
-        intent.putExtra(CameraMediaUtilities.TAG_USE_FLASH, true);
-
-        activity.startActivityForResult(intent, TAG_TAKE_SELF_PHOTO);
+//        //Get their build version first
+//        Intent intent;
+//        if(SystemUtilities.userHasMarshmallowOrHigher()){
+//            intent = new Intent(activity, TakePhotoActivityAPI21.class);
+//        } else {
+//            intent = new Intent(activity, TakePhotoActivity.class);
+//        }
+//
+//        //intent.putExtra(CameraMediaUtilities.TAG_FILE_PATH, userSentPathToFile);
+//        intent.putExtra(CameraMediaUtilities.TAG_FILE_NAME, userSentNameOfFile);
+//        intent.putExtra(CameraMediaUtilities.TAG_FILE_EXTENSION, photoExtension);
+//        intent.putExtra(CameraMediaUtilities.TAG_USE_FLASH, true);
+//
+//        activity.startActivityForResult(intent, TAG_TAKE_SELF_PHOTO);
     }
 
     /**

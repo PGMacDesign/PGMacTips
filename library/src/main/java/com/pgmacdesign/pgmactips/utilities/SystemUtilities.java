@@ -3,6 +3,8 @@ package com.pgmacdesign.pgmactips.utilities;
 import android.os.Build;
 
 /**
+ * SystemUtilities is used for quick referencing builds, versions, and other various tools so
+ * as to minimize having to google which version was which.
  * Created by pmacdowell on 8/12/2016.
  */
 public class SystemUtilities {

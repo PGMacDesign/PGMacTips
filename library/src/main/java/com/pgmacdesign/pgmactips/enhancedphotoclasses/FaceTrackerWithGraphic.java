@@ -4,7 +4,7 @@ package com.pgmacdesign.pgmactips.enhancedphotoclasses;
  * Created by PatrickSSD2 on 9/21/2016.
  */
 @Deprecated
-public class FaceTrackerWithGraphic {// extends Tracker<Face>  {
+class FaceTrackerWithGraphic {// extends Tracker<Face>  {
 
 //
 //

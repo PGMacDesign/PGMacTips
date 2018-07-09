@@ -44,6 +44,7 @@ public class EncryptionUtilities {
 
     private static final int iterationCount = 1000;
     private static final int keyLength = 256;
+    private static final int IV_LENGTH_BYTES = 16;
     //private static final int saltLength = (keyLength / 8); // same size as key output
     private static final String PUBLIC_KEY_CRYPT_STANDARD = "PBKDF2WithHmacSHA1";
     private static final String CIPHER_INSTANCE_TYPE = "AES/CBC/PKCS5Padding";
@@ -365,7 +366,8 @@ public class EncryptionUtilities {
         messageDigest.update(plainText);
         final byte[] digest = messageDigest.digest();
         plainText = null;
-        return StringUtilities.toHex(digest, false);
+        String hex = StringUtilities.toHex(digest, false);
+        return hex;
     }
 
     /**
@@ -420,6 +422,9 @@ public class EncryptionUtilities {
      */
     public static byte[] convertSaltTo16Digits(@NonNull byte[] salt) {
         if(salt == null){
+            return salt;
+        }
+        if(salt.length <= 0){
             return salt;
         }
         if (salt.length == 16) {

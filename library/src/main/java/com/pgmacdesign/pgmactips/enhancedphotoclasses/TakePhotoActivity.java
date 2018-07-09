@@ -5,7 +5,7 @@ package com.pgmacdesign.pgmactips.enhancedphotoclasses;
  * Created by pmacdowell on 9/20/2016.
  */
 @Deprecated
-public class TakePhotoActivity { //extends AppCompatActivity implements View.OnClickListener, CustomPhotoListener {
+class TakePhotoActivity { //extends AppCompatActivity implements View.OnClickListener, CustomPhotoListener {
 //
 //    //UI
 //    private ImageView take_photo_activity_shutter_button;

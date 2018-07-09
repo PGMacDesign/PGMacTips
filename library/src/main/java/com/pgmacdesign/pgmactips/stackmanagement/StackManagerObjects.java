@@ -5,7 +5,7 @@ package com.pgmacdesign.pgmactips.stackmanagement;
  * todo at a later date
  * Created by pmacdowell on 7/6/2018.
  */
-public class StackManagerObjects <E extends Object> {
+class StackManagerObjects <E extends Object> {
 
 //    private static final String BAD_ENUM = "The enum you passed was null, please check your params and try again";
 //    private static final String INSTANTIATION_ERROR = "No stack was created; please check your params and re-instantiate the object";

@@ -31,18 +31,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * StringUtilities handles a wide array of tasks and operations against Strings or converting to Strings.
  * Created by pmacdowell on 8/12/2016.
  */
 public class StringUtilities {
 
-    public static final String REGEX_WEB_URL_ENCODING = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
-    public static final String REGEX_PASSWORD_PATTERN = "^\\S*(?=\\S*[a-zA-Z])(?=\\S*[0-9])\\S*$";
-
-
-    public static final long ONE_SECOND = (1000);
-    public static final long ONE_MINUTE = (1000*60);
-    public static final long ONE_HOUR = (1000*60*60);
-    public static final long ONE_DAY = (1000*60*60*24);
+    static final String REGEX_WEB_URL_ENCODING = PGMacTipsConstants.REGEX_WEB_URL_ENCODING;
+    static final String REGEX_PASSWORD_PATTERN = PGMacTipsConstants.REGEX_PASSWORD_PATTERN;
+    
 
     public static final int DATE_MM_DD_YYYY = 4405;
     public static final int DATE_MM_DD_YY = 4406;
@@ -1664,69 +1660,69 @@ public class StringUtilities {
         if(time < 0){
             return "In the future";
         } else {
-            if(time <= (ONE_MINUTE)){
+            if(time <= (PGMacTipsConstants.ONE_MINUTE)){
                 return "A moment ago";
-            } else if (time <= (ONE_MINUTE * 2)){
+            } else if (time <= (PGMacTipsConstants.ONE_MINUTE * 2)){
                 return "1 minute ago";
-            } else if (time <= (ONE_MINUTE * 3)){
+            } else if (time <= (PGMacTipsConstants.ONE_MINUTE * 3)){
                 return "2 minutes ago";
-            } else if (time <= (ONE_MINUTE * 4)){
+            } else if (time <= (PGMacTipsConstants.ONE_MINUTE * 4)){
                 return "3 minutes ago";
-            } else if (time <= (ONE_MINUTE * 5)){
+            } else if (time <= (PGMacTipsConstants.ONE_MINUTE * 5)){
                 return "4 minutes ago";
-            } else if (time <= (ONE_MINUTE * 6)){
+            } else if (time <= (PGMacTipsConstants.ONE_MINUTE * 6)){
                 return "5 minutes ago";
-            } else if (time <= (ONE_MINUTE * 7)){
+            } else if (time <= (PGMacTipsConstants.ONE_MINUTE * 7)){
                 return "6 minutes ago";
-            } else if (time <= (ONE_MINUTE * 8)){
+            } else if (time <= (PGMacTipsConstants.ONE_MINUTE * 8)){
                 return "7 minutes ago";
-            } else if (time <= (ONE_MINUTE * 9)){
+            } else if (time <= (PGMacTipsConstants.ONE_MINUTE * 9)){
                 return "8 minutes ago";
-            } else if (time <= (ONE_MINUTE * 10)){
+            } else if (time <= (PGMacTipsConstants.ONE_MINUTE * 10)){
                 return "9 minutes ago";
-            } else if (time <= (ONE_MINUTE * 11)){
+            } else if (time <= (PGMacTipsConstants.ONE_MINUTE * 11)){
                 return "10 minutes ago";
-            } else if (time <= (ONE_MINUTE * 12)){
+            } else if (time <= (PGMacTipsConstants.ONE_MINUTE * 12)){
                 return "11 minutes ago";
-            } else if (time <= (ONE_MINUTE * 13)){
+            } else if (time <= (PGMacTipsConstants.ONE_MINUTE * 13)){
                 return "12 minutes ago";
-            } else if (time <= (ONE_MINUTE * 14)){
+            } else if (time <= (PGMacTipsConstants.ONE_MINUTE * 14)){
                 return "13 minutes ago";
-            } else if (time <= (ONE_MINUTE * 15)){
+            } else if (time <= (PGMacTipsConstants.ONE_MINUTE * 15)){
                 return "14 minutes ago";
-            } else if (time <= (ONE_MINUTE * 16)){
+            } else if (time <= (PGMacTipsConstants.ONE_MINUTE * 16)){
                 return "15 minutes ago";
-            } else if (time <= (ONE_MINUTE * 29)){
+            } else if (time <= (PGMacTipsConstants.ONE_MINUTE * 29)){
                 return "20 minutes ago";
-            } else if (time <= (ONE_MINUTE * 59)){
+            } else if (time <= (PGMacTipsConstants.ONE_MINUTE * 59)){
                 return "30 minutes ago";
-            } else if (time <= (ONE_HOUR * 2)){
+            } else if (time <= (PGMacTipsConstants.ONE_HOUR * 2)){
                 return "An hour ago";
-            } else if (time <= (ONE_HOUR * 3)){
+            } else if (time <= (PGMacTipsConstants.ONE_HOUR * 3)){
                 return "2 hours ago";
-            } else if (time <= (ONE_HOUR * 4)){
+            } else if (time <= (PGMacTipsConstants.ONE_HOUR * 4)){
                 return "3 hours ago";
-            } else if (time <= (ONE_HOUR * 5)){
+            } else if (time <= (PGMacTipsConstants.ONE_HOUR * 5)){
                 return "4 hours ago";
-            } else if (time <= (ONE_HOUR * 6)){
+            } else if (time <= (PGMacTipsConstants.ONE_HOUR * 6)){
                 return "5 hours ago";
-            } else if (time <= (ONE_HOUR * 7)){
+            } else if (time <= (PGMacTipsConstants.ONE_HOUR * 7)){
                 return "6 hours ago";
-            } else if (time <= (ONE_HOUR * 8)){
+            } else if (time <= (PGMacTipsConstants.ONE_HOUR * 8)){
                 return "7 hours ago";
-            } else if (time <= (ONE_HOUR * 9)){
+            } else if (time <= (PGMacTipsConstants.ONE_HOUR * 9)){
                 return "8 hours ago";
-            } else if (time <= (ONE_HOUR * 10)){
+            } else if (time <= (PGMacTipsConstants.ONE_HOUR * 10)){
                 return "9 hours ago";
-            } else if (time <= (ONE_HOUR * 11)){
+            } else if (time <= (PGMacTipsConstants.ONE_HOUR * 11)){
                 return "10 hours ago";
-            } else if (time <= (ONE_HOUR * 12)){
+            } else if (time <= (PGMacTipsConstants.ONE_HOUR * 12)){
                 return "11 hours ago";
-            } else if (time <= (ONE_HOUR * 13)){
+            } else if (time <= (PGMacTipsConstants.ONE_HOUR * 13)){
                 return "12 hours ago";
-            } else if (time <= (ONE_HOUR * 24)){
+            } else if (time <= (PGMacTipsConstants.ONE_HOUR * 24)){
                 return "12 hours ago";
-            } else if (time <= (ONE_DAY * 2)){
+            } else if (time <= (PGMacTipsConstants.ONE_DAY * 2)){
                 return "Yesterday";
             } else {
                 return timeEventHappened.toString();
