@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="#ffffff">
+    android:layout_gravity="center_horizontal|center_vertical|center"
+    android:background="@drawable/custom_background_white_back_black_edges"
+    android:padding="4dp">
 
     <!-- Title -->
     <TextView
@@ -34,7 +36,7 @@
     <!-- Scrollview that holds the TV in the middle -->
     <ScrollView
         android:layout_below="@+id/view1"
-        android:layout_above="@+id/view2"
+        android:id="@+id/three_button_dialog_scrollview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
@@ -63,7 +65,7 @@
         android:id="@+id/view2"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_above="@+id/three_button_dialog_buttons_layout"
+        android:layout_below="@+id/three_button_dialog_scrollview"
         android:background="#33000000"
         android:layout_marginBottom="8dp"
         />
@@ -73,7 +75,8 @@
         android:id="@+id/three_button_dialog_buttons_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/view2"
+        android:gravity="center_horizontal"
         android:background="#ffffff"
         android:orientation="horizontal"
         android:weightSum="100"

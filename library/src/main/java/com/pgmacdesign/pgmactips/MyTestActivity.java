@@ -16,12 +16,13 @@ import android.widget.TextView;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.GenericRecyclerviewAdapter;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
+import com.pgmacdesign.pgmactips.biometricutilities.BiometricVerification;
+import com.pgmacdesign.pgmactips.biometricutilities.FingerprintException;
 import com.pgmacdesign.pgmactips.customui.MultiColorLine;
 import com.pgmacdesign.pgmactips.datamodels.SamplePojo;
-import com.pgmacdesign.pgmactips.biometricprintutilities.BiometricVerification;
-import com.pgmacdesign.pgmactips.biometricprintutilities.FingerprintException;
 import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
+import com.pgmacdesign.pgmactips.misc.TempString;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitClient;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitParser;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.serviceapiinterfaces.ProfanityCheckerAPICalls;
@@ -31,14 +32,14 @@ import com.pgmacdesign.pgmactips.stackmanagement.StackManagerException;
 import com.pgmacdesign.pgmactips.utilities.CameraMediaUtilities;
 import com.pgmacdesign.pgmactips.utilities.ContactUtilities;
 import com.pgmacdesign.pgmactips.utilities.DatabaseUtilities;
-import com.pgmacdesign.pgmactips.utilities.EncryptionUtilities;
 import com.pgmacdesign.pgmactips.utilities.L;
 import com.pgmacdesign.pgmactips.utilities.MalwareUtilities;
 import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
 import com.pgmacdesign.pgmactips.utilities.NumberUtilities;
 import com.pgmacdesign.pgmactips.utilities.PermissionUtilities;
-import com.pgmacdesign.pgmactips.utilities.SharedPrefsEncrypted;
+import com.pgmacdesign.pgmactips.utilities.SharedPrefs;
 
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -92,31 +93,124 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
 
     }
 
+    private SharedPrefs sp;
     private void init5(){
-        L.m("init shared prefs encrypted");
-        SharedPrefsEncrypted sp = SharedPrefsEncrypted.getEncryptedSharedPrefsInstance(this, "pattest1", "password1");
-//        init5Save(sp);
-        init5Get(sp);
+        try {
+            sp = SharedPrefs.getSharedPrefsInstance(this, "pattest1", new TempString("pattest4"));
+//            init5Clear();
+//            init5Save();
+        } catch (GeneralSecurityException ge){
+            ge.printStackTrace();
+            sp = SharedPrefs.getSharedPrefsInstance(this, "pattest1");
+        }
+//        sp = SharedPrefs.getSharedPrefsInstance(this, "pattest1");
+//        init5Clear();
+//        if(true){
+//            return;
+//        }
+        init5Save();
+        L.m("saved data using init5");
+//        init6Save();
+//        init5Get(sp);
+
+//        if(true){
+//            return;
+//        }
+
+        L.m("\n");
+        L.m("Printing out data before changePassword called");
+        MiscUtilities.printOutHashMap(sp.getAllPrefs());
+        L.m("\n");
+
+        sp.destroySensitiveData();
+        sp.save("non_encrypted_stuff", "sure, why not");
+        L.m("\n");
+        L.m("Printing out data after destroyAllData() and adding 1");
+        MiscUtilities.printOutHashMap(sp.getAllPrefs());
+        L.m("\n");
+
+        if(true){
+            return;
+        }
+
+        try {
+            sp.disableEncryption();
+            sp.save("non_encrypted_stuff", "sure, why not");
+            L.m("\n");
+            L.m("Printing out data after disabling encryption and adding 1");
+            MiscUtilities.printOutHashMap(sp.getAllPrefs());
+            L.m("\n");
+
+            sp.reEnableEncryption();
+
+            L.m("\n");
+            L.m("Printing out data after calling reEnableEncryption()");
+            MiscUtilities.printOutHashMap(sp.getAllPrefs());
+            L.m("\n");
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        if(true){
+            return;
+        }
+        try {
+            sp.changePassword(new TempString("pattest991"));
+        } catch (GeneralSecurityException ge){
+            ge.printStackTrace();
+        }
+        L.m("\n");
+        L.m("Printing out data after changePassword called");
+        MiscUtilities.printOutHashMap(sp.getAllPrefs());
+        L.m("\n");
+//        init5Clear();
     }
 
-    private static void init5Save(SharedPrefsEncrypted sp){
+    private static final String KEY_STR = "STRING_TEST";
+    private static final String KEY_BOOL = "BOOL_TEST";
+    private static final String KEY_DBL = "DOUBLE_TEST";
+    private static final String KEY_LONG = "LONG_TEST";
+    private static final String KEY_INT = "INT_TEST";
+
+    private void init5Clear(){
+        sp.clearPref(KEY_STR);
+        sp.clearPref(KEY_BOOL);
+        sp.clearPref(KEY_DBL);
+        sp.clearPref(KEY_LONG);
+        sp.clearPref(KEY_INT);
+    }
+
+    private void init5Save(){
         L.m("save shared prefs encrypted");
-        sp.save("TEST", "worked?");
-        sp.save("BOOL_TEST", true);
+        sp.save(KEY_STR, "worked?");
+//        sp.save(KEY_BOOL, true);
+//        sp.save(KEY_DBL, 123.123123);
+//        sp.save(KEY_LONG, 555555555555555L);
+//        sp.save(KEY_INT, 123);
     }
 
-    private static void init5Get(SharedPrefsEncrypted sp){
+    private void init6Save(){
+        L.m("save shared prefs encrypted");
+        sp.save(KEY_STR, "DIFFERENT_worked?");
+        sp.save(KEY_BOOL, true);
+        sp.save(KEY_DBL, 321.321321321);
+        sp.save(KEY_LONG, 11111111111L);
+        sp.save(KEY_INT, 222);
+    }
+
+    private void init5Get(){
         L.m("get shared prefs encrypted");
-        String test = sp.getString("TEST", "nope");
-        boolean worked = sp.getBoolean("BOOL_TEST", false);
-        L.m("TEST == " + test);
-        L.m("worked == " + worked);
-    }
-
-    private void init4(){
-        byte[] bb = EncryptionUtilities.convertSaltTo16Digits("my_test");
-        String s = EncryptionUtilities.convertToMD5Hash("pattest1");
-        L.m("s == " + s);
+        String str = sp.getString(KEY_STR, "nope");
+        boolean bool = sp.getBoolean(KEY_BOOL, false);
+        double dbl = sp.getDouble(KEY_DBL, -1.1);
+        long lng = sp.getLong(KEY_LONG, -1);
+        int intx = sp.getInt(KEY_INT, -1);
+        L.m("str == " + str);
+        L.m("bool == " + bool);
+        L.m("dbl == " + dbl);
+        L.m("lng == " + lng);
+        L.m("intx == " + intx);
     }
 
     @SuppressLint("MissingPermission")
@@ -425,7 +519,7 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
     @SuppressLint("MissingPermission")
     @Override
     public void onClick(View view) {
-
+        init5Get();
         //doWebCall();
         /*
         TimerUtilities.startTimer(new OnTaskCompleteListener() {

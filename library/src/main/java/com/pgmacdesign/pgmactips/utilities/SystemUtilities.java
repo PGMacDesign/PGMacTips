@@ -1,6 +1,12 @@
 package com.pgmacdesign.pgmactips.utilities;
 
+import android.content.Context;
 import android.os.Build;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
+
+import com.pgmacdesign.pgmactips.BuildConfig;
 
 /**
  * SystemUtilities is used for quick referencing builds, versions, and other various tools so
@@ -235,6 +241,63 @@ public class SystemUtilities {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Gets the hardware serial number of this device.
+     *
+     * @return serial number or Settings.Secure.ANDROID_ID if not available.
+     */
+    public static String getDeviceSerialNumber(@NonNull Context context) {
+        // We're using the Reflection API because Build.SERIAL is only available
+        // since API Level 9 (Gingerbread, Android 2.3).
+        try {
+            String deviceSerial = (String) Build.class.getField("SERIAL").get(
+                    null);
+            if (TextUtils.isEmpty(deviceSerial)) {
+                return Settings.Secure.getString(
+                        context.getContentResolver(),
+                        Settings.Secure.ANDROID_ID);
+            } else {
+                return deviceSerial;
+            }
+        } catch (Exception ignored) {
+            // Fall back  to Android_ID
+            return Settings.Secure.getString(context.getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
+        }
+    }
+
+    /**
+     * Gets the package name. If null returned, send call again with context
+     * @return
+     */
+    public static String getPackageName(){
+        try {
+            return BuildConfig.APPLICATION_ID;
+        } catch (Exception e){
+            return null;
+        }
+    }
+
+    /**
+     * Overloaded method in case getPackageName returns null
+     * @param context context
+     * @return
+     */
+    public static String getPackageName(Context context){
+        String packageName = null;
+        try {
+            packageName = context.getPackageManager().getPackageInfo(
+                    getPackageName(), 0).packageName;
+            if(!StringUtilities.isNullOrEmpty(packageName)){
+                return packageName;
+            }
+        } catch (Exception e){}
+        try{
+            packageName = context.getPackageName();
+        } catch (Exception e){e.printStackTrace();}
+        return packageName;
     }
 
 }

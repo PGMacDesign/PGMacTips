@@ -19,6 +19,7 @@ import com.pgmacdesign.pgmactips.BuildConfig;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -202,7 +203,9 @@ public class MiscUtilities {
         for(Map.Entry<?,?> map : myMap.entrySet()){
             Object key = map.getKey();
             Object value = map.getValue();
-            L.m(key.toString() + ", " + value.toString());
+            String keyStr = (key == null) ? "null" : key.toString();
+            String valueStr = (value == null) ? "null" : value.toString();
+            L.m(keyStr + ", " + valueStr);
         }
         L.m("\nEnd printing out Hashmap:");
     }
@@ -210,7 +213,9 @@ public class MiscUtilities {
     /**
      * Gets the package name. If null returned, send call again with context
      * @return
+     * @deprecated Please redirect to {@link SystemUtilities#getPackageName()}
      */
+    @Deprecated
     public static String getPackageName(){
         try {
             return BuildConfig.APPLICATION_ID;
@@ -219,6 +224,27 @@ public class MiscUtilities {
         }
     }
 
+    /**
+     * Overloaded method in case getPackageName returns null
+     * @param context context
+     * @return
+     * @deprecated Please redirect to {@link SystemUtilities#getPackageName()}
+     */
+    @Deprecated
+    public static String getPackageName(Context context){
+        String packageName = null;
+        try {
+            packageName = context.getPackageManager().getPackageInfo(
+                    getPackageName(), 0).packageName;
+            if(!StringUtilities.isNullOrEmpty(packageName)){
+                return packageName;
+            }
+        } catch (Exception e){}
+        try{
+            packageName = context.getPackageName();
+        } catch (Exception e){e.printStackTrace();}
+        return packageName;
+    }
 
     /**
      * Remove nulls from a list of list of objects
@@ -261,26 +287,6 @@ public class MiscUtilities {
             } catch (Exception e){}
         }
         return listToReturn;
-    }
-
-    /**
-     * Overloaded method in case getPackageName returns null
-     * @param context context
-     * @return
-     */
-    public static String getPackageName(Context context){
-        String packageName = null;
-        try {
-            packageName = context.getPackageManager().getPackageInfo(
-                    getPackageName(), 0).packageName;
-            if(!StringUtilities.isNullOrEmpty(packageName)){
-                return packageName;
-            }
-        } catch (Exception e){}
-        try{
-            packageName = context.getPackageName();
-        } catch (Exception e){e.printStackTrace();}
-        return packageName;
     }
 
     /*
@@ -457,4 +463,83 @@ public class MiscUtilities {
             return atomicInteger.get();
         }
     }
+
+    /**
+     * Simple getter for UTF-8 since it is recommended to use StandardCharsets after SDK level 19,
+     * but this library currently supports 15 as the minimum.
+     * @return
+     */
+    public static String getUTF8(){
+        if(Build.VERSION.SDK_INT >= 19){
+            return StandardCharsets.UTF_8.toString();
+        } else {
+            return "UTF-8";
+        }
+    }
+
+    /**
+     * Simple getter for ISO_8859-1 since it is recommended to use StandardCharsets after SDK level 19,
+     * but this library currently supports 15 as the minimum.
+     * @return
+     */
+    public static String getISO8859(){
+        if(Build.VERSION.SDK_INT >= 19){
+            return StandardCharsets.ISO_8859_1.toString();
+        } else {
+            return "ISO-8859-1";
+        }
+    }
+
+    /**
+     * Simple getter for US_ASCII since it is recommended to use StandardCharsets after SDK level 19,
+     * but this library currently supports 15 as the minimum.
+     * @return
+     */
+    public static String getASCII(){
+        if(Build.VERSION.SDK_INT >= 19){
+            return StandardCharsets.US_ASCII.toString();
+        } else {
+            return "US-ASCII";
+        }
+    }
+
+    /**
+     * Simple getter for UTF-16 since it is recommended to use StandardCharsets after SDK level 19,
+     * but this library currently supports 15 as the minimum.
+     * @return
+     */
+    public static String getUTF16(){
+        if(Build.VERSION.SDK_INT >= 19){
+            return StandardCharsets.UTF_16.toString();
+        } else {
+            return "UTF-16";
+        }
+    }
+
+    /**
+     * Simple getter for UTF-16BE since it is recommended to use StandardCharsets after SDK level 19,
+     * but this library currently supports 15 as the minimum.
+     * @return
+     */
+    public static String getUTF16BE(){
+        if(Build.VERSION.SDK_INT >= 19){
+            return StandardCharsets.UTF_16BE.toString();
+        } else {
+            return "UTF-16BE";
+        }
+    }
+
+    /**
+     * Simple getter for UTF-16LE since it is recommended to use StandardCharsets after SDK level 19,
+     * but this library currently supports 15 as the minimum.
+     * @return
+     */
+    public static String getUTF16LE(){
+        if(Build.VERSION.SDK_INT >= 19){
+            return StandardCharsets.UTF_16LE.toString();
+        } else {
+            return "UTF-16LE";
+        }
+    }
+
 }

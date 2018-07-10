@@ -581,7 +581,7 @@ public class PermissionUtilities {
                             }
                         }
                     }
-                }, "Grant Permissions", null, "Later", "Permissions Authorization Needed", message
+                }, "Grant Permissions", null, "Never", "Permissions Authorization Needed", message
         );
         if(dialog != null) {
             dialog.show();
@@ -616,7 +616,7 @@ public class PermissionUtilities {
                     pos++;
                 }
                 sb.append("\nTo enable these permissions, click on the 'Grant Permissions'" +
-                        " button below and turn them on in settings ");
+                        " button below and turn them on in settings.");
                 message = sb.toString();
             }
         }

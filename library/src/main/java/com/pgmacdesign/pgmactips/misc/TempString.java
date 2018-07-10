@@ -1,5 +1,7 @@
 package com.pgmacdesign.pgmactips.misc;
 
+import com.pgmacdesign.pgmactips.utilities.StringUtilities;
+
 import java.util.Arrays;
 
 import static com.pgmacdesign.pgmactips.utilities.StringUtilities.isNullOrEmpty;
@@ -140,5 +142,26 @@ public class TempString implements CharSequence{
             return true;
         }
         return false;
+    }
+
+    /**
+     * Simple checker for if they are equal
+     * @param obj
+     * @return
+     */
+    public boolean equals(TempString obj) {
+        if(obj == null){
+            return false;
+        }
+        try {
+            String thisStr = this.getTempStringData();
+            String otherStr = obj.getTempStringData();
+            if(StringUtilities.isNullOrEmpty(thisStr) || StringUtilities.isNullOrEmpty(otherStr)){
+                return false;
+            }
+            return StringUtilities.doesEqual(thisStr, otherStr);
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

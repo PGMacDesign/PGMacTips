@@ -1,10 +1,17 @@
 Change Log
 ==========
 
-Version 0.0.60 *(2018-07-06)*
+Version 0.0.60 *(2018-07-10)*
 ----------------------------
 
- * New: Added in FingerprintUtilities, which allows access to fingerprint checking. 
+ * New: Added in BiometricUtilities and BiometricVerification, which allows access to fingerprint checking. 
+ * Improvement: Refactored [SharedPrefs](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/SharedPrefs.java) to have all Encrypted aspects merged into the one file. Deprecated the older SharedPrefsEncrypted class and removed the dependency. The class should work identical to before but now has the option to use either encryption or not on the fly without having to issue a new build. 
+ * Update: Altered the ThreeButtonDialog in [DialogUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/DialogUtilities.java) class to resize proportionally for less text and allowed auto-resizing whenever one button text is sent in as null; this will allow for <3 buttons should someone choose to omit one purposefully. 
+ * Update: Refactored the [EncryptionUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/EncryptionUtilities.java) class to utilize better practices in saving and persisting data. Pulled most of the code from [this](https://github.com/tozny/java-aes-crypto/blob/master/aes-crypto/src/main/java/com/tozny/crypto/android/AesCbcWithIntegrity.java) repository. 
+ * Update: Refactored getPackageName() out of [MiscUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/MiscUtilities.java) and into [SystemUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/SystemUtilities.java)
+ * Update: Refactored the various getUTF8(), getISO8859(), etc calls out of [EncryptionUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/EncryptionUtilities.java) and into [MiscUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/MiscUtilities.java).
+ 
+ 
  
 Version 0.0.57-59 *(2018-07-03)*
 ----------------------------
