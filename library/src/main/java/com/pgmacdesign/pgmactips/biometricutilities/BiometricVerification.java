@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmactips.biometricprintutilities;
+package com.pgmacdesign.pgmactips.biometricutilities;
 
 import android.Manifest;
 import android.app.KeyguardManager;
@@ -317,7 +317,7 @@ public class BiometricVerification {
                 return this.secretKey;
             }
 
-            // Obtain a reference to the Keystore using the standard Android keystore container identifier (“AndroidKeystore”)//
+            // Obtain a reference to the Keystore using the standard Android keystore container identifier ("AndroidKeystore")//
             this.keyStore = KeyStore.getInstance(BiometricVerification.ANDROID_KEYSTORE);
 
             //Generate the key//

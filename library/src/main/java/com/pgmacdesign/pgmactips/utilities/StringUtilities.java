@@ -1729,5 +1729,19 @@ public class StringUtilities {
             }
         }
     }
+
+    /**
+     * Reverse a String and return it.
+     * @param str String to reverse.
+     * @return reversed String, sending in "PatRIck" would return "kcIRtaP".
+     */
+    public static String reverseString(@NonNull String str) {
+        if(StringUtilities.isNullOrEmpty(str)){
+            return str;
+        }
+        StringBuilder sb = new StringBuilder(str);
+        sb = sb.reverse();
+        return sb.toString();
+    }
 }
 

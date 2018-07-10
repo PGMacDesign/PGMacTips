@@ -189,8 +189,10 @@ public class DialogUtilities {
 //            //Will trigger if user has chrome disabled
 //        }
         webView.loadUrl(webUrlToLoad);
-        webView.setForegroundGravity(
-                Gravity.CENTER_HORIZONTAL|Gravity.CENTER_HORIZONTAL|Gravity.CENTER);
+        if(Build.VERSION.SDK_INT >= 23) {
+            webView.setForegroundGravity(
+                    Gravity.CENTER_HORIZONTAL | Gravity.CENTER_HORIZONTAL | Gravity.CENTER);
+        }
         builder.setView(webView);
         builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
             @Override
@@ -342,6 +344,9 @@ public class DialogUtilities {
                 context, listener, yesText, laterText, neverText, message, title
         );
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        try {
+            dialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.custom_background_white_back_black_edges_heavy_rounding));
+        } catch (Exception e){e.printStackTrace();}
         return dialog;
     }
 
@@ -666,6 +671,13 @@ public class DialogUtilities {
             three_button_dialog_title.setText(title);
             three_button_dialog_body.setText(bodyText);
 
+            //Set Visibilities
+            int yesVisibility = (StringUtilities.isNullOrEmpty(yesText)) ? View.GONE : View.VISIBLE;
+            int neverVisibility = (StringUtilities.isNullOrEmpty(neverText)) ? View.GONE : View.VISIBLE;
+            int laterVisibility = (StringUtilities.isNullOrEmpty(laterText)) ? View.GONE : View.VISIBLE;
+            three_button_dialog_option_yes.setVisibility(yesVisibility);
+            three_button_dialog_option_never.setVisibility(neverVisibility);
+            three_button_dialog_option_later.setVisibility(laterVisibility);
         }
 
         @Override

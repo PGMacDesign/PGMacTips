@@ -1,5 +1,5 @@
-apply plugin: 'com.android.application' //Add this when switching from lib to app
-//apply plugin: 'com.android.library' //Remove this when switching from lib to app
+//apply plugin: 'com.android.application' //Add this when switching from lib to app
+apply plugin: 'com.android.library' //Remove this when switching from lib to app
 //apply plugin: 'kotlin-android' //Removing for now due to problems
 apply plugin: 'realm-android'
 apply plugin: 'com.github.dcendents.android-maven'
@@ -54,9 +54,6 @@ android {
         }
     }
     dependencies {
-
-        //Secure Shared Prefs. Link: https://github.com/scottyab/secure-preferences
-        api 'com.scottyab:secure-preferences-lib:0.1.4'
 
         //Image Cropper. https://github.com/Yalantis/uCrop
         api 'com.yalantis:ucrop:2.2.0'

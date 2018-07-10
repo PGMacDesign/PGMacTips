@@ -9,9 +9,10 @@ import java.lang.annotation.RetentionPolicy;
 public class CustomAnnotationsBase {
 
     public static enum Dependencies {
-        SecurePreferences("https://github.com/scottyab/secure-preferences",
-                "com.scottyab:secure-preferences-lib:0.1.4", "0.1.4",
-                "Used for Shared Preferences encryption to protect data"),
+        //Removed on 2018-07-10; refactored into SharedPrefs
+//        SecurePreferences("https://github.com/scottyab/secure-preferences",
+//                "com.scottyab:secure-preferences-lib:0.1.4", "0.1.4",
+//                "Used for Shared Preferences encryption to protect data"),
         ElasticDownload("https://github.com/Tibolte/ElasticDownload",
                 "com.github.tibolte:elasticdownload:1.0.4", "1.0.4",
                 "Used as a UI animation for progress bars"),
@@ -30,6 +31,7 @@ public class CustomAnnotationsBase {
         Picasso("https://github.com/square/picasso",
                 "com.squareup.picasso:picasso:2.5.2", "2.5.2",
                 "Picasso is an image setting lib that is used in the ImageUtilities to set images from local resources and web urls"),
+        //Removed on 2018-07-01; not needed anymore with AndroidAnimations
 //        NineOldAndroids("https://github.com/JakeWharton/NineOldAndroids",
 //                "com.nineoldandroids:library:2.4.0", "2.4.0",
 //                "Old Android library is used as the base for a large number of animations libraries"),
