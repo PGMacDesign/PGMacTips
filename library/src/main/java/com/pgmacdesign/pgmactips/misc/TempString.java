@@ -131,6 +131,11 @@ public class TempString implements CharSequence{
         }
     }
 
+    /**
+     * Simple tool for checking if the temp string is empty or null
+     * @param tempString
+     * @return
+     */
     public static boolean isTempStringEmptyOrNull(TempString tempString){
         if(tempString == null){
             return true;
@@ -143,6 +148,7 @@ public class TempString implements CharSequence{
         }
         return false;
     }
+
 
     /**
      * Simple checker for if they are equal

@@ -537,6 +537,26 @@ public class SharedPrefs {
         this.edit1.clear();
         this.edit1.commit();
         this.prefs1 = null;
+        try {
+            //Check the 'enc_' variation
+            if(!StringUtilities.isNullOrEmpty(this.password)) {
+                if (this.isEncrypted) {
+                    this.disableEncryption();
+                } else {
+                    this.reEnableEncryption();
+                }
+                init();
+                this.edit1.clear();
+                this.edit1.commit();
+                this.prefs1 = null;
+
+                if(this.isEncrypted){
+                    this.disableEncryption();
+                } else {
+                    this.reEnableEncryption();
+                }
+            }
+        } catch (Exception e){}
     }
 
     /**

@@ -6,7 +6,10 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/google/skia.svg)
 
 # PGMacTips
-This will be a collection of utility methods that I use in nearly all of my projects
+
+This is a collection of utility methods, various wrappers, and examples that are all used to reduce boilerplate code in projects. 
+
+For a list of changes and the differences in versions, please see the [Changelog](https://github.com/PGMacDesign/PGMacTips/blob/master/CHANGELOG.MD). 
 
 ## Installation
 

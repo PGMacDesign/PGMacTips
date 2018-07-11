@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
+import com.pgmacdesign.pgmactips.misc.TempString;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -999,11 +1000,26 @@ public class StringUtilities {
     }
 
     /**
+     * Simple checker for the {@link TempString} class. Will check if it is null or empty
+     * @param tempString TempString to check
+     * @return boolean if it is empty or null, false if not.
+     */
+    public static boolean isNullOrEmpty(@Nullable TempString tempString){
+        if(tempString == null){
+            return true;
+        }
+        if(StringUtilities.isNullOrEmpty(tempString.getTempStringData())){
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Checks if the passed String is null or empty
      * @param str String to check
      * @return Boolean, true if it is null or empty, false if it is not.
      */
-    public static boolean isNullOrEmpty(String str){
+    public static boolean isNullOrEmpty(@Nullable String str){
         if(str == null){
             return true;
         }

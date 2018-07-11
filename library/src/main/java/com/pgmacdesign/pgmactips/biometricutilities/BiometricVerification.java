@@ -51,6 +51,7 @@ import javax.crypto.SecretKey;
  * input, for example when your app goes into the background. If you don’t use this method, then other
  * apps will be unable to access the touch sensor, including the lockscreen!
  * Created by pmacdowell on 7/6/2018.
+ * todo https://developer.android.com/reference/android/hardware/fingerprint/FingerprintManager.CryptoObject
  */
 @RequiresApi(23)
 public class BiometricVerification {
@@ -302,6 +303,7 @@ public class BiometricVerification {
      * Simple method to combine all of of the checker methods into one so as to reduce code.
      * @return boolean, will return true if all criteria has been met, false if not
      */
+    @RequiresPermission(Manifest.permission.USE_FINGERPRINT)
     public boolean isCriteriaMet(){
         return (this.doesHaveFingerprintPermission() && this.doesUserHaveLockEnabled() &&
                 this.doesUserHaveEnrolledFingerprints() && this.isFingerprintSensorAvailable());
