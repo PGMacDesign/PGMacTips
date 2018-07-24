@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+Version 0.0.61 *(2018-07-24)*
+----------------------------
+
+ * Fix: Fixed bugs relating to [RetrofitParser](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/networkclasses/retrofitutilities/RetrofitParser.java) and updated the responses. 
+ * New: Added in some new StringUtilities to calculate the [LevenshteinDistance](https://en.wikipedia.org/wiki/Levenshtein_distance)
+ 
 Version 0.0.60 *(2018-07-10)*
 ----------------------------
 
