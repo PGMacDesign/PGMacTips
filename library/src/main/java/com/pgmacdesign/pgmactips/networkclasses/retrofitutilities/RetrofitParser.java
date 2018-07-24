@@ -462,7 +462,13 @@ public class RetrofitParser {
             }
         } else {
             try {
-                return new Gson().fromJson(responseBodyString, successClassDataModel);
+                Object o = new Gson().fromJson(responseBodyString, successClassDataModel);
+                if(o != null){
+                    String testing = new Gson().toJson(o);
+                    if(!StringUtilities.doesEqualIgnoreCase(testing, EMPTY_JSON_RESPONSE)){
+                        return o;
+                    }
+                }
             } catch (IllegalArgumentException ile){
                 RetrofitParser.illegalArgumentHit(successClassDataModel.getName());
             } catch (Exception e) {
@@ -603,7 +609,13 @@ public class RetrofitParser {
             }
         } else {
             try {
-                return new Gson().fromJson(responseBodyString, successClassDataType);
+                Object o = new Gson().fromJson(responseBodyString, successClassDataType);
+                if(o != null){
+                    String testing = new Gson().toJson(o);
+                    if(!StringUtilities.doesEqualIgnoreCase(testing, EMPTY_JSON_RESPONSE)){
+                        return o;
+                    }
+                }
             } catch (IllegalArgumentException ile){
                 RetrofitParser.illegalArgumentHit(successClassDataType.getClass().getName());
             } catch (Exception e) {
@@ -751,13 +763,25 @@ public class RetrofitParser {
             }
         } else {
             try {
-                return new Gson().fromJson(errorBodyString, errorClassDataModel);
+                Object o = new Gson().fromJson(responseBodyString, errorClassDataModel);
+                if(o != null){
+                    String testing = new Gson().toJson(o);
+                    if(!StringUtilities.doesEqualIgnoreCase(testing, EMPTY_JSON_RESPONSE)){
+                        return o;
+                    }
+                }
             } catch (IllegalArgumentException ile){
                 RetrofitParser.illegalArgumentHit(errorClassDataModel.getClass().getName());
             } catch (Exception e) {
             }
             try {
-                return new Gson().fromJson(responseBodyString, errorClassDataModel);
+                Object o = new Gson().fromJson(responseBodyString, errorClassDataModel);
+                if(o != null){
+                    String testing = new Gson().toJson(o);
+                    if(!StringUtilities.doesEqualIgnoreCase(testing, EMPTY_JSON_RESPONSE)){
+                        return o;
+                    }
+                }
             } catch (IllegalArgumentException ile){
                 RetrofitParser.illegalArgumentHit(errorClassDataModel.getClass().getName());
             } catch (Exception e) {
@@ -791,7 +815,13 @@ public class RetrofitParser {
             }
         } else {
             try {
-                return new Gson().fromJson(errorBodyString, errorClassDataModel);
+                Object o = new Gson().fromJson(errorBodyString, errorClassDataModel);
+                if(o != null){
+                    String testing = new Gson().toJson(o);
+                    if(!StringUtilities.doesEqualIgnoreCase(testing, EMPTY_JSON_RESPONSE)){
+                        return o;
+                    }
+                }
             } catch (IllegalArgumentException ile){
                 RetrofitParser.illegalArgumentHit(errorClassDataModel.getClass().getName());
             } catch (Exception e) {
@@ -825,13 +855,25 @@ public class RetrofitParser {
             }
         } else {
             try {
-                return new Gson().fromJson(errorBodyString, errorClassDataModel);
+                Object o = new Gson().fromJson(responseBodyString, errorClassDataModel);
+                if(o != null){
+                    String testing = new Gson().toJson(o);
+                    if(!StringUtilities.doesEqualIgnoreCase(testing, EMPTY_JSON_RESPONSE)){
+                        return o;
+                    }
+                }
             } catch (IllegalArgumentException ile){
                 RetrofitParser.illegalArgumentHit(errorClassDataModel.getClass().getName());
             } catch (Exception e) {
             }
             try {
-                return new Gson().fromJson(responseBodyString, errorClassDataModel);
+                Object o = new Gson().fromJson(responseBodyString, errorClassDataModel);
+                if(o != null){
+                    String testing = new Gson().toJson(o);
+                    if(!StringUtilities.doesEqualIgnoreCase(testing, EMPTY_JSON_RESPONSE)){
+                        return o;
+                    }
+                }
             } catch (IllegalArgumentException ile){
                 RetrofitParser.illegalArgumentHit(errorClassDataModel.getClass().getName());
             } catch (Exception e) {
@@ -857,7 +899,13 @@ public class RetrofitParser {
             }
         } else {
             try {
-                return new Gson().fromJson(errorBodyString, errorClassDataModel);
+                Object o = new Gson().fromJson(errorBodyString, errorClassDataModel);
+                if(o != null){
+                    String testing = new Gson().toJson(o);
+                    if(!StringUtilities.doesEqualIgnoreCase(testing, EMPTY_JSON_RESPONSE)){
+                        return o;
+                    }
+                }
             } catch (IllegalArgumentException ile){
                 RetrofitParser.illegalArgumentHit(errorClassDataModel.getClass().getName());
             } catch (Exception e) {
