@@ -11,6 +11,7 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
@@ -1772,6 +1773,7 @@ public class StringUtilities {
      * @param y String 2 (IE Shot)
      * @return int distance (IE 1 for the 2 strings passed above)
      */
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public static int calculateLevenshteinDistance(String x, String y) {
         int[][] dp = new int[x.length() + 1][y.length() + 1];
         for (int i = 0; i <= x.length(); i++) {
@@ -1781,7 +1783,7 @@ public class StringUtilities {
                 } else if (j == 0) {
                     dp[i][j] = i;
                 } else {
-                    dp[i][j] = Utilities.getMinimum(
+                    dp[i][j] = NumberUtilities.getMinimum(
                             dp[i - 1][j - 1] + costOfSubstitution(x.charAt(i - 1),
                                     y.charAt(j - 1)), dp[i - 1][j] + 1, dp[i][j - 1] + 1);
                 }

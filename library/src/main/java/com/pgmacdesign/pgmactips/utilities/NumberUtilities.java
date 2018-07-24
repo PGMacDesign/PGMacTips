@@ -1,10 +1,13 @@
 package com.pgmacdesign.pgmactips.utilities;
 
+import android.os.Build;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -324,6 +327,7 @@ public class NumberUtilities {
      * @param numbers variable number of numbers
      * @return minimum of the passed set
      */
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public static int getMinimum(int... numbers) {
         return Arrays.stream(numbers).min().orElse(Integer.MAX_VALUE);
     }
