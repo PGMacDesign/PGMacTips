@@ -319,5 +319,13 @@ public class NumberUtilities {
         return randomNum;
     }
 
+    /**
+     * Get the minimum value of a set of numbers
+     * @param numbers variable number of numbers
+     * @return minimum of the passed set
+     */
+    public static int getMinimum(int... numbers) {
+        return Arrays.stream(numbers).min().orElse(Integer.MAX_VALUE);
+    }
 
 }
