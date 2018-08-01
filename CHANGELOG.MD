@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+
+Version 0.0.62 *(2018-08-01)*
+----------------------------
+
+ * Update: Refactored the LyftUtilities and UberUtilities into a new package named [MiscThirdPartyUtilities](https://github.com/PGMacDesign/PGMacTips/tree/master/library/src/main/java/com/pgmacdesign/pgmactips/miscthirdpartyutilities) 
+ * New: Added some new functions into the [NumberUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/NumberUtilities.java) class for simple calculations. 
+ * Fix: Fixed a bug relating to the [RetrofitParser](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/networkclasses/retrofitutilities/RetrofitParser.java) and how it parsed objects that were not null, but contained no elements. 
+ 
 Version 0.0.61 *(2018-07-24)*
 ----------------------------
 
