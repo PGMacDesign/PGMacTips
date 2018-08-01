@@ -1,10 +1,12 @@
-package com.pgmacdesign.pgmactips.utilities;
+package com.pgmacdesign.pgmactips.miscthirdpartyutilities;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+
+import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 
 /**
  * Utilities for Uber (Car driving / taxi service)

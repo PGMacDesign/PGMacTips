@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmactips.utilities;
+package com.pgmacdesign.pgmactips.unuseddeprecatedcode;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,14 +13,15 @@ import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
  * Created by pmacdowell on 2017-07-18.
  */
 @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
-public class OAuthUtilities implements GoogleApiClient.OnConnectionFailedListener {
+@Deprecated
+class OAuthUtilities implements GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleSignInOptions gso;
     private GoogleApiClient mGoogleApiClient;
     private Activity activity;
 
     @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
-    public OAuthUtilities(Activity activity){
+    OAuthUtilities(Activity activity){
         this.activity = activity;
     }
 

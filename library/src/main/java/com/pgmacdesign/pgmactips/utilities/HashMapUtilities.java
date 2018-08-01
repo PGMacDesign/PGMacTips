@@ -1,5 +1,7 @@
 package com.pgmacdesign.pgmactips.utilities;
 
+import android.os.Build;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -39,10 +41,18 @@ public class HashMapUtilities {
                     public int compare(Map.Entry<Integer,?> a, Map.Entry<Integer,?> b) {
                         int inta = NumberUtilities.getInt(a.getKey());
                         int intb = NumberUtilities.getInt(b.getKey());
-                        if(!reverseOrder) {
-                            return Integer.compare(inta, intb);
+                        if(Build.VERSION.SDK_INT >= 19) {
+                            if (!reverseOrder) {
+                                return Integer.compare(inta, intb);
+                            } else {
+                                return Integer.compare(intb, inta);
+                            }
                         } else {
-                            return Integer.compare(intb, inta);
+                            if (!reverseOrder) {
+                                return (inta < intb) ? -1 : ((inta == intb) ? 0 : 1);
+                            } else {
+                                return (intb < inta) ? -1 : ((intb == inta) ? 0 : 1);
+                            }
                         }
                     }
                 }
@@ -82,10 +92,18 @@ public class HashMapUtilities {
                     public int compare(Map.Entry<?,Integer> a, Map.Entry<?,Integer> b) {
                         int inta = NumberUtilities.getInt(a.getValue());
                         int intb = NumberUtilities.getInt(b.getValue());
-                        if(!reverseOrder) {
-                            return Integer.compare(inta, intb);
+                        if(Build.VERSION.SDK_INT >= 19) {
+                            if (!reverseOrder) {
+                                return Integer.compare(inta, intb);
+                            } else {
+                                return Integer.compare(intb, inta);
+                            }
                         } else {
-                            return Integer.compare(intb, inta);
+                            if (!reverseOrder) {
+                                return (inta < intb) ? -1 : ((inta == intb) ? 0 : 1);
+                            } else {
+                                return (intb < inta) ? -1 : ((intb == inta) ? 0 : 1);
+                            }
                         }
                     }
                 }

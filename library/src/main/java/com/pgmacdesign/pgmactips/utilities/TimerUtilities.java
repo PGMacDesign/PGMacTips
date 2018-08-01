@@ -48,6 +48,8 @@ public class TimerUtilities {
     /**
      * Start a timer that will pass back a response on the {@link OnTaskCompleteListener} and
      * if the dataToReturn is not null, it will include that too.
+     * If this is called before the previous timer finishes, it will stop the old timer
+     * and create a new one to run.
      * @param listener Listener to pass data back on. {@link OnTaskCompleteListener}
      * @param timeInMilliseconds Time (in milliseconds) for timer to run. Must be >0 milliseconds.
      *                           If null, will default to 1 second (1000 milliseconds)

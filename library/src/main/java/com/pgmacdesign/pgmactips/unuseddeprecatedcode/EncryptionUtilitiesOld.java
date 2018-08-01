@@ -39,6 +39,8 @@ import javax.crypto.spec.SecretKeySpec;
 @Deprecated
 class EncryptionUtilitiesOld {
 
+    @Deprecated
+    private EncryptionUtilitiesOld(){}
 
     private static final String TAG = "EncryptionUtilities";
     private static final String INVALID_CHARSET_ERROR =

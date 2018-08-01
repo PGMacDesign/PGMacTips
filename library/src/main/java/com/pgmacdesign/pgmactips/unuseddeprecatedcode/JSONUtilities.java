@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmactips.utilities;
+package com.pgmacdesign.pgmactips.unuseddeprecatedcode;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -7,7 +7,8 @@ import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 /**
  * Created by pmacdowell on 8/15/2016.
  */
-public class JSONUtilities {
+@Deprecated
+class JSONUtilities {
     /**
      * Safely converts an object into string (used because sometimes
      * JSONObject's get() method returns null).
@@ -28,7 +29,7 @@ public class JSONUtilities {
      * @return an Integer representing the integer value of the Object (null if
      *         the object cannot be converted to an Integer)
      */
-    public static Integer safeJsonToInteger(Object obj) {
+    static Integer safeJsonToInteger(Object obj) {
         Integer intValue;
 
         try {
@@ -48,7 +49,7 @@ public class JSONUtilities {
      * @return a Double representing the double value of the Object (null if the
      *         object cannot be converted to Double)
      */
-    public static Double safeJsonToDouble(Object obj) {
+    static Double safeJsonToDouble(Object obj) {
         Double doubleValue;
 
         try {
@@ -68,7 +69,7 @@ public class JSONUtilities {
      * @return a Boolean representing the boolean value of the Object (null if
      *         the object cannot be converted to Boolean)
      */
-    public static Boolean safeJsonToBoolean(Object obj) {
+    static Boolean safeJsonToBoolean(Object obj) {
         Boolean booleanValue;
 
         try {
@@ -88,7 +89,7 @@ public class JSONUtilities {
      * @return a Long representing the long value of the Object (null if the
      *         object cannot be converted to Long)
      */
-    public static Long safeJsonToLong(Object obj) {
+    static Long safeJsonToLong(Object obj) {
         Long longValue;
 
         try {
@@ -101,7 +102,7 @@ public class JSONUtilities {
     }
 
     @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
-    public static <T> T convertToObject(String t, Class<T> to) {
+    static <T> T convertToObject(String t, Class<T> to) {
         Gson gson = new GsonBuilder().setDateFormat(
                 "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").create();
         return gson.fromJson(t, to);

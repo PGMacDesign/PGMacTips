@@ -6,10 +6,15 @@ package com.pgmacdesign.pgmactips.unuseddeprecatedcode;
  * Secure Shared Prefs. Link: https://github.com/scottyab/secure-preferences
  * compile 'com.scottyab:secure-preferences-lib:0.1.4'
  * Created by pmacdowell on 2017-07-13.
+ * Deprecated on 2018-07-10 due to removal of secure-preferences dependency
  */
 //@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.SecurePreferences)
 @Deprecated
 class SharedPrefsEncrypted {
+
+    @Deprecated
+    private SharedPrefsEncrypted(){}
+
 //
 //    //Secured Shared Prefs Objects
 //    private SecurePreferences.Editor secureEdit;

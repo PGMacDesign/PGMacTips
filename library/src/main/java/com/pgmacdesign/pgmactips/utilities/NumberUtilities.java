@@ -2,12 +2,13 @@ package com.pgmacdesign.pgmactips.utilities;
 
 import android.os.Build;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -296,7 +297,7 @@ public class NumberUtilities {
      * This used when a double ends in 0 (IE 100.0) and you want 2 decimal places instead (IE 100.00)
      * @param value The double to convert
      * @param addDollarSign boolean, if null passed, nothing, if true passed, will add
-     *                      a $ to the begining
+     *                      a $ to the beginning
      * @return A String, formatted correctly. Will look like this: 104.44 or $99.40
      */
     public static String convertDoubleToStringAddZeroNoRemove(double value, Boolean addDollarSign){
@@ -325,11 +326,61 @@ public class NumberUtilities {
     /**
      * Get the minimum value of a set of numbers
      * @param numbers variable number of numbers
-     * @return minimum of the passed set
+     * @return minimum of the passed set. If cannot find min, will return {@link Integer#MAX_VALUE}
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public static int getMinimum(int... numbers) {
-        return Arrays.stream(numbers).min().orElse(Integer.MAX_VALUE);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return Arrays.stream(numbers).min().orElse(Integer.MAX_VALUE);
+        } else {
+            if(numbers.length > 0){
+                Arrays.sort(numbers);
+                return numbers[0];
+            }
+            return Integer.MAX_VALUE;
+        }
     }
 
+    /**
+     * Get the Maximum value of a set of numbers
+     * @param numbers variable number of numbers
+     * @return maximum of the passed set. If cannot find max, will return {@link Integer#MIN_VALUE}
+     */
+    public static int getMaximum(int... numbers) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return Arrays.stream(numbers).max().orElse(Integer.MIN_VALUE);
+        } else {
+            if(numbers.length > 0){
+                Arrays.sort(numbers);
+                return numbers[(numbers.length -1)];
+            }
+            return Integer.MIN_VALUE;
+        }
+    }
+
+
+    /**
+     * Get the minimum value of a set of numbers
+     * @param numbers variable number of numbers
+     * @return minimum of the passed set. If cannot find min, will return {@link Integer#MAX_VALUE}
+     */
+    public static int getMinimum(List<Integer> numbers) {
+        try {
+            return Collections.min(numbers);
+        } catch (Exception e){
+            return Integer.MAX_VALUE;
+        }
+    }
+
+    /**
+     * Get the Maximum value of a set of numbers
+     * @param numbers variable number of numbers
+     * @return maximum of the passed set. If cannot find max, will return {@link Integer#MIN_VALUE}
+     */
+    public static int getMaximum(List<Integer> numbers) {
+        try {
+            return Collections.max(numbers);
+        } catch (Exception e){
+            return Integer.MIN_VALUE;
+        }
+    }
 }

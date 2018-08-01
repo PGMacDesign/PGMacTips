@@ -14,6 +14,7 @@ import android.support.annotation.RequiresApi;
  * Created by pmacdowell on 2018-05-09.
  */
 
+@RequiresApi(api = Build.VERSION_CODES.O)
 public class PushNotificationUtilities {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -65,7 +66,7 @@ public class PushNotificationUtilities {
         notificationChannel.setLightColor((notificationColor == null) ? Color.RED : notificationColor);
         notificationChannel.enableVibration((enableVibration == null) ? true : enableVibration);
         notificationChannel.setVibrationPattern((vibPatternOk) ? vibrationPattern :
-                new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                new long[]{100, 200, 300, 400, 500, 400, 300, 200, 100});
         return notificationChannel;
     }
 }

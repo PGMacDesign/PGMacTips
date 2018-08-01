@@ -465,7 +465,7 @@ public class MiscUtilities {
     }
 
     /**
-     * Simple getter for UTF-8 since it is recommended to use StandardCharsets after SDK level 19,
+     * Simple getter for UTF-8 String since it is recommended to use StandardCharsets after SDK level 19,
      * but this library currently supports 15 as the minimum.
      * @return
      */
@@ -478,7 +478,7 @@ public class MiscUtilities {
     }
 
     /**
-     * Simple getter for ISO_8859-1 since it is recommended to use StandardCharsets after SDK level 19,
+     * Simple getter for ISO_8859-1 String since it is recommended to use StandardCharsets after SDK level 19,
      * but this library currently supports 15 as the minimum.
      * @return
      */
@@ -491,7 +491,7 @@ public class MiscUtilities {
     }
 
     /**
-     * Simple getter for US_ASCII since it is recommended to use StandardCharsets after SDK level 19,
+     * Simple getter for US_ASCII String since it is recommended to use StandardCharsets after SDK level 19,
      * but this library currently supports 15 as the minimum.
      * @return
      */
@@ -504,7 +504,7 @@ public class MiscUtilities {
     }
 
     /**
-     * Simple getter for UTF-16 since it is recommended to use StandardCharsets after SDK level 19,
+     * Simple getter for UTF-16 String since it is recommended to use StandardCharsets after SDK level 19,
      * but this library currently supports 15 as the minimum.
      * @return
      */
@@ -517,7 +517,7 @@ public class MiscUtilities {
     }
 
     /**
-     * Simple getter for UTF-16BE since it is recommended to use StandardCharsets after SDK level 19,
+     * Simple getter for UTF-16BE String since it is recommended to use StandardCharsets after SDK level 19,
      * but this library currently supports 15 as the minimum.
      * @return
      */
@@ -530,7 +530,7 @@ public class MiscUtilities {
     }
 
     /**
-     * Simple getter for UTF-16LE since it is recommended to use StandardCharsets after SDK level 19,
+     * Simple getter for UTF-16LE String since it is recommended to use StandardCharsets after SDK level 19,
      * but this library currently supports 15 as the minimum.
      * @return
      */

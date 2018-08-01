@@ -87,7 +87,9 @@ public class ColorUtilities {
         }
     }
     /*
-     <color name="Semi_Transparent1">#20111111</color>
+    Color lists below:
+
+    <color name="Semi_Transparent1">#20111111</color>
     <color name="Semi_Transparent2">#30111111</color>
     <color name="Semi_Transparent3">#40111111</color>
     <color name="Semi_Transparent4">#50111111</color>
