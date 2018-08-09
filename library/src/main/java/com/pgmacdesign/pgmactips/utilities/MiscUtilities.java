@@ -154,6 +154,38 @@ public class MiscUtilities {
     }
 
     /**
+     * Get the 'first' (only) key in a map. Useful for maps with only one thing in them
+     * @param myMap
+     * @return
+     */
+    public static Object getOnlyKeyInMap(Map<?, ?> myMap){
+        if(MiscUtilities.isMapNullOrEmpty(myMap)){
+            return null;
+        }
+        try {
+            return myMap.entrySet().iterator().next().getKey();
+        } catch (Exception e){
+            return null;
+        }
+    }
+
+    /**
+     * Get the 'first' (only) value in a map. Useful for maps with only one thing in them
+     * @param myMap
+     * @return
+     */
+    public static Object getOnlyValueInMap(Map<?, ?> myMap){
+        if(MiscUtilities.isMapNullOrEmpty(myMap)){
+            return null;
+        }
+        try {
+            return myMap.entrySet().iterator().next().getValue();
+        } catch (Exception e){
+            return null;
+        }
+    }
+
+    /**
      * Print out a list of objects
      * @param myList
      */
