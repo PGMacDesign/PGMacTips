@@ -102,7 +102,8 @@ android {
         //api 'com.android.support:multidex:1.0.1'
 
         //Maps. Link: https://developers.google.com/android/guides/setup
-        api 'com.google.android.gms:play-services-maps:15.0.1'
+        //NOTE! Removed on 2018-08-15 due to: https://github.com/PGMacDesign/PGMacTips/issues/3
+//        api 'com.google.android.gms:play-services-maps:15.0.1'
 
         //Android support libs. Link: https://developer.android.com/topic/libraries/support-library/packages
         api 'com.android.support:design:27.1.1'
