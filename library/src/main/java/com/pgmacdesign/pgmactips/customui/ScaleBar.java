@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.widget.ImageView;
 
-import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.utilities.DisplayManagerUtilities;
 import com.pgmacdesign.pgmactips.utilities.NumberUtilities;
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
@@ -24,7 +23,7 @@ import com.pgmacdesign.pgmactips.utilities.StringUtilities;
  * visible via this link: https://github.com/PGMacDesign/PGMacTips/tree/master/library/src/main/java/com/pgmacdesign/pgmactips/maputilities
  */
 @SuppressLint("AppCompatCustomView")
-@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
+//@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
 public class ScaleBar extends ImageView { //public class ScaleBar extends ImageView { android.support.v7.widget.AppCompatImageView {
 	private float mXOffset = 10;
     private float mYOffset = 10;
@@ -53,7 +52,7 @@ public class ScaleBar extends ImageView { //public class ScaleBar extends ImageV
 
     private DisplayManagerUtilities dmu;
 
-    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
+//    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
     public ScaleBar(Context context) {
         super(context);
         this.dmu = new DisplayManagerUtilities(context);

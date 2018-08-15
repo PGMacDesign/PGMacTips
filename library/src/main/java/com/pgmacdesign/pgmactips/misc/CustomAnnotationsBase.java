@@ -56,9 +56,10 @@ public class CustomAnnotationsBase {
         AndroidAnimationsEasing("https://github.com/daimajia/AnimationEasingFunctions",
                 "com.daimajia.easing:library:2.0@aar", "2.0",
                 "Part of the Android Animations dependency, this is used for animations in various classes"),
-        GooglePlayServices_Maps("https://developers.google.com/android/guides/setup",
-                "com.google.android.gms:play-services-maps:15.0.1", "15.0.1",
-                "Google Maps API. Note! This requires the google-services.json file to be included"),
+        //Removed on 2018-08-15; Bug relating to issue 3 in Github (https://github.com/PGMacDesign/PGMacTips/issues/3)
+//        GooglePlayServices_Maps("https://developers.google.com/android/guides/setup",
+//                "com.google.android.gms:play-services-maps:15.0.1", "15.0.1",
+//                "Google Maps API. Note! This requires the google-services.json file to be included"),
         AndroidSupport_Design("https://developer.android.com/topic/libraries/support-library/packages",
                 "com.android.support:design:27.1.1", "27.1.1",
                 "Android support library is utilized in any class that makes use of recyclerviews and other design-related elements"),

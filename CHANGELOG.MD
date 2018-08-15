@@ -6,6 +6,7 @@ Version 0.0.63 *(2018-08-15)*
 
  * Fix: Fixed a bug in the [MapUtilities](https://github.com/PGMacDesign/PGMacTips/tree/master/library/src/main/java/com/pgmacdesign/pgmactips/maputilities), [SphericalUtils](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/maputilities/SphericalUtils.java) , and [ScaleBar](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/customui/ScaleBar.java) classes; specifically how it conflicted with other build variants in projects using a different version of Google Maps. See the link [here](https://github.com/PGMacDesign/PGMacTips/issues/3) for more details.
  * Update: Removed the OAuthUtilities class as it was mostly deprecated and unused anyway. 
+ * Update: Removed the <i>CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps</i> annotation from the [CustomAnnotationsBase](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/misc/CustomAnnotationsBase.java) class as it will no longer be needed as per fixes mentioned in this update.
  
 
 Version 0.0.62 *(2018-08-01)*
