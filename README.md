@@ -70,10 +70,10 @@ On the other hand, if you want to use the [*DatabaseUtilities*](https://github.c
 
 ### Realm 
 
-Note that one of the dependencies [Realm](https://github.com/realm/realm-java) has a plethora of releases and using different versions can cause crashes and problems, IE [Issue 3](https://github.com/PGMacDesign/PGMacTips/issues/3) . 
+Note that one of the dependencies [Realm](https://github.com/realm/realm-java) has a plethora of releases and using different versions can cause crashes and problems, IE [Issue 3](https://github.com/PGMacDesign/PGMacTips/issues/3).  The solution for that particular issue was related to a custom Module, regardless, see the versioning guide below to prevent code breaking builds if you yourself are using Realm as a dependency:
 
   * If using version >= 3.0.0 but < than 4.2.0, use a release equal to or less than [0.0.64](https://github.com/PGMacDesign/PGMacTips/releases/tag/0.0.64)
-  * If using version 4.2.0, use a release at or above [0.0.65](https://github.com/PGMacDesign/PGMacTips/releases/tag/0.0.65). 
+  * If using version 4.2.0, use a release at or above [0.0.66](https://github.com/PGMacDesign/PGMacTips/releases/tag/0.0.66). 
 
 Also note that the old method for declaring Realm in the gradle file has been updated as per [this](https://realm.io/blog/android-installation-change/) announcement.
 The new way I am declaring the library is as follows:
@@ -177,7 +177,7 @@ Sometimes, however, none of these will resolve your issue. Don't despair though!
 
 If you happen to be in this situation, either [make a new issue](https://github.com/PGMacDesign/PGMacTips/issues/new) or message me withe the info and I will work to get an update out as soon as I am able. 
 
-As an aside, it is infurating that running the stack trace with those subsequent optionals did not help to discover the issue at all, so my apologies if you went through the same frustration I did. 
+Update: the issue has been resolved since 2018-08-16 in version [0.0.66](https://github.com/PGMacDesign/PGMacTips/releases/tag/0.0.66). and the solution to fix it was declared within the issue itself.
 
 ## New Issues
 
