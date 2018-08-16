@@ -2,13 +2,15 @@ Change Log
 ==========
 
 
-Version 0.0.65 *(2018-08-16)*
+
+Version 0.0.66 *(2018-08-16)*
 ----------------------------
 
  * Revert: Reverted changes made in the [MapUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/maputilities/MapUtilities.java), [SphericalUtils](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/maputilities/SphericalUtils.java) , and [ScaleBar](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/customui/ScaleBar.java) classes as they were not the direct cause of [this issue](https://github.com/PGMacDesign/PGMacTips/issues/3).
  * Revert: Reverted the changes in the [CustomAnnotationsBase](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/misc/CustomAnnotationsBase.java) class for the same reasons mentioned above. 
  * Update: Updated the Realm Version from [3.0.0](https://realm.io/docs/java/3.0.0/api/) to [4.2.0](https://realm.io/docs/java/4.2.0/api/). Those wishing to use previous versions of Realm (or those that have a version lower than 4.2.0 declared in their own gradle file) will need to use PGMacTips versions prior to 0.0.65 
  * Update: Made multiple internal edits to the [DatabaseUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/DatabaseUtilities.java) class that should not affect existing code using it. Also added in logging to indicate when objects won't save due to multiple @SerializedName Strings; as seen [here](https://stackoverflow.com/a/42517143/2480714).
+ * Note: Version 65 was skipped as the initial release missed a few bugs. 
  
 Version 0.0.64 *(2018-08-15)*
 ----------------------------

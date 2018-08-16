@@ -31,6 +31,7 @@ import io.realm.RealmModel;
 import io.realm.RealmObject;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
+import io.realm.annotations.RealmModule;
 
 /**
  * This class serves as a conduit for database functionality. It is utilizing Realm for the
@@ -1555,7 +1556,7 @@ public class DatabaseUtilities {
                 try {
                     String packageName = SystemUtilities.getPackageName(context);
                     if (!StringUtilities.isNullOrEmpty(packageName)) {
-                        dbName = packageName + ".db";
+                        dbName = packageName + ".realm";
                         setNameSuccess = true;
                     }
                 } catch (Exception e1) {
@@ -1573,13 +1574,12 @@ public class DatabaseUtilities {
         }
         //Builder
         RealmConfiguration.Builder builder = new RealmConfiguration.Builder();
-        //RealmConfiguration.Builder builder = new RealmConfiguration.Builder(context);
         builder.name(dbName);
         if (deleteIfNeeded) {
             builder.deleteRealmIfMigrationNeeded();
         }
         builder.schemaVersion(schemaVersion);
-
+        builder.modules(new DatabaseUtilities.PGMacTipsModule());
         //Realm Config
         RealmConfiguration config = builder.build();
 
@@ -1908,4 +1908,11 @@ public class DatabaseUtilities {
         }
         L.m("\nEnd Printout of full Database");
     }
+
+    ///////////
+    //Modules//  From: https://realm.io/docs/java/latest/#schemas
+    ///////////
+
+    @RealmModule(library = true, allClasses = true)
+    public static class PGMacTipsModule {}
 }
