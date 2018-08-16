@@ -1910,9 +1910,16 @@ public class DatabaseUtilities {
     }
 
     ///////////
-    //Modules//  From: https://realm.io/docs/java/latest/#schemas
+    //Modules//
     ///////////
 
+    /*
+    From this issue:
+    https://github.com/realm/realm-java/issues/1721
+
+    Using logic here:
+    https://realm.io/docs/java/latest/#schemas
+     */
     @RealmModule(library = true, allClasses = true)
     public static class PGMacTipsModule {}
 }
