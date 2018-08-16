@@ -14,7 +14,7 @@ public class GsonUtilities {
 
     private static Gson gson;
 
-    private static void init(){
+    static {
         if(gson == null){
             gson = new Gson();
         }
@@ -28,13 +28,13 @@ public class GsonUtilities {
      */
     @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
     public static String convertObjectToJson(Object object, Class objectSourceClass){
-        GsonUtilities.init();
         String str = null;
         try {
             str = gson.toJson(object, objectSourceClass);
-        } catch (Exception e){
-            //For testing
-        }
+        } catch (IllegalArgumentException ile){
+            //Triggers if you declare 2 fields with the same @Serialized string name
+            ile.printStackTrace();
+        } catch (Exception e){}
         return(str);
     }
 
@@ -46,13 +46,13 @@ public class GsonUtilities {
      */
     @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
     public static String convertObjectToJson(Object object, Type objectSourceClass){
-        GsonUtilities.init();
         String str = null;
         try {
             str = gson.toJson(object, objectSourceClass);
-        } catch (Exception e){
-            //For testing
-        }
+        } catch (IllegalArgumentException ile){
+            //Triggers if you declare 2 fields with the same @Serialized string name
+            ile.printStackTrace();
+        } catch (Exception e){}
         return(str);
     }
 
@@ -64,12 +64,10 @@ public class GsonUtilities {
      */
     @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
     public static Object convertJsonToObject(String jsonString, Class objectSourceClass){
-        GsonUtilities.init();
         try {
             Object obj = gson.fromJson(jsonString, objectSourceClass);
             return obj;
         } catch (Exception e){
-            //For testing
             e.printStackTrace();
             return null;
         }
@@ -83,12 +81,10 @@ public class GsonUtilities {
      */
     @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
     public static Object convertJsonToObject(String jsonString, Type objectSourceClass){
-        GsonUtilities.init();
         try {
             Object obj = gson.fromJson(jsonString, objectSourceClass);
             return obj;
         } catch (Exception e){
-            //For testing
             e.printStackTrace();
             return null;
         }
@@ -101,7 +97,6 @@ public class GsonUtilities {
      */
     @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
     public static JsonElement convertToJsonElement(Object o){
-        GsonUtilities.init();
         JsonElement jsonElement = null;
         try {
             jsonElement = gson.toJsonTree(o);

@@ -260,7 +260,7 @@ public class MiscUtilities {
      * Overloaded method in case getPackageName returns null
      * @param context context
      * @return
-     * @deprecated Please redirect to {@link SystemUtilities#getPackageName()}
+     * @deprecated Please redirect to {@link SystemUtilities#getPackageName(Context)}
      */
     @Deprecated
     public static String getPackageName(Context context){

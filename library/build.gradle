@@ -1,7 +1,11 @@
+/*
+Really useful link for dependency conflict issues:
+https://www.devsbedevin.com/android-understanding-gradle-dependencies-and-resolving-conflicts/
+ */
 //apply plugin: 'com.android.application' //Add this when switching from lib to app
 apply plugin: 'com.android.library' //Remove this when switching from lib to app
 //apply plugin: 'kotlin-android' //Removing for now due to problems
-//apply plugin: 'realm-android' //Removed on 2018-08-15 as per: https://stackoverflow.com/a/51447494/2480714
+apply plugin: 'realm-android'
 apply plugin: 'com.github.dcendents.android-maven'
 group='com.github.PGMacDesign'
 allprojects {
@@ -27,8 +31,8 @@ android {
         minSdkVersion 15
         targetSdkVersion 27
         //multiDexEnabled true
-        versionCode 1
-        versionName "0.0.62"
+//        versionCode 1
+        versionName "0.0.65"
     }
 //    dexOptions {
 //        javaMaxHeapSize "4g"
@@ -54,11 +58,6 @@ android {
         }
     }
     dependencies {
-
-        //Realm: (https://github.com/realm/realm-java) && (https://realm.io/docs/java/latest) && (https://stackoverflow.com/a/51447494/2480714)
-        implementation "io.realm:realm-annotations:3.0.0"
-        implementation "io.realm:realm-android-library:3.0.0"
-        annotationProcessor  "io.realm:realm-annotations-processor:3.0.0"
 
         //Image Cropper. https://github.com/Yalantis/uCrop
         api 'com.yalantis:ucrop:2.2.0'
@@ -107,8 +106,7 @@ android {
         //api 'com.android.support:multidex:1.0.1'
 
         //Maps. Link: https://developers.google.com/android/guides/setup
-        //NOTE! Removed on 2018-08-15 due to: https://github.com/PGMacDesign/PGMacTips/issues/3
-//        api 'com.google.android.gms:play-services-maps:15.0.1'
+        api 'com.google.android.gms:play-services-maps:15.0.1'
 
         //Android support libs. Link: https://developer.android.com/topic/libraries/support-library/packages
         api 'com.android.support:design:27.1.1'

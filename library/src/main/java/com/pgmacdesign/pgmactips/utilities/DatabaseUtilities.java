@@ -1,6 +1,7 @@
 package com.pgmacdesign.pgmactips.utilities;
 
 import android.content.Context;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -38,9 +39,9 @@ import io.realm.RealmResults;
  * Created by pmacdowell on 8/18/2016.
  * NOTES:
  * 1) Feel free to cast responses from getPersistedObject even if it is null as null objects
- *    can be cast without throwing an error. I caution you against casting them to something
- *    else without knowing the response class though. For more info --
- *    http://stackoverflow.com/questions/18723596/no-exception-while-type-casting-with-a-null-in-java
+ * can be cast without throwing an error. I caution you against casting them to something
+ * else without knowing the response class though. For more info --
+ * http://stackoverflow.com/questions/18723596/no-exception-while-type-casting-with-a-null-in-java
  * 2)
  */
 @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Realm,
@@ -55,6 +56,8 @@ public class DatabaseUtilities {
             "Context null within DatabaseUtilities. Please call overloaded method to pass in Context";
     private static final String PGMACTIPS_NOT_INITIALIZED =
             "Could not initialize DatabaseUtilities. Either initialize PGMacTipsConfig or call the overloaded constructor to pass in context";
+    private static final String COULD_NOT_PERSIST_OBJECT_ILE =
+            "Could not persist object into database: ";
 
     //Global Vars
     private RealmConfiguration realmConfiguration;
@@ -72,13 +75,13 @@ public class DatabaseUtilities {
     /**
      * Test constructor
      */
-    DatabaseUtilities() {
-        if(PGMacTipsConfig.getInstance() == null){
+    private DatabaseUtilities() {
+        if (PGMacTipsConfig.getInstance() == null) {
             L.m(PGMACTIPS_NOT_INITIALIZED);
             return;
         }
         this.context = PGMacTipsConfig.getInstance().getContext();
-        if(this.context == null){
+        if (this.context == null) {
             L.m(CONTEXT_NULL);
             return;
         }
@@ -96,7 +99,7 @@ public class DatabaseUtilities {
             CustomAnnotationsBase.Dependencies.GSON})
     public DatabaseUtilities(@NonNull Context context) {
         this.context = context;
-        if(this.context == null){
+        if (this.context == null) {
             L.m(CONTEXT_NULL);
             return;
         }
@@ -114,7 +117,7 @@ public class DatabaseUtilities {
     public DatabaseUtilities(@NonNull Context context, @Nullable String dbName,
                              @Nullable Integer dbSchemaVersion, @Nullable Boolean deleteDBIfNeeded) {
         this.context = context;
-        if(this.context == null){
+        if (this.context == null) {
             L.m(CONTEXT_NULL);
             return;
         }
@@ -135,7 +138,7 @@ public class DatabaseUtilities {
             CustomAnnotationsBase.Dependencies.GSON})
     public DatabaseUtilities(@NonNull Context context, RealmConfiguration realmConfiguration) {
         this.context = context;
-        if(this.context == null){
+        if (this.context == null) {
             L.m(CONTEXT_NULL);
             return;
         }
@@ -289,7 +292,7 @@ public class DatabaseUtilities {
                     if (BoolUtilities.isTrue(appendToObject)) {
                         try {
                             realm.createOrUpdateObjectFromJson(myClass, is);
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             L.m("IOException. Error reading file");
                             e.printStackTrace();
                         }
@@ -440,6 +443,8 @@ public class DatabaseUtilities {
         String jsonString = null;
         try {
             jsonString = new Gson().toJson(obj, myClass);
+        } catch (IllegalArgumentException ile) {
+            L.m(COULD_NOT_PERSIST_OBJECT_ILE + ile.getMessage());
         } catch (Exception e) {
         }
 
@@ -501,8 +506,9 @@ public class DatabaseUtilities {
         String jsonString = null;
         try {
             jsonString = new Gson().toJson(obj, myClass.getType());
+        } catch (IllegalArgumentException ile) {
+            L.m(COULD_NOT_PERSIST_OBJECT_ILE + ile.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
         }
 
         if (jsonString == null) {
@@ -578,6 +584,8 @@ public class DatabaseUtilities {
         String jsonString = null;
         try {
             jsonString = new Gson().toJson(obj, myClass);
+        } catch (IllegalArgumentException ile) {
+            L.m(COULD_NOT_PERSIST_OBJECT_ILE + ile.getMessage());
         } catch (Exception e) {
         }
 
@@ -645,6 +653,8 @@ public class DatabaseUtilities {
         String jsonString = null;
         try {
             jsonString = new Gson().toJson(obj, myClass.getType());
+        } catch (IllegalArgumentException ile) {
+            L.m(COULD_NOT_PERSIST_OBJECT_ILE + ile.getMessage());
         } catch (Exception e) {
         }
 
@@ -807,7 +817,14 @@ public class DatabaseUtilities {
         }
 
         Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
-        final RealmQuery query = RealmQuery.createQuery(realm, MasterDatabaseObject.class);
+        //final RealmQuery query = RealmQuery.createQuery(realm, MasterDatabaseObject.class); //Old version, 3.0.0
+        final RealmQuery<T> query;
+        try {
+            query = realm.where(myClass);
+        } catch (IllegalStateException il) {
+            il.printStackTrace();
+            return false;
+        }
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -888,7 +905,14 @@ public class DatabaseUtilities {
         }
 
         Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
-        final RealmQuery query = RealmQuery.createQuery(realm, MasterDatabaseObject.class);
+        //final RealmQuery query = RealmQuery.createQuery(realm, MasterDatabaseObject.class); //Old version, 3.0.0
+        final RealmQuery<T> query;
+        try {
+            query = realm.where(myClass.getRawType());
+        } catch (IllegalStateException il) {
+            il.printStackTrace();
+            return false;
+        }
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -960,12 +984,12 @@ public class DatabaseUtilities {
         try {
             L.m("Deleting entire database!");
             Set<Class<? extends RealmModel>> allClasses = getDBTableTypes();
-            if(allClasses != null){
-                if(allClasses.size()>= 0){
-                    for(Class<? extends RealmModel> c : allClasses){
+            if (allClasses != null) {
+                if (allClasses.size() >= 0) {
+                    for (Class<? extends RealmModel> c : allClasses) {
                         try {
                             deleteFromMasterDB(c);
-                        } catch (Exception e){
+                        } catch (Exception e) {
                             L.m("A class could not be deleted: " + c.getCanonicalName());
                         }
                     }
@@ -1005,13 +1029,20 @@ public class DatabaseUtilities {
             return false;
         }
         Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
-        final RealmQuery query = RealmQuery.createQuery(realm, MasterDatabaseObject.class);
+        //final RealmQuery query = RealmQuery.createQuery(realm, MasterDatabaseObject.class); //Old version, 3.0.0
+        final RealmQuery<MasterDatabaseObject> query;
+        try {
+            query = realm.where(MasterDatabaseObject.class);
+        } catch (IllegalStateException il) {
+            il.printStackTrace();
+            return false;
+        }
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 //Start transaction
-                RealmResults<T> results = query.findAll();
-                for (T t : results) {
+                RealmResults<MasterDatabaseObject> results = query.findAll();
+                for (MasterDatabaseObject t : results) {
                     if (t != null) {
                         try {
                             t.deleteFromRealm();
@@ -1306,18 +1337,23 @@ public class DatabaseUtilities {
     private <T extends RealmModel> List<MasterDatabaseObject> queryDatabaseMasterAll() {
 
         Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
-        RealmQuery query = RealmQuery.createQuery(realm, MasterDatabaseObject.class);
-
+        //final RealmQuery query = RealmQuery.createQuery(realm, MasterDatabaseObject.class); //Old version, 3.0.0
+        final RealmQuery<MasterDatabaseObject> query;
+        try {
+            query = realm.where(MasterDatabaseObject.class);
+        } catch (IllegalStateException il) {
+            il.printStackTrace();
+            return new ArrayList<>();
+        }
         //Start transaction
-        RealmResults<T> results = query.findAll();
+        RealmResults<MasterDatabaseObject> results = query.findAll();
         if (results.size() <= 0) {
             return new ArrayList<>();
         }
         try {
             List<MasterDatabaseObject> masterDatabaseObjectList = new ArrayList<MasterDatabaseObject>();
-            for (T t : results) {
-                if (t != null) {
-                    MasterDatabaseObject mdo = (MasterDatabaseObject) t;
+            for (MasterDatabaseObject mdo : results) {
+                if (mdo != null) {
                     if (!StringUtilities.isNullOrEmpty(mdo.getId()) &&
                             !StringUtilities.isNullOrEmpty(mdo.getJsonString())) {
                         masterDatabaseObjectList.add(mdo);
@@ -1457,9 +1493,12 @@ public class DatabaseUtilities {
 
     /**
      * Build a Realm object and return it
+     * Not making a singleton version as per the docs:
+     * "Realm instances cannot be used across different threads. This means that you have to open an instance on each thread
+     * you want to use Realm" {@link Realm}
      *
-     * @param realmConfiguration
-     * @return Realm object
+     * @param realmConfiguration {@link RealmConfiguration}
+     * @return Realm object {@link Realm}
      */
     public static Realm buildRealm(@NonNull RealmConfiguration realmConfiguration) {
         Realm realm = null;
@@ -1506,21 +1545,23 @@ public class DatabaseUtilities {
             boolean setNameSuccess = false;
             try {
                 String s = PGMacTipsConfig.getInstance().getDefaultDatabaseName();
-                if(!StringUtilities.isNullOrEmpty(s)){
+                if (!StringUtilities.isNullOrEmpty(s)) {
                     dbName = s;
                     setNameSuccess = true;
                 }
-            } catch (Exception e){}
-            if(!setNameSuccess){
+            } catch (Exception e) {
+            }
+            if (!setNameSuccess) {
                 try {
-                    String packageName = MiscUtilities.getPackageName(context);
+                    String packageName = SystemUtilities.getPackageName(context);
                     if (!StringUtilities.isNullOrEmpty(packageName)) {
                         dbName = packageName + ".db";
                         setNameSuccess = true;
                     }
-                } catch (Exception e1) {}
+                } catch (Exception e1) {
+                }
             }
-            if(!setNameSuccess){
+            if (!setNameSuccess) {
                 dbName = DEFAULT_DB_NAME;
             }
         }
@@ -1553,14 +1594,32 @@ public class DatabaseUtilities {
      * @return
      */
     private RealmQuery buildRealmQuery(Realm realm, @NonNull Class myClass) {
-        return RealmQuery.createQuery(realm, myClass);
+        if (realm == null) {
+            return null;
+        }
+        try {
+            return realm.where(myClass);
+        } catch (IllegalStateException il) {
+            il.printStackTrace();
+            return null;
+        }
+        //return RealmQuery.createQuery(realm, myClass); //Old version, 3.0.0
     }
 
     /**
      * Overloaded to allow for {@link TypeToken}
      */
     private RealmQuery buildRealmQuery(Realm realm, @NonNull TypeToken myClass) {
-        return RealmQuery.createQuery(realm, myClass.getRawType());
+        if (realm == null) {
+            return null;
+        }
+        try {
+            return realm.where(myClass.getRawType());
+        } catch (IllegalStateException il) {
+            il.printStackTrace();
+            return null;
+        }
+        //return RealmQuery.createQuery(realm, myClass.getRawType()); //Old version, 3.0.0
     }
 
     //////////////////
@@ -1717,8 +1776,8 @@ public class DatabaseUtilities {
     public RealmConfiguration getRealmConfiguration() {
         try {
             if (this.realmConfiguration == null) {
-                this.realmConfiguration = DatabaseUtilities
-                        .buildRealmConfig(context, null, null, null);
+                this.realmConfiguration = DatabaseUtilities.buildRealmConfig(
+                        context, null, null, null);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1755,13 +1814,18 @@ public class DatabaseUtilities {
      * @param dbName The name of the database. NOTE! MUST INCLUDE THE EXTENSION! (IE 'myDB.db')
      * @return boolean, true if it succeeded, false if it did not
      */
-    public static boolean copyDBToDownloadDirectory(String dbName) {
+    public static boolean copyDBToDownloadDirectory(Context context, String dbName) {
         File file = null;
-        String packageName = MiscUtilities.getPackageName();
+        String packageName = SystemUtilities.getPackageName();
         try {
-            file = new File("/data/data/" + packageName + "/files/" + dbName);
+            file = new File(context.getFilesDir().getPath() + "/" + packageName + "/files/" + dbName);
         } catch (Exception e) {
             e.printStackTrace();
+            try {
+                file = new File(Environment.getExternalStorageDirectory() + "/" + packageName + "/" + dbName);
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
         }
         FileInputStream fis = null;
         FileOutputStream fos = null;
@@ -1812,19 +1876,25 @@ public class DatabaseUtilities {
     public <T extends RealmObject> void printOutDatabase() {
         L.m("Begin Printout of full Database\n");
         Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
-        final RealmQuery query = RealmQuery.createQuery(realm, MasterDatabaseObject.class);
+        //final RealmQuery query = RealmQuery.createQuery(realm, MasterDatabaseObject.class); //Old version, 3.0.0
+        final RealmQuery<MasterDatabaseObject> query;
+        try {
+            query = realm.where(MasterDatabaseObject.class);
+        } catch (IllegalStateException il) {
+            il.printStackTrace();
+            return;
+        }
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 //Start transaction
-                RealmResults<T> results = query.findAll();
+                RealmResults<MasterDatabaseObject> results = query.findAll();
                 if (results == null) {
                     L.m("Nothing in the Database");
                     return;
                 }
-                for (T t : results) {
-                    if (t != null) {
-                        MasterDatabaseObject mdo = (MasterDatabaseObject) t;
+                for (MasterDatabaseObject mdo : results) {
+                    if (mdo != null) {
                         L.m("Object: " + mdo.getId() + ", JSON == "
                                 + mdo.getJsonString() + "\n");
                     }

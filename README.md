@@ -28,7 +28,7 @@ allprojects {
 And include this in your dependencies section of your module .gradle file:
 
 ```java
-implementation ('com.github.PGMacDesign:PGMacTips:0.0.64')
+implementation ('com.github.PGMacDesign:PGMacTips:0.0.65')
 ```
 
 Having trouble with Jitpack? [This link](https://jitpack.io/#pgmacdesign/PGMacTips) here will show what is going on with the current build as well as give you instructions on integrating Jitpack into your project. 
@@ -38,7 +38,7 @@ Having trouble with Jitpack? [This link](https://jitpack.io/#pgmacdesign/PGMacTi
 
 ## Javadoc
 
-Javadoc info can be found [here](https://jitpack.io/com/github/pgmacdesign/PGMacTips/0.0.64/javadoc/): 
+Javadoc info can be found [here](https://jitpack.io/com/github/pgmacdesign/PGMacTips/0.0.65/javadoc/): 
 
 If you would like to view docs for older version (supported versions are those >= 0.0.602), just replace the version code in this url:
 
@@ -70,27 +70,60 @@ On the other hand, if you want to use the [*DatabaseUtilities*](https://github.c
 
 ### Realm 
 
-Note that one of the dependencies [Realm](https://github.com/realm/realm-java) is added to your project in the base build.gradle file and is done so with these two code snippets: 
+Note that one of the dependencies [Realm](https://github.com/realm/realm-java) has a plethora of releases and using different versions can cause crashes and problems, IE [Issue 3](https://github.com/PGMacDesign/PGMacTips/issues/3) . 
 
+  * If using version >= 3.0.0 but < than 4.2.0, use a release equal to or less than [0.0.64](https://github.com/PGMacDesign/PGMacTips/releases/tag/0.0.64)
+  * If using version 4.2.0, use a release at or above [0.0.65](https://github.com/PGMacDesign/PGMacTips/releases/tag/0.0.65). 
+
+Also note that the old method for declaring Realm in the gradle file has been updated as per [this](https://realm.io/blog/android-installation-change/) announcement.
+The new way I am declaring the library is as follows:
+
+in the build.gradle file, but here is the code copied over (changing api to implementation):
+
+At the project level: 
 ```java
-//This goes in your base, root .gradle file
 buildscript {
+    repositories {
+        jcenter()
+    }
+    allprojects {
+        repositories {
+            jcenter()
+        }
+    }
     dependencies {
-        classpath "io.realm:realm-gradle-plugin:3.0.0" 
+        classpath 'com.android.tools.build:gradle:3.0.1' //Your gradle version
+		
+        //Realm
+        classpath "io.realm:realm-gradle-plugin:4.2.0" //<--------
+
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
 }
 ```
 
+At the module level:
 ```java
-//This goes in your module level .gradle file
-apply plugin: 'realm-android'
+apply plugin: 'realm-android' //<--------
+allprojects {
+    repositories {
+        jcenter()
+        maven { url "https://jitpack.io" }
+    }
+}
+
 ```
 
-Please note that I started deviating from Realm's updates once they started requiring accounts / credentials to use. I utilize the code found in [this release](https://github.com/realm/realm-java/releases/tag/v3.0.0). I am unsure of forwards compatibility, but if newer versions will work, please let me know and I will update to the highest possible one without making changes to the source code. 
+I started deviating from Realm's updates once they started requiring accounts / credentials to use. 
+I originally used version 3.0.0, but have since upgraded to 4.2.0. See the lsit of releases [here](https://github.com/realm/realm-java/releases)
+I am unsure of forwards compatibility, but if newer versions will work or break the current project, please let me know and I will update to the highest possible one without making changes to the source code. 
+
+
 
 ## Known Issues
+
+### Manifest merger errors 
 
 Depending on your version of Google's Libraries, you may run into this error:
 
@@ -116,11 +149,39 @@ Or something along those lines. If you do, simply add this line of code to your 
             }
         }
     }
-```	
+```
+
+### TransformExceptions
+
+Your build may work just fine when debugging, but break when you try to make an APK file. If it does not work when you do this and this error appears:
+
+```
+Note: Recompile with -Xlint:unchecked for details.
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:transformClassesWithMultidexlistForDebug'.
+> com.android.build.api.transform.TransformException: Error while generating the main dex list.
+
+* Try:
+Run with --stacktrace option to get the stack trace. Run with --info or --debug option to get more log output. Run with --scan to get full insights.
+
+* Get more help at https://help.gradle.org
+
+BUILD FAILED in 49s
+```
+
+This issue was discovered with [Issue 3](https://github.com/PGMacDesign/PGMacTips/issues/3) and is related to version compatability issues relating to a dependency or yours clashing with one of mine. Normally this is fixed by following the logic in one of the following stackoverflow links: [Solution 1](https://stackoverflow.com/questions/33717886/errorexecution-failed-for-task-apptransformclasseswithdexfordebug) , [solution 2](https://stackoverflow.com/questions/37497882/errorexecution-failed-for-task-apptransformclasseswithdexfordebug-in-androi/37498940) , or [Solution 3](https://stackoverflow.com/questions/35890257/android-errorexecution-failed-for-task-apptransformclasseswithdexforrelease) . 
+
+Sometimes, however, none of these will resolve your issue. Don't despair though! This can happen when a dependency has made changes that are breaking a core section of my code. An example would be Realm when it upgraded from versions 3.0.0 to 4.2.0 we saw an enormous number of breaking changes and it caused this issue to come about. 
+
+If you happen to be in this situation, either [make a new issue](https://github.com/PGMacDesign/PGMacTips/issues/new) or message me withe the info and I will work to get an update out as soon as I am able. 
+
+As an aside, it is infurating that running the stack trace with those subsequent optionals did not help to discover the issue at all, so my apologies if you went through the same frustration I did. 
 
 ## New Issues
 
-If you run into any compatability issues or bugs, please open a ticket ASAP so I can take a look at it. 
+If you run into any compatability issues or bugs, please [make a new issue](https://github.com/PGMacDesign/PGMacTips/issues/new) ASAP so I can take a look at it. 
 
 ## Important Notes
 

@@ -32,12 +32,14 @@ import com.pgmacdesign.pgmactips.stackmanagement.StackManagerException;
 import com.pgmacdesign.pgmactips.utilities.CameraMediaUtilities;
 import com.pgmacdesign.pgmactips.utilities.ContactUtilities;
 import com.pgmacdesign.pgmactips.utilities.DatabaseUtilities;
+import com.pgmacdesign.pgmactips.utilities.GsonUtilities;
 import com.pgmacdesign.pgmactips.utilities.L;
 import com.pgmacdesign.pgmactips.utilities.MalwareUtilities;
 import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
 import com.pgmacdesign.pgmactips.utilities.NumberUtilities;
 import com.pgmacdesign.pgmactips.utilities.PermissionUtilities;
 import com.pgmacdesign.pgmactips.utilities.SharedPrefs;
+import com.pgmacdesign.pgmactips.utilities.SystemUtilities;
 
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -89,7 +91,7 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
         //init2();
         //init3();
 	    //init4();
-        init5();
+//        init5();
 
     }
 
@@ -358,12 +360,12 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
         if(perm.startPermissionsRequest(new PermissionUtilities.permissionsEnum[]{
                 PermissionUtilities.permissionsEnum.WRITE_EXTERNAL_STORAGE,
                 PermissionUtilities.permissionsEnum.READ_EXTERNAL_STORAGE})) {
-            dbUtilities.copyDBToDownloadDirectory(null);
+            dbUtilities.copyDBToDownloadDirectory(MyTestActivity.this, null);
         }
     }
 
     private void temp(){
-        L.m(MiscUtilities.getPackageName());
+        L.m(SystemUtilities.getPackageName());
 
     }
     private void temp2(){
@@ -519,7 +521,30 @@ public class MyTestActivity extends Activity implements View.OnClickListener {
     @SuppressLint("MissingPermission")
     @Override
     public void onClick(View view) {
-        init5Get();
+        if(dbUtilities == null) {
+            dbUtilities = new DatabaseUtilities(this);
+        }
+        SamplePojo samplePojo = new SamplePojo();
+        samplePojo.setAge(2);
+        samplePojo.setGender("panstuffffff");
+        samplePojo.setId(123123);
+        samplePojo.setName("name");
+        boolean bool = dbUtilities.persistObject(SamplePojo.class, samplePojo);
+        L.m("save success? - " + bool);
+
+        SamplePojo ss = (SamplePojo) dbUtilities.getPersistedObject(SamplePojo.class);
+        if(ss == null){
+            L.m("could not retrieve object");
+        } else {
+            L.m("successfully retrieved object: " + GsonUtilities.convertObjectToJson(ss, SamplePojo.class));
+        }
+
+        if(true){
+            return;
+        }
+
+
+//        init5Get();
         //doWebCall();
         /*
         TimerUtilities.startTimer(new OnTaskCompleteListener() {

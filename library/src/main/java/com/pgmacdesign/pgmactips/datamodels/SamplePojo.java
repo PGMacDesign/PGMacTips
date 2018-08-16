@@ -14,7 +14,7 @@ public class SamplePojo {
     private String name;
 	@SerializedName("age")
     private int age;
-    @SerializedName("gender")
+    @SerializedName("name")
     private String gender;
 
     public long getId() {

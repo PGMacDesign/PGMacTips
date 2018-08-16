@@ -17,8 +17,8 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
-        //Realm - Changed on 2018-08-15 as per: https://stackoverflow.com/a/51447494/2480714
-//        classpath "io.realm:realm-gradle-plugin:3.0.0"
+        //Realm - (https://realm.io/blog/android-installation-change/)
+        classpath "io.realm:realm-gradle-plugin:4.2.0"
         //classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         // NOTE: Do not place your application dependencies here; they belong

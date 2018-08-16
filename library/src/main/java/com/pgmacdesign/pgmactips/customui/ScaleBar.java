@@ -3,29 +3,30 @@ package com.pgmacdesign.pgmactips.customui;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.location.Location;
 import android.widget.ImageView;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.Projection;
+import com.google.android.gms.maps.model.LatLng;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.utilities.DisplayManagerUtilities;
 import com.pgmacdesign.pgmactips.utilities.NumberUtilities;
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
-
-//import com.google.android.gms.maps.GoogleMap;
-//import com.google.android.gms.maps.Projection;
-//import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Scale bar to match Google Maps that shows the scale on the map
  * Created by pmacdowell on 2017-02-21.
  * From: http://stackoverflow.com/a/29076258/2480714
- * NOTE! As of 2018-08-15, the majority of this class has been commented out due to compatibility
- * issues (see here for info: https://github.com/PGMacDesign/PGMacTips/issues/3). Code is still
- * visible via this link: https://github.com/PGMacDesign/PGMacTips/tree/master/library/src/main/java/com/pgmacdesign/pgmactips/maputilities
  */
 @SuppressLint("AppCompatCustomView")
-//@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
+@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
 public class ScaleBar extends ImageView { //public class ScaleBar extends ImageView { android.support.v7.widget.AppCompatImageView {
-	private float mXOffset = 10;
+    private float mXOffset = 10;
     private float mYOffset = 10;
     private float mLineWidth = 3;
 
@@ -37,7 +38,7 @@ public class ScaleBar extends ImageView { //public class ScaleBar extends ImageV
 
     private static final int TEXT_SIZE_BASE = 16;
 
-//    private GoogleMap mMap;
+    private GoogleMap mMap;
 
     private float mXdpi;
     private float mYdpi;
@@ -52,23 +53,15 @@ public class ScaleBar extends ImageView { //public class ScaleBar extends ImageV
 
     private DisplayManagerUtilities dmu;
 
-//    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
-    public ScaleBar(Context context) {
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
+    public ScaleBar(Context context, GoogleMap map) {
         super(context);
         this.dmu = new DisplayManagerUtilities(context);
+        this.mMap = map;
+
         this.mXdpi = dmu.getXdpi();
         this.mYdpi = dmu.getYdpi();
     }
-
-//    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
-//    public ScaleBar(Context context, GoogleMap map) {
-//        super(context);
-//        this.dmu = new DisplayManagerUtilities(context);
-//        this.mMap = map;
-//
-//        this.mXdpi = dmu.getXdpi();
-//        this.mYdpi = dmu.getYdpi();
-//    }
 
     @Override
     public void onDraw(Canvas canvas) {
@@ -85,128 +78,128 @@ public class ScaleBar extends ImageView { //public class ScaleBar extends ImageV
         // We want the scale bar to be as long as the closest round-number miles/kilometers
         // to 1-inch at the latitude at the current center of the screen.
 
-//        Projection projection = mMap.getProjection();
-//
-//        if (projection == null) {
-//            return;
-//        }
-//
-//        final Paint barPaint = new Paint();
-//        barPaint.setColor(Color.BLACK);
-//        barPaint.setAntiAlias(true);
-//        barPaint.setStrokeWidth(mLineWidth);
-//
-//        final Paint textPaint = new Paint();
-//        textPaint.setColor(Color.BLACK);
-//        textPaint.setAntiAlias(true);
-//        textPaint.setTextSize(dmu.getScalablePixelTextSize(TEXT_SIZE_BASE));
-//
-//        drawXMetric(canvas, textPaint, barPaint);
-//
-//        drawYMetric(canvas, textPaint, barPaint);
+        Projection projection = mMap.getProjection();
+
+        if (projection == null) {
+            return;
+        }
+
+        final Paint barPaint = new Paint();
+        barPaint.setColor(Color.BLACK);
+        barPaint.setAntiAlias(true);
+        barPaint.setStrokeWidth(mLineWidth);
+
+        final Paint textPaint = new Paint();
+        textPaint.setColor(Color.BLACK);
+        textPaint.setAntiAlias(true);
+        textPaint.setTextSize(dmu.getScalablePixelTextSize(TEXT_SIZE_BASE));
+
+        drawXMetric(canvas, textPaint, barPaint);
+
+        drawYMetric(canvas, textPaint, barPaint);
     }
 
-   private void drawXMetric(Canvas canvas, Paint textPaint, Paint barPaint) {
-//        Projection projection = mMap.getProjection();
-//
-//
-//        if (projection != null) {
-//            int point1, point2;
-//            point1 = (int) (((getWidth() / 2) - (mXdpi / 2)));
-//            point2 =  (int) (getHeight() / 2);
-//            LatLng p1 = projection.fromScreenLocation(
-//                    new Point(point1, point2));
-//
-//            int point3, point4;
-//            point3 = (int) (((getWidth() / 2) + (mXdpi / 2)));
-//            point4 =  (int) (getHeight() / 2);
-//            LatLng p2 = projection.fromScreenLocation(
-//                    new Point(point3, point4));
-//
-//            Location locationP1 = new Location(SCALEBAR_LOCATION_PART_1);
-//            Location locationP2 = new Location(SCALEBAR_LOCATION_PART_2);
-//
-//            locationP1.setLatitude(p1.latitude);
-//            locationP2.setLatitude(p2.latitude);
-//            locationP1.setLongitude(p1.longitude);
-//            locationP2.setLongitude(p2.longitude);
-//
-//            float xMetersPerInch = locationP1.distanceTo(locationP2);
-//
-//            if (mIsLatitudeBar) {
-//                String xMsg = scaleBarLengthText(xMetersPerInch, mIsImperial, mIsNautical);
-//                Rect xTextRect = new Rect();
-//                textPaint.getTextBounds(xMsg, 0, xMsg.length(), xTextRect);
-//
-//                int textSpacing = (int) (xTextRect.height() / 5.0);
-//
-//                if(drawLine) {
-//                    canvas.drawRect(mXOffset, mYOffset, mXOffset + mXdpi, mYOffset + mLineWidth, barPaint);
-//                    canvas.drawRect(mXOffset + mXdpi, mYOffset, mXOffset + mXdpi + mLineWidth, mYOffset +
-//                            xTextRect.height() + mLineWidth + textSpacing, barPaint);
-//                }
-//
-//                if (!mIsLongitudeBar) {
-//                    if(drawLine) {
-//                        canvas.drawRect(mXOffset, mYOffset, mXOffset + mLineWidth, mYOffset +
-//                                xTextRect.height() + mLineWidth + textSpacing, barPaint);
-//                    }
-//                }
-//                if(drawNumbers) {
-//                    canvas.drawText(xMsg, (mXOffset + mXdpi / 2 - xTextRect.width() / 2),
-//                            (mYOffset + xTextRect.height() + mLineWidth + textSpacing), textPaint);
-//                }
-//            }
-//        }
+    private void drawXMetric(Canvas canvas, Paint textPaint, Paint barPaint) {
+        Projection projection = mMap.getProjection();
+
+
+        if (projection != null) {
+            int point1, point2;
+            point1 = (int) (((getWidth() / 2) - (mXdpi / 2)));
+            point2 =  (int) (getHeight() / 2);
+            LatLng p1 = projection.fromScreenLocation(
+                    new Point(point1, point2));
+
+            int point3, point4;
+            point3 = (int) (((getWidth() / 2) + (mXdpi / 2)));
+            point4 =  (int) (getHeight() / 2);
+            LatLng p2 = projection.fromScreenLocation(
+                    new Point(point3, point4));
+
+            Location locationP1 = new Location(SCALEBAR_LOCATION_PART_1);
+            Location locationP2 = new Location(SCALEBAR_LOCATION_PART_2);
+
+            locationP1.setLatitude(p1.latitude);
+            locationP2.setLatitude(p2.latitude);
+            locationP1.setLongitude(p1.longitude);
+            locationP2.setLongitude(p2.longitude);
+
+            float xMetersPerInch = locationP1.distanceTo(locationP2);
+
+            if (mIsLatitudeBar) {
+                String xMsg = scaleBarLengthText(xMetersPerInch, mIsImperial, mIsNautical);
+                Rect xTextRect = new Rect();
+                textPaint.getTextBounds(xMsg, 0, xMsg.length(), xTextRect);
+
+                int textSpacing = (int) (xTextRect.height() / 5.0);
+
+                if(drawLine) {
+                    canvas.drawRect(mXOffset, mYOffset, mXOffset + mXdpi, mYOffset + mLineWidth, barPaint);
+                    canvas.drawRect(mXOffset + mXdpi, mYOffset, mXOffset + mXdpi + mLineWidth, mYOffset +
+                            xTextRect.height() + mLineWidth + textSpacing, barPaint);
+                }
+
+                if (!mIsLongitudeBar) {
+                    if(drawLine) {
+                        canvas.drawRect(mXOffset, mYOffset, mXOffset + mLineWidth, mYOffset +
+                                xTextRect.height() + mLineWidth + textSpacing, barPaint);
+                    }
+                }
+                if(drawNumbers) {
+                    canvas.drawText(xMsg, (mXOffset + mXdpi / 2 - xTextRect.width() / 2),
+                            (mYOffset + xTextRect.height() + mLineWidth + textSpacing), textPaint);
+                }
+            }
+        }
     }
 
     private void drawYMetric(Canvas canvas, Paint textPaint, Paint barPaint) {
-//        Projection projection = mMap.getProjection();
-//
-//        if (projection != null) {
-//            Location locationP1 = new Location(SCALEBAR_LOCATION_PART_1);
-//            Location locationP2 = new Location(SCALEBAR_LOCATION_PART_2);
-//
-//            LatLng p1 = projection.fromScreenLocation(new Point(getWidth() / 2,
-//                    (int) ((getHeight() / 2) - (mYdpi / 2))));
-//            LatLng p2 = projection.fromScreenLocation(new Point(getWidth() / 2,
-//                    (int) ((getHeight() / 2) + (mYdpi / 2))));
-//
-//            locationP1.setLatitude(p1.latitude);
-//            locationP2.setLatitude(p2.latitude);
-//            locationP1.setLongitude(p1.longitude);
-//            locationP2.setLongitude(p2.longitude);
-//
-//            float yMetersPerInch = locationP1.distanceTo(locationP2);
-//
-//            if (mIsLongitudeBar) {
-//                String yMsg = scaleBarLengthText(yMetersPerInch, mIsImperial, mIsNautical);
-//                Rect yTextRect = new Rect();
-//                textPaint.getTextBounds(yMsg, 0, yMsg.length(), yTextRect);
-//
-//                int textSpacing = (int) (yTextRect.height() / 5.0);
-//
-//                if(drawLine) {
-//                    canvas.drawRect(mXOffset, mYOffset, mXOffset + mLineWidth, mYOffset + mYdpi, barPaint);
-//                    canvas.drawRect(mXOffset, mYOffset + mYdpi, mXOffset + yTextRect.height() +
-//                            mLineWidth + textSpacing, mYOffset + mYdpi + mLineWidth, barPaint);
-//                }
-//                if (!mIsLatitudeBar) {
-//                    if(drawLine) {
-//                        canvas.drawRect(mXOffset, mYOffset, mXOffset + yTextRect.height() +
-//                                mLineWidth + textSpacing, mYOffset + mLineWidth, barPaint);
-//                    }
-//                }
-//
-//                float x = mXOffset + yTextRect.height() + mLineWidth + textSpacing;
-//                float y = mYOffset + mYdpi / 2 + yTextRect.width() / 2;
-//
-//                if(drawNumbers) {
-//                    canvas.rotate(-90, x, y);
-//                    canvas.drawText(yMsg, x, y + textSpacing, textPaint);
-//                }
-//            }
-//        }
+        Projection projection = mMap.getProjection();
+
+        if (projection != null) {
+            Location locationP1 = new Location(SCALEBAR_LOCATION_PART_1);
+            Location locationP2 = new Location(SCALEBAR_LOCATION_PART_2);
+
+            LatLng p1 = projection.fromScreenLocation(new Point(getWidth() / 2,
+                    (int) ((getHeight() / 2) - (mYdpi / 2))));
+            LatLng p2 = projection.fromScreenLocation(new Point(getWidth() / 2,
+                    (int) ((getHeight() / 2) + (mYdpi / 2))));
+
+            locationP1.setLatitude(p1.latitude);
+            locationP2.setLatitude(p2.latitude);
+            locationP1.setLongitude(p1.longitude);
+            locationP2.setLongitude(p2.longitude);
+
+            float yMetersPerInch = locationP1.distanceTo(locationP2);
+
+            if (mIsLongitudeBar) {
+                String yMsg = scaleBarLengthText(yMetersPerInch, mIsImperial, mIsNautical);
+                Rect yTextRect = new Rect();
+                textPaint.getTextBounds(yMsg, 0, yMsg.length(), yTextRect);
+
+                int textSpacing = (int) (yTextRect.height() / 5.0);
+
+                if(drawLine) {
+                    canvas.drawRect(mXOffset, mYOffset, mXOffset + mLineWidth, mYOffset + mYdpi, barPaint);
+                    canvas.drawRect(mXOffset, mYOffset + mYdpi, mXOffset + yTextRect.height() +
+                            mLineWidth + textSpacing, mYOffset + mYdpi + mLineWidth, barPaint);
+                }
+                if (!mIsLatitudeBar) {
+                    if(drawLine) {
+                        canvas.drawRect(mXOffset, mYOffset, mXOffset + yTextRect.height() +
+                                mLineWidth + textSpacing, mYOffset + mLineWidth, barPaint);
+                    }
+                }
+
+                float x = mXOffset + yTextRect.height() + mLineWidth + textSpacing;
+                float y = mYOffset + mYdpi / 2 + yTextRect.width() / 2;
+
+                if(drawNumbers) {
+                    canvas.rotate(-90, x, y);
+                    canvas.drawText(yMsg, x, y + textSpacing, textPaint);
+                }
+            }
+        }
     }
 
     public void invalidateNumbersOnly(){
