@@ -28,6 +28,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1788,6 +1789,80 @@ public class StringUtilities {
             }
         }
         return dp[x.length()][y.length()];
-    }    
+    }
+
+    /**
+     * Converts a list of Strings to a single String of comma separated values
+     * @param lst Array of Strings to combine
+     * @return List of Comma-separated String values
+     */
+    public static String convertListToString(List<String> lst){
+        return convertListToString(lst, ", ");
+    }
+
+    /**
+     * Converts a list of Strings to a single String of comma separated values
+     * @param lst Array of Strings to combine
+     * @param delimiter Delimiter to use instead of a comma. IF null, will be set as ""
+     * @return List of Comma-separated String values
+     */
+    public static String convertListToString(List<String> lst, String delimiter){
+        if(MiscUtilities.isListNullOrEmpty(lst)){
+            return null;
+        }
+        if(delimiter == null){
+            delimiter = "";
+        }
+        if(Build.VERSION.SDK_INT >= 26) {
+            return String.join(delimiter, lst);
+        } else {
+            StringBuilder listString = new StringBuilder();
+            for(int i = 0; i < lst.size(); i++){
+                String s = (String) lst.get(i);
+                listString.append(s);
+                if(i >= (lst.size() - 1)){
+                    //On the last one, do nothing
+                } else {
+                    listString.append(delimiter);
+                }
+            }
+            return listString.toString();
+        }
+    }
+
+    /**
+     * Convert a map to a Single String
+     * @param map map to separate
+     * @return String of joined key value pairs. Will return null if map is null
+     */
+    public static String convertMapToString(Map<?, ?> map){
+        return convertMapToString(map, " -- ");
+    }
+
+    /**
+     * Convert a map to a Single String
+     * @param map map to separate
+     * @param delimiter String delimiter to separate the pairs of key values
+     * @return String of joined key value pairs. Will return null if map is null
+     */
+    public static String convertMapToString(Map<?, ?> map, String delimiter){
+        if(MiscUtilities.isMapNullOrEmpty(map)){
+            return null;
+        }
+        if(delimiter == null){
+            delimiter = " - ";
+        }
+        StringBuilder sb = new StringBuilder();
+        for(Map.Entry<?, ?> m : map.entrySet()){
+            Object key = m.getKey();
+            Object value = m.getValue();
+            if(key == null || value == null){
+                continue;
+            }
+            sb.append("Key: " + key.toString() + ", Value: " + value.toString());
+        }
+        return sb.toString();
+    }
+
 }
 
