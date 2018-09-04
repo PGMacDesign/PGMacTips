@@ -8,7 +8,7 @@ import java.lang.reflect.Type;
  * Created by pmacdowell on 8/12/2016.
  */
 public class PGMacTipsConstants {
-	
+
 	///////////////
 	//Misc Values//
 	///////////////
@@ -16,7 +16,8 @@ public class PGMacTipsConstants {
 	// TODO: 2018-02-13 refactor this into preferences setup
 	public static final String PGMACTIPS_PACKAGE_ID = "com.pgmacdesign.pgmactips";
 	public static final String PGMACTIPS_CONTEXT_PROVIDER = "PGMacContextProvider";
-	
+	public static final String PGMACTIPS_STRING = "PGMacTips";
+
     /////////////////
     //Misc Booleans//
     /////////////////

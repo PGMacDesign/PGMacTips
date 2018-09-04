@@ -3,6 +3,12 @@ Change Log
 
 
 
+Version 0.0.67 *(2018-09-04)*
+----------------------------
+
+ * Update: Updated the [StackManager](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/stackmanagement/StackManager.java) class to include overloaded methods for single stack management of one type of enum, added in getters for the size, and changed the behavior so it will display errors in the log rather than throwing StackManagerExceptions. 
+ * Update: Updated the [MiscUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/MiscUtilities.java) to include a simple function to convert the passed enum into a list of said enum values. 
+
 Version 0.0.66 *(2018-08-16)*
 ----------------------------
 

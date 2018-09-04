@@ -9,6 +9,8 @@ import android.content.pm.Signature;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Looper;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.format.DateFormat;
 import android.util.Base64;
 import android.util.Log;
@@ -17,12 +19,14 @@ import android.webkit.CookieSyncManager;
 
 import com.pgmacdesign.pgmactips.BuildConfig;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -405,14 +409,12 @@ public class MiscUtilities {
      * @param context context
      */
     @SuppressWarnings("deprecation")
-    public static void clearCookies(Context context)
-    {
+    public static void clearCookies(Context context) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             CookieManager.getInstance().removeAllCookies(null);
             CookieManager.getInstance().flush();
-        } else
-        {
+        } else {
             CookieSyncManager cookieSyncMngr = CookieSyncManager.createInstance(context);
             cookieSyncMngr.startSync();
             CookieManager cookieManager=CookieManager.getInstance();
@@ -493,6 +495,59 @@ public class MiscUtilities {
             return -1;
         } else {
             return atomicInteger.get();
+        }
+    }
+
+
+    /**
+     * copy something to the clipboard. Overloaded to allow for empty label
+     * @param context Context for referencing system service
+     * @param toCopy The actual text to copy
+     * @return boolean, true if it successfully copied, false if it did not
+     */
+    public static boolean copyToClipboard(@NonNull Context context, @NonNull String toCopy){
+        return copyToClipboard(context, null, toCopy);
+    }
+
+    /**
+     * copy something to the clipboard
+     * @param context Context for referencing system service
+     * @param label A label to reference by. If null or empty, will be {@link PGMacTipsConstants#PGMACTIPS_STRING}
+     * @param toCopy The actual text to copy
+     * @return boolean, true if it successfully copied, false if it did not
+     */
+    public static boolean copyToClipboard(@NonNull Context context, @Nullable String label, @NonNull String toCopy){
+        if(context == null || StringUtilities.isNullOrEmpty(toCopy)){
+            return false;
+        }
+        if(StringUtilities.isNullOrEmpty(label)){
+            label = PGMacTipsConstants.PGMACTIPS_STRING;
+        }
+        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        android.content.ClipData clip = android.content.ClipData.newPlainText(label, toCopy);
+        if(clipboard != null) {
+            clipboard.setPrimaryClip(clip);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Get all values from an enum type (list of all the values)
+     * @param enumToGet The enum to get all of
+     * @param <E> E Extends Enum
+     * @return List of enum values, null if something fails
+     */
+    public static <E extends Enum> List<E> getAllEnumValues(E enumToGet){
+        if(enumToGet == null){
+            return null;
+        }
+        try {
+            return new ArrayList<>(EnumSet.allOf(enumToGet.getDeclaringClass()));
+        } catch (Exception e){
+            e.printStackTrace();
+            return null;
         }
     }
 

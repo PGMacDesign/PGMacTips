@@ -28,7 +28,7 @@ allprojects {
 And include this in your dependencies section of your module .gradle file:
 
 ```java
-implementation ('com.github.PGMacDesign:PGMacTips:0.0.66')
+implementation ('com.github.PGMacDesign:PGMacTips:0.0.67')
 ```
 
 Having trouble with Jitpack? [This link](https://jitpack.io/#pgmacdesign/PGMacTips) here will show what is going on with the current build as well as give you instructions on integrating Jitpack into your project. 
@@ -38,7 +38,7 @@ Having trouble with Jitpack? [This link](https://jitpack.io/#pgmacdesign/PGMacTi
 
 ## Javadoc
 
-Javadoc info can be found [here](https://jitpack.io/com/github/pgmacdesign/PGMacTips/0.0.66/javadoc/): 
+Javadoc info can be found [here](https://jitpack.io/com/github/pgmacdesign/PGMacTips/0.0.67/javadoc/): 
 
 If you would like to view docs for older version (supported versions are those >= 0.0.602), just replace the version code in this url:
 
@@ -116,7 +116,7 @@ allprojects {
 ```
 
 I started deviating from Realm's updates once they started requiring accounts / credentials to use. 
-I originally used version 3.0.0, but have since upgraded to 4.2.0. See the lsit of releases [here](https://github.com/realm/realm-java/releases)
+I originally used version 3.0.0, but have since upgraded to 4.2.0. See the list of releases [here](https://github.com/realm/realm-java/releases)
 I am unsure of forwards compatibility, but if newer versions will work or break the current project, please let me know and I will update to the highest possible one without making changes to the source code. 
 
 
@@ -144,7 +144,7 @@ Or something along those lines. If you do, simply add this line of code to your 
             def requested = details.requested
             if (requested.group == 'com.android.support') { //Replace String here with whichever error is thrown
                 if (!requested.name.startsWith("multidex")) {
-                    details.useVersion '26.0.2' //Replace version here with whatever you are using; this will override the other one
+                    details.useVersion '27.1.1' //Replace version here with whatever you are using; this will override the other one
                 }
             }
         }
@@ -171,13 +171,13 @@ Run with --stacktrace option to get the stack trace. Run with --info or --debug 
 BUILD FAILED in 49s
 ```
 
-This issue was discovered with [Issue 3](https://github.com/PGMacDesign/PGMacTips/issues/3) and is related to version compatability issues relating to a dependency or yours clashing with one of mine. Normally this is fixed by following the logic in one of the following stackoverflow links: [Solution 1](https://stackoverflow.com/questions/33717886/errorexecution-failed-for-task-apptransformclasseswithdexfordebug) , [solution 2](https://stackoverflow.com/questions/37497882/errorexecution-failed-for-task-apptransformclasseswithdexfordebug-in-androi/37498940) , or [Solution 3](https://stackoverflow.com/questions/35890257/android-errorexecution-failed-for-task-apptransformclasseswithdexforrelease) . 
+This issue was discovered with [Issue 3](https://github.com/PGMacDesign/PGMacTips/issues/3) and is related to version compatability issues relating to a dependency or yours clashing with one of mine. Normally this is fixed by following the logic in one of the following stackoverflow links: [Solution 1](https://stackoverflow.com/questions/33717886/errorexecution-failed-for-task-apptransformclasseswithdexfordebug), [solution 2](https://stackoverflow.com/questions/37497882/errorexecution-failed-for-task-apptransformclasseswithdexfordebug-in-androi/37498940), or [Solution 3](https://stackoverflow.com/questions/35890257/android-errorexecution-failed-for-task-apptransformclasseswithdexforrelease). 
 
 Sometimes, however, none of these will resolve your issue. Don't despair though! This can happen when a dependency has made changes that are breaking a core section of my code. An example would be Realm when it upgraded from versions 3.0.0 to 4.2.0 we saw an enormous number of breaking changes and it caused this issue to come about. 
 
-If you happen to be in this situation, either [make a new issue](https://github.com/PGMacDesign/PGMacTips/issues/new) or message me withe the info and I will work to get an update out as soon as I am able. 
+If you happen to be in this situation, either [make a new issue](https://github.com/PGMacDesign/PGMacTips/issues/new) or message me with the info and I will work to get an update out as soon as I am able. 
 
-Update: the issue has been resolved since 2018-08-16 in version [0.0.66](https://github.com/PGMacDesign/PGMacTips/releases/tag/0.0.66). and the solution to fix it was declared within the issue itself.
+Update: the [issue](https://github.com/PGMacDesign/PGMacTips/issues/3) has been resolved since 2018-08-16 in version [0.0.66](https://github.com/PGMacDesign/PGMacTips/releases/tag/0.0.66). and the solution to fix it was declared within the issue description and comments.
 
 ## New Issues
 

@@ -811,6 +811,34 @@ public class ImageUtilities {
     }
 
     /**
+     * Convert a base64String into a bitmap
+     * @param base64Image Base64 String
+     * @return {@link Bitmap}
+     */
+    public static Bitmap convertBase64StringToBitmap(@NonNull String base64Image){
+        byte[] decodedString = Base64.decode(base64Image, Base64.DEFAULT);
+        Bitmap bitmap;
+        try {
+            bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            if(bitmap == null){
+                throw new Exception();
+            }
+            return bitmap;
+        } catch (Exception e){
+            e.printStackTrace();
+            try {
+                final String pureBase64Encoded = base64Image.substring(base64Image.indexOf(",")  + 1);
+                byte[] decodedString1 = Base64.decode(pureBase64Encoded, Base64.DEFAULT);
+                bitmap = BitmapFactory.decodeByteArray(decodedString1, 0, decodedString.length);
+                return bitmap;
+            } catch (Exception ee){
+                ee.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    /**
      * Download a file from the web. This defaults to a photo (png)
      */
     public static class DownloadImageFromWeb extends AsyncTask<Void, Integer, File> {
