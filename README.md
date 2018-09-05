@@ -151,8 +151,9 @@ Or something along those lines. If you do, simply add this line of code to your 
     }
 ```
 
-### TransformExceptions
+### Realm Exceptions (TransformExceptions && AbstractMethodError)
 
+#### TransformException
 Your build may work just fine when debugging, but break when you try to make an APK file. If it does not work when you do this and this error appears:
 
 ```
@@ -178,6 +179,33 @@ Sometimes, however, none of these will resolve your issue. Don't despair though!
 If you happen to be in this situation, either [make a new issue](https://github.com/PGMacDesign/PGMacTips/issues/new) or message me with the info and I will work to get an update out as soon as I am able. 
 
 Update: the [issue](https://github.com/PGMacDesign/PGMacTips/issues/3) has been resolved since 2018-08-16 in version [0.0.66](https://github.com/PGMacDesign/PGMacTips/releases/tag/0.0.66). and the solution to fix it was declared within the issue description and comments.
+
+
+#### AbstractMethodError
+
+If you upgrade from an old version of the library to a new one (or vice-versa) and see this error when running your code:
+
+```
+   java.lang.AbstractMethodError: abstract method not implemented
+       at io.realm.internal.RealmProxyMediator.validateTable(RealmProxyMediator.java)
+       at io.realm.Realm.initializeRealm(Realm.java:349)
+       at io.realm.Realm.createAndValidate(Realm.java:314)
+       at io.realm.Realm.createInstance(Realm.java:265)
+       at io.realm.RealmCache.createRealmOrGetFromCache(RealmCache.java:143)
+       at io.realm.Realm.getInstance(Realm.java:228)
+       at com.pgmacdesign.pgmactips.utilities.DatabaseUtilities.buildRealm(DatabaseUtilities.java:1507)
+       at com.pgmacdesign.pgmactips.utilities.DatabaseUtilities.queryDatabaseMasterAll(DatabaseUtilities.java:1340)
+       at com.pgmacdesign.pgmactips.utilities.DatabaseUtilities.queryDatabaseMasterSingle(DatabaseUtilities.java:1258)
+       at com.pgmacdesign.pgmactips.utilities.DatabaseUtilities.queryDatabaseMasterSingle(DatabaseUtilities.java:1233)
+       at com.pgmacdesign.pgmactips.utilities.DatabaseUtilities.deleteFromMasterDB(DatabaseUtilities.java:810)
+       at com.pgmacdesign.pgmactips.utilities.DatabaseUtilities.deleteFromMasterDB(DatabaseUtilities.java:771)
+       at com.pgmacdesign.pgmactips.utilities.DatabaseUtilities.dePersistObject(DatabaseUtilities.java:716)
+	   ...
+```
+
+You may be using conflicting versions of Realm. As mentioned in the Realm section above, if you use PGMacTips version 0.0.66 or later and utilize the DatabaseUtilities class, you must use Realm 4.2.0 but if you use this library version 0.0.64 or lower, you must use Realm version 3.0.0.
+
+Double check your versions for both Realm and this library if you spot this error. 
 
 ## New Issues
 
