@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmactips.broadcastReceivers;
+package com.pgmacdesign.pgmactips.broadcastreceivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

@@ -1,4 +1,4 @@
-package com.pgmacdesign.pgmactips.broadcastReceivers;
+package com.pgmacdesign.pgmactips.broadcastreceivers;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
