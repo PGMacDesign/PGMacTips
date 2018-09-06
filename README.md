@@ -28,7 +28,7 @@ allprojects {
 And include this in your dependencies section of your module .gradle file:
 
 ```java
-implementation ('com.github.PGMacDesign:PGMacTips:0.0.67')
+implementation ('com.github.PGMacDesign:PGMacTips:0.0.68')
 ```
 
 Having trouble with Jitpack? [This link](https://jitpack.io/#pgmacdesign/PGMacTips) here will show what is going on with the current build as well as give you instructions on integrating Jitpack into your project. 
@@ -38,7 +38,7 @@ Having trouble with Jitpack? [This link](https://jitpack.io/#pgmacdesign/PGMacTi
 
 ## Javadoc
 
-Javadoc info can be found [here](https://jitpack.io/com/github/pgmacdesign/PGMacTips/0.0.67/javadoc/): 
+Javadoc info can be found [here](https://jitpack.io/com/github/pgmacdesign/PGMacTips/0.0.UPDATE_THIS_WHEN_EVENTUALLY_REINSTATE/javadoc/): 
 
 If you would like to view docs for older version (supported versions are those >= 0.0.602), just replace the version code in this url:
 

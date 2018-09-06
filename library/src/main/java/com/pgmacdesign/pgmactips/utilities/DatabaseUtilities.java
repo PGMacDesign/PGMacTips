@@ -819,24 +819,26 @@ public class DatabaseUtilities {
 
         Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
         //final RealmQuery query = RealmQuery.createQuery(realm, MasterDatabaseObject.class); //Old version, 3.0.0
-        final RealmQuery<T> query;
+        final RealmQuery<MasterDatabaseObject> query;
         try {
-            query = realm.where(myClass);
+            query = realm.where(MasterDatabaseObject.class);
         } catch (IllegalStateException il) {
             il.printStackTrace();
+            return false;
+        }
+        if(query == null){
             return false;
         }
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 //Start transaction
-                RealmResults<T> results = query.findAll();
+                RealmResults<MasterDatabaseObject> results = query.findAll();
                 if (results == null) {
                     return;
                 }
-                for (T t : results) {
-                    if (t != null) {
-                        MasterDatabaseObject mdo = (MasterDatabaseObject) t;
+                for (MasterDatabaseObject mdo : results) {
+                    if (mdo != null) {
                         String id = mdo.getId();
                         if (!StringUtilities.isNullOrEmpty(id)) {
                             if (!StringUtilities.isNullOrEmpty(customSuffix)) {
@@ -844,7 +846,7 @@ public class DatabaseUtilities {
                                 //Check if ID Matches package name
                                 if (customId.equals(id)) {
                                     try {
-                                        t.deleteFromRealm();
+                                        mdo.deleteFromRealm();
                                         L.m("delete from DB succeeded");
                                         return;
                                     } catch (Exception e) {
@@ -855,7 +857,7 @@ public class DatabaseUtilities {
                                 //Check if ID Matches package name
                                 if (myClassName.equals(id)) {
                                     try {
-                                        t.deleteFromRealm();
+                                        mdo.deleteFromRealm();
                                         L.m("delete succeeded");
                                         return;
                                     } catch (Exception e) {
@@ -907,24 +909,27 @@ public class DatabaseUtilities {
 
         Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
         //final RealmQuery query = RealmQuery.createQuery(realm, MasterDatabaseObject.class); //Old version, 3.0.0
-        final RealmQuery<T> query;
+        final RealmQuery<MasterDatabaseObject> query;
         try {
-            query = realm.where(myClass.getRawType());
+//            query = realm.where(myClass.getRawType());
+            query = realm.where(MasterDatabaseObject.class);
         } catch (IllegalStateException il) {
             il.printStackTrace();
+            return false;
+        }
+        if(query == null){
             return false;
         }
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 //Start transaction
-                RealmResults<T> results = query.findAll();
+                RealmResults<MasterDatabaseObject> results = query.findAll();
                 if (results == null) {
                     return;
                 }
-                for (T t : results) {
-                    if (t != null) {
-                        MasterDatabaseObject mdo = (MasterDatabaseObject) t;
+                for (MasterDatabaseObject mdo : results) {
+                    if (mdo != null) {
                         String id = mdo.getId();
                         if (!StringUtilities.isNullOrEmpty(id)) {
                             if (!StringUtilities.isNullOrEmpty(customSuffix)) {
@@ -932,7 +937,7 @@ public class DatabaseUtilities {
                                 //Check if ID Matches package name
                                 if (customId.equals(id)) {
                                     try {
-                                        t.deleteFromRealm();
+                                        mdo.deleteFromRealm();
                                         L.m("delete from DB succeeded");
                                         return;
                                     } catch (Exception e) {
@@ -943,7 +948,7 @@ public class DatabaseUtilities {
                                 //Check if ID Matches package name
                                 if (myClassName.equals(id)) {
                                     try {
-                                        t.deleteFromRealm();
+                                        mdo.deleteFromRealm();
                                         L.m("delete succeeded");
                                         return;
                                     } catch (Exception e) {
@@ -1036,6 +1041,9 @@ public class DatabaseUtilities {
             query = realm.where(MasterDatabaseObject.class);
         } catch (IllegalStateException il) {
             il.printStackTrace();
+            return false;
+        }
+        if(query == null){
             return false;
         }
         realm.executeTransaction(new Realm.Transaction() {
@@ -1344,6 +1352,9 @@ public class DatabaseUtilities {
             query = realm.where(MasterDatabaseObject.class);
         } catch (IllegalStateException il) {
             il.printStackTrace();
+            return new ArrayList<>();
+        }
+        if(query == null){
             return new ArrayList<>();
         }
         //Start transaction
@@ -1882,6 +1893,9 @@ public class DatabaseUtilities {
             query = realm.where(MasterDatabaseObject.class);
         } catch (IllegalStateException il) {
             il.printStackTrace();
+            return;
+        }
+        if(query == null){
             return;
         }
         realm.executeTransaction(new Realm.Transaction() {

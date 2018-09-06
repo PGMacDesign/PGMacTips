@@ -3,6 +3,14 @@ Change Log
 
 
 
+Version 0.0.68 *(2018-09-06)*
+----------------------------
+
+ * Rename: Renamed the broadcastreceivers package name [here](https://github.com/PGMacDesign/PGMacTips/tree/master/library/src/main/java/com/pgmacdesign/pgmactips/broadcastreceivers) to remove the camel-casing (broadcastReceivers --> broadcastreceivers). Note that this WILL break any manifest files that declare the [Connectivity Receiver](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/broadcastreceivers/PGConnectivityReceiver.java) as it changes the pathing. Just rename it your manifest and it should work the same. 
+ * Rename: Renamed SamplePojo @SerializedName field that was a duplicate to manually trigger IllegalStateException back to different one.
+ * Fix: Fixed a bug in DatabaseUtilities that was causing a NullPointerException to be thrown if no items could be found to be deleted / de-persisted. (Should also fix objects not being removed properly from the DB)
+ 
+
 Version 0.0.67 *(2018-09-04)*
 ----------------------------
 

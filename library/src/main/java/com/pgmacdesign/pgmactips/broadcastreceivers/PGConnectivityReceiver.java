@@ -1,11 +1,12 @@
 package com.pgmacdesign.pgmactips.broadcastreceivers;
 
-import android.annotation.SuppressLint;
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.annotation.RequiresPermission;
 
 /**
  * Connectivity Receiver. Useful for detecting no internet connection (as a listener)
@@ -50,6 +51,7 @@ public class PGConnectivityReceiver extends BroadcastReceiver {
      */
     public static ConnectivityReceiverListener connectivityReceiverListener;
 
+    @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE)
     public PGConnectivityReceiver() {
         super();
     }
@@ -58,10 +60,11 @@ public class PGConnectivityReceiver extends BroadcastReceiver {
      * Note! Requires permission to run, will throw exception otherwise
      */
     @Override
+    @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE)
     public void onReceive(Context context, Intent arg1) {
         ConnectivityManager cm = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
-        @SuppressLint("MissingPermission") NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null
                 && activeNetwork.isConnectedOrConnecting();
 
