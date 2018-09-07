@@ -17,10 +17,10 @@ public class CustomAnnotationsBase {
                 "com.github.tibolte:elasticdownload:1.0.4", "1.0.4",
                 "Used as a UI animation for progress bars"),
         uCrop("https://github.com/Yalantis/uCrop",
-                "'com.yalantis:ucrop:2.2.0'", "2.2.0",
+                "com.yalantis:ucrop:2.2.0", "2.2.0",
                 "Photo cropping tool with clean GUI. Used in various camera / media tools"),
         AnimatedSVGView("https://github.com/jaredrummler/AnimatedSvgView",
-                "'com.jaredrummler:animated-svg-view:1.0.5'", "1.0.5",
+                "com.jaredrummler:animated-svg-view:1.0.5", "1.0.5",
                 "Progress bar loading animation used as an indeterminate loader with svg Strings"),
         Volley("https://github.com/google/volley",
                 "com.android.volley:volley:1.0.0", "1.0.0",
@@ -94,6 +94,7 @@ public class CustomAnnotationsBase {
     public @interface RequiresDependency {
         CustomAnnotationsBase.Dependencies requiresDependency() default Dependencies.Unknown;
         CustomAnnotationsBase.Dependencies[] requiresDependencies() default {Dependencies.Unknown};
+        //Unused code below, but leaving it here for reference
 //        String dependencyUrl() default "https://github.com/PGMacDesign/PGMacTips";
 //        String dependencyPackage() default "Unknown";
 //        String dependencyVersion() default "?.?.?";
