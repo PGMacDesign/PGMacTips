@@ -1,10 +1,17 @@
 package com.pgmacdesign.pgmactips.utilities;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 
 import java.lang.reflect.Type;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by pmacdowell on 8/18/2016.
@@ -104,5 +111,117 @@ public class GsonUtilities {
             e.printStackTrace();
         }
         return jsonElement;
+    }
+
+    /**
+     * Convert an object to a String (using gson)
+     * @param o
+     * @param type {@link Type}. To see type examples, look at sample:
+     * {@link com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.CustomConverterFactory#TYPE_TESTINGPOJO}
+     * @return
+     */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
+    public static String convertObjectToString(@NonNull final Object o, @NonNull final Type type){
+//        JsonElement jsonElement = new Gson().toJsonTree(o);
+        JsonElement jsonElement = new Gson().toJsonTree(o, type);
+        if(jsonElement == null){
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        if(jsonElement.isJsonArray()){
+            JsonArray jsonArray = jsonElement.getAsJsonArray();
+            Iterator<JsonElement> j = jsonArray.iterator();
+            while (j.hasNext()){
+                JsonElement element = j.next();
+                String s = convertJsonElementToString(element);
+                if(!StringUtilities.isNullOrEmpty(s)){
+                    sb.append(s + "\n");
+                }
+            }
+        } else if (jsonElement.isJsonObject()){
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
+            sb.append(convertJsonObjectToString(jsonObject));
+        } else if (jsonElement.isJsonNull()){
+            return null;
+        } else if (jsonElement.isJsonPrimitive()){
+            sb.append("JsonPrimitive: " + jsonElement.getAsJsonPrimitive().toString());
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Convert a {@link JsonElement} to a String using gson
+     * @param jsonElement
+     * @return
+     */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
+    public static String convertJsonElementToString(JsonElement jsonElement){
+        if(jsonElement == null){
+            return null;
+        }
+        return jsonElement.getAsString();
+    }
+
+    /**
+     * Convert a {@link JsonObject} to a String using gson
+     * @param jsonObject
+     * @return
+     */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
+    public static String convertJsonObjectToString(JsonObject jsonObject){
+        if(jsonObject == null){
+            return null;
+        }
+        Set<Map.Entry<String, JsonElement>> entries = jsonObject.entrySet();
+        StringBuilder sb = new StringBuilder();
+        for(Map.Entry<String, JsonElement> map : entries){
+            if(map == null){
+                continue;
+            }
+            String key = map.getKey();
+            JsonElement value = map.getValue();
+            if(!StringUtilities.isNullOrEmpty(key) && value != null){
+                try {
+                    sb.append(key + " : " + value.getAsString() + "\n");
+                } catch (UnsupportedOperationException o){
+                    sb.append(key + " : " + value.toString() + "\n");
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Makes a deep copy of an object. From:
+     * https://stackoverflow.com/questions/64036/how-do-you-make-a-deep-copy-of-an-object-in-java
+     * @param objectToCopy Object to copy
+     * @param typeOfObject Type of the object
+     * @return Will returned copied object or null if it did not process correctly
+     */
+    public static Object copyObject(Object objectToCopy, Type typeOfObject){
+        try {
+            String json = gson.toJson(objectToCopy, typeOfObject);
+            return gson.fromJson(json, typeOfObject);
+        } catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Makes a deep copy of an object. From:
+     * https://stackoverflow.com/questions/64036/how-do-you-make-a-deep-copy-of-an-object-in-java
+     * @param objectToCopy Object to copy
+     * @param typeOfObject Class of the object
+     * @return Will returned copied object or null if it did not process correctly
+     */
+    public static Object copyObject(Object objectToCopy, Class typeOfObject){
+        try {
+            String json = gson.toJson(objectToCopy, typeOfObject);
+            return gson.fromJson(json, typeOfObject);
+        } catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 }
