@@ -2,6 +2,11 @@ Change Log
 ==========
 
 
+Version 0.0.69 *(TBD)*
+----------------------------
+
+ * New: Added in new Dialog static methods and variables to the [Dialog Utilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/DialogUtilities.java) class. The new static int references of <i>NO_RESPONSE</i>, <i>YES_RESPONSE</i>, and <i>SIMPLE_CLOSE_RESPONSE</i> mirror their respective counterparts of <i>FAIL_RESPONSE</i>, <i>SUCCESS_RESPONSE</i>, and <i>OTHER_RESPONSE</i>; they were added for clarification. 
+ * New: Added in 2 new images: <b>close_x_black</b>, and <b>close_x_white</b> which are simple close ('x' with a circle around them) icons. They are used in Dialog Utilities and can be accessed from outside the library as well. 
 
 Version 0.0.68 *(2018-09-06)*
 ----------------------------

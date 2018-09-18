@@ -13,6 +13,7 @@ import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.InputStream;
 import java.lang.reflect.Type;
 
 import okhttp3.ResponseBody;
@@ -135,9 +136,19 @@ public class RetrofitParser {
                     String responseJson = null, errorResponseJson = null;
                     if (responseBody != null) {
                         try {
+                            if (successClassDataModel != null) {
+                                if (successClassDataModel.isAssignableFrom(InputStream.class)) {
+                                    InputStream responseInputStream = responseBody.byteStream();
+                                    if(responseInputStream != null){
+                                        listener.onTaskComplete(responseInputStream, successCallbackTag);
+                                        return;
+                                    }
+                                }
+                            }
+                        } catch (Exception e){}
+                        try {
                             responseJson = responseBody.string();
-                        } catch (Exception e) {
-                        }
+                        } catch (Exception e) {}
                     }
                     if (errorBody != null) {
                         try {
@@ -278,6 +289,17 @@ public class RetrofitParser {
                     ResponseBody errorBody = response.errorBody();
                     String responseJson = null, errorResponseJson = null;
                     if (responseBody != null) {
+                        try {
+                            if (successClassDataModel != null) {
+                                if (successClassDataModel.getClass().isAssignableFrom(InputStream.class)) {
+                                    InputStream responseInputStream = responseBody.byteStream();
+                                    if(responseInputStream != null){
+                                        listener.onTaskComplete(responseInputStream, successCallbackTag);
+                                        return;
+                                    }
+                                }
+                            }
+                        } catch (Exception e){}
                         try {
                             responseJson = responseBody.string();
                         } catch (Exception e) {

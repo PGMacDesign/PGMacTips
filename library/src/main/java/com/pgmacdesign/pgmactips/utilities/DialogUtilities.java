@@ -6,6 +6,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -27,6 +28,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.NumberPicker;
@@ -52,8 +54,11 @@ import java.util.TimeZone;
 public class DialogUtilities {
 
     public static final int FAIL_RESPONSE = -1;
+    public static final int NO_RESPONSE = -1;
     public static final int OTHER_RESPONSE = 0;
+    public static final int SIMPLE_CLOSE_RESPONSE = 0;
     public static final int SUCCESS_RESPONSE = 1;
+    public static final int YES_RESPONSE = 1;
     public static final int LATER_RESPONSE = 2;
     public static final int NEVER_RESPONSE = 3;
 
@@ -89,6 +94,12 @@ public class DialogUtilities {
         return dialog;
     }
 
+    /**
+     * Sets the flag to dim the back of the dialog
+     * {@link WindowManager.LayoutParams#FLAG_DIM_BEHIND}
+     * @param dialog
+     * @return
+     */
     public static Dialog dimDialog(Dialog dialog) {
         try {
             Window window = dialog.getWindow();
@@ -101,15 +112,21 @@ public class DialogUtilities {
         return dialog;
     }
 
-
-    //Mirrors the Calendar class
+    /**
+     * Simple date object POJO to be used in some of the dialogs in this class
+     */
     public static class SimpleDateObject {
         public int year;
         public int monthOfYear;
         public int dayOfMonth;
     }
 
-    //Date Picker Dialog
+    /**
+     * Simple Date Picker dialog for choose a date
+     * @param context
+     * @param listener
+     * @return
+     */
     public static DatePickerDialog buildDatePickerDialog(final Context context,
                                                          final DialogFinishedListener listener) {
 
@@ -146,7 +163,14 @@ public class DialogUtilities {
         return mDialog;
     }
 
-    //Web Dialog
+    /**
+     * Web dialog
+     * @param context
+     * @param listener
+     * @param webUrlToLoad
+     * @param title
+     * @return
+     */
     public static AlertDialog buildWebDialog(@NonNull final Context context,
                                              @NonNull final DialogFinishedListener listener,
                                              @NonNull final String webUrlToLoad,
@@ -244,7 +268,15 @@ public class DialogUtilities {
 //        return mDialog;
 //    }
 
-    //Simple Alert Dialog
+    /**
+     * Simple alert dialog with only one option
+     * @param context
+     * @param listener
+     * @param okText
+     * @param title
+     * @param message
+     * @return
+     */
     public static AlertDialog buildSimpleOkDialog(final Context context,
                                                   final DialogFinishedListener listener,
                                                   String okText, String title, String message) {
@@ -275,7 +307,16 @@ public class DialogUtilities {
         return myBuilder.create();
     }
 
-    //2 Option Dialog Dialog
+    /**
+     * Simple alert dialog with yes and no options as well as message + title
+     * @param context
+     * @param listener
+     * @param yesText
+     * @param noText
+     * @param title
+     * @param message
+     * @return
+     */
     public static AlertDialog buildOptionDialog(final Context context,
                                                 final DialogFinishedListener listener,
                                                 String yesText, String noText,
@@ -301,13 +342,19 @@ public class DialogUtilities {
         myBuilder.setPositiveButton(yesText, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                listener.dialogFinished(true, SUCCESS_RESPONSE);
+                listener.dialogFinished(true, YES_RESPONSE);
             }
         });
         myBuilder.setNegativeButton(noText, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                listener.dialogFinished(false, FAIL_RESPONSE);
+                listener.dialogFinished(false, NO_RESPONSE);
+            }
+        });
+        myBuilder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                listener.dialogFinished(false, NO_RESPONSE);
             }
         });
         myBuilder.setMessage(message);
@@ -316,11 +363,75 @@ public class DialogUtilities {
         return myBuilder.create();
     }
 
-    //3 Option Dialog Dialog
-    public static Dialog buildOptionDialog(final Context context,
-                                           final DialogFinishedListener listener,
-                                           String yesText, String laterText,
-                                           String neverText, String title, String message) {
+    /**
+     * Build a simple alert dialog. (Nearly identical to
+     * {@link DialogUtilities#buildOptionDialog(Context, DialogFinishedListener, String, String, String, String, String)}
+     * other than this returns an alert dialog for a different viewing experience)
+     * @param context Context
+     * @param listener listener to send data back upon. Answer will be one of 2 things:
+     *                 1) {@link DialogUtilities#NO_RESPONSE} if no is clicked or dialog dismissed
+     *                 2) {@link DialogUtilities#YES_RESPONSE} if yes is clicked.
+     * @param title Title, can be null, but either title or message must not be null; not both
+     * @param message Message (body) to display, can be null, but either title or message must not be null; not both
+     * @param yesConfirmText Yes (confirm) text. If null, will default to "Yes"
+     * @param noDenyText No (cancel) text. If null, will default to "No"
+     * @return {@link AlertDialog}
+     */
+    public static AlertDialog buildSimpleAlertDialog(@NonNull final Context context,
+                                                     @NonNull final DialogFinishedListener listener,
+                                                     @Nullable final String title,
+                                                     @NonNull final String message,
+                                                     @Nullable final String yesConfirmText,
+                                                     @Nullable final String noDenyText){
+        if(context == null || listener == null){
+            return null;
+        }
+        if(StringUtilities.isNullOrEmpty(title) && StringUtilities.isNullOrEmpty(message)){
+            return null;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(StringUtilities.isNullOrEmpty(title) ? "" : title);
+        builder.setMessage(StringUtilities.isNullOrEmpty(message) ? "" : message);
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                listener.dialogFinished(false, DialogUtilities.NO_RESPONSE);
+            }
+        });
+        builder.setPositiveButton(((StringUtilities.isNullOrEmpty(yesConfirmText)
+                        ? "Yes" : yesConfirmText)),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        listener.dialogFinished(true, DialogUtilities.YES_RESPONSE);
+                    }
+                });
+        builder.setNegativeButton(((StringUtilities.isNullOrEmpty(noDenyText)
+                        ? "No" : noDenyText)),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        listener.dialogFinished(false, DialogUtilities.NO_RESPONSE);
+                    }
+                });
+        return builder.create();
+    }
+
+    /**
+     * Simple dialog with 3 options on it
+     * @param context
+     * @param listener
+     * @param yesText
+     * @param laterText
+     * @param neverText
+     * @param title
+     * @param message
+     * @return
+     */
+    public static Dialog buildOptionDialog(@NonNull final Context context,
+                                           @NonNull final DialogFinishedListener listener,
+                                           @Nullable String yesText, @Nullable String laterText,
+                                           @Nullable String neverText, @Nullable String title, @Nullable String message) {
         if (StringUtilities.isNullOrEmpty(message)) {
             return null;
         }
@@ -350,8 +461,37 @@ public class DialogUtilities {
         return dialog;
     }
 
+    /**
+     * Build a Center Image Dialog with an image in the center and a close (x) button in the top right
+     * @param context Context
+     * @param listener listener to send response back on
+     * @param title Title (if null, will have visibility set to {@link View#GONE})
+     * @param message Message / body (if null, will have visibility set to {@link View#GONE})
+     * @param bitmapToSet Bitmap to set into the main IV.
+     * @param bitmapToSet Scaletype to be used. If null, scaleType == {@link android.widget.ImageView.ScaleType#CENTER_INSIDE}
+     * @return
+     */
+    public static Dialog buildCenterImageDialog(@NonNull final Context context,
+                                                @NonNull final DialogFinishedListener listener,
+                                                @Nullable final String title,
+                                                @Nullable final String message,
+                                                @NonNull final Bitmap bitmapToSet,
+                                                @Nullable final ImageView.ScaleType scaleTypeToUse){
+        return new CenterImageDialog(context, listener, title, message, bitmapToSet, scaleTypeToUse);
+    }
 
-    //Edit Text dialog
+    /**
+     * Simple EditText dialog where a user can enter text into the ET available
+     * @param context
+     * @param listener
+     * @param doneText
+     * @param cancelText
+     * @param title
+     * @param message
+     * @param editTextHint
+     * @param textInputType
+     * @return
+     */
     public static Dialog buildEditTextDialog(final Context context,
                                              final DialogFinishedListener listener,
                                              String doneText, String cancelText,
@@ -454,6 +594,105 @@ public class DialogUtilities {
         Dialog d = new TextIconSelectDialog(context, listener, title, message,
                 simpleTextIconObjects, backgroundColor, textColor);
         return d;
+    }
+
+    /**
+     * Simple dialog with an image in the center and the message / body right above it
+     */
+    private static class CenterImageDialog extends Dialog {
+
+        //Objects
+        private Context context;
+        private String title, message;
+        private DialogFinishedListener listener;
+        private Bitmap bitmapToSet;
+        private ImageView.ScaleType scaleType;
+
+        //UI
+        private RelativeLayout center_image_dialog_root;
+        private ImageView center_image_dialog_iv, center_image_dialog_close_x;
+        private TextView center_image_dialog_tv;
+
+        CenterImageDialog(@NonNull final Context context,
+                          @NonNull final DialogFinishedListener listener,
+                          @Nullable String title, @Nullable String message,
+                          @NonNull Bitmap bitmapToSet, @Nullable ImageView.ScaleType scaleType){
+            super(context);
+            this.title = title;
+            this.context = context;
+            this.message = message;
+            this.listener = listener;
+            this.bitmapToSet = bitmapToSet;
+            this.scaleType = (scaleType == null) ? ImageView.ScaleType.CENTER_INSIDE : scaleType;
+        }
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            if(StringUtilities.isNullOrEmpty(title)){
+                this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            }
+            setCanceledOnTouchOutside(false);
+            setContentView(R.layout.center_image_dialog);
+
+            checkForNulls();
+            initUIFields();
+            setUIFields();
+            setAdapters();
+        }
+
+        private void checkForNulls() {
+            if (StringUtilities.isNullOrEmpty(title)) {
+                this.title = "";
+            }
+            if (StringUtilities.isNullOrEmpty(message)) {
+                this.message = "";
+            }
+        }
+
+        private void initUIFields() {
+            this.center_image_dialog_root = (RelativeLayout) this.findViewById(
+                    R.id.center_image_dialog_root);
+            this.center_image_dialog_iv = (ImageView) this.findViewById(
+                    R.id.center_image_dialog_iv);
+            this.center_image_dialog_close_x = (ImageView) this.findViewById(
+                    R.id.center_image_dialog_close_x);
+            this.center_image_dialog_tv = (TextView) this.findViewById(
+                    R.id.center_image_dialog_tv);
+            this.center_image_dialog_iv.setScaleType(this.scaleType);
+        }
+
+        private void setUIFields(){
+            if(!StringUtilities.isNullOrEmpty(title)) {
+                this.setTitle(title);
+            }
+            if(this.bitmapToSet != null){
+                this.center_image_dialog_iv.setImageBitmap(this.bitmapToSet);
+            } else {
+                this.center_image_dialog_iv.setImageDrawable(
+                        new ColorDrawable(context.getResources().getColor(R.color.gray)));
+            }
+            if(!StringUtilities.isNullOrEmpty(this.message)){
+                this.center_image_dialog_tv.setText(this.message);
+                this.center_image_dialog_tv.setVisibility(View.VISIBLE);
+            } else {
+                this.center_image_dialog_tv.setText("");
+                this.center_image_dialog_tv.setVisibility(View.GONE);
+            }
+
+            this.center_image_dialog_close_x.bringToFront();
+        }
+
+        private void setAdapters(){
+            this.center_image_dialog_close_x.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.dialogFinished(null, DialogUtilities.SIMPLE_CLOSE_RESPONSE);
+                }
+            });
+        }
     }
 
     private static class TextIconSelectDialog extends Dialog {
