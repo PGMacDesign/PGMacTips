@@ -121,7 +121,11 @@ I am unsure of forwards compatibility, but if newer versions will work or break 
 
 
 
-## Known Issues
+## Issues / Exceptions
+
+As this library uses multiple nested dependencies, there can sometimes be conflicts that arise when being used with other dependencies. This section covers some of the more common ones and how they can be resolved fairly quickly.
+
+When all of these recommendations below fail, try simply invalidating caches and restarting (<i>File --> 'Incalidate Caches / Restart...'</i>).
 
 ### Manifest merger errors 
 
@@ -134,6 +138,7 @@ Error:Execution failed for task ':app:processDebugManifest'.
 	Suggestion: add 'tools:replace="android:value"' to <meta-data> element at AndroidManifest.xml:26:9-28:38 to override.
 ```
 
+
 Or an error indicating that "Multiple dex files define...".
 
 Or something along those lines. If you do, simply add this line of code to your build.gradle file underneath the Android Tag
@@ -144,11 +149,28 @@ Or something along those lines. If you do, simply add this line of code to your 
             def requested = details.requested
             if (requested.group == 'com.android.support') { //Replace String here with whichever error is thrown
                 if (!requested.name.startsWith("multidex")) {
-                    details.useVersion '27.1.1' //Replace version here with whatever you are using; this will override the other one
+                    details.useVersion '{VERSION}' //Replace version here with whatever you are using (IE, 27.1.1); this will override the other one
                 }
             }
         }
     }
+```
+
+### ExecException (Gradle / AAPT)
+
+Occasionally when you add in multiple dependencies, you may see this error:
+
+```java
+Error:org.gradle.process.internal.ExecException: Process 'command 'D:\user\Android\sdk\build-tools\{VERSION}\aapt.exe''
+ finished with non-zero exit value 1
+Error:Execution failed for task ':app:processDebugResources'.
+> Failed to execute aapt
+```
+
+This is one of those exceptions that has a large number of [fixes](https://stackoverflow.com/questions/29249986/finished-with-non-zero-exit-value) for it so by all means check around if one is better than my solution here, but more often than not I simply add this line to the <i>gradle.properties</i> file. 
+
+```yaml
+android.enableAapt2=false
 ```
 
 ### Realm Exceptions (TransformExceptions && AbstractMethodError)

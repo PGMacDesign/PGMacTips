@@ -2,12 +2,19 @@ package com.pgmacdesign.pgmactips.datamodels;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 /**
  * Sample POJO that demonstrates serialization
  * Created by pmacdowell on 8/18/2016.
  */
 public class SamplePojo {
-	
+
+
+    public static enum MyFauxTestEnum {
+        One, Two, Three
+    }
+
 	@SerializedName("id")
     private long id;
 	@SerializedName("name")
@@ -16,6 +23,26 @@ public class SamplePojo {
     private int age;
     @SerializedName("gender")
     private String gender;
+    @SerializedName("strs")
+    private List<String> strs;
+    @SerializedName("fauxEnums")
+    private List<MyFauxTestEnum> fauxEnums;
+
+    public List<MyFauxTestEnum> getFauxEnums() {
+        return fauxEnums;
+    }
+
+    public void setFauxEnums(List<MyFauxTestEnum> fauxEnums) {
+        this.fauxEnums = fauxEnums;
+    }
+
+    public List<String> getStrs() {
+        return strs;
+    }
+
+    public void setStrs(List<String> strs) {
+        this.strs = strs;
+    }
 
     public long getId() {
         return id;

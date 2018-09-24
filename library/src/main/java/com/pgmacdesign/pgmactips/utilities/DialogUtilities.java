@@ -468,7 +468,7 @@ public class DialogUtilities {
      * @param title Title (if null, will have visibility set to {@link View#GONE})
      * @param message Message / body (if null, will have visibility set to {@link View#GONE})
      * @param bitmapToSet Bitmap to set into the main IV.
-     * @param bitmapToSet Scaletype to be used. If null, scaleType == {@link android.widget.ImageView.ScaleType#CENTER_INSIDE}
+     * @param bitmapToSet Scaletype to be used. If null, scaleType == {@link android.widget.ImageView.ScaleType#FIT_CENTER}
      * @return
      */
     public static Dialog buildCenterImageDialog(@NonNull final Context context,
@@ -623,7 +623,7 @@ public class DialogUtilities {
             this.message = message;
             this.listener = listener;
             this.bitmapToSet = bitmapToSet;
-            this.scaleType = (scaleType == null) ? ImageView.ScaleType.CENTER_INSIDE : scaleType;
+            this.scaleType = (scaleType == null) ? ImageView.ScaleType.FIT_CENTER : scaleType;
         }
 
         @Override
