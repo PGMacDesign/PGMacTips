@@ -53,6 +53,7 @@ public class DatabaseUtilities {
     //final TypeToken MASTER_DB_OBJECT_TYPETOKEN = new TypeToken<List<MasterDatabaseObject>>(){};
     //final Type MASTER_DB_OBJECT_TYPE = MASTER_DB_OBJECT_TYPETOKEN.getType();
 
+    //region Static Final Vars
     private static final String CONTEXT_NULL =
             "Context null within DatabaseUtilities. Please call overloaded method to pass in Context";
     private static final String PGMACTIPS_NOT_INITIALIZED =
@@ -60,17 +61,21 @@ public class DatabaseUtilities {
     private static final String COULD_NOT_PERSIST_OBJECT_ILE =
             "Could not persist object into database: ";
 
-    //Global Vars
-    private RealmConfiguration realmConfiguration;
-    private Context context;
-
     //Defaults. If no configuration is set, these will be used
     private static final String DEFAULT_DB_NAME = PGMacTipsConstants.DB_NAME;
     private static final int DEFAULT_DB_SCHEMA = PGMacTipsConstants.DB_VERSION;
     private static final boolean DEFAULT_DELETE_OPTION = PGMacTipsConstants.DELETE_DB_IF_NEEDED;
 
+    //endregion
+
+    //region Instance Variables
+    private RealmConfiguration realmConfiguration;
+    private Context context;
+
+    //endregion
+
     ////////////////////////
-    //Constructors - init //
+    //region Constructors - init //
     ////////////////////////
 
     /**
@@ -154,8 +159,10 @@ public class DatabaseUtilities {
         Realm.init(context);
     }
 
+    //endregion
+
     //////////////////
-    //Insert Methods//
+    //region Insert Methods//
     //////////////////
 
     /**
@@ -700,9 +707,10 @@ public class DatabaseUtilities {
         return false;
 
     }
+    //endregion
 
     //////////////////
-    //Delete Methods//
+    //region Delete Methods//
     //////////////////
 
     /**
@@ -1157,8 +1165,10 @@ public class DatabaseUtilities {
         return false;
     }
 
+    //endregion
+
     /////////////////
-    //Query Methods//
+    //region Query Methods//
     /////////////////
 
     /**
@@ -1485,8 +1495,10 @@ public class DatabaseUtilities {
         return objects;
     }
 
+    //endregion
+
     ////////////////////////////////////////////////////
-    //Realm Object, Configuration, and Query Utilities//
+    //region Realm Object, Configuration, and Query Utilities//
     ////////////////////////////////////////////////////
 
     /**
@@ -1598,6 +1610,31 @@ public class DatabaseUtilities {
     }
 
     /**
+     * Simple getter for the realm configuration being used. If it does not exist, it will
+     * build it.
+     *
+     * @return
+     */
+    public RealmConfiguration getRealmConfiguration() {
+        try {
+            if (this.realmConfiguration == null) {
+                this.realmConfiguration = DatabaseUtilities.buildRealmConfig(
+                        context, null, null, null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return this.realmConfiguration;
+    }
+
+    //endregion
+
+    //////////////////
+    //region Private Misc Utilities//
+    //////////////////
+
+    /**
      * If no query is set, this will build a query with the class sent in
      *
      * @param realm
@@ -1632,10 +1669,6 @@ public class DatabaseUtilities {
         }
         //return RealmQuery.createQuery(realm, myClass.getRawType()); //Old version, 3.0.0
     }
-
-    //////////////////
-    //Misc Utilities//
-    //////////////////
 
     /**
      * Checking for a valid class
@@ -1761,6 +1794,11 @@ public class DatabaseUtilities {
         return true;
     }
 
+    //endregion
+
+    ///////////////////////
+    //region Public Misc Utilities
+
     /**
      * In case you want to know the name of your db file, this will print the
      * file name in the logcat
@@ -1776,25 +1814,6 @@ public class DatabaseUtilities {
         if (!StringUtilities.isNullOrEmpty(str)) {
             L.m("Database Name: " + str);
         }
-    }
-
-    /**
-     * Simple getter for the realm configuration being used. If it does not exist, it will
-     * build it.
-     *
-     * @return
-     */
-    public RealmConfiguration getRealmConfiguration() {
-        try {
-            if (this.realmConfiguration == null) {
-                this.realmConfiguration = DatabaseUtilities.buildRealmConfig(
-                        context, null, null, null);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return this.realmConfiguration;
     }
 
     /**
@@ -1923,8 +1942,10 @@ public class DatabaseUtilities {
         L.m("\nEnd Printout of full Database");
     }
 
+    //endregion
+
     ///////////
-    //Modules//
+    //region Modules//
     ///////////
 
     /*
@@ -1936,4 +1957,6 @@ public class DatabaseUtilities {
      */
     @RealmModule(library = true, allClasses = true)
     public static class PGMacTipsModule {}
+
+    //endregion
 }

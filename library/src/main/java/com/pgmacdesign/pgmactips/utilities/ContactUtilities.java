@@ -37,9 +37,28 @@ import java.util.regex.Pattern;
 public class ContactUtilities {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-    //----------Variables, enums, projections, and sort-by Strings---------------------------------/
+    //region ---Variables, enums, projections, and sort-by Strings---------------------------------/
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * List of service numbers. These can be blocked for bringing up a list to send SMS to as they
+     * will not take in SMS
+     */
+    public static final String[] BLOCK_LIST_NUMBERS = {
+            //Verizon
+            "#225", "#3282", "*226", "#646", "#768", "#874", "*86", "18668946848", "8668946848",
+            "18776237433", "8776237433", "8009220204", "18009220204", "18664065154", "8664065154",
+            "*228", "*22828", "*526", "*611", "611",
+            //AT&T
+            "*729", "*72427", "*3282#", "*3286#", "*646#", "*876#", "*225#", "*725#", "*639#",
+            "*6737#",
+            //Sprint
+            "1311", "3223", "7726", "8353", "8757", "9000", "9016", "9099", "9230", "9999",
+            //T-Mobile
+            "#932#", "#674#", "#674#", "#999#", "#225#", "#264#", "#263#", "#266#", "#646#",
+            "#932#", "#686#", "#793#", "#796#", "#763#", "#766#", "#326#", "*#06#", "*#9999#",
+            "*#0000#", "#8294", "##21#", "##61#", "##62#", "##67#", "*43#", "#43#"
+    };
 
     private static final String SORT_BY_DISPLAY_NAME =
             "upper(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + ") ASC";
@@ -162,8 +181,10 @@ public class ContactUtilities {
         ONLY_INCLUDE_CONTACTS_WITH_PHOTOS
     }
 
+    //endregion
+
     ////////////////////
-    //Global Variables//
+    //region Instance Variables//
     ////////////////////
 
     private final OnTaskCompleteListener listener;
@@ -175,6 +196,9 @@ public class ContactUtilities {
             moveFavoritesToTop, removeBlockListItems, shouldUpdateProgress,
             onlyKeepContactsWithPhotos;
 
+    //endregion
+
+    //region Private Constructor
     //Private Constructor
     private ContactUtilities(Context context, Activity activity,
                              OnTaskCompleteListener listener,
@@ -195,8 +219,10 @@ public class ContactUtilities {
         this.onlyKeepContactsWithPhotos = onlyKeepContactsWithPhotos;
     }
 
+    //endregion
+
     ////////////////
-    //Main Builder//
+    //region Main Builder//
     ////////////////
 
 
@@ -372,8 +398,10 @@ public class ContactUtilities {
         }
     }
 
+    //endregion
+
     /////////////////////////////////////////////
-    //Async Query Methods for Single table pull//
+    //region Async Query Methods for Single table pull//
     /////////////////////////////////////////////
 
     /**
@@ -496,7 +524,7 @@ public class ContactUtilities {
         async.execute();
     }
 
-
+    //region Class: ContactQueryAsync
     private static class ContactQueryAsync extends AsyncTask<Void, Float, Map<SearchTypes, List<Contact>>> {
 
         private SearchTypes[] typesToQuery;
@@ -793,8 +821,11 @@ public class ContactUtilities {
 
     }
 
+    //endregion
+    //endregion
+
     ///////////////////////////////////////
-    //Query Methods for Single table pull//
+    //region Query Methods for Single table pull//
     ///////////////////////////////////////
 
     /**
@@ -1928,9 +1959,10 @@ public class ContactUtilities {
         return contacts;
     }
 
+    //endregion
 
     /////////////////////////////////////////////////////////////
-    //Custom Query utilizing Regex. Mostly just testing for now//
+    //region Custom Query utilizing Regex. Mostly just testing for now//
     /////////////////////////////////////////////////////////////
 
     /**
@@ -2748,9 +2780,10 @@ public class ContactUtilities {
         return contacts;
     }
 
+    //endregion
 
     /////////////////////////////////////////////////////////////////////////////////////////
-    //Query HashMap Builder methods (Same as above, but return Map<contactId, ContactObject//
+    //region Query HashMap Builder methods (Same as above, but return Map<contactId, ContactObject>//
     /////////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -3173,8 +3206,10 @@ public class ContactUtilities {
         return contacts;
     }
 
+    //endregion
+
     /////////////////////////////////////////////
-    //Individual methods with passed contact ID//
+    //region Individual methods with passed contact ID//
     /////////////////////////////////////////////
 
     /**
@@ -3445,8 +3480,10 @@ public class ContactUtilities {
         }
     }
 
+    //endregion
+
     ////////////////////////////////////
-    //Utility methods for parsing data//
+    //region Utility methods for parsing data//
     ////////////////////////////////////
 
     /**
@@ -3491,8 +3528,10 @@ public class ContactUtilities {
         }
     }
 
+    //endregion
+
     //////////////////////////////////////////////////////////
-    //Contact class to serve as POJO + Other Related Methods//
+    //region Contact class to serve as POJO + Other Related Methods//
     //////////////////////////////////////////////////////////
 
     /**
@@ -3954,8 +3993,10 @@ public class ContactUtilities {
 
     }
 
+    //endregion
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
-    //----------Methods for mutating or accessing lists of contacts--------------------------------/
+    //region ---Methods for mutating or accessing lists of contacts--------------------------------/
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -4332,9 +4373,10 @@ public class ContactUtilities {
         return toReturn;
     }
 
+    //endregion
 
     ///////////////////
-    //Utility Methods//
+    //region Utility Methods//
     ///////////////////
 
     /**
@@ -5014,26 +5056,6 @@ public class ContactUtilities {
         }
     }
 
-    /**
-     * List of service numbers. These can be blocked for bringing up a list to send SMS to as they
-     * will not take in SMS
-     */
-    public static final String[] BLOCK_LIST_NUMBERS = {
-            //Verizon
-            "#225", "#3282", "*226", "#646", "#768", "#874", "*86", "18668946848", "8668946848",
-            "18776237433", "8776237433", "8009220204", "18009220204", "18664065154", "8664065154",
-            "*228", "*22828", "*526", "*611", "611",
-            //AT&T
-            "*729", "*72427", "*3282#", "*3286#", "*646#", "*876#", "*225#", "*725#", "*639#",
-            "*6737#",
-            //Sprint
-            "1311", "3223", "7726", "8353", "8757", "9000", "9016", "9099", "9230", "9999",
-            //T-Mobile
-            "#932#", "#674#", "#674#", "#999#", "#225#", "#264#", "#263#", "#266#", "#646#",
-            "#932#", "#686#", "#793#", "#796#", "#763#", "#766#", "#326#", "*#06#", "*#9999#",
-            "*#0000#", "#8294", "##21#", "##61#", "##62#", "##67#", "*43#", "#43#"
-    };
-
 
     /**
      * Simple  utility method for the 'first' letter in a list. The idea being that if you
@@ -5167,8 +5189,12 @@ public class ContactUtilities {
         return myList;
     }
 
+    //endregion
+
+
+
     ////////////////////////////////////////////////////////////////////
-    //Misc Utilities that are pulled/ altered from Android Source Code//
+    //region Misc Utilities that are pulled/ altered from Android Source Code//
     ////////////////////////////////////////////////////////////////////
 
     /**
@@ -5236,4 +5262,5 @@ public class ContactUtilities {
         }
     }
 
+    //endregion
 }

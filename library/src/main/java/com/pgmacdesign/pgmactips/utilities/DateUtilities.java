@@ -331,6 +331,33 @@ public class DateUtilities {
         return age;
     }
 
+
+    /**
+     * Quick calculator to get a person's age (as an int)
+     *
+     * @param dob Date of birth
+     * @return
+     */
+    public static int getAge(Calendar dob) {
+        Calendar now = Calendar.getInstance();
+        int age = 0;
+        int year1 = now.get(Calendar.YEAR);
+        int year2 = dob.get(Calendar.YEAR);
+        age = year1 - year2;
+        int month1 = now.get(Calendar.MONTH);
+        int month2 = dob.get(Calendar.MONTH);
+        if (month2 > month1) {
+            age--;
+        } else if (month1 == month2) {
+            int day1 = now.get(Calendar.DAY_OF_MONTH);
+            int day2 = dob.get(Calendar.DAY_OF_MONTH);
+            if (day2 > day1) {
+                age--;
+            }
+        }
+        return age;
+    }
+
     /**
      * Quick calculator to determine if person is >= age of 18
      *
@@ -389,32 +416,6 @@ public class DateUtilities {
         } else {
             return false;
         }
-    }
-
-    /**
-     * Quick calculator to get a person's age (as an int)
-     *
-     * @param dob Date of birth
-     * @return
-     */
-    public static int getAge(Calendar dob) {
-        Calendar now = Calendar.getInstance();
-        int age = 0;
-        int year1 = now.get(Calendar.YEAR);
-        int year2 = dob.get(Calendar.YEAR);
-        age = year1 - year2;
-        int month1 = now.get(Calendar.MONTH);
-        int month2 = dob.get(Calendar.MONTH);
-        if (month2 > month1) {
-            age--;
-        } else if (month1 == month2) {
-            int day1 = now.get(Calendar.DAY_OF_MONTH);
-            int day2 = dob.get(Calendar.DAY_OF_MONTH);
-            if (day2 > day1) {
-                age--;
-            }
-        }
-        return age;
     }
 
     /**
@@ -541,23 +542,6 @@ public class DateUtilities {
         long msTwo = calTwo.getTimeInMillis();
 
         return (int) ((msTwo - msOne) / (1000L * 60L * 60L * 24L));
-    }
-
-    /**
-     * Checks start and end dates to compare which came first
-     *
-     * @param startDate start date of event in Date object format
-     * @param endDate   end date of event in Date object format
-     * @return True if first date BEFORE second date OR second date is NULL
-     */
-    public static boolean before(Date startDate, Date endDate) {
-        if ((startDate == null) && (endDate == null))
-            return true;
-        if ((startDate == null) && (endDate != null))
-            return false;
-        if ((startDate != null) && (endDate == null))
-            return true;
-        return startDate.before(endDate);
     }
 
     /**
@@ -916,14 +900,98 @@ public class DateUtilities {
         return before(startDate, endDate);
     }
 
+    /**
+     * Checks start and end dates to compare which came first
+     *
+     * @param startDate start date of event in Date object format
+     * @param endDate   end date of event in Date object format
+     * @return True if first date BEFORE second date OR second date is NULL
+     */
+    public static boolean before(Date startDate, Date endDate) {
+        if ((startDate == null) && (endDate == null))
+            return true;
+        if ((startDate == null) && (endDate != null))
+            return false;
+        if ((startDate != null) && (endDate == null))
+            return true;
+        return startDate.before(endDate);
+    }
+
+    /**
+     * Used to compare the start and end dates
+     *
+     * @param startDateStr start date of event in Date object format
+     * @param endDateStr   end date of event in Date object format
+     * @return Returns true if the first date is
+     * BEFORE second date OR second date is NULL
+     */
+    public static boolean after(String startDateStr, String endDateStr, int formatType, String delimiter, Locale locale) {
+        //Get rid of nulls
+        if (delimiter == null) {
+            delimiter = "/";
+        }
+        if (locale == null) {
+            locale = Locale.US;
+        }
+        if ((startDateStr == null) || (startDateStr.isEmpty()))
+            return false;
+
+        if ((endDateStr == null) || (endDateStr.isEmpty()))
+            return true;
+
+        Date startDate = convertStringToDate(startDateStr, formatType, delimiter, locale);
+        Date endDate = convertStringToDate(endDateStr, formatType, delimiter, locale);
+
+        return after(startDate, endDate);
+    }
+
+    /**
+     * Checks start and end dates to compare which came first
+     *
+     * @param startDate start date of event in Date object format
+     * @param endDate   end date of event in Date object format
+     * @return True if first date BEFORE second date OR second date is NULL
+     */
+    public static boolean after(Date startDate, Date endDate) {
+        if ((startDate == null) && (endDate == null))
+            return true;
+        if ((startDate == null) && (endDate != null))
+            return false;
+        if ((startDate != null) && (endDate == null))
+            return true;
+        return startDate.after(endDate);
+    }
+
+    /**
+     * Convert 24 hour to 12 hour. IE:
+     * (14:11) --> (2:11 pm)
+     * @param hour
+     * @param minute
+     * @return
+     */
     public static String convert24HourTo12Hour(int hour, int minute){
         return convert24HourTo12Hour(hour + "", minute + "");
     }
 
+    /**
+     * Convert 12 hour to 24 hour. IE:
+     * (2:11 pm)--> (14:11)
+     * @param hour
+     * @param minute
+     * @param isAm
+     * @return
+     */
     public static String convert12HourTo24Hour(int hour, int minute, boolean isAm){
         return convert12HourTo24Hour(hour + "", minute + "", isAm);
     }
 
+    /**
+     * Convert 24 hour to 12 hour. IE:
+     * (14:11) --> (2:11 pm)
+     * @param hour
+     * @param minute
+     * @return
+     */
     public static String convert24HourTo12Hour(String hour, String minute){
         String str = hour + ":" + minute;
         SimpleDateFormat time24 = new SimpleDateFormat("HH:mm");
@@ -936,6 +1004,14 @@ public class DateUtilities {
         }
     }
 
+    /**
+     * Convert 12 hour to 24 hour. IE:
+     * (2:11 pm)--> (14:11)
+     * @param hour
+     * @param minute
+     * @param isAm
+     * @return
+     */
     public static String convert12HourTo24Hour(String hour, String minute, boolean isAm){
         String ampm;
         if(isAm){

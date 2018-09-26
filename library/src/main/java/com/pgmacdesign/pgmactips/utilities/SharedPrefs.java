@@ -39,11 +39,15 @@ import java.util.Set;
  */
 public class SharedPrefs {
 
-    //Static final Vars
+    //region Static final Vars
     private static final String OLD_AND_NEW_PW_DONT_MATCH = "Old and new passwords are not the same. If you want to change your password, please call the changePassword() method.";
     private static final String ENCRYPTED_PREFIX = "enc_";
     private static final String INVALID_RE_ENABLE_ENCRYPTION_CALL = "You must call setEncrypted() or initialize encryption through the constructor. This method is to re-enable after disabling";
     private static final String ENABLE_ENCRYPTION_BEFORE_CHANGING_PASSWORD = "You must have encryption enabled before a password can be changed. Please do so either in the constructor or by calling setEncrypted()";
+
+    //endregion
+
+    //region Instance Variables
 
     //Shared Prefs vars
     private SharedPreferences.Editor edit1;
@@ -59,9 +63,10 @@ public class SharedPrefs {
     private String salt;
     private EncryptionUtilities.SecretKeys keys, keyKeys;
 
+    //endregion
 
     ////////////////////////////
-    //Static Instance Builders//
+    //region Static Instance Builders//
     ////////////////////////////
 
     /**
@@ -103,6 +108,9 @@ public class SharedPrefs {
         return new SharedPrefs(context, getSPName(sharedPrefsName, context), password, salt);
     }
 
+    //endregion
+
+    //region Private Constructors
     /**
      * Constructor
      * @param context Context
@@ -150,8 +158,10 @@ public class SharedPrefs {
         this.encryptionInit();
     }
 
+    //endregion
+
     //////////////////
-    //Public Setters//
+    //region Public Setters//
     //////////////////
 
     /**
@@ -206,8 +216,10 @@ public class SharedPrefs {
         this.encryptionInit();
     }
 
+    //endregion
+
     //////////////////
-    //Init Functions//
+    //region Init Functions//
     //////////////////
 
     /**
@@ -233,9 +245,10 @@ public class SharedPrefs {
         this.edit1 = this.prefs1.edit();
     }
 
+    //endregion
 
     //////////////////
-    //Save Functions//
+    //region Save Methods//
     //////////////////
     /*
     All the methods below are save methods. First param is the key and the second is the
@@ -355,8 +368,10 @@ public class SharedPrefs {
         this.edit1.commit();
     }
 
+    //endregion
+
     ///////////////
-    //Get Methods//
+    //region Get Methods//
     ///////////////
 
     public String getString(String valueKey, String defaultValue) {
@@ -494,6 +509,38 @@ public class SharedPrefs {
         }
     }
 
+    /**
+     * Gets everything in the shared preferences
+     * @return A map of String to objects
+     */
+    public Map<String, ?> getAllPrefs(){
+        init();
+        if(this.isEncrypted){
+            Map<String, ?> myMap = this.prefs1.getAll();
+            if(MiscUtilities.isMapNullOrEmpty(myMap)){
+                return myMap;
+            }
+            Map<String, String> map = new HashMap<>();
+            for(Map.Entry<String, ?> m : myMap.entrySet()){
+                try {
+                    String key = m.getKey();
+                    key = decryptKey(key);
+                    String value = m.getValue().toString();
+                    value = decrypt(value);
+                    map.put(key, value);
+                } catch (NullPointerException e){} //To catch null errors
+            }
+            return map;
+        } else {
+            Map<String, ?> myMap = this.prefs1.getAll();
+            return myMap;
+        }
+    }
+
+    //endregion
+
+    //region Clear Pref Values
+
     public void clearPref(String[] keys){
         if(MiscUtilities.isArrayNullOrEmpty(keys)){
             return;
@@ -559,33 +606,9 @@ public class SharedPrefs {
         } catch (Exception e){}
     }
 
-    /**
-     * Gets everything in the shared preferences
-     * @return A map of String to objects
-     */
-    public Map<String, ?> getAllPrefs(){
-        init();
-        if(this.isEncrypted){
-            Map<String, ?> myMap = this.prefs1.getAll();
-            if(MiscUtilities.isMapNullOrEmpty(myMap)){
-                return myMap;
-            }
-            Map<String, String> map = new HashMap<>();
-            for(Map.Entry<String, ?> m : myMap.entrySet()){
-                try {
-                    String key = m.getKey();
-                    key = decryptKey(key);
-                    String value = m.getValue().toString();
-                    value = decrypt(value);
-                    map.put(key, value);
-                } catch (NullPointerException e){} //To catch null errors
-            }
-            return map;
-        } else {
-            Map<String, ?> myMap = this.prefs1.getAll();
-            return myMap;
-        }
-    }
+    //endregion
+
+    //region UPublic tilities
 
     /**
      * Change the stored password.
@@ -641,6 +664,12 @@ public class SharedPrefs {
         }
     }
 
+    //endregion
+
+    ///////////////////////////
+    //region Private Utility Methods//
+    ///////////////////////////
+
     /**
      * nulls in memory keys
      */
@@ -658,11 +687,6 @@ public class SharedPrefs {
         }
     }
 
-
-    ///////////////////////////
-    //Private Utility Methods//
-    ///////////////////////////
-
     /**
      * Get the Prefs for editing
      * @return
@@ -671,26 +695,6 @@ public class SharedPrefs {
         return (this.isEncrypted)
                 ? this.context.getSharedPreferences((ENCRYPTED_PREFIX + this.sharedPrefsName), Context.MODE_PRIVATE)
                 : this.context.getSharedPreferences(this.sharedPrefsName, Context.MODE_PRIVATE);
-    }
-
-    /**
-     * Get the SP name using the context in case it is null or empty
-     * @param sharedPrefsName
-     * @return
-     */
-    private static String getSPName(@Nullable String sharedPrefsName, @NonNull Context context){
-        String str;
-        if(StringUtilities.isNullOrEmpty(sharedPrefsName)){
-            String packageName = SystemUtilities.getPackageName(context);
-            if(!StringUtilities.isNullOrEmpty(packageName)){
-                str = packageName + ".sp";
-            } else {
-                str = context.getPackageName() + ".sp";
-            }
-        } else {
-            str = sharedPrefsName;
-        }
-        return str;
     }
 
     /**
@@ -731,6 +735,26 @@ public class SharedPrefs {
 //        }
 //        return null;
 //    }
+
+    /**
+     * Get the SP name using the context in case it is null or empty
+     * @param sharedPrefsName
+     * @return
+     */
+    private static String getSPName(@Nullable String sharedPrefsName, @NonNull Context context){
+        String str;
+        if(StringUtilities.isNullOrEmpty(sharedPrefsName)){
+            String packageName = SystemUtilities.getPackageName(context);
+            if(!StringUtilities.isNullOrEmpty(packageName)){
+                str = packageName + ".sp";
+            } else {
+                str = context.getPackageName() + ".sp";
+            }
+        } else {
+            str = sharedPrefsName;
+        }
+        return str;
+    }
 
     /**
      * Gets the salt string to be used from either the device serial number or the package
@@ -863,4 +887,5 @@ public class SharedPrefs {
         return cipherText;
     }
 
+    //endregion
 }
