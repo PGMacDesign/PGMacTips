@@ -214,7 +214,8 @@ public class StringUtilities {
      * @param otherStringToCheckFor
      * @return
      */
-    public static boolean doesStringContainIgnoreCase(@NonNull String originalString, int posStart,
+    // TODO: 10/2/2018 This is not working properly as of 2018-10-02
+    static boolean doesStringContainIgnoreCase(@NonNull String originalString, int posStart,
                                             int posEnd, @NonNull String otherStringToCheckFor){
         if(StringUtilities.isNullOrEmpty(originalString) ||
                 StringUtilities.isNullOrEmpty(otherStringToCheckFor)){
@@ -251,7 +252,8 @@ public class StringUtilities {
      * @param otherStringToCheckFor
      * @return
      */
-    public static boolean doesStringContainIgnoreCase(@NonNull String originalString,
+    // TODO: 10/2/2018 This is not working properly as of 2018-10-02
+    static boolean doesStringContainIgnoreCase(@NonNull String originalString,
                                             @NonNull String otherStringToCheckFor){
         try {
             return Pattern.compile(Pattern.quote(originalString), Pattern.CASE_INSENSITIVE)
