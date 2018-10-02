@@ -46,6 +46,8 @@ import retrofit2.Response;
         CustomAnnotationsBase.Dependencies.Okio})
 public class RetrofitParser {
 
+    //region Static Variables
+
     private static final String PARSE_FAILED_STR_1 =
             "Web response could not be converted using the passed type. ";
     private static final String PARSE_FAILED_STR_2 =
@@ -61,7 +63,6 @@ public class RetrofitParser {
     public static final Type TYPE_STRING = new TypeToken<String>() {
     }.getType();
 
-
     /**
      * This parse error tag triggers if the call could not be parsed by either the success
      * or failure tag. If this gets sent back, the object in the
@@ -76,8 +77,10 @@ public class RetrofitParser {
     public static final int TAG_RETROFIT_CALL_ERROR = PGMacTipsConstants.TAG_RETROFIT_CALL_ERROR;
     public static final String EMPTY_JSON_RESPONSE = "{}";
 
+    //endregion
+
     ////////////////////////
-    //Asynchronous Parsers//
+    //region Asynchronous Parsers//
     ////////////////////////
 
     /**
@@ -451,11 +454,13 @@ public class RetrofitParser {
                 errorClassDataModel, successCallbackTag, failCallbackTag, false);
     }
 
+    //endregion
 
     /////////////////////////////
-    //Private Utility Functions//
+    //region Private Utility Functions//
     /////////////////////////////
 
+    //region Converters
     /**
      * Convert a response object into the success class data model
      *
@@ -749,6 +754,10 @@ public class RetrofitParser {
         return null;
     }
 
+    //endregion
+
+    //region Error Checkers
+
     /**
      * Check for an error response.
      *
@@ -936,6 +945,9 @@ public class RetrofitParser {
         return null;
     }
 
+    //endregion
+
+    //region Raw Type Utilities
     /**
      * Simple checker for if the return type is a raw type
      * @param typeToCast input to check if raw
@@ -979,6 +991,8 @@ public class RetrofitParser {
             return false;
         }
     }
+
+    //endregion
 
     /**
      * Used to determine if response is raw type (IE Boolean, Integer, Double, String) and
@@ -1289,4 +1303,6 @@ public class RetrofitParser {
                 + typeOfModelPassed +
                 ". This can be caused by having multiple variables with the same '@Serialized' String name. Check your data model for errors and try again. See this link for more information: https://stackoverflow.com/questions/32367469/unable-to-create-converter-for-my-class-in-android-retrofit-library/42517143#42517143");
     }
+
+    //endregion
 }

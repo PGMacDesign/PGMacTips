@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.GenericRecyclerviewAdapter;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.biometricutilities.BiometricVerification;
@@ -27,6 +28,7 @@ import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitClient
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitParser;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.serviceapiinterfaces.ProfanityCheckerAPICalls;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.serviceapiinterfaces.ProfanityCheckerInterface;
+import com.pgmacdesign.pgmactips.networkclasses.volleyutilities.VolleyUtilities;
 import com.pgmacdesign.pgmactips.stackmanagement.StackManager;
 import com.pgmacdesign.pgmactips.stackmanagement.StackManagerException;
 import com.pgmacdesign.pgmactips.utilities.CameraMediaUtilities;
@@ -39,6 +41,7 @@ import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
 import com.pgmacdesign.pgmactips.utilities.NumberUtilities;
 import com.pgmacdesign.pgmactips.utilities.PermissionUtilities;
 import com.pgmacdesign.pgmactips.utilities.SharedPrefs;
+import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 import com.pgmacdesign.pgmactips.utilities.SystemUtilities;
 
 import java.security.GeneralSecurityException;
@@ -522,29 +525,9 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
     @SuppressLint("MissingPermission")
     @Override
     public void onClick(View view) {
-        if(dbUtilities == null) {
-            dbUtilities = new DatabaseUtilities(this);
-        }
-        SamplePojo samplePojo = new SamplePojo();
-        samplePojo.setAge(2);
-        samplePojo.setGender("panstuffffff");
-        samplePojo.setId(123123);
-        samplePojo.setName("name");
-        samplePojo.setStrs(Arrays.asList("test1", "test2", "test3", "okiedokie"));
-        samplePojo.setFauxEnums(Arrays.asList(SamplePojo.MyFauxTestEnum.One,
-                SamplePojo.MyFauxTestEnum.Two, SamplePojo.MyFauxTestEnum.Three));
-        boolean bool = dbUtilities.persistObject(SamplePojo.class, samplePojo);
-        L.m("save success? - " + bool);
 
-        SamplePojo ss = (SamplePojo) dbUtilities.getPersistedObject(SamplePojo.class);
-        if(ss == null){
-            L.m("could not retrieve object");
-        } else {
-            L.m("successfully retrieved object: " + GsonUtilities.convertObjectToJson(ss, SamplePojo.class));
-        }
+        testWeb2(null);
 
-        boolean dePersisted = dbUtilities.dePersistObject(SamplePojo.class);
-        L.m("Successfully depersisted the object? == " + dePersisted);
         if(true){
             return;
         }
@@ -571,6 +554,56 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
 	    	contactQuery();
 	    }
 
+    }
+
+    private void testDB2(){
+        if(dbUtilities == null) {
+            dbUtilities = new DatabaseUtilities(this);
+        }
+        SamplePojo samplePojo = new SamplePojo();
+        samplePojo.setAge(2);
+        samplePojo.setGender("panstuffffff");
+        samplePojo.setId(123123);
+        samplePojo.setName("name");
+        samplePojo.setStrs(Arrays.asList("test1", "test2", "test3", "okiedokie"));
+        samplePojo.setFauxEnums(Arrays.asList(SamplePojo.MyFauxTestEnum.One,
+                SamplePojo.MyFauxTestEnum.Two, SamplePojo.MyFauxTestEnum.Three));
+        boolean bool = dbUtilities.persistObject(SamplePojo.class, samplePojo);
+        L.m("save success? - " + bool);
+
+        SamplePojo ss = (SamplePojo) dbUtilities.getPersistedObject(SamplePojo.class);
+        if(ss == null){
+            L.m("could not retrieve object");
+        } else {
+            L.m("successfully retrieved object: " + GsonUtilities.convertObjectToJson(ss, SamplePojo.class));
+        }
+
+        boolean dePersisted = dbUtilities.dePersistObject(SamplePojo.class);
+        L.m("Successfully depersisted the object? == " + dePersisted);
+    }
+
+    private void testWeb2(@Nullable String url){
+        if(StringUtilities.isNullOrEmpty(url)){
+            return;
+        }
+        VolleyUtilities.makeGetRequest(new OnTaskCompleteListener() {
+            @Override
+            public void onTaskComplete(Object o, int i) {
+                if (i == VolleyUtilities.VOLLEY_REQUEST_SUCCESS_STRING) {
+                    String response = (String) o;
+                    L.m("RESPONSE == " + response);
+                } else if (i == VolleyUtilities.VOLLEY_REQUEST_VOLLEY_ERROR) {
+                    VolleyError ve = (VolleyError) o;
+                    if(ve != null){
+                        ve.printStackTrace();
+                    } else {
+                        L.m("VE null");
+                    }
+                } else if (i == VolleyUtilities.VOLLEY_REQUEST_NULL_RETURN) {
+                    L.m("Null return");
+                }
+            }
+        }, MyTestActivity.this, url, null);
     }
 
     private void makeMultiColorLine() {

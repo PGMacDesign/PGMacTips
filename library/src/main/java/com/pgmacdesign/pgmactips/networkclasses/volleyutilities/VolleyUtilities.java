@@ -9,6 +9,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -22,6 +23,8 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.net.ssl.SSLSocketFactory;
 
 /**
  * Volley Utilities to shorthand calls. Code pulled from:
@@ -37,7 +40,16 @@ public class VolleyUtilities {
     public static final int VOLLEY_REQUEST_VOLLEY_ERROR = 445;
     public static final int VOLLEY_REQUEST_NULL_RETURN = 446;
 
-    private VolleyUtilities(){}
+
+    // TODO: 10/2/2018 refactor in dynamic handshake timeout window
+    private static SSLSocketFactory getSocketFactory(@NonNull Context context){
+        try {
+            return ClientSSLSocketFactory.getSocketFactory(context, 10000);
+        } catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     /**
      * Simple get example
@@ -50,7 +62,9 @@ public class VolleyUtilities {
     public static void makeGetRequest(@NonNull final OnTaskCompleteListener listener,
                                       @NonNull Context context, @NonNull String url,
                                       @Nullable final Map<String, String> headers){
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        SSLSocketFactory socketFactory = VolleyUtilities.getSocketFactory(context);
+        RequestQueue requestQueue = (socketFactory == null) ? Volley.newRequestQueue(context)
+                : Volley.newRequestQueue(context, new HurlStack(null, socketFactory));
 
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -150,7 +164,9 @@ public class VolleyUtilities {
                                        Context context, String url,
                                        JSONObject jsonObject,
                                        @Nullable final Map<String, String> headers){
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        SSLSocketFactory socketFactory = VolleyUtilities.getSocketFactory(context);
+        RequestQueue requestQueue = (socketFactory == null) ? Volley.newRequestQueue(context)
+                : Volley.newRequestQueue(context, new HurlStack(null, socketFactory));
         JsonObjectRequest objectRequest = new JsonObjectRequest(
                 Request.Method.POST, url, jsonObject,
                 new Response.Listener<JSONObject>() {
