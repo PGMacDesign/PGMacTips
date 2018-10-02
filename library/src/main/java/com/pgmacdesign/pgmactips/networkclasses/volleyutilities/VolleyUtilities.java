@@ -16,6 +16,8 @@ import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
+import com.pgmacdesign.pgmactips.networkclasses.sslsocketsandprotocols.ClientSSLSocketFactory;
+import com.pgmacdesign.pgmactips.networkclasses.sslsocketsandprotocols.SSLProtocolOptions;
 import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
 
 import org.json.JSONException;
@@ -42,27 +44,44 @@ public class VolleyUtilities {
 
 
     // TODO: 10/2/2018 refactor in dynamic handshake timeout window
-    private static SSLSocketFactory getSocketFactory(@NonNull Context context){
+    private static SSLSocketFactory getSocketFactory(@NonNull Context context,
+                                                     SSLProtocolOptions sslProtocolOption) {
         try {
-            return ClientSSLSocketFactory.getSocketFactory(context, 10000);
-        } catch (Exception e){
+            return ClientSSLSocketFactory.getSocketFactory(context, 10000,
+                    (sslProtocolOption != null) ? sslProtocolOption : SSLProtocolOptions.TLS);
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
     /**
-     * Simple get example
-     * @param listener listener to pass data back on
-     * @param context context
-     * @param url Url to send to
+     * Overloaded to allow for omission of {@link SSLProtocolOptions}
      */
     @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Volley,
             CustomAnnotationsBase.Dependencies.GSON})
     public static void makeGetRequest(@NonNull final OnTaskCompleteListener listener,
                                       @NonNull Context context, @NonNull String url,
-                                      @Nullable final Map<String, String> headers){
-        SSLSocketFactory socketFactory = VolleyUtilities.getSocketFactory(context);
+                                      @Nullable final Map<String, String> headers) {
+        VolleyUtilities.makeGetRequest(listener, context, url, headers, SSLProtocolOptions.TLS);
+    }
+
+    /**
+     * Simple get example
+     *
+     * @param listener          listener to pass data back on
+     * @param context           context
+     * @param url               Url to send to
+     * @param headers           Map of headers to send
+     * @param sslProtocolOption {@link SSLProtocolOptions} to use. Defaults to {@link SSLProtocolOptions#TLS}
+     */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Volley,
+            CustomAnnotationsBase.Dependencies.GSON})
+    public static void makeGetRequest(@NonNull final OnTaskCompleteListener listener,
+                                      @NonNull Context context, @NonNull String url,
+                                      @Nullable final Map<String, String> headers,
+                                      @NonNull SSLProtocolOptions sslProtocolOption) {
+        SSLSocketFactory socketFactory = VolleyUtilities.getSocketFactory(context, sslProtocolOption);
         RequestQueue requestQueue = (socketFactory == null) ? Volley.newRequestQueue(context)
                 : Volley.newRequestQueue(context, new HurlStack(null, socketFactory));
 
@@ -81,7 +100,7 @@ public class VolleyUtilities {
                         error.printStackTrace();
                         listener.onTaskComplete(error, VOLLEY_REQUEST_VOLLEY_ERROR);
                     }
-        }) {
+                }) {
             /**
              * Passing some request headers
              */
@@ -102,69 +121,128 @@ public class VolleyUtilities {
     }
 
     /**
-     * Simple post example with an object
-     * @param listener listener to pass data back on
-     * @param context context
-     * @param url String URL
-     * @param body body object to be converted into json
-     * @param objectClass class type of the body object passed
+     * Overloaded to allow for omission of {@link SSLProtocolOptions}
      */
     @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Volley,
             CustomAnnotationsBase.Dependencies.GSON})
     public static void makePostRequest(@NonNull final OnTaskCompleteListener listener,
                                        @NonNull Context context, @NonNull String url,
                                        Object body, Class objectClass,
-                                       @Nullable final Map<String, String> headers){
+                                       @Nullable final Map<String, String> headers) {
+        JSONObject object = null;
+        try {
+            String jsonString = new Gson().toJson(body, objectClass);
+            object = new JSONObject(jsonString);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        makePostRequestLocal(listener, context, url, object, headers, SSLProtocolOptions.TLS);
+    }
+
+    /**
+     * Simple post example with an object
+     *
+     * @param listener          listener to pass data back on
+     * @param context           context
+     * @param url               String URL
+     * @param body              body object to be converted into json
+     * @param objectClass       class type of the body object passed
+     * @param headers           Map of headers to send
+     * @param sslProtocolOption {@link SSLProtocolOptions} SSL Protocol option.
+     *                          If unsure, call overloaded method
+     */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Volley,
+            CustomAnnotationsBase.Dependencies.GSON})
+    public static void makePostRequest(@NonNull final OnTaskCompleteListener listener,
+                                       @NonNull Context context, @NonNull String url,
+                                       Object body, Class objectClass,
+                                       @Nullable final Map<String, String> headers,
+                                       @NonNull SSLProtocolOptions sslProtocolOption) {
 
         JSONObject object = null;
         try {
             String jsonString = new Gson().toJson(body, objectClass);
             object = new JSONObject(jsonString);
-        } catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
-        makePostRequestLocal(true, listener, context, url, object, headers);
+        makePostRequestLocal(listener, context, url, object, headers, sslProtocolOption);
     }
 
     /**
-     * Overloaded to include map<String, Object> input
-     * @param listener
-     * @param context
-     * @param url
-     * @param params Map<String, Object> to convert to jsonObject
+     * Overloaded to allow for omission of {@link SSLProtocolOptions}
      */
     @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Volley,
             CustomAnnotationsBase.Dependencies.GSON})
     public static void makePostRequest(final OnTaskCompleteListener listener,
                                        Context context, String url,
                                        Map<String, ?> params,
-                                       @Nullable final Map<String, String> headers){
+                                       @Nullable final Map<String, String> headers) {
         JSONObject object = new JSONObject(params);
-        makePostRequestLocal(true, listener, context, url, object, headers);
+        makePostRequestLocal(listener, context, url, object, headers, SSLProtocolOptions.TLS);
     }
 
     /**
-     * Overloaded to include JSONObject input
+     * Overloaded to include map<String, Object> input
+     *
      * @param listener
      * @param context
      * @param url
-     * @param jsonObject
+     * @param params            Map<String, Object> to convert to jsonObject
+     * @param headers           Map of headers to send
+     * @param sslProtocolOption {@link SSLProtocolOptions} SSL Protocol option.
+     *                          If unsure, call overloaded method
+     */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Volley,
+            CustomAnnotationsBase.Dependencies.GSON})
+    public static void makePostRequest(final OnTaskCompleteListener listener,
+                                       Context context, String url,
+                                       Map<String, ?> params,
+                                       @Nullable final Map<String, String> headers,
+                                       @NonNull SSLProtocolOptions sslProtocolOption) {
+        JSONObject object = new JSONObject(params);
+        makePostRequestLocal(listener, context, url, object, headers, sslProtocolOption);
+    }
+
+    /**
+     * Overloaded to allow for empty {@link SSLProtocolOptions}
      */
     @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Volley,
             CustomAnnotationsBase.Dependencies.GSON})
     public static void makePostRequest(final OnTaskCompleteListener listener,
                                        Context context, String url,
                                        JSONObject jsonObject,
-                                       @Nullable final Map<String, String> headers){
-        makePostRequestLocal(true, listener, context, url, jsonObject, headers);
+                                       @Nullable final Map<String, String> headers) {
+        makePostRequestLocal(listener, context, url, jsonObject, headers, SSLProtocolOptions.TLS);
     }
 
-    private static void makePostRequestLocal(boolean makePost,
-                                             final OnTaskCompleteListener listener,
+    /**
+     * Overloaded to include JSONObject input
+     *
+     * @param listener
+     * @param context
+     * @param url
+     * @param jsonObject
+     * @param headers           Map of headers to send
+     * @param sslProtocolOption {@link SSLProtocolOptions} SSL Protocol option.
+     *                          If unsure, call overloaded method
+     */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Volley,
+            CustomAnnotationsBase.Dependencies.GSON})
+    public static void makePostRequest(final OnTaskCompleteListener listener,
                                        Context context, String url,
                                        JSONObject jsonObject,
-                                       @Nullable final Map<String, String> headers){
-        SSLSocketFactory socketFactory = VolleyUtilities.getSocketFactory(context);
+                                       @Nullable final Map<String, String> headers,
+                                       @NonNull SSLProtocolOptions sslProtocolOption) {
+        makePostRequestLocal(listener, context, url, jsonObject, headers, sslProtocolOption);
+    }
+
+    private static void makePostRequestLocal(final OnTaskCompleteListener listener,
+                                             Context context, String url,
+                                             JSONObject jsonObject,
+                                             @Nullable final Map<String, String> headers,
+                                             @NonNull SSLProtocolOptions sslProtocolOption) {
+        SSLSocketFactory socketFactory = VolleyUtilities.getSocketFactory(context, sslProtocolOption);
         RequestQueue requestQueue = (socketFactory == null) ? Volley.newRequestQueue(context)
                 : Volley.newRequestQueue(context, new HurlStack(null, socketFactory));
         JsonObjectRequest objectRequest = new JsonObjectRequest(
@@ -172,13 +250,15 @@ public class VolleyUtilities {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        if(response != null){
+                        if (response != null) {
                             try {
                                 String jsonString = response.toString();
                                 //Do whatever here with response
                                 listener.onTaskComplete(jsonString, VOLLEY_REQUEST_SUCCESS_STRING);
                                 return;
-                            } catch (Exception e){e.printStackTrace();}
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                         listener.onTaskComplete(null, VOLLEY_REQUEST_NULL_RETURN);
                     }
@@ -189,13 +269,13 @@ public class VolleyUtilities {
                         error.printStackTrace();
                         listener.onTaskComplete(error, VOLLEY_REQUEST_VOLLEY_ERROR);
                     }
-                }){
+                }) {
             /**
              * Passing some request headers
              */
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                if(MiscUtilities.isMapNullOrEmpty(headers)){
+                if (MiscUtilities.isMapNullOrEmpty(headers)) {
                     Map<String, String> headers1 = new HashMap<String, String>();
                     headers1.put("Content-Type", "application/json");
                     return headers1;

@@ -4,6 +4,9 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
+import com.pgmacdesign.pgmactips.networkclasses.sslsocketsandprotocols.SSLProtocolOptions;
+import com.pgmacdesign.pgmactips.networkclasses.sslsocketsandprotocols.Tls12SocketFactory;
+import com.pgmacdesign.pgmactips.utilities.L;
 import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 
@@ -12,8 +15,10 @@ import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -23,11 +28,13 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
+import okhttp3.ConnectionSpec;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.TlsVersion;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.CallAdapter;
 import retrofit2.Converter;
@@ -59,6 +66,7 @@ public class RetrofitClient {
     private Class serviceInterface;
     private Converter.Factory customConverterFactory;
     private CallAdapter.Factory customCallAdapterFactory;
+    private SSLProtocolOptions sslProtocolOption;
 
     /**
      * Constructor
@@ -70,6 +78,7 @@ public class RetrofitClient {
         this.dateFormat = builder.builder_dateFormat;
         this.readTimeout = builder.builder_readTimeout;
         this.writeTimeout = builder.builder_writeTimeout;
+        this.sslProtocolOption = builder.sslProtocolOption;
         this.serviceInterface = builder.builder_serviceInterface;
         this.customConverterFactory = builder.customConverterFactory;
         this.customCallAdapterFactory = builder.customCallAdapterFactory;
@@ -235,12 +244,34 @@ public class RetrofitClient {
             }
             X509TrustManager trustManager = (X509TrustManager) trustManagers[0];
 
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, new TrustManager[]{trustManager}, null);
-            SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
-
-            builder.sslSocketFactory(sslSocketFactory, trustManager);
-
+            //Check on SSL Protocol to use
+            boolean needToForce1dot2 = SSLProtocolOptions.requiresForcedTLS1dot2();
+            if(needToForce1dot2 && this.sslProtocolOption == SSLProtocolOptions.TLSv1dot2){
+                try {
+                    SSLContext sc = SSLContext.getInstance(SSLProtocolOptions.TLSv1dot2.name);
+                    sc.init(null, null, null);
+                    builder.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()), trustManager);
+                    ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+                            .tlsVersions(TlsVersion.TLS_1_2)
+                            .build();
+                    List<ConnectionSpec> specs = new ArrayList<>();
+                    specs.add(cs);
+                    specs.add(ConnectionSpec.COMPATIBLE_TLS);
+                    specs.add(ConnectionSpec.CLEARTEXT);
+                    builder.connectionSpecs(specs);
+                } catch (Exception exc) {
+                    L.m("Error while setting TLS 1.2");
+                    SSLContext sslContext = SSLContext.getInstance(this.sslProtocolOption.name);
+                    sslContext.init(null, new TrustManager[]{trustManager}, null);
+                    SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+                    builder.sslSocketFactory(sslSocketFactory, trustManager);
+                }
+            } else {
+                SSLContext sslContext = SSLContext.getInstance(this.sslProtocolOption.name);
+                sslContext.init(null, new TrustManager[]{trustManager}, null);
+                SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+                builder.sslSocketFactory(sslSocketFactory, trustManager);
+            }
         } catch (KeyManagementException kme){
             kme.printStackTrace();
         } catch (NoSuchAlgorithmException nsa){
@@ -260,7 +291,7 @@ public class RetrofitClient {
             CustomAnnotationsBase.Dependencies.Okio})
     public <T> Builder newBuilder(@NonNull final Class<T> serviceInterface,
                                   @NonNull String urlBase){
-        return new Builder(serviceInterface, urlBase);
+        return (new Builder(serviceInterface, urlBase)); //(T)
     }
 
     //Builder class below
@@ -279,6 +310,7 @@ public class RetrofitClient {
         static final int SIXTY_SECONDS = (int)(1000*60);
         Converter.Factory customConverterFactory;
         CallAdapter.Factory customCallAdapterFactory;
+        SSLProtocolOptions sslProtocolOption;
 
         /**
          * Constructor visible to the outside
@@ -289,6 +321,7 @@ public class RetrofitClient {
          */
         public Builder(@NonNull final Class<T> serviceInterface,
                        @NonNull String urlBase){
+            this.sslProtocolOption = SSLProtocolOptions.TLS;
             this.builder_urlBase = urlBase;
             this.builder_serviceInterface = serviceInterface;
             this.builder_headers = null;
@@ -345,6 +378,17 @@ public class RetrofitClient {
             if(!MiscUtilities.isMapNullOrEmpty(headers)) {
                 this.builder_headers = headers;
             }
+            return this;
+        }
+
+        /**
+         * This is the SSL protocol level to be used in the call. Will default to TLS if null
+         * is passed or this setter is never called.
+         * @param sslProtocolOption {@link SSLProtocolOptions}
+         * @return this
+         */
+        public Builder setSSLProtocolOption(SSLProtocolOptions sslProtocolOption){
+            this.sslProtocolOption = (sslProtocolOption != null) ? sslProtocolOption : SSLProtocolOptions.TLS;
             return this;
         }
 
