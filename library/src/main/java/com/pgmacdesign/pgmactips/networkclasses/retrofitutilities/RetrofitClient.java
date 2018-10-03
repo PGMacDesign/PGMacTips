@@ -15,6 +15,8 @@ import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -67,6 +69,7 @@ public class RetrofitClient {
     private Converter.Factory customConverterFactory;
     private CallAdapter.Factory customCallAdapterFactory;
     private SSLProtocolOptions sslProtocolOption;
+    private boolean forceAcceptAllCertificates;
 
     /**
      * Constructor
@@ -82,6 +85,7 @@ public class RetrofitClient {
         this.serviceInterface = builder.builder_serviceInterface;
         this.customConverterFactory = builder.customConverterFactory;
         this.customCallAdapterFactory = builder.customCallAdapterFactory;
+        this.forceAcceptAllCertificates = builder.forceAcceptAllCertificates;
     }
 
     /**
@@ -234,16 +238,41 @@ public class RetrofitClient {
     private OkHttpClient.Builder configureClient(final OkHttpClient.Builder builder) {
 
         try {
-            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
-                    TrustManagerFactory.getDefaultAlgorithm());
-            trustManagerFactory.init((KeyStore) null);
-            TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
-            if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
-                throw new IllegalStateException("Unexpected default trust managers:"
-                        + Arrays.toString(trustManagers));
+            X509TrustManager trustManager;
+            if(this.forceAcceptAllCertificates){
+                trustManager = new X509TrustManager() {
+                    public void checkClientTrusted(X509Certificate[] xcs, String string)
+                            throws CertificateException {}
+                    public void checkServerTrusted(X509Certificate[] xcs, String string)
+                            throws CertificateException {}
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return null;
+                    }
+                };
+            } else {
+                TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
+                        TrustManagerFactory.getDefaultAlgorithm());
+                trustManagerFactory.init((KeyStore) null);
+                TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+                if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
+                    throw new IllegalStateException("Unexpected default trust managers:"
+                            + Arrays.toString(trustManagers));
+                }
+                trustManager = (X509TrustManager) trustManagers[0];
             }
-            X509TrustManager trustManager = (X509TrustManager) trustManagers[0];
 
+            SSLContext sslContext;
+            SSLSocketFactory sslSocketFactory;
+
+            sslContext = SSLContext.getInstance(this.sslProtocolOption.name);
+            sslContext.init(null, new TrustManager[]{trustManager}, null);
+            sslSocketFactory = sslContext.getSocketFactory();
+            builder.sslSocketFactory(sslSocketFactory, trustManager);
+
+            if(true){
+                return builder;
+            }
+            //todo remove this if not needed. Keeping here for reference
             //Check on SSL Protocol to use
             boolean needToForce1dot2 = SSLProtocolOptions.requiresForcedTLS1dot2();
             if(needToForce1dot2 && this.sslProtocolOption == SSLProtocolOptions.TLSv1dot2){
@@ -261,15 +290,15 @@ public class RetrofitClient {
                     builder.connectionSpecs(specs);
                 } catch (Exception exc) {
                     L.m("Error while setting TLS 1.2");
-                    SSLContext sslContext = SSLContext.getInstance(this.sslProtocolOption.name);
+                    sslContext = SSLContext.getInstance(this.sslProtocolOption.name);
                     sslContext.init(null, new TrustManager[]{trustManager}, null);
-                    SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+                    sslSocketFactory = sslContext.getSocketFactory();
                     builder.sslSocketFactory(sslSocketFactory, trustManager);
                 }
             } else {
-                SSLContext sslContext = SSLContext.getInstance(this.sslProtocolOption.name);
+                sslContext = SSLContext.getInstance(this.sslProtocolOption.name);
                 sslContext.init(null, new TrustManager[]{trustManager}, null);
-                SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+                sslSocketFactory = sslContext.getSocketFactory();
                 builder.sslSocketFactory(sslSocketFactory, trustManager);
             }
         } catch (KeyManagementException kme){
@@ -311,6 +340,7 @@ public class RetrofitClient {
         Converter.Factory customConverterFactory;
         CallAdapter.Factory customCallAdapterFactory;
         SSLProtocolOptions sslProtocolOption;
+        boolean forceAcceptAllCertificates;
 
         /**
          * Constructor visible to the outside
@@ -325,7 +355,7 @@ public class RetrofitClient {
             this.builder_urlBase = urlBase;
             this.builder_serviceInterface = serviceInterface;
             this.builder_headers = null;
-
+            this.forceAcceptAllCertificates = false;
             this.setDateFormat(DEFAULT_DATE_FORMAT);
             this.setTimeouts(SIXTY_SECONDS, SIXTY_SECONDS);
         }
@@ -342,6 +372,20 @@ public class RetrofitClient {
             return this;
         }
 
+        /**
+         * Force all SSL Certificates to be accepted.
+         * WARNING! THIS IS DANGEROUS AND CAN LEAD YOUR APP OPEN TO MALICIOUS ATTACKS!
+         * The main reason this option is available is because of API levels 16-19 and the
+         * subsequent issue with regards to TrustManagers not working properly. For more info, see
+         * this link: https://stackoverflow.com/questions/52630694/how-to-get-trust-anchors-to-work-properly-on-android-api-levels-16-19
+         * @param passTrueToEnable Pass true to force acceptance of all certificates &&
+         * @param passFalseToEnable Pass false to force acceptance of all certificates
+         * @return this
+         */
+        public Builder forceAcceptAllCertificates(boolean passTrueToEnable, boolean passFalseToEnable){
+            this.forceAcceptAllCertificates = (passTrueToEnable && !passFalseToEnable);
+            return this;
+        }
 
         /**
          * Set a custom factory in case you want to add a special one (IE RX Java)
