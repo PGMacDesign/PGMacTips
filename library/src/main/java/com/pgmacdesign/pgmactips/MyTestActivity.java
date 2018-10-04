@@ -28,6 +28,7 @@ import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitClient
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitParser;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.serviceapiinterfaces.ProfanityCheckerAPICalls;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.serviceapiinterfaces.ProfanityCheckerInterface;
+import com.pgmacdesign.pgmactips.networkclasses.sslsocketsandprotocols.SSLProtocolOptions;
 import com.pgmacdesign.pgmactips.networkclasses.volleyutilities.VolleyUtilities;
 import com.pgmacdesign.pgmactips.stackmanagement.StackManager;
 import com.pgmacdesign.pgmactips.stackmanagement.StackManagerException;
@@ -525,8 +526,8 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
     @SuppressLint("MissingPermission")
     @Override
     public void onClick(View view) {
-
-        testWeb2(null);
+        String toSend = "https://www.ssllabs.com/ssltest/viewMyClient.html";
+        testWeb2(toSend);
 
         if(true){
             return;
@@ -603,7 +604,7 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
                     L.m("Null return");
                 }
             }
-        }, MyTestActivity.this, url, null);
+        }, MyTestActivity.this, url, null, SSLProtocolOptions.TLSv1dot2, false);
     }
 
     private void makeMultiColorLine() {

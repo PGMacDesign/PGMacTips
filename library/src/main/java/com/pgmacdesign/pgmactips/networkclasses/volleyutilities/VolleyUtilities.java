@@ -23,10 +23,16 @@ import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 /**
  * Volley Utilities to shorthand calls. Code pulled from:
@@ -45,10 +51,13 @@ public class VolleyUtilities {
 
     // TODO: 10/2/2018 refactor in dynamic handshake timeout window
     private static SSLSocketFactory getSocketFactory(@NonNull Context context,
-                                                     SSLProtocolOptions sslProtocolOption) {
+                                                     @Nullable Integer handshakeTimeoutInMilliseconds,
+                                                     @Nullable SSLProtocolOptions sslProtocolOption,
+                                                     @Nullable Boolean forceAcceptAllCertificates) {
         try {
-            return ClientSSLSocketFactory.getSocketFactory(context, 10000,
-                    (sslProtocolOption != null) ? sslProtocolOption : SSLProtocolOptions.TLS);
+            return ClientSSLSocketFactory.getSocketFactory(context,
+                    (handshakeTimeoutInMilliseconds != null) ? handshakeTimeoutInMilliseconds : 10000,
+                    (sslProtocolOption != null) ? sslProtocolOption : SSLProtocolOptions.TLS, forceAcceptAllCertificates);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -63,28 +72,35 @@ public class VolleyUtilities {
     public static void makeGetRequest(@NonNull final OnTaskCompleteListener listener,
                                       @NonNull Context context, @NonNull String url,
                                       @Nullable final Map<String, String> headers) {
-        VolleyUtilities.makeGetRequest(listener, context, url, headers, SSLProtocolOptions.TLS);
+        VolleyUtilities.makeGetRequest(listener, context, url, headers, SSLProtocolOptions.TLS, false);
     }
 
     /**
      * Simple get example
      *
-     * @param listener          listener to pass data back on
-     * @param context           context
-     * @param url               Url to send to
-     * @param headers           Map of headers to send
-     * @param sslProtocolOption {@link SSLProtocolOptions} to use. Defaults to {@link SSLProtocolOptions#TLS}
+     * @param listener                   listener to pass data back on
+     * @param context                    context
+     * @param url                        Url to send to
+     * @param headers                    Map of headers to send
+     * @param sslProtocolOption          {@link SSLProtocolOptions} to use. Defaults to {@link SSLProtocolOptions#TLS}
+     * @param forceAcceptAllCertificates Force to accept ALL SSL handshakes.
+     *                                   WARNING! THIS IS DANGEROUS AND CAN LEAD YOUR APP OPEN TO MALICIOUS ATTACKS!
+     *                                   The main reason this option is available is because of API levels 16-19 and the
+     *                                   subsequent issue with regards to TrustManagers not working properly. For more info, see
+     *                                   this link: https://stackoverflow.com/questions/52630694/how-to-get-trust-anchors-to-work-properly-on-android-api-levels-16-19
      */
     @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Volley,
             CustomAnnotationsBase.Dependencies.GSON})
     public static void makeGetRequest(@NonNull final OnTaskCompleteListener listener,
                                       @NonNull Context context, @NonNull String url,
                                       @Nullable final Map<String, String> headers,
-                                      @NonNull SSLProtocolOptions sslProtocolOption) {
-        SSLSocketFactory socketFactory = VolleyUtilities.getSocketFactory(context, sslProtocolOption);
+                                      @NonNull SSLProtocolOptions sslProtocolOption,
+                                      @Nullable Boolean forceAcceptAllCertificates) {
+        SSLSocketFactory socketFactory = VolleyUtilities.getSocketFactory(context,
+                10000, sslProtocolOption, forceAcceptAllCertificates);
+        HttpsURLConnection.setDefaultSSLSocketFactory(socketFactory);
         RequestQueue requestQueue = (socketFactory == null) ? Volley.newRequestQueue(context)
                 : Volley.newRequestQueue(context, new HurlStack(null, socketFactory));
-
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -136,20 +152,25 @@ public class VolleyUtilities {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        makePostRequestLocal(listener, context, url, object, headers, SSLProtocolOptions.TLS);
+        makePostRequestLocal(listener, context, url, object, headers, SSLProtocolOptions.TLS, false);
     }
 
     /**
      * Simple post example with an object
      *
-     * @param listener          listener to pass data back on
-     * @param context           context
-     * @param url               String URL
-     * @param body              body object to be converted into json
-     * @param objectClass       class type of the body object passed
-     * @param headers           Map of headers to send
-     * @param sslProtocolOption {@link SSLProtocolOptions} SSL Protocol option.
-     *                          If unsure, call overloaded method
+     * @param listener                   listener to pass data back on
+     * @param context                    context
+     * @param url                        String URL
+     * @param body                       body object to be converted into json
+     * @param objectClass                class type of the body object passed
+     * @param headers                    Map of headers to send
+     * @param sslProtocolOption          {@link SSLProtocolOptions} SSL Protocol option.
+     *                                   If unsure, call overloaded method
+     * @param forceAcceptAllCertificates Force to accept ALL SSL handshakes.
+     *                                   WARNING! THIS IS DANGEROUS AND CAN LEAD YOUR APP OPEN TO MALICIOUS ATTACKS!
+     *                                   The main reason this option is available is because of API levels 16-19 and the
+     *                                   subsequent issue with regards to TrustManagers not working properly. For more info, see
+     *                                   this link: https://stackoverflow.com/questions/52630694/how-to-get-trust-anchors-to-work-properly-on-android-api-levels-16-19
      */
     @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Volley,
             CustomAnnotationsBase.Dependencies.GSON})
@@ -157,7 +178,8 @@ public class VolleyUtilities {
                                        @NonNull Context context, @NonNull String url,
                                        Object body, Class objectClass,
                                        @Nullable final Map<String, String> headers,
-                                       @NonNull SSLProtocolOptions sslProtocolOption) {
+                                       @NonNull SSLProtocolOptions sslProtocolOption,
+                                       @Nullable Boolean forceAcceptAllCertificates) {
 
         JSONObject object = null;
         try {
@@ -166,7 +188,7 @@ public class VolleyUtilities {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        makePostRequestLocal(listener, context, url, object, headers, sslProtocolOption);
+        makePostRequestLocal(listener, context, url, object, headers, sslProtocolOption, forceAcceptAllCertificates);
     }
 
     /**
@@ -179,7 +201,7 @@ public class VolleyUtilities {
                                        Map<String, ?> params,
                                        @Nullable final Map<String, String> headers) {
         JSONObject object = new JSONObject(params);
-        makePostRequestLocal(listener, context, url, object, headers, SSLProtocolOptions.TLS);
+        makePostRequestLocal(listener, context, url, object, headers, SSLProtocolOptions.TLS, false);
     }
 
     /**
@@ -188,10 +210,15 @@ public class VolleyUtilities {
      * @param listener
      * @param context
      * @param url
-     * @param params            Map<String, Object> to convert to jsonObject
-     * @param headers           Map of headers to send
-     * @param sslProtocolOption {@link SSLProtocolOptions} SSL Protocol option.
-     *                          If unsure, call overloaded method
+     * @param params                     Map<String, Object> to convert to jsonObject
+     * @param headers                    Map of headers to send
+     * @param sslProtocolOption          {@link SSLProtocolOptions} SSL Protocol option.
+     *                                   If unsure, call overloaded method
+     * @param forceAcceptAllCertificates Force to accept ALL SSL handshakes.
+     *                                   WARNING! THIS IS DANGEROUS AND CAN LEAD YOUR APP OPEN TO MALICIOUS ATTACKS!
+     *                                   The main reason this option is available is because of API levels 16-19 and the
+     *                                   subsequent issue with regards to TrustManagers not working properly. For more info, see
+     *                                   this link: https://stackoverflow.com/questions/52630694/how-to-get-trust-anchors-to-work-properly-on-android-api-levels-16-19
      */
     @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Volley,
             CustomAnnotationsBase.Dependencies.GSON})
@@ -199,9 +226,10 @@ public class VolleyUtilities {
                                        Context context, String url,
                                        Map<String, ?> params,
                                        @Nullable final Map<String, String> headers,
-                                       @NonNull SSLProtocolOptions sslProtocolOption) {
+                                       @NonNull SSLProtocolOptions sslProtocolOption,
+                                       @Nullable Boolean forceAcceptAllCertificates) {
         JSONObject object = new JSONObject(params);
-        makePostRequestLocal(listener, context, url, object, headers, sslProtocolOption);
+        makePostRequestLocal(listener, context, url, object, headers, sslProtocolOption, false);
     }
 
     /**
@@ -213,7 +241,7 @@ public class VolleyUtilities {
                                        Context context, String url,
                                        JSONObject jsonObject,
                                        @Nullable final Map<String, String> headers) {
-        makePostRequestLocal(listener, context, url, jsonObject, headers, SSLProtocolOptions.TLS);
+        makePostRequestLocal(listener, context, url, jsonObject, headers, SSLProtocolOptions.TLS, false);
     }
 
     /**
@@ -223,9 +251,14 @@ public class VolleyUtilities {
      * @param context
      * @param url
      * @param jsonObject
-     * @param headers           Map of headers to send
-     * @param sslProtocolOption {@link SSLProtocolOptions} SSL Protocol option.
-     *                          If unsure, call overloaded method
+     * @param headers                    Map of headers to send
+     * @param sslProtocolOption          {@link SSLProtocolOptions} SSL Protocol option.
+     *                                   If unsure, call overloaded method
+     * @param forceAcceptAllCertificates Force to accept ALL SSL handshakes.
+     *                                   WARNING! THIS IS DANGEROUS AND CAN LEAD YOUR APP OPEN TO MALICIOUS ATTACKS!
+     *                                   The main reason this option is available is because of API levels 16-19 and the
+     *                                   subsequent issue with regards to TrustManagers not working properly. For more info, see
+     *                                   this link: https://stackoverflow.com/questions/52630694/how-to-get-trust-anchors-to-work-properly-on-android-api-levels-16-19
      */
     @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Volley,
             CustomAnnotationsBase.Dependencies.GSON})
@@ -233,16 +266,21 @@ public class VolleyUtilities {
                                        Context context, String url,
                                        JSONObject jsonObject,
                                        @Nullable final Map<String, String> headers,
-                                       @NonNull SSLProtocolOptions sslProtocolOption) {
-        makePostRequestLocal(listener, context, url, jsonObject, headers, sslProtocolOption);
+                                       @NonNull SSLProtocolOptions sslProtocolOption,
+                                       @Nullable Boolean forceAcceptAllCertificates) {
+        makePostRequestLocal(listener, context, url, jsonObject, headers,
+                sslProtocolOption, forceAcceptAllCertificates);
     }
 
     private static void makePostRequestLocal(final OnTaskCompleteListener listener,
                                              Context context, String url,
                                              JSONObject jsonObject,
                                              @Nullable final Map<String, String> headers,
-                                             @NonNull SSLProtocolOptions sslProtocolOption) {
-        SSLSocketFactory socketFactory = VolleyUtilities.getSocketFactory(context, sslProtocolOption);
+                                             @NonNull SSLProtocolOptions sslProtocolOption,
+                                             @Nullable Boolean forceAcceptAllCertificates) {
+        SSLSocketFactory socketFactory = VolleyUtilities.getSocketFactory(context,
+                10000, sslProtocolOption, forceAcceptAllCertificates);
+        HttpsURLConnection.setDefaultSSLSocketFactory(socketFactory);
         RequestQueue requestQueue = (socketFactory == null) ? Volley.newRequestQueue(context)
                 : Volley.newRequestQueue(context, new HurlStack(null, socketFactory));
         JsonObjectRequest objectRequest = new JsonObjectRequest(
@@ -287,6 +325,40 @@ public class VolleyUtilities {
 
         // Add the request to the RequestQueue.
         requestQueue.add(objectRequest);
+    }
+
+    /**
+     * Enables all https connections and leaves device open to SSL / MITM attacks
+     * This is dangerous and not recommended as per: https://developer.android.com/training/articles/security-ssl.html
+     * Leaving it in for reference and debug mode only
+     */
+    public static void forceUnsafeSSLHandshake(@NonNull SSLProtocolOptions protocolOption) {
+        try {
+            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+                public X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[0];
+                }
+
+                @Override
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                }
+
+                @Override
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                }
+            }};
+
+            SSLContext sc = SSLContext.getInstance(protocolOption.name);
+            sc.init(null, trustAllCerts, new SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+//            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+//                @Override
+//                public boolean verify(String arg0, SSLSession arg1) {
+//                    return true;
+//                }
+//            });
+        } catch (Exception ignored) {
+        }
     }
 
 }

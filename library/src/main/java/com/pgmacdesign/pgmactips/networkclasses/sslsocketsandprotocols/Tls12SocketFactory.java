@@ -73,4 +73,15 @@ public class Tls12SocketFactory extends SSLSocketFactory {
         }
         return s;
     }
+
+    @Override
+    public Socket createSocket() throws IOException {
+//        try {
+//            return sslContext.getSocketFactory().createSocket(socket, host, port, autoClose);
+//        } catch (IOException ioe){
+//            ioe.printStackTrace();
+//            return null;
+//        }
+        return super.createSocket();
+    }
 }
