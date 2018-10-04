@@ -87,7 +87,7 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
         button.setTag("button");
         button.setTransformationMethod(null);
         button.setOnClickListener(this);
-        L.m("setoNClickListener");
+        L.m("setOnClickListener");
 	    testing_layout_recyclerview = (RecyclerView) this.findViewById(
 	    		R.id.testing_layout_recyclerview);
 	    testing_layout_recyclerview.setLayoutManager(new LinearLayoutManager(this));
