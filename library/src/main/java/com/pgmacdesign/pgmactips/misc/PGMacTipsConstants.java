@@ -271,6 +271,7 @@ public class PGMacTipsConstants {
     public static final String REGEX_COLOR = "^#[0-9a-fA-F]{6,6}$";
     public static final String REGEX_DATE = "^[0-9]{1,2}[-/][0-9]{1,2}[-/][0-9]{2,4}$";
     public static final String REGEX_EMAIL = "^\\s*[^@\\s]+@(?:[^@\\.\\s]+\\.[^@\\.\\s]+)+\\s*$";
+    public static final String REGEX_NEW_LINE = "[\\r\\n]+";
 
     ////////////////////////////////
     //Animation Constants and Tags//

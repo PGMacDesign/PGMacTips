@@ -1646,10 +1646,18 @@ public class StringUtilities {
             byte[] bytes = base64String.getBytes(PGMacTipsConstants.UTF8);
             if(Build.VERSION.SDK_INT >= 26){
                 String encoded = Base64.getEncoder().encodeToString(bytes);
-                return encoded;
+                try {
+                    return StringUtilities.removeNewLineCharacters(encoded);
+                } catch (Exception e) {
+                    return encoded;
+                }
             } else {
                 String encoded = android.util.Base64.encodeToString(bytes, android.util.Base64.DEFAULT);
-                return encoded;
+                try {
+                    return StringUtilities.removeNewLineCharacters(encoded);
+                } catch (Exception e) {
+                    return encoded;
+                }
             }
         } catch (Exception e){
             e.printStackTrace();
@@ -1866,5 +1874,26 @@ public class StringUtilities {
         return sb.toString();
     }
 
+    /**
+     * Convert a multi-line string to a single line. IE, "this \nis the newest\n\nline we have"
+     * will become "this is the newestline we have"
+     * @param str String to change
+     * @return Altered string if it works, original string if it does not work
+     */
+    public static String convertStringToSingleLine(@NonNull String str){
+        try {
+            return (str.replaceAll(PGMacTipsConstants.REGEX_NEW_LINE, ""));
+        } catch (Exception e){
+            return str;
+        }
+    }
+
+    /**
+     * Overloaded endpoint in order to remember various uses with regex. For actual function, see
+     * {@link StringUtilities#convertStringToSingleLine(String)}
+     */
+    public static String removeNewLineCharacters(@NonNull String str){
+        return convertStringToSingleLine(str);
+    }
 }
 
