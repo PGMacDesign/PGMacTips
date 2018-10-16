@@ -249,6 +249,15 @@ public class RetrofitClient {
                         return null;
                     }
                 };
+//                trustManager = new X509TrustManager() {
+//                    public void checkClientTrusted(X509Certificate[] xcs, String string)
+//                            throws CertificateException {}
+//                    public void checkServerTrusted(X509Certificate[] xcs, String string)
+//                            throws CertificateException {}
+//                    public X509Certificate[] getAcceptedIssuers() {
+//                        return new java.security.cert.X509Certificate[]{};
+//                    }
+//                };
             } else {
                 TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
                         TrustManagerFactory.getDefaultAlgorithm());
@@ -272,6 +281,7 @@ public class RetrofitClient {
             if(true){
                 return builder;
             }
+
             //todo remove this if not needed. Keeping here for reference
             //Check on SSL Protocol to use
             boolean needToForce1dot2 = SSLProtocolOptions.requiresForcedTLS1dot2();

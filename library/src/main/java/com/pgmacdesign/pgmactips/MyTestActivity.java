@@ -52,8 +52,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.http.GET;
 
 /**
  * Test activity for experimenting, please ignore
@@ -526,12 +530,15 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
     @SuppressLint("MissingPermission")
     @Override
     public void onClick(View view) {
-        String toSend = "https://www.ssllabs.com/ssltest/viewMyClient.html";
-        testWeb2(toSend);
+
+        testNewWebClient();
 
         if(true){
             return;
         }
+
+        String toSend = "https://www.ssllabs.com/ssltest/viewMyClient.html";
+        testWeb2(toSend);
 
 
 //        init5Get();
@@ -555,6 +562,44 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
 	    	contactQuery();
 	    }
 
+    }
+
+    private TestSSLInterface service;
+    private void testNewWebClient(){
+        L.m("testNewWebClient()");
+        if(service == null) {
+            RetrofitClient.Builder b = new RetrofitClient.Builder(TestSSLInterface.class, TestSSLInterface.BASE_URL);
+            b.forceAcceptAllCertificates(true, false);
+            b.setSSLProtocolOption(SSLProtocolOptions.TLSv1dot2);
+            service = b.build().buildServiceClient();
+        }
+        if(service != null){
+            Call<ResponseBody> call = service.checkTLS();
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    L.m("Response was successful? " + response.isSuccessful());
+                    if(response.isSuccessful()){
+                        try {
+                            L.m("RESPONSE == \n" + response.body().string());
+                        } catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    } else {
+                        try {
+                            L.m("RESPONSE == \n" + response.errorBody().string());
+                        } catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    t.printStackTrace();
+                }
+            });
+        }
     }
 
     private void testDB2(){
@@ -650,5 +695,17 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
                 L.m("CALLBACK TAG == " + customTag);
             }
         }, call, RetrofitParser.TYPE_INTEGER, RetrofitParser.TYPE_BOOLEAN, 1, 0, true);
+    }
+
+    interface TestSSLInterface {
+        //Not used here, but left for example. Could technically use this if empty String is passed to Client class
+        static final String BASE_URL = "https://www.ssllabs.com/";
+
+        //API pathways
+        static final String BASE1 = "/ssltest";
+        static final String BASE2 = "/viewMyClient.html";
+
+        @GET(BASE1 + BASE2)
+        Call<ResponseBody> checkTLS();
     }
 }
