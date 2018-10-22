@@ -1,5 +1,6 @@
 package com.pgmacdesign.pgmactips.networkclasses.retrofitutilities;
 
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -63,6 +64,7 @@ public class RetrofitClient {
     private String urlBase;
     private Map<String, String> headers;
     private HttpLoggingInterceptor.Level logLevel;
+    private Interceptor retryInterceptor;
     private long readTimeout, writeTimeout;
     private String dateFormat;
     private Class serviceInterface;
@@ -81,6 +83,7 @@ public class RetrofitClient {
         this.dateFormat = builder.builder_dateFormat;
         this.readTimeout = builder.builder_readTimeout;
         this.writeTimeout = builder.builder_writeTimeout;
+        this.retryInterceptor = builder.retryInterceptor;
         this.sslProtocolOption = builder.sslProtocolOption;
         this.serviceInterface = builder.builder_serviceInterface;
         this.customConverterFactory = builder.customConverterFactory;
@@ -189,7 +192,9 @@ public class RetrofitClient {
         //Add logging and interceptor
         builder.addInterceptor(interceptor);
         builder.addInterceptor(logging);
-
+        if(this.retryInterceptor != null){
+            builder.addInterceptor(this.retryInterceptor);
+        }
         //Configure SSL
         builder = configureClient(builder);
 
@@ -205,7 +210,6 @@ public class RetrofitClient {
         } else {
             myBuilder.addConverterFactory(new CustomConverterFactory());
         }
-
         if(customCallAdapterFactory != null) {
             myBuilder.addCallAdapterFactory(customCallAdapterFactory);
             //IE: RxJava2CallAdapterFactory.create()
@@ -341,16 +345,18 @@ public class RetrofitClient {
     public static final class Builder <T> {
 
         String builder_urlBase;
+        String builder_dateFormat;
+        Interceptor retryInterceptor;
         Class<T> builder_serviceInterface;
         Map<String, String> builder_headers;
         HttpLoggingInterceptor.Level builder_logLevel;
         long builder_readTimeout, builder_writeTimeout;
-        String builder_dateFormat;
-        static final int SIXTY_SECONDS = (int)(1000*60);
         Converter.Factory customConverterFactory;
         CallAdapter.Factory customCallAdapterFactory;
         SSLProtocolOptions sslProtocolOption;
         boolean forceAcceptAllCertificates;
+
+        static final int SIXTY_SECONDS = (int)(1000*60);
 
         /**
          * Constructor visible to the outside
@@ -361,13 +367,14 @@ public class RetrofitClient {
          */
         public Builder(@NonNull final Class<T> serviceInterface,
                        @NonNull String urlBase){
-            this.sslProtocolOption = SSLProtocolOptions.TLS;
-            this.builder_urlBase = urlBase;
-            this.builder_serviceInterface = serviceInterface;
             this.builder_headers = null;
+            this.retryInterceptor = null;
+            this.builder_urlBase = urlBase;
             this.forceAcceptAllCertificates = false;
             this.setDateFormat(DEFAULT_DATE_FORMAT);
             this.setTimeouts(SIXTY_SECONDS, SIXTY_SECONDS);
+            this.sslProtocolOption = SSLProtocolOptions.TLS;
+            this.builder_serviceInterface = serviceInterface;
         }
 
         /**
@@ -394,6 +401,44 @@ public class RetrofitClient {
          */
         public Builder forceAcceptAllCertificates(boolean passTrueToEnable, boolean passFalseToEnable){
             this.forceAcceptAllCertificates = (passTrueToEnable && !passFalseToEnable);
+            return this;
+        }
+
+        /**
+         * Add a retry interceptor that will attempt the call again should it fail.
+         * @param retryCount
+         * @return
+         */
+        public Builder setRetryCount(@IntRange(from = 1) final int retryCount){
+            if(retryCount < 1){
+                this.retryInterceptor = null;
+                return this;
+            }
+            retryInterceptor = new Interceptor() {
+                @Override
+                public Response intercept(Chain chain) throws IOException {
+                    if(chain == null){
+                        return null;
+                    }
+                    Request request = chain.request();
+                    if(request == null){
+                        return null;
+                    }
+
+                    Response response = chain.proceed(request);
+
+                    if(response != null){
+                        int tryCount = 0;
+                        while (!response.isSuccessful() && tryCount < retryCount) {
+                            tryCount++;
+                            L.m("Call failed, retry triggered. Retry #" + tryCount);
+                            // retry the request
+                            response = chain.proceed(request);
+                        }
+                    }
+                    return response;
+                }
+            };
             return this;
         }
 
