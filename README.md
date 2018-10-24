@@ -19,8 +19,9 @@ To install, insert this into your projects root build.gradle file
 allprojects {
     repositories {
         jcenter()
+        google()
         maven { url "https://jitpack.io" }
-        maven { url "https://maven.google.com" } // Google's Maven repository 
+        maven { url "https://maven.google.com" }
     }
 }
 ```
