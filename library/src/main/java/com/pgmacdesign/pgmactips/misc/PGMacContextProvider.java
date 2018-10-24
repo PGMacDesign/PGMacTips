@@ -18,7 +18,7 @@ import com.pgmacdesign.pgmactips.utilities.StringUtilities;
  */
 public final class PGMacContextProvider extends ContentProvider {
 
-    private static final String ERROR_STR_1 = "Cannot initialize PGMacUtilities Context. Please make sure ProviderInfo is not null";
+    private static final String ERROR_STR_1 = "Cannot initialize PGMacTips Context. Please make sure ProviderInfo is not null";
     private static final String ERROR_STR_2 = "Incorrect provider authority in manifest. Most likely due to a "
             + "missing applicationId variable in application\'s build.gradle.";
     private static final String CONFIG_INITIALIZED = "Successfully initialized PGMacTipsConfig";

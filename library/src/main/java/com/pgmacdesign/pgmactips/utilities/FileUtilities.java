@@ -196,7 +196,7 @@ public class FileUtilities {
         try {
 
             if(StringUtilities.isNullOrEmpty(nameOfFile)){
-                nameOfFile = "PGMacUtilities_" + DateUtilities.getCurrentDateLong();
+                nameOfFile = "PGMacTips_" + DateUtilities.getCurrentDateLong();
             }
             if(StringUtilities.isNullOrEmpty(path)){
                 path = StringUtilities.getDataDirectoryLocation();
@@ -304,7 +304,7 @@ public class FileUtilities {
          * @param pathToFile The path to the file. If null, will write to downloads
          * @param data The data to be written. Cannot be null
          * @param nameOfFile The name of the file. If null, will be auto-generated as
-         *                   PGMacUtilities_ + the date in epoch (long) time
+         *                   PGMacTips_ + the date in epoch (long) time
          */
         public FileGeneratorAsync(OnTaskCompleteListener listener,
                                   String pathToFile, @NonNull String data, String nameOfFile) {
@@ -371,7 +371,7 @@ public class FileUtilities {
             fw.close();
 
         } catch (IOException e){
-            L.m("error writing to file in PGMacUtilities");
+            L.m("error writing to file in PGMacTips");
         } catch (Exception e){}
 
     }

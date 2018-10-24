@@ -12,6 +12,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -36,6 +38,7 @@ import com.pgmacdesign.pgmactips.utilities.CameraMediaUtilities;
 import com.pgmacdesign.pgmactips.utilities.ContactUtilities;
 import com.pgmacdesign.pgmactips.utilities.DatabaseUtilities;
 import com.pgmacdesign.pgmactips.utilities.GsonUtilities;
+import com.pgmacdesign.pgmactips.utilities.ImageUtilities;
 import com.pgmacdesign.pgmactips.utilities.L;
 import com.pgmacdesign.pgmactips.utilities.MalwareUtilities;
 import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
@@ -68,16 +71,27 @@ import retrofit2.http.GET;
         CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
 class MyTestActivity  extends Activity implements View.OnClickListener {
 
+    //Please note! these are for testing purposes only. I do not own the rights to the images below, I am referencing the URL link for testing loading times of images
+    private static final String LOTR_TEST_URL_1 = "https://vignette.wikia.nocookie.net/lotr/images/8/87/Ringstrilogyposter.jpg/revision/latest?cb=20070806215413";
+    private static final String LOTR_TEST_URL_2 = "https://vignette.wikia.nocookie.net/lotr/images/3/3a/The_Lord_of_the_Rings_Characters.jpg/revision/latest?cb=20150328111911";
+    private static final String LOTR_TEST_URL_3 = "https://i.imgur.com/SmXu3j7.jpg";
+    private static final String LOTR_TEST_URL_4 = "https://vignette.wikia.nocookie.net/lotr/images/7/79/Slider_-_One_Ring.jpg/revision/latest/scale-to-width-down/670?cb=20150328112455";
+    private static final String LOTR_TEST_URL_5 = "http://fullhdwallpapers.ru/image/movies/5422/karta-sredizemya.jpg";
+    private static final String LOTR_TEST_URL_6 = "https://i.imgur.com/CbNxBf7.jpg"; //Super large (4000x2000)
+
+    private ScrollView testing_layout_scrollview;
+    private ImageView image1, image2, image3, image4, image5, image6;
+    private Button button;
+    private RecyclerView testing_layout_recyclerview;
 
     private DatabaseUtilities dbUtilities;
     private CameraMediaUtilities cam;
-    private Button button;
-    private RecyclerView testing_layout_recyclerview;
     private BiometricVerification biometricVerification;
    // private MultipurposeEditText et;
     private static final String CUSTOM_STRING = "-PAT";
     private ContactUtilities contactUtilities;
     private OnTaskCompleteListener contactUtilsListener;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -95,13 +109,19 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
 	    testing_layout_recyclerview = (RecyclerView) this.findViewById(
 	    		R.id.testing_layout_recyclerview);
 	    testing_layout_recyclerview.setLayoutManager(new LinearLayoutManager(this));
+        this.testing_layout_scrollview = (ScrollView) this.findViewById(R.id.testing_layout_scrollview);
+        this.testing_layout_scrollview.setVisibility(View.GONE);
+        this.image1 = (ImageView) this.findViewById(R.id.image1);
+        this.image2 = (ImageView) this.findViewById(R.id.image2);
+        this.image3 = (ImageView) this.findViewById(R.id.image3);
+        this.image4 = (ImageView) this.findViewById(R.id.image4);
+        this.image5 = (ImageView) this.findViewById(R.id.image5);
+        this.image6 = (ImageView) this.findViewById(R.id.image6);
 
-        //init();
-        //init2();
-        //init3();
-	    //init4();
-//        init5();
-
+//        this.init2();
+//        this.init3();
+//        this.init5();
+//        this.testDB2();
     }
 
     private SharedPrefs sp;
@@ -527,9 +547,16 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
         L.m("Number of infections: " + mylist.size());
         L.Toast(this, "Number of infections: " + mylist.size());
     }
+
     @SuppressLint("MissingPermission")
     @Override
     public void onClick(View view) {
+
+        testPicassoImageLoads();
+
+        if(true){
+            return;
+        }
 
         testNewWebClient();
 
@@ -562,6 +589,20 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
 	    	contactQuery();
 	    }
 
+    }
+
+    private void testPicassoImageLoads(){
+        try {
+            this.testing_layout_scrollview.setVisibility(View.VISIBLE);
+            ImageUtilities.setImageWithPicasso(LOTR_TEST_URL_1, this.image1, R.color.black);
+            ImageUtilities.setImageWithPicasso(LOTR_TEST_URL_2, this.image2, R.color.blue);
+            ImageUtilities.setImageWithPicasso(LOTR_TEST_URL_3, this.image3, R.color.black);
+            ImageUtilities.setImageWithPicasso(LOTR_TEST_URL_4, this.image4, R.color.blue);
+            ImageUtilities.setImageWithPicasso(LOTR_TEST_URL_5, this.image5, R.color.black);
+            ImageUtilities.setImageWithPicasso(LOTR_TEST_URL_6, this.image6, R.color.blue);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private TestSSLInterface service;

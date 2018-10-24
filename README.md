@@ -28,7 +28,7 @@ allprojects {
 And include this in your dependencies section of your module .gradle file:
 
 ```java
-implementation ('com.github.PGMacDesign:PGMacTips:0.0.70')
+implementation ('com.github.PGMacDesign:PGMacTips:0.0.71')
 ```
 
 Having trouble with Jitpack? [This link](https://jitpack.io/#pgmacdesign/PGMacTips) here will show what is going on with the current build as well as give you instructions on integrating Jitpack into your project. 
@@ -126,6 +126,8 @@ I am unsure of forwards compatibility, but if newer versions will work or break 
 As this library uses multiple nested dependencies, there can sometimes be conflicts that arise when being used with other dependencies. This section covers some of the more common ones and how they can be resolved fairly quickly.
 
 When all of these recommendations below fail, try simply invalidating caches and restarting (<i>File --> 'Incalidate Caches / Restart...'</i>).
+
+Note, many of the errors / issues here have been resolved, but I am leaving them in for future reference.
 
 ### Manifest merger errors 
 
@@ -228,6 +230,19 @@ If you upgrade from an old version of the library to a new one (or vice-versa) a
 You may be using conflicting versions of Realm. As mentioned in the Realm section above, if you use PGMacTips version 0.0.66 or later and utilize the DatabaseUtilities class, you must use Realm 4.2.0 but if you use this library version 0.0.64 or lower, you must use Realm version 3.0.0.
 
 Double check your versions for both Realm and this library if you spot this error. 
+
+### Google Play Services Issues
+
+#### Play-Services-Basement Issue
+
+You may run into this issue at some point:
+
+```
+Failed to resolve: com.google.android.gms:play-services-basement:x.y.z
+```
+
+This issue can be caused by a few things, but the most common solutions are these three: [One](https://stackoverflow.com/a/50814456/2480714), [Two](https://stackoverflow.com/a/50795440/2480714), and [Three](https://stackoverflow.com/a/36463346/2480714).  If they don't work for you, try looking at how my [top-level build.gradle](https://github.com/PGMacDesign/PGMacTips/blob/master/build.gradle) and [project-level build.gradle](https://github.com/PGMacDesign/PGMacTips/blob/master/library/build.gradle) files are structured
+
 
 ## New Issues
 

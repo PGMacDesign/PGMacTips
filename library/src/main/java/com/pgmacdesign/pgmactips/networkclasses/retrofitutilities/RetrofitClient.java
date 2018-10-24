@@ -46,6 +46,7 @@ import retrofit2.Retrofit;
 /**
  * Retrofit Client that is used for Retrofit calls. The builder method allows for more customized
  * uses and cases rather than using the regular {@link Retrofit}
+ * todo: Look into retry if not functioning properly: https://medium.com/shuttl/easily-retrying-network-requests-on-android-with-retrofit-2-ee4b4b379eb7
  * Created by pmacdowell on 8/25/2016.
  */
 @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,

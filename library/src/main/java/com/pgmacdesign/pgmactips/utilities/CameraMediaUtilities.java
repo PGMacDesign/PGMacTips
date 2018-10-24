@@ -574,7 +574,7 @@ public class CameraMediaUtilities {
         }
 
         if(StringUtilities.isNullOrEmpty(userSentNameOfFile)){
-            userSentNameOfFile = "PGMacUtilities";
+            userSentNameOfFile = "PGMacTips";
         }
         userSentNameOfFile = StringUtilities.removeSpaces(userSentNameOfFile);
 

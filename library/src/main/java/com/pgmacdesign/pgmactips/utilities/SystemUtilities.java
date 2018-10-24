@@ -300,4 +300,21 @@ public class SystemUtilities {
         return packageName;
     }
 
+
+    /**
+     * Get the maximum system cache size for the app. Designed after this answer:
+     * https://stackoverflow.com/a/15763477/2480714
+     * Note! DO NOT USE THE ENTIRE 100%! Use a fraction of it. (IE, 1/8th)
+     *
+     * @return long maximum cache size. (If an error occurs, return 0)
+     */
+    public static long getMaxCacheSize() {
+        try {
+            return (long) ((Runtime.getRuntime().maxMemory()) / (1024));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
 }

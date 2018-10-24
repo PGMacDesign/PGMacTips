@@ -23,11 +23,10 @@ import android.util.Base64;
 import android.widget.ImageView;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
-import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.transformations.CircleTransform;
 import com.squareup.picasso.Callback;
-import com.squareup.picasso.LruCache;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -52,46 +51,26 @@ public class ImageUtilities {
 
     public static final String INVALID_PIXEL_POSITIONS =
             "Invalid pixel positions. Please check the passed params and start again";
+
+    //region Picasso Circular Images With Caching
     /**
      * Set a circular image into a view and set caching.
      *
      * @param urlThumbnail          URL String to use
      * @param viewToSet             View to set it into
      * @param backupImageResourceId Backup resource id in case the String url fails parsing
-     * @param context               Context
-     * @param percentMaxCache       Percent max cache to use (float, <1 && >0, IE, 0.45  == 45% of max
-     *                              cache. Note that Picasso defaults to 14.3% of max cache if null sent
-     * @param context               circularFrameColor Circular frame color (surrounds outside of image)
-     * @param context               circularFrameWidth Circular frame width (in pixels)
      * @param <T>                   {T extends View}
      */
     @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
     public static <T extends ImageView> void setCircularImageWithPicasso(String urlThumbnail,
                                                                          final T viewToSet,
                                                                          final int backupImageResourceId,
-                                                                         @NonNull Context context,
-                                                                         final Float percentMaxCache,
                                                                          final Integer circularFrameColor,
                                                                          final Integer circularFrameWidth) {
-        if (context == null) {
-            context = viewToSet.getContext();
-        }
-        final boolean useCustomCachePercent;
-        if (percentMaxCache == null) {
-            useCustomCachePercent = false;
-        } else {
-            if (percentMaxCache < 0 || percentMaxCache > 1) {
-                useCustomCachePercent = false;
-            } else {
-                useCustomCachePercent = true;
-            }
-        }
-        final Context fContext = context;
-
 
         if (StringUtilities.isNullOrEmpty(urlThumbnail)) {
             try {
-                Picasso.with(fContext).load(backupImageResourceId).
+                Picasso.get().load(backupImageResourceId).
                         transform(new CircleTransform(circularFrameColor, circularFrameWidth)).into(viewToSet);
 
             } catch (Exception e) {
@@ -101,7 +80,7 @@ public class ImageUtilities {
             final String innerUrlThumbnail = urlThumbnail;
 
             try {
-                Picasso.with(fContext)
+                Picasso.get()
                         .load(innerUrlThumbnail)
                         .networkPolicy(NetworkPolicy.OFFLINE)
                         .transform(new CircleTransform(circularFrameColor, circularFrameWidth))
@@ -112,52 +91,45 @@ public class ImageUtilities {
                                 try {
                                     List<String> toCache = new ArrayList<String>();
                                     toCache.add(innerUrlThumbnail);
-                                    float flt = 0;
-                                    if (useCustomCachePercent) {
-                                        flt = percentMaxCache;
-                                    }
                                     ImageUtilities.LoadImagesIntoPicassoCache async = new
-                                            ImageUtilities.LoadImagesIntoPicassoCache(toCache, fContext, flt);
+                                            ImageUtilities.LoadImagesIntoPicassoCache(toCache);
                                     async.execute();
                                 } catch (Exception e2) {
                                 }
                             }
 
                             @Override
-                            public void onError() {
+                            public void onError(Exception e) {
                                 //Can trigger if image not in cache
-                                Picasso.with(fContext).load(innerUrlThumbnail)
+                                Picasso.get().load(innerUrlThumbnail)
                                         .transform(new CircleTransform(circularFrameColor, circularFrameWidth))
                                         .into(viewToSet, new Callback() {
                                             @Override
                                             public void onSuccess() {
                                                 //Load the image into cache for next time
                                                 try {
-                                                    float flt = 0;
-                                                    if (useCustomCachePercent) {
-                                                        flt = percentMaxCache;
-                                                    }
                                                     List<String> toCache = new ArrayList<String>();
                                                     toCache.add(innerUrlThumbnail);
                                                     ImageUtilities.LoadImagesIntoPicassoCache async = new
-                                                            ImageUtilities.LoadImagesIntoPicassoCache(toCache, fContext, flt);
+                                                            ImageUtilities.LoadImagesIntoPicassoCache(toCache);
                                                     async.execute();
                                                 } catch (Exception e2) {}
                                             }
 
                                             @Override
-                                            public void onError() {
-                                                Picasso.with(fContext).load(backupImageResourceId)
+                                            public void onError(Exception e) {
+                                                Picasso.get().load(backupImageResourceId)
                                                         .transform(new CircleTransform(circularFrameColor, circularFrameWidth))
                                                         .into(viewToSet);
                                             }
                                         });
 
                             }
+                            
                         });
             } catch (Exception e) {
                 try {
-                    Picasso.with(fContext).load(backupImageResourceId).
+                    Picasso.get().load(backupImageResourceId).
                             transform(new CircleTransform(circularFrameColor, circularFrameWidth)).into(viewToSet);
                 } catch (Exception e1) {
                 }
@@ -172,18 +144,19 @@ public class ImageUtilities {
      * @param urlThumbnail          URL String to use
      * @param viewToSet             View to set it into
      * @param backupImageResourceId Backup resource id in case the String url fails parsing
-     * @param context               Context
      * @param <T>                   {T extends View}
      */
     @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
     public static <T extends ImageView> void setCircularImageWithPicasso(String urlThumbnail,
                                                                          final T viewToSet,
-                                                                         final int backupImageResourceId,
-                                                                         Context context) {
+                                                                         final int backupImageResourceId) {
         ImageUtilities.setCircularImageWithPicasso(urlThumbnail, viewToSet, backupImageResourceId,
-                context, null, null, null);
+                 null, null);
     }
 
+    //endregion
+
+    //region Picasso Circular Images Without Caching
     /**
      * Set a circular image into a view and set caching. Overloaded to allow for excluding
      * max cache size float
@@ -191,46 +164,17 @@ public class ImageUtilities {
      * @param urlThumbnail          URL String to use
      * @param viewToSet             View to set it into
      * @param backupImageResourceId Backup resource id in case the String url fails parsing
-     * @param context               Context
-     * @param <T>                   {T extends View}
-     */
-    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
-    public static <T extends ImageView> void setCircularImageWithPicasso(String urlThumbnail,
-                                                                         final T viewToSet,
-                                                                         final int backupImageResourceId,
-                                                                         Context context,
-                                                                         final Integer circularFrameColor,
-                                                                         final Integer circularFrameWidth) {
-        ImageUtilities.setCircularImageWithPicasso(urlThumbnail, viewToSet, backupImageResourceId,
-                context, null, circularFrameColor, circularFrameWidth);
-    }
-
-    /**
-     * Set a circular image into a view and set caching. Overloaded to allow for excluding
-     * max cache size float
-     *
-     * @param urlThumbnail          URL String to use
-     * @param viewToSet             View to set it into
-     * @param backupImageResourceId Backup resource id in case the String url fails parsing
-     * @param context               Context
      * @param <T>                   {T extends View}
      */
     @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
     public static <T extends ImageView> void setCircularImageWithPicassoNoCache(String urlThumbnail,
                                                                                 final T viewToSet,
                                                                                 final int backupImageResourceId,
-                                                                                Context context,
                                                                                 final Integer circularFrameColor,
                                                                                 final Integer circularFrameWidth) {
-        if (context == null) {
-            context = viewToSet.getContext();
-        }
-        final Context fContext = context;
-
-
         if (StringUtilities.isNullOrEmpty(urlThumbnail)) {
             try {
-                Picasso.with(fContext).load(backupImageResourceId).
+                Picasso.get().load(backupImageResourceId).
                         transform(new CircleTransform()).into(viewToSet);
 
             } catch (Exception e) {
@@ -240,13 +184,13 @@ public class ImageUtilities {
             final String innerUrlThumbnail = urlThumbnail;
 
             try {
-                Picasso.with(fContext)
+                Picasso.get()
                         .load(innerUrlThumbnail)
                         .transform(new CircleTransform())
                         .into(viewToSet);
             } catch (Exception e) {
                 try {
-                    Picasso.with(fContext).load(backupImageResourceId).
+                    Picasso.get().load(backupImageResourceId).
                             transform(new CircleTransform()).into(viewToSet);
                 } catch (Exception e1) {
                 }
@@ -262,81 +206,41 @@ public class ImageUtilities {
      * @param urlThumbnail          URL String to use
      * @param viewToSet             View to set it into
      * @param backupImageResourceId Backup resource id in case the String url fails parsing
-     * @param context               Context
      * @param <T>                   {T extends View}
      */
     @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
     public static <T extends ImageView> void setCircularImageWithPicassoNoCache(String urlThumbnail,
                                                                                 final T viewToSet,
-                                                                                final int backupImageResourceId,
-                                                                                Context context) {
+                                                                                final int backupImageResourceId) {
         setCircularImageWithPicassoNoCache(urlThumbnail, viewToSet, backupImageResourceId,
-                context, null, null);
+                null, null);
     }
 
+    //endregion
 
-    /**
-     * Set an image into a view and set caching. Overloaded to allow for excluding
-     * max cache size float
-     *
-     * @param urlThumbnail          URL String to use
-     * @param viewToSet             View to set it into
-     * @param backupImageResourceId Backup resource id in case the String url fails parsing
-     * @param context               Context
-     * @param <T>                   {T extends View}
-     */
-    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
-    public static <T extends ImageView> void setImageWithPicasso(String urlThumbnail,
-                                                                 final T viewToSet,
-                                                                 final int backupImageResourceId,
-                                                                 Context context) {
-        ImageUtilities.setImageWithPicasso(urlThumbnail, viewToSet, backupImageResourceId, context, null);
-    }
-
+    //region Picasso Images With Caching
     /**
      * Set an image into a view and set caching.
      *
      * @param urlThumbnail          URL String to use
      * @param viewToSet             View to set it into
      * @param backupImageResourceId Backup resource id in case the String url fails parsing
-     * @param context               Context
-     * @param percentMaxCache       Percent max cache to use (float, <1 && >0, IE, 0.45  == 45% of max
-     *                              cache. Note that Picasso defaults to 14.3% of max cache if null sent
      * @param <T>                   {T extends View}
      */
     @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
     public static <T extends ImageView> void setImageWithPicasso(String urlThumbnail,
                                                                  final T viewToSet,
-                                                                 final int backupImageResourceId,
-                                                                 Context context,
-                                                                 final Float percentMaxCache) {
+                                                                 final int backupImageResourceId) {
         if (urlThumbnail == null) {
             urlThumbnail = "";
-        }
-        final boolean useCustomCachePercent;
-        if (percentMaxCache == null) {
-            useCustomCachePercent = false;
-        } else {
-            if (percentMaxCache < 0 || percentMaxCache > 1) {
-                useCustomCachePercent = false;
-            } else {
-                useCustomCachePercent = true;
-            }
         }
         if (urlThumbnail.isEmpty() || urlThumbnail.equalsIgnoreCase("")) {
             viewToSet.setImageResource(backupImageResourceId);
         } else {
-            final Context context1;
-            if (context != null) {
-                context1 = context;
-            } else {
-                context1 = viewToSet.getContext();
-            }
             final String innerUrlThumbnail = urlThumbnail;
-            final Context innerContext1 = context1;
 
             try {
-                Picasso.with(context1)
+                Picasso.get()
                         .load(urlThumbnail)
                         .networkPolicy(NetworkPolicy.OFFLINE)
                         .into(viewToSet, new Callback() {
@@ -346,28 +250,24 @@ public class ImageUtilities {
                             }
 
                             @Override
-                            public void onError() {
+                            public void onError(Exception e) {
                                 //Can trigger if image not in cache
-                                Picasso.with(innerContext1).load(innerUrlThumbnail)
+                                Picasso.get().load(innerUrlThumbnail)
                                         .into(viewToSet, new Callback() {
                                             @Override
                                             public void onSuccess() {
                                                 try {
                                                     List<String> toCache = new ArrayList<String>();
                                                     toCache.add(innerUrlThumbnail);
-                                                    float flt = 0;
-                                                    if (useCustomCachePercent) {
-                                                        flt = percentMaxCache;
-                                                    }
                                                     ImageUtilities.LoadImagesIntoPicassoCache async = new
-                                                            ImageUtilities.LoadImagesIntoPicassoCache(toCache, context1, flt);
+                                                            ImageUtilities.LoadImagesIntoPicassoCache(toCache);
                                                     async.execute();
                                                 } catch (Exception e2) {}
                                             }
 
                                             @Override
-                                            public void onError() {
-                                                Picasso.with(context1)
+                                            public void onError(Exception e) {
+                                                Picasso.get()
                                                         .load(backupImageResourceId)
                                                         .into(viewToSet);
                                             }
@@ -384,6 +284,9 @@ public class ImageUtilities {
         }
     }
 
+    //endregion
+
+    //region Picasso Images Without Caching
     /**
      * Set an image into a view and set caching. Overloaded to allow for excluding
      * max cache size float
@@ -391,31 +294,21 @@ public class ImageUtilities {
      * @param urlThumbnail          URL String to use
      * @param viewToSet             View to set it into
      * @param backupImageResourceId Backup resource id in case the String url fails parsing
-     * @param context               Context
      * @param <T>                   {T extends View}
      */
     @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
     public static <T extends ImageView> void setImageWithPicassoNoCache(String urlThumbnail,
                                                                         final T viewToSet,
-                                                                        final int backupImageResourceId,
-                                                                        Context context) {
+                                                                        final int backupImageResourceId) {
         if (urlThumbnail == null) {
             urlThumbnail = "";
         }
         if (urlThumbnail.isEmpty() || urlThumbnail.equalsIgnoreCase("")) {
             viewToSet.setImageResource(backupImageResourceId);
         } else {
-            final Context context1;
-            if (context != null) {
-                context1 = context;
-            } else {
-                context1 = viewToSet.getContext();
-            }
             final String innerUrlThumbnail = urlThumbnail;
-            final Context innerContext1 = context1;
-
             try {
-                Picasso.with(context1)
+                Picasso.get()
                         .load(urlThumbnail)
                         .into(viewToSet);
             } catch (Exception e) {
@@ -426,73 +319,51 @@ public class ImageUtilities {
         }
     }
 
+    //endregion
+
+    //region Picasso Remove Images from cache Async Method
     /**
-     * Loads images into the picasso cache by using the fetch() call. Reference:
-     * http://stackoverflow.com/questions/23978828/how-do-i-use-disk-caching-in-picasso
+     * Remove images from the Picasso cache. This runs on a background thread and does not return anything
+     * @param imageUrlsToRemove
      */
     @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
-    public static class LoadImagesIntoPicassoCache extends AsyncTask<Void, Void, Void> {
+    public static void removeImageFromPicassoCache(List<String> imageUrlsToRemove){
+        try {
+            RemoveImagesFromPicassoCache async = new RemoveImagesFromPicassoCache(imageUrlsToRemove);
+            async.execute();
+        } catch (Exception e){
+            L.m("Could not remove images from Picasso cache: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Removes images from the picasso cache. Reference:
+     * http://www.zoftino.com/android-picasso-image-downloading-and-caching-library-tutorial
+     */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
+    public static class RemoveImagesFromPicassoCache extends AsyncTask<Void, Void, Void> {
         private List<String> imageURLs;
-        private Context context;
-        private float cacheSizeMaxPercent;
 
         /**
          * Load Images into cache constructor
          *
          * @param imageURLs A list of the image URLs to set
-         * @param context   Context
          */
-        public LoadImagesIntoPicassoCache(List<String> imageURLs, Context context) {
+        public RemoveImagesFromPicassoCache(List<String> imageURLs) {
             this.imageURLs = imageURLs;
-            this.context = context;
-            this.cacheSizeMaxPercent = 0;
-        }
-
-        /**
-         * Overloaded Constructor
-         *
-         * @param imageURLs           A list of the image URLs to set
-         * @param context             Context
-         * @param cacheSizeMaxPercent float % for max cache size. If left out or set to null,
-         *                            it will default to the auto generated max (which is
-         *                            about 1/7 available ram) Link:
-         *                            http://stackoverflow.com/questions/20090265/android-picasso-configure-lrucache-size
-         */
-        public LoadImagesIntoPicassoCache(List<String> imageURLs, Context context, Float cacheSizeMaxPercent) {
-            this.imageURLs = imageURLs;
-            this.context = context;
-            if (cacheSizeMaxPercent == null) {
-                this.cacheSizeMaxPercent = 0;
-            } else {
-                this.cacheSizeMaxPercent = cacheSizeMaxPercent;
-            }
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-
-            Picasso p;
-
-            if (cacheSizeMaxPercent > 0 && cacheSizeMaxPercent < 1) {
-                p = new Picasso.Builder(context)
-                        .memoryCache(new LruCache((int) (
-                                cacheSizeMaxPercent * ImageUtilities.getMaxCacheSize())))
-                        .build();
-            } else {
-                p = new Picasso.Builder(context)
-                        .build();
-            }
-
             for (String str : imageURLs) {
                 try {
                     if (isCancelled()) {
                         return null;
                     }
-                    p.with(context).load(str).fetch();
-                    Thread.sleep(500);
+                    Picasso.get().invalidate(str);
+                    Thread.sleep(10);
                 } catch (OutOfMemoryError e1) {
-                    //If we run out of memory, make sure to catch it!
-                    p.with(context).invalidate(str);
+                    Picasso.get().invalidate(str);
                     return null;
                 } catch (Exception e) {
                 }
@@ -501,6 +372,52 @@ public class ImageUtilities {
             return null;
         }
     }
+
+    //endregion
+
+    //region Picasso Add / Load Images into the cache Async Method
+    /**
+     * Loads images into the picasso cache by using the fetch() call. Reference:
+     * http://stackoverflow.com/questions/23978828/how-do-i-use-disk-caching-in-picasso
+     */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
+    public static class LoadImagesIntoPicassoCache extends AsyncTask<Void, Void, Void> {
+        private List<String> imageURLs;
+
+        /**
+         * Load Images into cache constructor
+         *
+         * @param imageURLs A list of the image URLs to set
+         */
+        public LoadImagesIntoPicassoCache(List<String> imageURLs) {
+            this.imageURLs = imageURLs;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            for (String str : imageURLs) {
+                try {
+                    if (isCancelled()) {
+                        return null;
+                    }
+
+                    Picasso.get().load(str).fetch();
+                    Thread.sleep(20);
+                } catch (OutOfMemoryError e1) {
+                    //If we run out of memory, make sure to catch it!
+                    Picasso.get().invalidate(str);
+                    return null;
+                } catch (Exception e) {
+                }
+            }
+
+            return null;
+        }
+    }
+
+    //endregion
+
+    //region Bitmap Operations
 
     /**
      * Adjust the photo orientation
@@ -600,43 +517,6 @@ public class ImageUtilities {
     }
 
     /**
-     * Set the drawable to a specific color and return it
-     *
-     * @param drawable   The drawable to change
-     * @param colorToSet The color to set it to
-     * @return Drawable
-     * @throws NullPointerException, if it fails, throws a null pointer
-     */
-    public static Drawable colorDrawable(@NonNull Drawable drawable, int colorToSet) {
-        try {
-            drawable.mutate().setColorFilter(colorToSet, PorterDuff.Mode.MULTIPLY);
-            return drawable;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return drawable;
-        }
-    }
-
-    /**
-     * Set the drawable to a specific color and return it
-     *
-     * @param drawableId the int ID of the drawable to change
-     * @param colorToSet The color to set it to
-     * @return Drawable
-     * @throws NullPointerException, if it fails, throws a null pointer
-     */
-    public static Drawable colorDrawable(int drawableId, int colorToSet, Context context) {
-        try {
-            Drawable drawable = ContextCompat.getDrawable(context, drawableId);
-            drawable.mutate().setColorFilter(colorToSet, PorterDuff.Mode.MULTIPLY);
-            return drawable;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
      * Converts an inputstream to a byte array (Mostly useful for sending images via JSON)
      *
      * @param is Input stream, if using a URI, open it by calling:
@@ -686,49 +566,6 @@ public class ImageUtilities {
     }
 
     /**
-     * Decode a file from the path and return a bitmap
-     *
-     * @param uri
-     * @param context
-     * @return
-     */
-    public static Bitmap decodeFileFromPath(Uri uri, Context context) {
-
-        InputStream in = null;
-        try {
-            in = context.getContentResolver().openInputStream(uri);
-
-            //Decode image size
-            BitmapFactory.Options o = new BitmapFactory.Options();
-            o.inJustDecodeBounds = true;
-
-            BitmapFactory.decodeStream(in, null, o);
-            in.close();
-
-
-            int scale = 1;
-            int inSampleSize = 1024;
-            if (o.outHeight > inSampleSize || o.outWidth > inSampleSize) {
-                scale = (int) Math.pow(2, (int) Math.round(Math.log(inSampleSize / (double) Math.max(o.outHeight, o.outWidth)) / Math.log(0.5)));
-            }
-
-            BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize = scale;
-            in = context.getContentResolver().openInputStream(uri);
-            Bitmap b = BitmapFactory.decodeStream(in, null, o2);
-            in.close();
-
-            return b;
-
-        } catch (FileNotFoundException e) {
-            //e.printStackTrace();
-        } catch (IOException e) {
-            //e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
      * Decode a bitmap from a resource
      *
      * @param res
@@ -774,40 +611,6 @@ public class ImageUtilities {
         }
 
         return inSampleSize;
-    }
-
-    /**
-     * Convert an image to a byte array
-     *
-     * @param uri
-     * @param context
-     * @return
-     */
-    public static byte[] convertImageToByte(Uri uri, Context context) {
-        byte[] data = null;
-        try {
-            ContentResolver cr = context.getContentResolver();
-            InputStream inputStream = cr.openInputStream(uri);
-            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-            data = baos.toByteArray();
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (Exception e2) {
-                }
-            }
-            if (baos != null) {
-                try {
-                    baos.close();
-                } catch (Exception e2) {
-                }
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return data;
     }
 
     /**
@@ -1045,31 +848,141 @@ public class ImageUtilities {
     }
 
     /**
-     * TBD in the future
+     * Decode a file from the path and return a bitmap
+     *
+     * @param uri
+     * @param context
+     * @return
      */
-    static void zoomAView() {
-        //https://developer.android.com/training/animation/zoom.html
+    public static Bitmap decodeFileFromPath(Uri uri, Context context) {
+
+        InputStream in = null;
+        try {
+            in = context.getContentResolver().openInputStream(uri);
+
+            //Decode image size
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+
+            BitmapFactory.decodeStream(in, null, o);
+            in.close();
+
+
+            int scale = 1;
+            int inSampleSize = 1024;
+            if (o.outHeight > inSampleSize || o.outWidth > inSampleSize) {
+                scale = (int) Math.pow(2, (int) Math.round(Math.log(inSampleSize / (double) Math.max(o.outHeight, o.outWidth)) / Math.log(0.5)));
+            }
+
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = scale;
+            in = context.getContentResolver().openInputStream(uri);
+            Bitmap b = BitmapFactory.decodeStream(in, null, o2);
+            in.close();
+
+            return b;
+
+        } catch (FileNotFoundException e) {
+            //e.printStackTrace();
+        } catch (IOException e) {
+            //e.printStackTrace();
+        }
+        return null;
+    }
+
+    //endregion
+
+    //region Drawable Operations
+    /**
+     * Set the drawable to a specific color and return it
+     *
+     * @param drawable   The drawable to change
+     * @param colorToSet The color to set it to
+     * @return Drawable
+     * @throws NullPointerException, if it fails, throws a null pointer
+     */
+    public static Drawable colorDrawable(@NonNull Drawable drawable, int colorToSet) {
+        try {
+            drawable.mutate().setColorFilter(colorToSet, PorterDuff.Mode.MULTIPLY);
+            return drawable;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return drawable;
+        }
     }
 
     /**
-     * Get the maximum system cache size for the app. Designed after this answer:
-     * https://stackoverflow.com/a/15763477/2480714
-     * Note! DO NOT USE THE ENTIRE 100%! Use a fraction of it. (IE, 1/8th)
+     * Set the drawable to a specific color and return it
      *
-     * @return long maximum cache size. (If an error occurs, return 0)
+     * @param drawableId the int ID of the drawable to change
+     * @param colorToSet The color to set it to
+     * @return Drawable
+     * @throws NullPointerException, if it fails, throws a null pointer
      */
-    public static long getMaxCacheSize() {
+    public static Drawable colorDrawable(int drawableId, int colorToSet, Context context) {
         try {
-            return (long) ((Runtime.getRuntime().maxMemory()) / (1024));
+            Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+            drawable.mutate().setColorFilter(colorToSet, PorterDuff.Mode.MULTIPLY);
+            return drawable;
         } catch (Exception e) {
             e.printStackTrace();
-            return 0;
+            return null;
         }
     }
+
+    //endregion
+
+    //region Misc Operations
+
+    /**
+     * Convert an image to a byte array
+     *
+     * @param uri
+     * @param context
+     * @return
+     */
+    public static byte[] convertImageToByte(Uri uri, Context context) {
+        byte[] data = null;
+        try {
+            ContentResolver cr = context.getContentResolver();
+            InputStream inputStream = cr.openInputStream(uri);
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+            data = baos.toByteArray();
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (Exception e2) {
+                }
+            }
+            if (baos != null) {
+                try {
+                    baos.close();
+                } catch (Exception e2) {
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+
+
+    /**
+     * TBD in the future
+     */
+    private static void zoomAView() {
+        //https://developer.android.com/training/animation/zoom.html
+    }
+
+    //endregion
 
     ///////////////////////////////////////////
     //Base64 String Image --> String Encoding//
     ///////////////////////////////////////////
+
+    //region Base64 Encoding
 
     /**
      * Encode a Bitmap to a base 64 String
@@ -1292,21 +1205,9 @@ public class ImageUtilities {
         }.execute();
     }
 
-    private static int getLeftSideXCoord(int topLeftX, int bottomLeftX){
-        return (topLeftX < bottomLeftX) ? topLeftX : bottomLeftX;
-    }
+    //endregion
 
-    private static int getRightSideXCoord(int topRightX, int bottomRightX){
-        return (topRightX > bottomRightX) ? topRightX : bottomRightX;
-    }
-
-    private static int getTopSideYCoord(int topLeftY, int topRightY){
-        return (topLeftY < topRightY) ? topLeftY : topRightY;
-    }
-
-    private static int getBottomSideYCoord(int bottomLeftY, int bottomRightY){
-        return (bottomLeftY > bottomRightY) ? bottomLeftY : bottomRightY;
-    }
+    //region Image Getter Utilities
 
     /**
      * Get the Left, Top, Right, and Bottom sides of an image.
@@ -1336,6 +1237,26 @@ public class ImageUtilities {
                 ImageUtilities.getBottomSideYCoord(bottomLeftY, bottomRightY)
         };
     }
+
+    private static int getLeftSideXCoord(int topLeftX, int bottomLeftX){
+        return (topLeftX < bottomLeftX) ? topLeftX : bottomLeftX;
+    }
+
+    private static int getRightSideXCoord(int topRightX, int bottomRightX){
+        return (topRightX > bottomRightX) ? topRightX : bottomRightX;
+    }
+
+    private static int getTopSideYCoord(int topLeftY, int topRightY){
+        return (topLeftY < topRightY) ? topLeftY : topRightY;
+    }
+
+    private static int getBottomSideYCoord(int bottomLeftY, int bottomRightY){
+        return (bottomLeftY > bottomRightY) ? bottomLeftY : bottomRightY;
+    }
+
+    //endregion
+
+    //region Image Cropping
 
     /**
      * Crop an image to the positions passed. If any # <0 is passed or an error occurs, it will
@@ -1474,4 +1395,5 @@ public class ImageUtilities {
                 startingXPos, startingYPos, endingXPos, endingYPos);
     }
 
+    //endregion
 }

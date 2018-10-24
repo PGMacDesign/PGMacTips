@@ -254,7 +254,7 @@ public class PGMacCustomProgressBar extends ProgressDialog {
                     animated_svg_view.reset();
                     startSVGAnimation();
                 }
-            }, ((long) (PGMacUtilitiesConstants.ONE_SECOND * 2.1)));
+            }, ((long) (PGMacTipsConstants.ONE_SECOND * 2.1)));
         }
     }
 

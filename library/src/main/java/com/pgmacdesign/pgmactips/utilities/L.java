@@ -14,7 +14,7 @@ import com.pgmacdesign.pgmactips.misc.PGMacTipsConfig;
 public class L {
 
 
-    private static final String TAG = "PGMacUtilities";
+    private static final String TAG = "PGMacTips";
 
 
     /**
@@ -130,9 +130,14 @@ public class L {
     private static String getTag(){
         try {
             String str = PGMacTipsConfig.getInstance().getTagForLogging();
+            if(!StringUtilities.isNullOrEmpty(str)){
+                if(str.length() > 23){
+                    str = str.substring((str.length() - (1 + 23)), (str.length() - 1));
+                }
+            }
             return (!StringUtilities.isNullOrEmpty(str)) ? str : TAG;
         } catch (Exception e){
-            //If this triggers, it means the context init has not run yet
+            //If this triggers, it means the context init has not run yet (OR) sizing issue
         }
         return TAG;
     }

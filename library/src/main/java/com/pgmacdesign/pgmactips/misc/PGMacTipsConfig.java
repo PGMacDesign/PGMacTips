@@ -3,6 +3,11 @@ package com.pgmacdesign.pgmactips.misc;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.pgmacdesign.pgmactips.utilities.StringUtilities;
+import com.pgmacdesign.pgmactips.utilities.SystemUtilities;
+import com.squareup.picasso.LruCache;
+import com.squareup.picasso.Picasso;
+
 /**
  * Class for defaulting global config variables
  * Currently used in the following classes:
@@ -12,6 +17,9 @@ import android.support.annotation.NonNull;
  * Created by pmacdowell on 2017-07-03.
  */
 public class PGMacTipsConfig {
+
+    // (1/7). Obtained from: https://stackoverflow.com/questions/20090265/android-picasso-configure-lrucache-size
+    private static final double DEFAULT_MAX_LRU_CACHE_PICASSO = 0.14286;
 
     private static PGMacTipsConfig instance;
 
@@ -58,6 +66,7 @@ public class PGMacTipsConfig {
         this.isLiveBuild = builder.isLiveBuild;
         this.tagForLogging = builder.tagForLogging;
         this.defaultDatabaseName = builder.defaultDatabaseName;
+        this.initPicassoSingleton();
         PGMacTipsConfig.instance = this;
     }
 
@@ -83,6 +92,28 @@ public class PGMacTipsConfig {
             return this;
         }
 
+        //Removed on 2018-10-24 as leaving at default 1/7 for now
+//        /**
+//         * This is used to set the max used percent of the device storage capacity for Picasso to use
+//         * as an LRU cache storage.
+//         * @param picassoCacheSizeMaxPercent Passing in an int value as the percent to use. IE, passing
+//         *                                   int 10 will use 10% of the device's memory while passing
+//         *                                   int 50 will use 50% of the device's memory.
+//         *                                   Defaults to 1/7 as per recommended defaults.
+//         *                                   See {@link PGMacTipsConfig#DEFAULT_MAX_LRU_CACHE_PICASSO} for more info.
+//         * @return this
+//         */
+//        public Builder setMaxPicassoCachePercent(@IntRange(from = 1, to = 99) @Nullable Integer picassoCacheSizeMaxPercent) {
+//            if(picassoCacheSizeMaxPercent == null){
+//                picassoCacheSizeMaxPercent = 14;
+//            }
+//            if(picassoCacheSizeMaxPercent < 0 || picassoCacheSizeMaxPercent >= 100){
+//                picassoCacheSizeMaxPercent = 14;
+//            }
+//            this.picassoCacheSizeMaxPercent = picassoCacheSizeMaxPercent;
+//            return this;
+//        }
+
         /**
          * This is used for setting the tag String to be printed out in the logging class
          * {@link com.pgmacdesign.pgmactips.utilities.L
@@ -106,10 +137,52 @@ public class PGMacTipsConfig {
         }
 
 	    public PGMacTipsConfig build(@NonNull Context context){
+            //Context
             this.context = context;
+            String packageName = null;
+            //Package String
+            try {
+                packageName = SystemUtilities.getPackageName(this.context);
+                if(!StringUtilities.isNullOrEmpty(packageName)){
+                    if(packageName.length() > 23){
+                        //Max length 23: https://stackoverflow.com/questions/28168622/the-logging-tag-can-be-at-most-23-characters
+                        packageName = packageName.substring((packageName.length() - (1 + 23)), (packageName.length() - 1));
+                    }
+                }
+            } catch (Exception e) {}
+            if(StringUtilities.isNullOrEmpty(packageName)){
+                packageName = "PGMacTips";
+            }
+            //Tag
+            if(StringUtilities.isNullOrEmpty(this.tagForLogging)){
+                this.tagForLogging = packageName;
+            } else {
+                if(this.tagForLogging.length() > 23){
+                    this.tagForLogging = packageName;
+                }
+            }
+            //DB Name
+            if (StringUtilities.isNullOrEmpty(this.defaultDatabaseName)) {
+                this.defaultDatabaseName = packageName + ".realm.db";
+            }
+
             PGMacTipsConfig.instance = new PGMacTipsConfig(this);
 		    return PGMacTipsConfig.instance;
 	    }
+
+    }
+
+    /**
+     * LRU Cache Defaults for Picasso Caching
+     */
+    private void initPicassoSingleton(){
+        try {
+            double x = (((DEFAULT_MAX_LRU_CACHE_PICASSO * ((double) SystemUtilities.getMaxCacheSize()))));
+            Picasso p = new Picasso.Builder(context)
+                    .memoryCache(new LruCache((int) (x)))
+                    .build();
+            Picasso.setSingletonInstance(p);
+        } catch (Exception e){}
     }
 
     public String getDefaultDatabaseName() {
@@ -127,4 +200,6 @@ public class PGMacTipsConfig {
     public Context getContext(){
         return this.context;
     }
+
+
 }
