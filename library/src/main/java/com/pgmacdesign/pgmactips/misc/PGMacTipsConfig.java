@@ -5,8 +5,6 @@ import android.support.annotation.NonNull;
 
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 import com.pgmacdesign.pgmactips.utilities.SystemUtilities;
-import com.squareup.picasso.LruCache;
-import com.squareup.picasso.Picasso;
 
 /**
  * Class for defaulting global config variables
@@ -66,7 +64,7 @@ public class PGMacTipsConfig {
         this.isLiveBuild = builder.isLiveBuild;
         this.tagForLogging = builder.tagForLogging;
         this.defaultDatabaseName = builder.defaultDatabaseName;
-        this.initPicassoSingleton();
+//        this.initPicassoSingleton(); //Removed due to 'java.lang.NoClassDefFoundError: Failed resolution of: Lcom/squareup/picasso/Picasso$Builder;'
         PGMacTipsConfig.instance = this;
     }
 
@@ -170,19 +168,6 @@ public class PGMacTipsConfig {
 		    return PGMacTipsConfig.instance;
 	    }
 
-    }
-
-    /**
-     * LRU Cache Defaults for Picasso Caching
-     */
-    private void initPicassoSingleton(){
-        try {
-            double x = (((DEFAULT_MAX_LRU_CACHE_PICASSO * ((double) SystemUtilities.getMaxCacheSize()))));
-            Picasso p = new Picasso.Builder(context)
-                    .memoryCache(new LruCache((int) (x)))
-                    .build();
-            Picasso.setSingletonInstance(p);
-        } catch (Exception e){}
     }
 
     public String getDefaultDatabaseName() {
