@@ -2,16 +2,16 @@ Change Log
 ==========
 
 
-Version 0.0.72 *(TBD)*
+Version 0.0.73 *(TBD)*
 ----------------------------
 
  * Update: 
 
-Version 0.0.71 *(2018-10-24)*
+Version 0.0.72 *(2018-10-24)*
 ----------------------------
 
- * Update: Updated the Picasso library to the most current version and rewrote [ImageUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ImageUtilities.java) to match the new structure. Note that image caching is handled automatically now and no longer has an overloaded method to pass in a percent max cache integer. Also, <i>Context</i> was removed as a required param for calls as it is not required and is auto setup in the [PGMacTipsConfig](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/misc/PGMacTipsConfig.java) class when initialized. Lastly, added region mapping in ImageUtilities for easier mapping. 
- * Update: Changed the code in the [PGMacTipsConfig](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/misc/PGMacTipsConfig.java) class to auto-initialize more fields and automatically set a Picasso singleton instance.
+ * Update: Updated the Picasso library to the most current version and rewrote [ImageUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ImageUtilities.java) to match the new structure. Note that image caching is handled automatically now and no longer has an overloaded method to pass in a percent max cache integer. Also, <i>Context</i> was removed as a required param for calls as it is not required anymore. Lastly, added region mapping in ImageUtilities for easier source code reading. 
+ * Update: Changed the code in the [PGMacTipsConfig](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/misc/PGMacTipsConfig.java) class to auto-initialize more fields.
  * Update: Updated the Gradle Build to Version 3.1.3 as per the recent Android Studio update. Note, did not use version 3.2.1 as per [this](https://stackoverflow.com/a/52608833/2480714) issue. 
  * Update Updated the maps play services to version 16.0.0. Please note that I also had to reorganize where the `google()` and `maven { url "https://maven.google.com" }` items were placed within the build.gradle for <i>whatever reason</i>. 
  * New: Added in a reference to the <i>Play-Services-Basement Issue</i> into the [ReadMe](https://github.com/PGMacDesign/PGMacTips/blob/master/README.md). This definitely took some time to resolve so I am placing it there for anyone else who has the issue. 
