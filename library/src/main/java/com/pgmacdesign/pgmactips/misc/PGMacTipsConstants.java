@@ -267,11 +267,14 @@ public class PGMacTipsConstants {
     public static final String REGEX_MONEY = "^[0-9]+(?:\\.[0-9]{0,2})?$";
     public static final String REGEX_MONEY_SIGNED = "^[-+]?[0-9]+(?:\\.[0-9]{0,2})?$";
     public static final String REGEX_PHONE = "^ *\\(?[0-9]{3,3}[-\\.\\)]? ?[0-9]{3,3}[-\\. ]?[0-9]{4,4} *$";
-    public static final String REGEX_IPADDRESS = "^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$";
     public static final String REGEX_COLOR = "^#[0-9a-fA-F]{6,6}$";
     public static final String REGEX_DATE = "^[0-9]{1,2}[-/][0-9]{1,2}[-/][0-9]{2,4}$";
     public static final String REGEX_EMAIL = "^\\s*[^@\\s]+@(?:[^@\\.\\s]+\\.[^@\\.\\s]+)+\\s*$";
     public static final String REGEX_NEW_LINE = "[\\r\\n]+";
+//    public static final String REGEX_IPADDRESS = "^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$";
+    //Updated as per: https://www.mkyong.com/regular-expressions/how-to-validate-ip-address-with-regular-expression/
+    public static final String REGEX_IPADDRESS = "^([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.\n" +
+            "([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])$\n";
 
     ////////////////////////////////
     //Animation Constants and Tags//

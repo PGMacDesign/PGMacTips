@@ -1666,6 +1666,28 @@ public class StringUtilities {
     }
 
     /**
+     * NOTE! Not working at all right now... unclear why
+     * Checks for a valid IP Address.
+     * Valid: '1.1.1.1', '255.255.255.255', '192.168.1.1'
+     * Invalid: '10.10.10', '2222.222.222.222', '111'
+     * Pulled from: https://www.mkyong.com/regular-expressions/how-to-validate-ip-address-with-regular-expression/
+     * @param ipAddress String IP Address to check. If null, returns false
+     * @return boolean, if true, valid IP address, if false, not valid
+     */
+    public static boolean isValidIPAddress(@Nullable String ipAddress){
+        if(StringUtilities.isNullOrEmpty(ipAddress)){
+            return false;
+        }
+        try {
+            Pattern pattern = Pattern.compile(PGMacTipsConstants.REGEX_IPADDRESS);
+            Matcher matcher = pattern.matcher(ipAddress);
+            return matcher.matches();
+        } catch (Exception e){
+            return false;
+        }
+    }
+
+    /**
      * For converting 2 times into SMS-like format where it shows "how long ago" someone did
      * something. IE, when someone sends you a message 'just now' vs 'an hour ago'
      * @param timeEventHappened Time the event happened
