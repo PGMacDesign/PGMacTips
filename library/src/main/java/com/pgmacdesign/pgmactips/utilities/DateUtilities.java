@@ -1030,4 +1030,94 @@ public class DateUtilities {
         }
     }
 
+    /**
+     * Get the first millisecond of the current month
+     * @return First millisecond of month, 0 if null is passed
+     */
+    public static long getFirstMillisecondOfMonth(){
+        return getFirstMillisecondOfMonth(Calendar.getInstance());
+    }
+
+    /**
+     * Get the first millisecond of the month passed in
+     * @param cal {@link Calendar}
+     * @return First millisecond of month, 0 if null is passed
+     */
+    public static long getFirstMillisecondOfMonth(@NonNull Calendar cal){
+        if(cal == null){
+            return 0;
+        }
+        return getFirstDateTimeOfMonth(cal).getTime();
+    }
+
+    /**
+     * Get the last millisecond of the current month
+     * @return last millisecond of month, 0 if null is passed
+     */
+    public static long getLastMillisecondOfMonth(){
+        return getLastMillisecondOfMonth(Calendar.getInstance());
+    }
+
+    /**
+     * Get the last millisecond of the month passed in
+     * @param cal {@link Calendar}
+     * @return last millisecond of month, 0 if null is passed
+     */
+    public static long getLastMillisecondOfMonth(@NonNull Calendar cal){
+        if(cal == null){
+            return 0;
+        }
+        return getLastDateTimeOfMonth(cal).getTime();
+    }
+
+    /**
+     * Get the first DateTime of the current month
+     * @return First DateTime of month, new initialized date if null is passed
+     */
+    public static Date getFirstDateTimeOfMonth(){
+        return getFirstDateTimeOfMonth(Calendar.getInstance());
+    }
+
+    /**
+     * Get the first DateTime of the month passed in
+     * @param cal {@link Calendar}
+     * @return First DateTime of month, new initialized date if null is passed
+     */
+    public static Date getFirstDateTimeOfMonth(@NonNull Calendar cal){
+        if(cal == null){
+            return new Date();
+        }
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTime();
+    }
+
+    /**
+     * Get the last DateTime of the current month
+     * @return last DateTime of month, new initialized date if null is passed
+     */
+    public static Date getLastDateTimeOfMonth(){
+        return getLastDateTimeOfMonth(Calendar.getInstance());
+    }
+
+    /**
+     * Get the last DateTime of the month passed in
+     * @param cal {@link Calendar}
+     * @return last DateTime of month, new initialized date if null is passed
+     */
+    public static Date getLastDateTimeOfMonth(@NonNull Calendar cal){
+        if(cal == null){
+            return new Date();
+        }
+        int lastDay = cal.getActualMaximum(Calendar.MONTH);
+        cal.set(Calendar.DAY_OF_MONTH, lastDay);
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        cal.set(Calendar.MILLISECOND, 999);
+        return cal.getTime();
+    }
 }
