@@ -176,6 +176,10 @@ This is one of those exceptions that has a large number of [fixes](https://stack
 android.enableAapt2=false
 ```
 
+<b>2019 Update</b>
+
+As of January 2019, the above command is now deprecated and will not work. One bit of info that might help solve the issue, AAPT issues are generally related to asset, xml, layout, or resource errors. Check your layouts for bad references, make sure your custom drawables do not have malformed xml; [Guidelines Here](https://developer.android.com/guide/practices/ui_guidelines/icon_design), and confirm that you don't have capital letters in your various resources [See this page](https://github.com/ribot/android-guidelines/blob/master/project_and_code_guidelines.md) for examples.
+
 ### Realm Exceptions (TransformExceptions && AbstractMethodError)
 
 #### TransformException
