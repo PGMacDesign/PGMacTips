@@ -1112,7 +1112,7 @@ public class DateUtilities {
         if(cal == null){
             return new Date();
         }
-        int lastDay = cal.getActualMaximum(Calendar.MONTH);
+        int lastDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
         cal.set(Calendar.DAY_OF_MONTH, lastDay);
         cal.set(Calendar.HOUR_OF_DAY, 23);
         cal.set(Calendar.MINUTE, 59);
