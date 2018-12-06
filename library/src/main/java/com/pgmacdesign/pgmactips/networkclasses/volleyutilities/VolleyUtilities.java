@@ -19,6 +19,7 @@ import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.networkclasses.sslsocketsandprotocols.ClientSSLSocketFactory;
 import com.pgmacdesign.pgmactips.networkclasses.sslsocketsandprotocols.SSLProtocolOptions;
 import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
+import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -129,6 +130,25 @@ public class VolleyUtilities {
                 } else {
                     return headers;
                 }
+            }
+            /**
+             * Overloaded do to headers issue here: https://stackoverflow.com/a/26246558/2480714
+             * @return
+             */
+            @Override
+            public String getBodyContentType() {
+                try {
+                    if (!MiscUtilities.isMapNullOrEmpty(headers)) {
+                        Object o = headers.get("Content-Type");
+                        if(o != null){
+                            String s = (String) o;
+                            if(!StringUtilities.isNullOrEmpty(s)){
+                                return s;
+                            }
+                        }
+                    }
+                } catch (Exception e){}
+                return super.getBodyContentType();
             }
         };
 
@@ -320,6 +340,25 @@ public class VolleyUtilities {
                 } else {
                     return headers;
                 }
+            }
+            /**
+             * Overloaded do to headers issue here: https://stackoverflow.com/a/26246558/2480714
+             * @return
+             */
+            @Override
+            public String getBodyContentType() {
+                try {
+                    if (!MiscUtilities.isMapNullOrEmpty(headers)) {
+                        Object o = headers.get("Content-Type");
+                        if(o != null){
+                            String s = (String) o;
+                            if(!StringUtilities.isNullOrEmpty(s)){
+                                return s;
+                            }
+                        }
+                    }
+                } catch (Exception e){}
+                return super.getBodyContentType();
             }
         };
 

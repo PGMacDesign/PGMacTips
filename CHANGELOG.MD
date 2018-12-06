@@ -2,10 +2,17 @@ Change Log
 ==========
 
 
-Version 0.0.73 *(TBD)*
+Version 0.0.74 *(TBD)*
 ----------------------------
 
- * Update: 
+ *  
+
+Version 0.0.73 *(2018-12-06)*
+----------------------------
+
+ * Fix: Fixed a bug in [VolleyUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/networkclasses/volleyutilities/VolleyUtilities.java) class that was preventing custom Content-Type headers from being observed.  
+ * New: Adding in new functions to the [DateUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/DateUtilities.java) class for use in simple getters. 
+ * Update: Updating the [CustomAnnotationsBase](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/misc/CustomAnnotationsBase.java) to reference newest versions. 
 
 Version 0.0.72 *(2018-10-24)*
 ----------------------------

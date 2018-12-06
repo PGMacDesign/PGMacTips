@@ -34,7 +34,7 @@ android {
         targetSdkVersion 28
         //multiDexEnabled true
 //        versionCode 1
-        versionName "0.0.71"
+        versionName "0.0.73"
     }
 //    dexOptions {
 //        javaMaxHeapSize "4g"
