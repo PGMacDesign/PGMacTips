@@ -23,6 +23,7 @@ import android.util.Base64;
 import android.widget.ImageView;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
+import com.pgmacdesign.pgmactips.datamodels.ImageMimeType;
 import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.transformations.CircleTransform;
@@ -611,6 +612,53 @@ public class ImageUtilities {
         }
 
         return inSampleSize;
+    }
+
+    public static String convertBitmapToBase64String(@NonNull Bitmap bitmap){
+        return ImageUtilities.convertBitmapToBase64String(bitmap, ImageMimeType.PNG);
+    }
+
+    public static String convertBitmapToBase64String(@NonNull Bitmap bitmap, @Nullable ImageMimeType mimeType){
+        if(bitmap == null){
+            return null;
+        }
+        try {
+            if(mimeType == null){
+                mimeType = ImageMimeType.PNG;
+            }
+            Bitmap.CompressFormat c;
+            switch (mimeType){
+                case JPEG:
+                    c = Bitmap.CompressFormat.JPEG;
+                    break;
+                default:
+                case GIF:
+                case UNKNOWN:
+                case PNG:
+                    c = Bitmap.CompressFormat.PNG;
+                    break;
+            }
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            bitmap.compress(c, 100, byteArrayOutputStream);
+            byte[] byteArray = byteArrayOutputStream .toByteArray();
+            return Base64.encodeToString(byteArray, Base64.DEFAULT);
+        } catch (Exception e){
+            return null;
+        }
+    }
+
+    public static String convertBitmapToBase64String(@NonNull Bitmap bitmap, @Nullable Bitmap.CompressFormat compressFormat){
+        if(bitmap == null){
+            return null;
+        }
+        try {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            bitmap.compress(((compressFormat == null) ? Bitmap.CompressFormat.PNG : compressFormat), 100, byteArrayOutputStream);
+            byte[] byteArray = byteArrayOutputStream .toByteArray();
+            return Base64.encodeToString(byteArray, Base64.DEFAULT);
+        } catch (Exception e){
+            return null;
+        }
     }
 
     /**
@@ -1203,6 +1251,42 @@ public class ImageUtilities {
                 }
             }
         }.execute();
+    }
+
+    /**
+     * Determine the Mime Type of an image from the base64 String
+     * @param bitmap Bitmap image to determine type from
+     * @return {@link ImageMimeType}
+     */
+    public static ImageMimeType determineImageMimeType(@NonNull Bitmap bitmap){
+        if(bitmap == null){
+            return ImageMimeType.UNKNOWN;
+        }
+        try {
+            return ImageUtilities.determineImageMimeType(ImageUtilities.convertBitmapToBase64String(bitmap));
+        } catch (Exception e){
+            return ImageMimeType.UNKNOWN;
+        }
+    }
+
+    /**
+     * Determine the Mime Type of an image from the base64 String
+     * @param base64Image Base64 String of an image
+     * @return {@link ImageMimeType}
+     */
+    public static ImageMimeType determineImageMimeType(@NonNull String base64Image){
+        if(StringUtilities.isNullOrEmpty(base64Image)){
+            return ImageMimeType.UNKNOWN;
+        }
+        if(base64Image.charAt(0)=='/'){
+            return ImageMimeType.JPEG;
+        }else if(base64Image.charAt(0)=='R'){
+            return ImageMimeType.GIF;
+        }else if(base64Image.charAt(0)=='i'){
+            return ImageMimeType.PNG;
+        } else {
+            return ImageMimeType.UNKNOWN;
+        }
     }
 
     //endregion
