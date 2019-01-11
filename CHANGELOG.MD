@@ -13,6 +13,7 @@ Version 0.0.74 *(TBD)*
 		android.useAndroidX=true
 		android.enableJetifier=true
 		```	
+		
  * New: Added in new gradle dependencies for Android Lifecycle support:
  
  		```
@@ -20,6 +21,7 @@ Version 0.0.74 *(TBD)*
 		api "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
 		annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
 		```
+		
  * Update: Updating the [CustomAnnotationsBase](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/misc/CustomAnnotationsBase.java) to reference newest Android Lifecycle support as well as some links that mirror where to find more info. . 
  
  
