@@ -117,6 +117,15 @@ android {
         //Annotations. Link: https://developer.android.com/topic/libraries/support-library/packages
         api 'com.android.support:support-annotations:28.0.0'
 
+        //region Android Jetpack
+        //Lifecycle Version
+        def lifecycle_version="2.0.0"
+//        api "android.arch.lifecycle:extensions:$lifecycle_version" //For Pre X (1.1.1)
+        api "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+//        annotationProcessor "android.arch.lifecycle:compiler:$lifecycle_version"  //For Pre X (1.1.1)
+        annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
+
+        //endregion
     }
 }
 // Publish default flavour as main artifact, otherwise the maven pom is not generated
