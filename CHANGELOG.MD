@@ -5,8 +5,24 @@ Change Log
 Version 0.0.74 *(TBD)*
 ----------------------------
 
- *  
-
+ * New: Added in new gradle.properties entries that allow for AndroidX Support:
+ 
+		```
+		# Jetpack Library info can be found here: https://developer.android.com/jetpack/androidx/
+		# More info at this link: https://developer.android.com/jetpack/androidx/migrate
+		android.useAndroidX=true
+		android.enableJetifier=true
+		```	
+ * New: Added in new gradle dependencies for Android Lifecycle support:
+ 
+ 		```
+		def lifecycle_version="2.0.0"
+		api "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+		annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
+		```
+ * Update: Updating the [CustomAnnotationsBase](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/misc/CustomAnnotationsBase.java) to reference newest Android Lifecycle support as well as some links that mirror where to find more info. . 
+ 
+ 
 Version 0.0.73 *(2018-12-06)*
 ----------------------------
 
