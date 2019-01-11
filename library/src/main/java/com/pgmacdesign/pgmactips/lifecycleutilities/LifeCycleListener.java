@@ -84,42 +84,42 @@ public class LifeCycleListener <E extends Enum<E>> implements LifecycleObserver 
 
     //region Events
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    private void onCreateEventHit(){
+    public void onCreateEventHit(){
         if(listener != null){
             listener.onTaskComplete(buildPojo(Lifecycle.Event.ON_CREATE), TAG_LIFE_CYCLE_LISTENER);
         }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    private void onDestroyEventHit(){
+    public void onDestroyEventHit(){
         if(listener != null){
             listener.onTaskComplete(buildPojo(Lifecycle.Event.ON_DESTROY), TAG_LIFE_CYCLE_LISTENER);
         }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    private void onPauseEventHit(){
+    public void onPauseEventHit(){
         if(listener != null){
             listener.onTaskComplete(buildPojo(Lifecycle.Event.ON_PAUSE), TAG_LIFE_CYCLE_LISTENER);
         }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    private void onResumeEventHit(){
+    public void onResumeEventHit(){
         if(listener != null){
             listener.onTaskComplete(buildPojo(Lifecycle.Event.ON_RESUME), TAG_LIFE_CYCLE_LISTENER);
         }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    private void onStartEventHit(){
+    public void onStartEventHit(){
         if(listener != null){
             listener.onTaskComplete(buildPojo(Lifecycle.Event.ON_START), TAG_LIFE_CYCLE_LISTENER);
         }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    private void onStopEventHit(){
+    public void onStopEventHit(){
         if(listener != null){
             listener.onTaskComplete(buildPojo(Lifecycle.Event.ON_STOP), TAG_LIFE_CYCLE_LISTENER);
         }
