@@ -2,10 +2,11 @@ package com.pgmacdesign.pgmactips.broadcastreceivers;
 
 import android.content.Context;
 import android.content.IntentFilter;
-import android.support.annotation.NonNull;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.annotation.NonNull;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 /**
  * Created by pmacdowell on 2017-06-13.

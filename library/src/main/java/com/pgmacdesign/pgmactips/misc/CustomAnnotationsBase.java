@@ -63,7 +63,7 @@ public class CustomAnnotationsBase {
                 "com.android.support:design:27.1.1", "27.1.1",
                 "Android support library is utilized in any class that makes use of recyclerviews and other design-related elements"),
         AndroidSupport_Annotations("https://developer.android.com/topic/libraries/support-library/packages",
-                "com.android.support:support-annotations:27.1.1", "27.1.1",
+                "androidx.annotation:annotation:1.0.0", "1.0.0",
                 "Android support annotations is used for custom annotations like the ones used here with the 'RequiresDependency' interface"),
         Android_Lifecycle("https://developer.android.com/topic/libraries/architecture/adding-components",
                 "androidx.lifecycle:lifecycle-extensions:2.0.0", "2.0.0",
@@ -74,7 +74,7 @@ public class CustomAnnotationsBase {
         Android_Lifecycle_Annotations("https://developer.android.com/topic/libraries/architecture/adding-components",
                 "androidx.lifecycle:lifecycle-compiler:2.0.0", "2.0.0",
                 "Android lifecycle support lib requires the following 2 fields to be set in your gradle.properties file:" +
-                        "android.useAndroidX=true" + "android.enableJetifier=true" + ", or use version 1.1.1 or below. For more info, see " +
+                        "android.useAndroidX=true & " + "android.enableJetifier=true" + ", or use version 1.1.1 or below. For more info, see " +
                         "1) https://developer.android.com/jetpack/androidx/ && " +
                         "2) https://developer.android.com/topic/libraries/architecture/adding-components"),
         Realm("https://github.com/realm/realm-java",

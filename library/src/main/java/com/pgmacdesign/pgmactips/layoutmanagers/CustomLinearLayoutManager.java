@@ -1,12 +1,13 @@
 package com.pgmacdesign.pgmactips.layoutmanagers;
 
 import android.content.Context;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Custom Grid layout manager {@link RecyclerView.LayoutManager} that can be used for a normal Recyclerview Layout

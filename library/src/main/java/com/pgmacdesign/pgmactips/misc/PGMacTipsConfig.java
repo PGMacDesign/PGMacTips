@@ -1,7 +1,7 @@
 package com.pgmacdesign.pgmactips.misc;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 import com.pgmacdesign.pgmactips.utilities.SystemUtilities;

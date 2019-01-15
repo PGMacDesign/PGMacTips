@@ -7,7 +7,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.provider.Settings;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 
 import com.pgmacdesign.pgmactips.utilities.PermissionUtilities;
 

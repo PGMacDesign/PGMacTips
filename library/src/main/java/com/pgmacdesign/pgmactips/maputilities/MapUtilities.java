@@ -2,7 +2,7 @@ package com.pgmacdesign.pgmactips.maputilities;
 
 import android.graphics.Point;
 import android.location.Location;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;

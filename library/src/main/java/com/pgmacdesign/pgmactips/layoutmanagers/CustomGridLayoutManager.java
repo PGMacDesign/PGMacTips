@@ -2,12 +2,13 @@ package com.pgmacdesign.pgmactips.layoutmanagers;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
 import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
+
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Custom Grid layout manager {@link RecyclerView.LayoutManager} that can be used like a grid layout
@@ -54,7 +55,7 @@ public class CustomGridLayoutManager extends GridLayoutManager {
         int height = this.getHeight();
         if (mColumnWidthChanged && (mColumnWidth > 0) && (width > 0) && (height > 0)) {
             int totalSpace;
-            if (getOrientation() == VERTICAL) {
+            if (getOrientation() == RecyclerView.VERTICAL) {
                 try {
                     totalSpace = width - getPaddingEnd() - getPaddingStart();
                 } catch (Exception e){

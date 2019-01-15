@@ -6,14 +6,10 @@ import android.database.DataSetObserver;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.AttrRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
-import android.support.annotation.StyleRes;
-import android.support.v4.app.Fragment;
-import android.support.v4.os.ParcelableCompat;
-import android.support.v4.os.ParcelableCompatCreatorCallbacks;
-import android.support.v4.view.PagerAdapter;
+import androidx.annotation.AttrRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.annotation.StyleRes;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -24,6 +20,11 @@ import com.pgmacdesign.pgmactips.BuildConfig;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.DatabaseUtilities;
+
+import androidx.core.os.ParcelableCompat;
+import androidx.core.os.ParcelableCompatCreatorCallbacks;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.PagerAdapter;
 
 /**
  * Custom Fragment State array adapter. This will persist not only the savedInstanceState

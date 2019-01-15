@@ -2,7 +2,7 @@ package com.pgmacdesign.pgmactips.utilities;
 
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Created by pmacdowell on 8/12/2016.

@@ -1,7 +1,7 @@
 package com.pgmacdesign.pgmactips.mapzen;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;

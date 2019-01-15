@@ -1,6 +1,6 @@
 package com.pgmacdesign.pgmactips.filters;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.widget.Filter;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;

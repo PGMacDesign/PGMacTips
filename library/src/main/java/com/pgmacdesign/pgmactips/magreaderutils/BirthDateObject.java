@@ -1,6 +1,6 @@
 package com.pgmacdesign.pgmactips.magreaderutils;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 import com.pgmacdesign.pgmactips.misc.TempString;
