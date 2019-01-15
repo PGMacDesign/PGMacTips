@@ -43,7 +43,7 @@
 			android:clickable="false"
 			/>
 		
-		<android.support.v7.widget.RecyclerView
+		<androidx.recyclerview.widget.RecyclerView
 			android:id="@+id/multipurpose_choice_dialog_recyclerview"
 			android:layout_below="@+id/multipurpose_choice_dialog_top_tv"
 			android:layout_width="match_parent"

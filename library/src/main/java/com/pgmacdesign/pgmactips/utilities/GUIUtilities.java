@@ -8,8 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -18,6 +16,9 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
 /**
  * Created by pmacdowell on 8/15/2016.
@@ -143,9 +144,9 @@ public class GUIUtilities {
      * @param listener The onTaskComplete listener that will send back the results to the activity
      */
     public static AlertDialog createAlertDialogPopup(final Activity activity, final String yes,
-                                              final String no, final String title,
-                                              final String message, final boolean dismissable,
-                                              final OnTaskCompleteListener listener){
+                                                     final String no, final String title,
+                                                     final String message, final boolean dismissable,
+                                                     final OnTaskCompleteListener listener){
         //Dialog Click listener
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {

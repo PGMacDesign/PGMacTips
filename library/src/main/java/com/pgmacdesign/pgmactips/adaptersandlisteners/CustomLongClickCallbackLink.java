@@ -1,6 +1,6 @@
 package com.pgmacdesign.pgmactips.adaptersandlisteners;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * This class serves as an interface link between long click events and an activity/ fragment.

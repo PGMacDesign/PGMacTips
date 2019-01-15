@@ -1,6 +1,6 @@
 package com.pgmacdesign.pgmactips.stackmanagement;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.pgmacdesign.pgmactips.utilities.L;
 import com.pgmacdesign.pgmactips.utilities.MiscUtilities;

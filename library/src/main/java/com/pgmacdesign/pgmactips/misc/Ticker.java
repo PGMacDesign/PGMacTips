@@ -1,6 +1,6 @@
 package com.pgmacdesign.pgmactips.misc;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.pgmacdesign.pgmactips.utilities.L;
 import com.pgmacdesign.pgmactips.utilities.NumberUtilities;

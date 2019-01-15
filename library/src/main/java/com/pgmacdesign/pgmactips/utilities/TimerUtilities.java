@@ -3,7 +3,7 @@ package com.pgmacdesign.pgmactips.utilities;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;

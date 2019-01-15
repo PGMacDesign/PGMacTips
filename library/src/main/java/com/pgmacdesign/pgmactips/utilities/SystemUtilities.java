@@ -3,7 +3,7 @@ package com.pgmacdesign.pgmactips.utilities;
 import android.content.Context;
 import android.os.Build;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.pgmacdesign.pgmactips.BuildConfig;

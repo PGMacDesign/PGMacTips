@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.annotation.RequiresPermission;
+import androidx.annotation.RequiresPermission;
 
 /**
  * Connectivity Receiver. Useful for detecting no internet connection (as a listener)

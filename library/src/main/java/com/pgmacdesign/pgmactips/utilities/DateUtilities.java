@@ -1,9 +1,6 @@
 package com.pgmacdesign.pgmactips.utilities;
 
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
 import java.text.ParseException;
@@ -14,6 +11,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Date Utilities for converting and whatnot
@@ -801,6 +801,44 @@ public class DateUtilities {
         }
         return toReturn;
     }
+
+    /**
+     * Simple method for getting the YYYY/MM/DD String returned
+     * @return String in format YYYY/MM/DD
+     */
+    public static String getSimpleDate(){
+        return getSimpleDate(Calendar.getInstance());
+    }
+
+    /**
+     * Simple method for getting the YYYY/MM/DD String returned
+     * @param date If null, will initialize new instance
+     * @return String in format YYYY/MM/DD
+     */
+    public static String getSimpleDate(Date date){
+        if(date == null){
+            date = new Date();
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return getSimpleDate(calendar);
+    }
+
+    /**
+     * Simple method for getting the YYYY/MM/DD String returned
+     * @param calendar If null, will initialize new instance
+     * @return String in format YYYY/MM/DD
+     */
+    public static String getSimpleDate(@Nullable Calendar calendar){
+        if(calendar == null){
+            calendar = Calendar.getInstance();
+        }
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        return year + "/" + month + "/" + day;
+    }
+
 
     /**
      * For when I need a quick date in the year 1985. Don't judge me, I get lazy and don't

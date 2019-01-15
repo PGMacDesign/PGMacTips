@@ -1,6 +1,6 @@
 package com.pgmacdesign.pgmactips.adaptersandlisteners;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.View;
 
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;

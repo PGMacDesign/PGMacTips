@@ -9,11 +9,11 @@ import android.os.CancellationSignal;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.annotation.RequiresPermission;
-import android.support.v4.app.ActivityCompat;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.annotation.RequiresPermission;
+import androidx.core.app.ActivityCompat;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.utilities.MiscUtilities;

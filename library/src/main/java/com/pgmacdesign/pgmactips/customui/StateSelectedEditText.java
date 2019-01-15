@@ -10,7 +10,7 @@ import android.widget.EditText;
  * Created by pmacdowell on 2017-02-16.
  */
 @SuppressLint("AppCompatCustomView")
-public class StateSelectedEditText extends EditText { //android.support.v7.widget.AppCompatEditText {
+public class StateSelectedEditText extends EditText { //import androidx.appcompat.widget.AppCompatEditText {
 
     public static enum EditTextState {
         FOCUSED, NOT_FOCUSED, ERROR, VALIDATED

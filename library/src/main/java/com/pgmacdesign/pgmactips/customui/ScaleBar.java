@@ -25,7 +25,7 @@ import com.pgmacdesign.pgmactips.utilities.StringUtilities;
  */
 @SuppressLint("AppCompatCustomView")
 @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GooglePlayServices_Maps)
-public class ScaleBar extends ImageView { //public class ScaleBar extends ImageView { android.support.v7.widget.AppCompatImageView {
+public class ScaleBar extends ImageView { //public class ScaleBar extends ImageView { import androidx.appcompat.widget.AppCompatImageView {
     private float mXOffset = 10;
     private float mYOffset = 10;
     private float mLineWidth = 3;

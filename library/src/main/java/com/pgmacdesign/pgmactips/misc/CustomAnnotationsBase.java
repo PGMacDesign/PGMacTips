@@ -57,26 +57,27 @@ public class CustomAnnotationsBase {
                 "com.daimajia.easing:library:2.0@aar", "2.0",
                 "Part of the Android Animations dependency, this is used for animations in various classes"),
         GooglePlayServices_Maps("https://developers.google.com/android/guides/setup",
-                "com.google.android.gms:play-services-maps:15.0.1", "15.0.1",
+                "com.google.android.gms:play-services-maps:16.0.0", "16.0.0",
                 "Google Maps API. Note! This requires the google-services.json file to be included"),
         AndroidSupport_Design("https://developer.android.com/topic/libraries/support-library/packages",
-                "com.android.support:design:27.1.1", "27.1.1",
+                "com.android.support:design:28.0.0", "28.0.0",
                 "Android support library is utilized in any class that makes use of recyclerviews and other design-related elements"),
         AndroidSupport_Annotations("https://developer.android.com/topic/libraries/support-library/packages",
-                "com.android.support:support-annotations:27.1.1", "27.1.1",
+                "com.android.support:support-annotations:28.0.0", "28.0.0",
                 "Android support annotations is used for custom annotations like the ones used here with the 'RequiresDependency' interface"),
-        Android_Lifecycle("https://developer.android.com/topic/libraries/architecture/adding-components",
-                "androidx.lifecycle:lifecycle-extensions:2.0.0", "2.0.0",
-                "Android lifecycle support lib requires the following 2 fields to be set in your gradle.properties file:" +
-                        "android.useAndroidX=true" + "android.enableJetifier=true" + ", or use version 1.1.1 or below. For more info, see " +
-                        "1) https://developer.android.com/jetpack/androidx/ && " +
-                        "2) https://developer.android.com/topic/libraries/architecture/adding-components"),
-        Android_Lifecycle_Annotations("https://developer.android.com/topic/libraries/architecture/adding-components",
-                "androidx.lifecycle:lifecycle-compiler:2.0.0", "2.0.0",
-                "Android lifecycle support lib requires the following 2 fields to be set in your gradle.properties file:" +
-                        "android.useAndroidX=true" + "android.enableJetifier=true" + ", or use version 1.1.1 or below. For more info, see " +
-                        "1) https://developer.android.com/jetpack/androidx/ && " +
-                        "2) https://developer.android.com/topic/libraries/architecture/adding-components"),
+        //Removed on 2019-01-15 to modularize into sample project instead. Link: https://github.com/PGMacDesign/Jetpack-Samples
+//        Android_Lifecycle("https://developer.android.com/topic/libraries/architecture/adding-components",
+//                "androidx.lifecycle:lifecycle-extensions:2.0.0", "2.0.0",
+//                "Android lifecycle support lib requires the following 2 fields to be set in your gradle.properties file:" +
+//                        "android.useAndroidX=true" + "android.enableJetifier=true" + ", or use version 1.1.1 or below. For more info, see " +
+//                        "1) https://developer.android.com/jetpack/androidx/ && " +
+//                        "2) https://developer.android.com/topic/libraries/architecture/adding-components"),
+//        Android_Lifecycle_Annotations("https://developer.android.com/topic/libraries/architecture/adding-components",
+//                "androidx.lifecycle:lifecycle-compiler:2.0.0", "2.0.0",
+//                "Android lifecycle support lib requires the following 2 fields to be set in your gradle.properties file:" +
+//                        "android.useAndroidX=true & " + "android.enableJetifier=true" + ", or use version 1.1.1 or below. For more info, see " +
+//                        "1) https://developer.android.com/jetpack/androidx/ && " +
+//                        "2) https://developer.android.com/topic/libraries/architecture/adding-components"),
         Realm("https://github.com/realm/realm-java",
                 "classpath 'io.realm:realm-gradle-plugin:4.2.0'", "4.2.0",
                 "Realm is a Database wrapper used to interact with the SQLite DB in the device. It is used in the DatabaseUtilities class"),

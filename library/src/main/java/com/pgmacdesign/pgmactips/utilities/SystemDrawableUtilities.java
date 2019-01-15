@@ -4,12 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.pgmacdesign.pgmactips.R;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
+
+import androidx.core.content.ContextCompat;
 
 /**
  * This class is used for getting system icons and coloring them (IE a back button)
@@ -76,8 +77,8 @@ public class SystemDrawableUtilities {
      * @param searchView Searchview being altered
      * @return A View which can be altered
      */
-    private static View getSearchPlate(android.support.v7.widget.SearchView searchView){
-        View view = (View)searchView.findViewById(android.support.v7.appcompat.R.id.search_plate);
+    private static View getSearchPlate(androidx.appcompat.widget.SearchView searchView){
+        View view = (View)searchView.findViewById(androidx.appcompat.R.id.search_plate);
         return view;
     }
 
@@ -87,7 +88,7 @@ public class SystemDrawableUtilities {
      * @param searchView The searchview to be altering
      * @param drawableToSet The drawable to set
      */
-    private static void setSearchPlate(android.support.v7.widget.SearchView searchView, int drawableToSet){
+    private static void setSearchPlate(androidx.appcompat.widget.SearchView searchView, int drawableToSet){
         View searchPlate = getSearchPlate(searchView);
         searchPlate.setBackgroundResource(drawableToSet);
     }
@@ -97,9 +98,9 @@ public class SystemDrawableUtilities {
      * @param searchView Searchview being altered
      * @return An ImageView which can be altered
      */
-    private static ImageView getSearchCloseIcon(android.support.v7.widget.SearchView searchView){
+    private static ImageView getSearchCloseIcon(androidx.appcompat.widget.SearchView searchView){
         ImageView searchCloseIcon = (ImageView)searchView.findViewById(
-                android.support.v7.appcompat.R.id.search_close_btn);
+                androidx.appcompat.R.id.search_close_btn);
         return searchCloseIcon;
     }
 
@@ -109,7 +110,7 @@ public class SystemDrawableUtilities {
      * @param searchView The searchview to be altering
      * @param drawableToSet The drawable to set (Image resource)
      */
-    private static void setSearchCloseIcon(android.support.v7.widget.SearchView searchView, int drawableToSet){
+    private static void setSearchCloseIcon(androidx.appcompat.widget.SearchView searchView, int drawableToSet){
         ImageView iv = getSearchCloseIcon(searchView);
         iv.setImageResource(drawableToSet);
     }
@@ -119,9 +120,9 @@ public class SystemDrawableUtilities {
      * @param searchView Searchview being altered
      * @return A View which can be altered
      */
-    private static ImageView getSearchVoiceIcon(android.support.v7.widget.SearchView searchView){
+    private static ImageView getSearchVoiceIcon(androidx.appcompat.widget.SearchView searchView){
         ImageView voiceIcon = (ImageView)searchView.findViewById(
-                android.support.v7.appcompat.R.id.search_voice_btn);
+                androidx.appcompat.R.id.search_voice_btn);
         return voiceIcon;
     }
 
@@ -131,7 +132,7 @@ public class SystemDrawableUtilities {
      * @param searchView The searchview to be altering
      * @param drawableToSet The drawable to set
      */
-    private static void setSearchVoiceIcon(android.support.v7.widget.SearchView searchView, int drawableToSet){
+    private static void setSearchVoiceIcon(androidx.appcompat.widget.SearchView searchView, int drawableToSet){
         ImageView voiceIcon = getSearchVoiceIcon(searchView);
         voiceIcon.setImageResource(drawableToSet);
     }
@@ -141,9 +142,9 @@ public class SystemDrawableUtilities {
      * @param searchView Searchview being altered
      * @return A View which can be altered
      */
-    public static ImageView getSearchMagnifierIcon(android.support.v7.widget.SearchView searchView){
+    public static ImageView getSearchMagnifierIcon(androidx.appcompat.widget.SearchView searchView){
         ImageView searchIcon = (ImageView)searchView.findViewById(
-                android.support.v7.appcompat.R.id.search_mag_icon);
+                androidx.appcompat.R.id.search_mag_icon);
         return searchIcon;
     }
 
@@ -153,7 +154,7 @@ public class SystemDrawableUtilities {
      * @param searchView The searchview to be altering
      * @param resIdToSet The resource id to set
      */
-    public static void setSearchMagnifierIcon(android.support.v7.widget.SearchView searchView,
+    public static void setSearchMagnifierIcon(androidx.appcompat.widget.SearchView searchView,
                                               int resIdToSet){
         ImageView searchIcon = getSearchMagnifierIcon(searchView);
         searchIcon.setImageResource(resIdToSet);

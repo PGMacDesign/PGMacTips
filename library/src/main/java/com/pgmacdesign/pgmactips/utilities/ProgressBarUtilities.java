@@ -3,7 +3,7 @@ package com.pgmacdesign.pgmactips.utilities;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.progressbars.GIFProgressBar;

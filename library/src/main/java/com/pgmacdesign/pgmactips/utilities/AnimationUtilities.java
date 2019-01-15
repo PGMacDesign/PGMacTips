@@ -1,12 +1,13 @@
 package com.pgmacdesign.pgmactips.utilities;
 
 import android.app.Activity;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Utilities designed to help shorthand animations on your views

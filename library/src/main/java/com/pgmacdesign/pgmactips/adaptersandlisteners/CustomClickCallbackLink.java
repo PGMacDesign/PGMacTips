@@ -1,6 +1,6 @@
 package com.pgmacdesign.pgmactips.adaptersandlisteners;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * Created by pmacdowell on 8/16/2016.

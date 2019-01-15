@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Telephony;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.telephony.SmsMessage;
 import android.util.Log;
 

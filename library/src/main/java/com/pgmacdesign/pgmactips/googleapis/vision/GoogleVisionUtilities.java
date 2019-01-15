@@ -1,8 +1,8 @@
 package com.pgmacdesign.pgmactips.googleapis.vision;
 
 import android.graphics.Bitmap;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;

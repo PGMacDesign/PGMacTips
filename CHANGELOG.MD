@@ -1,28 +1,27 @@
 Change Log
 ==========
 
-
-Version 0.0.74 *(TBD)*
+Version 0.0.75 *(TBD)*
 ----------------------------
 
- * New: Added in new gradle.properties entries that allow for AndroidX Support:
+ * TBD
+
+Version 0.0.74 *(2019-01-15)*
+----------------------------
+
+ * New: Added in new gradle.properties entries that allow for AndroidX Support. Put these in your gradle.properties file to mirror this:
  
-		```
+		
 		# Jetpack Library info can be found here: https://developer.android.com/jetpack/androidx/
 		# More info at this link: https://developer.android.com/jetpack/androidx/migrate
 		android.useAndroidX=true
 		android.enableJetifier=true
-		```	
 		
- * New: Added in new gradle dependencies for Android Lifecycle support:
- 
- 		```
-		def lifecycle_version="2.0.0"
-		api "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
-		annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
-		```
+ * New: Removed the /ignore on the build.gradle file so it will be included in the next build; that wasy it can be used as a sample.
 		
- * Update: Updating the [CustomAnnotationsBase](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/misc/CustomAnnotationsBase.java) to reference newest Android Lifecycle support as well as some links that mirror where to find more info. . 
+ * Update: Updating the [CustomAnnotationsBase](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/misc/CustomAnnotationsBase.java) to reference AndroidX support as well as updating Support lib: design - 28.0.0 and reverting back some of the changes from AndroidX migration so as to not cause conflict issues. 
+ * Bugfix: Users were indicating an issue with regards to updating gradle to 3.2.0 [issue is here](https://github.com/PGMacDesign/PGMacTips/issues/5) and this release should fix said issue, if not, will update and increment version afterwards. 
+ * Update: Adding in new functions to the [DateUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/DateUtilities.java) class for use in simple getters for a date String in the format of YYYY-MM-DD. 
  
  
 Version 0.0.73 *(2018-12-06)*
