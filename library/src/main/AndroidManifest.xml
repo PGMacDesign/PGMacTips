@@ -3,56 +3,51 @@
     package="com.pgmacdesign.pgmactips">
 
 
-    <!--<application>-->
-        <!--<provider-->
-            <!--android:authorities="${applicationId}.PGMacContextProvider"-->
-            <!--android:exported="false"-->
-            <!--android:enabled="true"-->
-            <!--android:name=".misc.PGMacContextProvider"-->
-	        <!--/>-->
+    <application>
+        <provider
+            android:authorities="${applicationId}.PGMacContextProvider"
+            android:exported="false"
+            android:enabled="true"
+            android:name=".misc.PGMacContextProvider"
+	        />
 
-	<!--</application>-->
+	</application>
 
 
-    <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <!--<uses-permission android:name="android.permission.USE_FINGERPRINT"/>-->
+    <!--<uses-permission android:name="android.permission.INTERNET" />-->
+    <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
+    <!--<uses-permission android:name="android.permission.CAMERA" />-->
+    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
+    <!--<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />-->
+    <!--<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />-->
+    <!--<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />-->
+    <!--<uses-permission android:name="android.permission.READ_CONTACTS"/>-->
 
-    <application
-        android:allowBackup="true"
-        android:hardwareAccelerated="false"
-        android:name=".misc.SampleMyApplication"
-        android:icon="@mipmap/android_toolbelt"
-        android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:theme="@style/MyMainTheme"
-        >
-        <activity
-            android:name=".MyTestActivity"
-            android:screenOrientation="portrait">
+    <!--<application-->
+        <!--android:allowBackup="true"-->
+        <!--android:hardwareAccelerated="false"-->
+        <!--android:name=".misc.SampleMyApplication"-->
+        <!--android:icon="@mipmap/android_toolbelt"-->
+        <!--android:label="@string/app_name"-->
+        <!--android:supportsRtl="true"-->
+        <!--android:theme="@style/MyMainTheme"-->
+        <!--&gt;-->
+        <!--<activity-->
+            <!--android:name=".MyTestActivity"-->
+            <!--android:screenOrientation="portrait">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
 
-        </activity>
+        <!--</activity>-->
 
-        <activity android:name=".jetpackutilities.viewmodelutilities.SampleViewModelUsage"
-            android:theme="@style/MyMainTheme"
-            >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <!--<service-->
+            <!--android:name=".services.ServiceFlash"-->
+            <!--android:exported="false" />-->
 
-        <service
-            android:name=".services.ServiceFlash"
-            android:exported="false" />
-
-    </application>
+    <!--</application>-->
 
 
 
