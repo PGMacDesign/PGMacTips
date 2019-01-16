@@ -16,16 +16,41 @@ import androidx.annotation.RequiresPermission;
  */
 public class PGConnectivityReceiver extends BroadcastReceiver {
 
-    // TODO: 2018-03-20 refactor to usable
+    //
     /*
     HOW TO USE:
     //1) In your MyApplication class, put this code:
-    public void setConnectivityListener(PGConnectivityReceiver.ConnectivityReceiverListener listener) {
+
+    //variable outside of the classes:
+    private static BroadcastReceiver mNetworkReceiver;
+
+    //To register the receiver
+    public static synchronized void setConnectivityListener(PGConnectivityReceiver.ConnectivityReceiverListener listener) {
+        if(MyApplication.mNetworkReceiver == null) {
+            MyApplication.mNetworkReceiver = new PGConnectivityReceiver();
+            //This next line is required for versions Nougat (24) or higher
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                getContext().registerReceiver(mNetworkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+            }
+        }
         PGConnectivityReceiver.connectivityReceiverListener = listener;
     }
 
-    //2) Next, in your activity/ fragment, use this code in the onCreate or onResume:
+    //To Unregister the receiver
+    public static synchronized void removeConnectivityListener() {
+        if(MyApplication.mNetworkReceiver != null ) {
+            getContext().unregisterReceiver(mNetworkReceiver);
+        }
+        PGConnectivityReceiver.connectivityReceiverListener = null;
+        MyApplication.mNetworkReceiver = null;
+    }
+
+    //2)
+        a) Next, in your activity/ fragment, use this code in the onCreate or onStart:
     MyApplication.getInstance().setConnectivityListener(this);
+
+        b) Make sure to include this in your onStop() so as to prevent memory leaks
+
 
     //3) Make that same activity/ fragment implement:
     PGConnectivityReceiver.ConnectivityReceiverListener
@@ -42,7 +67,9 @@ public class PGConnectivityReceiver extends BroadcastReceiver {
     }
 
     //5) Lastly, add this line to your manifest
-        <receiver android:name="com.pgmacdesign.pgmactips.broadcastReceivers.PGConnectivityReceiver">
+        <receiver android:name="com.pgmacdesign.pgmactips.broadcastreceivers.PGConnectivityReceiver"
+            android:enabled="true"
+            >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
