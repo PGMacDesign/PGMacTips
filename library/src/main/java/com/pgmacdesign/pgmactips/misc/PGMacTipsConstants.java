@@ -528,4 +528,9 @@ public class PGMacTipsConstants {
         }
     }
 
+    //region Misc
+    //Commenting this out, but leaving is here for reference in case someone cannot find it after the AndroidX update
+//    private static final int SNACKBAR_ID_USING_ANDROID_X_SUPPORT_LIB =
+//            com.google.android.material.R.id.snackbar_text;
+    //endregion
 }
