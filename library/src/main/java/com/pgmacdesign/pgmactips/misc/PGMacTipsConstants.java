@@ -190,6 +190,17 @@ public class PGMacTipsConstants {
     public static final long ONE_MONTH = (long)(1000L*60L*60L*24L*30L);
     public static final long ONE_YEAR = (long)(1000L*60L*60L*24L*365L);
 
+    //Size Values
+    public static final long ONE_BYTE = 1L;
+    public static final long ONE_KILOBYTE = 1024L;
+    public static final long ONE_MEGABYTE = 1024L * 1024L;
+    public static final long ONE_GIGABYTE = 1024L * 1024L * 1024L;
+    public static final long ONE_TERABYTE = 1024L * 1024L * 1024L * 1024L;
+    public static final long ONE_PETABYTE = 1024L * 1024L * 1024L * 1024L * 1024L;
+    public static final long ONE_EXABYTE = 1024L * 1024L * 1024L * 1024L * 1024L * 1024L;
+//    public static final long ONE_ZETTABYTE = 1024L * 1024L * 1024L * 1024L * 1024L * 1024L * 1024L;
+//    public static final long ONE_YOTTABYTE = 1024L * 1024L * 1024L * 1024L * 1024L * 1024L * 1024L * 1024L;
+
 
     //Default Date Formats
     public static final String DEFAULT_ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
@@ -313,7 +324,7 @@ public class PGMacTipsConstants {
     */
 
     ////////////////////////////////
-    //Known Malware Package Names //
+    //region Known Malware Package Names //
     ////////////////////////////////
 
     public static final String[] MALWARE_PACKAGE_STRINGS = {
@@ -366,6 +377,8 @@ public class PGMacTipsConstants {
             "org.mbj.sticker"
     };
 
+    //endregion
+
     //////////////////////
     //Misc Useful Values//
     //////////////////////
@@ -373,7 +386,7 @@ public class PGMacTipsConstants {
     /**
      * List of States for dropdown menus or other GUI-related uses
      */
-    public static final String[] ALL_STATES = {"California", "Alabama", "Arkansas", "Arizona", "Alaska",
+    public static final String[] ALL_US_STATES = {"California", "Alabama", "Arkansas", "Arizona", "Alaska",
             "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois",
             "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts",
             "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire",
