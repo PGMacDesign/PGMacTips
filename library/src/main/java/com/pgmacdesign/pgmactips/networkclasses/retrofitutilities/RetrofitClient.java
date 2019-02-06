@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.networkclasses.sslsocketsandprotocols.SSLProtocolOptions;
 import com.pgmacdesign.pgmactips.networkclasses.sslsocketsandprotocols.Tls12SocketFactory;
 import com.pgmacdesign.pgmactips.utilities.L;
@@ -21,6 +22,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -61,11 +63,11 @@ public class RetrofitClient {
 
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     public static final String DEFAULT_DATE_FORMAT_WITHOUT_MILLISECONDS = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-
+    
     private String urlBase;
     private Map<String, String> headers;
     private HttpLoggingInterceptor.Level logLevel;
-    private Interceptor retryInterceptor;
+    private int retryCount;
     private long readTimeout, writeTimeout;
     private String dateFormat;
     private Class serviceInterface;
@@ -78,13 +80,13 @@ public class RetrofitClient {
      * Constructor
      */
     private RetrofitClient(RetrofitClient.Builder builder) {
+        this.retryCount = builder.retryCount;
         this.urlBase = builder.builder_urlBase;
         this.headers = builder.builder_headers;
         this.logLevel = builder.builder_logLevel;
         this.dateFormat = builder.builder_dateFormat;
         this.readTimeout = builder.builder_readTimeout;
         this.writeTimeout = builder.builder_writeTimeout;
-        this.retryInterceptor = builder.retryInterceptor;
         this.sslProtocolOption = builder.sslProtocolOption;
         this.serviceInterface = builder.builder_serviceInterface;
         this.customConverterFactory = builder.customConverterFactory;
@@ -149,6 +151,51 @@ public class RetrofitClient {
                         builder.headers(headers);
                     }
                 }
+                // TODO: 2/6/19 research here if this will cause problems relating to builder above
+                Response originalResponse = chain.proceed(chain.request());
+                if(originalResponse != null) {
+                    if (!MiscUtilities.isListNullOrEmpty(originalResponse.headers(PGMacTipsConstants.COOKIE_1))) {
+                        HashSet<String> cookies = new HashSet<>();
+                        try {
+                            cookies.addAll(originalResponse.headers(PGMacTipsConstants.COOKIE_1));
+                            // Save the cookies (I saved in SharedPreference), you save wherever you want to save
+//                            preferencesHelper.putStringSet(PreferenceKey.PREF_KEY_COOKIES, cookies); //Unused ATM
+                        } catch (Exception e){
+                            //Catching in the event of custom cookie responses
+                        }
+                    }
+                    if (!MiscUtilities.isListNullOrEmpty(originalResponse.headers(PGMacTipsConstants.COOKIE_2))) {
+                        HashSet<String> cookies = new HashSet<>();
+                        try {
+                            cookies.addAll(originalResponse.headers(PGMacTipsConstants.COOKIE_2));
+                            // Save the cookies (I saved in SharedPreference), you save wherever you want to save
+//                            preferencesHelper.putStringSet(PreferenceKey.PREF_KEY_COOKIES, cookies); //Unused ATM
+                        } catch (Exception e){
+                            //Catching in the event of custom cookie responses
+                        }
+                    }
+                }
+    
+                //region Retry Count
+                //Unused for now
+//                Request request = chain.request();
+//                if(request == null){
+//                    return null;
+//                }
+//                if(RetrofitClient.this.retryCount > 0) {
+//                    Response response = chain.proceed(request);
+//                    if (response != null) {
+//                        int tryCount = 0;
+//                        while (!response.isSuccessful() && tryCount < retryCount) {
+//                            tryCount++;
+//                            L.m("Call failed, retry triggered. Retry #" + tryCount);
+//                            // retry the request
+//                            response = chain.proceed(request);
+//                        }
+//                    }
+//                }
+                //endregion
+                
                 Request newRequest = builder.build();
                 return chain.proceed(newRequest);
             }
@@ -193,9 +240,7 @@ public class RetrofitClient {
         //Add logging and interceptor
         builder.addInterceptor(interceptor);
         builder.addInterceptor(logging);
-        if(this.retryInterceptor != null){
-            builder.addInterceptor(this.retryInterceptor);
-        }
+        
         //Configure SSL
         builder = configureClient(builder);
 
@@ -345,9 +390,9 @@ public class RetrofitClient {
             CustomAnnotationsBase.Dependencies.Okio})
     public static final class Builder <T> {
 
+        int retryCount;
         String builder_urlBase;
         String builder_dateFormat;
-        Interceptor retryInterceptor;
         Class<T> builder_serviceInterface;
         Map<String, String> builder_headers;
         HttpLoggingInterceptor.Level builder_logLevel;
@@ -369,7 +414,6 @@ public class RetrofitClient {
         public Builder(@NonNull final Class<T> serviceInterface,
                        @NonNull String urlBase){
             this.builder_headers = null;
-            this.retryInterceptor = null;
             this.builder_urlBase = urlBase;
             this.forceAcceptAllCertificates = false;
             this.setDateFormat(DEFAULT_DATE_FORMAT);
@@ -411,35 +455,11 @@ public class RetrofitClient {
          * @return
          */
         public Builder setRetryCount(@IntRange(from = 1) final int retryCount){
-            if(retryCount < 1){
-                this.retryInterceptor = null;
-                return this;
+            if(retryCount >= 1){
+                this.retryCount = retryCount;
+            } else {
+                this.retryCount = 0;
             }
-            retryInterceptor = new Interceptor() {
-                @Override
-                public Response intercept(Chain chain) throws IOException {
-                    if(chain == null){
-                        return null;
-                    }
-                    Request request = chain.request();
-                    if(request == null){
-                        return null;
-                    }
-
-                    Response response = chain.proceed(request);
-
-                    if(response != null){
-                        int tryCount = 0;
-                        while (!response.isSuccessful() && tryCount < retryCount) {
-                            tryCount++;
-                            L.m("Call failed, retry triggered. Retry #" + tryCount);
-                            // retry the request
-                            response = chain.proceed(request);
-                        }
-                    }
-                    return response;
-                }
-            };
             return this;
         }
 
