@@ -23,7 +23,7 @@ public class CustomAnnotationsBase {
                 "com.jaredrummler:animated-svg-view:1.0.5", "1.0.5",
                 "Progress bar loading animation used as an indeterminate loader with svg Strings"),
         Volley("https://github.com/google/volley",
-                "com.android.volley:volley:1.0.0", "1.0.0",
+                "com.android.volley:volley:1.1.0", "1.1.0",
                 "Volley is Google's core networking dependency. Used in the networking utilities package"),
         GSON("https://github.com/google/gson",
                 "com.google.code.gson:gson:2.8.2", "2.8.2",
