@@ -61,7 +61,7 @@ public class SharedPrefs {
     private boolean isEncrypted;
     private TempString password;
     private String salt;
-    private EncryptionUtilities.SecretKeys keys, keyKeys;
+//    private EncryptionUtilitiesV2.SecretKeys keys, keyKeys;
 
     //endregion
 
@@ -227,10 +227,10 @@ public class SharedPrefs {
      */
     private void encryptionInit() throws GeneralSecurityException{
         try {
-            final byte[] saltBytes = this.getSalt().getBytes();
-            final byte[] keySaltBytes = this.getKeySalt().getBytes();
-            this.keys = EncryptionUtilities.generateKeyFromPassword(this.password.getTempStringData(), saltBytes);
-            this.keyKeys = EncryptionUtilities.generateKeyFromPassword(this.password.getTempStringData(), keySaltBytes);
+//            final byte[] saltBytes = this.getSalt().getBytes();
+//            final byte[] keySaltBytes = this.getKeySalt().getBytes();
+//            this.keys = EncryptionUtilitiesV2.generateKeyFromPassword(this.password.getTempStringData(), saltBytes);
+//            this.keyKeys = EncryptionUtilitiesV2.generateKeyFromPassword(this.password.getTempStringData(), keySaltBytes);
         } catch (Exception e){
             e.printStackTrace();
             throw new GeneralSecurityException("Could not generate key from password: " + e.getMessage());
@@ -257,10 +257,15 @@ public class SharedPrefs {
 
     public void save(String valueKey, String value) {
         init();
+        L.m("SAVE STRING. " + "isEncrypted? " + isEncrypted);
+        L.m("SAVE STRING. " + "value Key before encryption == " + valueKey);
+        L.m("SAVE STRING. " + "value before encryption == " + value);
         if(this.isEncrypted){
 //            valueKey = SharedPrefs.hashPrefKey(valueKey);
             valueKey = encryptKey(valueKey);
             String newValue = encrypt(value);
+            L.m("SAVE STRING. " + "value Key after encryption == " + valueKey);
+            L.m("SAVE STRING. " + "value after encryption == " + newValue);
             this.edit1.putString(valueKey, newValue);
         } else {
             this.edit1.putString(valueKey, value);
@@ -376,14 +381,19 @@ public class SharedPrefs {
 
     public String getString(String valueKey, String defaultValue) {
         init();
+        L.m("GET STRING. " + "isEncrypted? " + this.isEncrypted);
         if(this.isEncrypted){
 //            valueKey = SharedPrefs.hashPrefKey(valueKey);
+            L.m("GET STRING. " + "key before encryption == " + valueKey);
             valueKey = encryptKey(valueKey);
+            L.m("GET STRING. " + "key after encryption == " + valueKey);
             String value = this.prefs1.getString(valueKey, null);
+            L.m("GET STRING. " + "value after extraction, but before encryption == " + value);
             if(value == null){
                 return defaultValue;
             } else {
                 String decryptedString = decrypt(value);
+                L.m("GET STRING. " + "value after encryption == " + decryptedString);
                 return decryptedString;
             }
         } else {
@@ -674,8 +684,8 @@ public class SharedPrefs {
      * nulls in memory keys
      */
     private void destroyKeys() {
-        this.keys = null;
-        this.keyKeys = null;
+//        this.keys = null;
+//        this.keyKeys = null;
     }
 
     /**
@@ -762,10 +772,14 @@ public class SharedPrefs {
     private static String getIdentifier(Context context) {
         String toReturn = null;
         try {
-            toReturn = SystemUtilities.getDeviceSerialNumber(context);
+            toReturn = SystemUtilities.getPackageName(context);
         } catch (Exception e){}
         if(StringUtilities.isNullOrEmpty(toReturn)){
-            toReturn = SystemUtilities.getPackageName(context);
+            try {
+                toReturn = SystemUtilities.getDeviceSerialNumber(context);
+            } catch (Exception e){
+                toReturn = "pgmacdesign.provided.salt";
+            }
         }
         return toReturn;
     }
@@ -776,13 +790,13 @@ public class SharedPrefs {
      * @return String to be used as the AESkey Pref key
      * @throws GeneralSecurityException if something goes wrong in generation
      */
-    private String generateAesKeyName() throws GeneralSecurityException {
-        final String password = this.context.getPackageName();
-        final byte[] salt = getSalt().getBytes();
-        EncryptionUtilities.SecretKeys generatedKeyName = EncryptionUtilities
-                .generateKeyFromPassword(password, salt);
-        return hashPrefKey(generatedKeyName.toString());
-    }
+//    private String generateAesKeyName() throws GeneralSecurityException {
+//        final String password = this.context.getPackageName();
+//        final byte[] salt = getSalt().getBytes();
+//        EncryptionUtilitiesV2.SecretKeys generatedKeyName = EncryptionUtilitiesV2
+//                .generateKeyFromPassword(password, salt);
+//        return hashPrefKey(generatedKeyName.toString());
+//    }
 
     /**
      * Hash the key in the key-value pair of the shared prefs.
@@ -790,20 +804,20 @@ public class SharedPrefs {
      * @param prefKey key pref to be hashed
      * @return SHA-256 Hash of the preference key
      */
-    static String hashPrefKey(String prefKey) {
-        final MessageDigest digest;
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-            byte[] bytes = prefKey.getBytes("UTF-8");
-            digest.update(bytes, 0, bytes.length);
-
-            return Base64.encodeToString(digest.digest(), EncryptionUtilities.BASE64_FLAGS);
-
-        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+//    static String hashPrefKey(String prefKey) {
+//        final MessageDigest digest;
+//        try {
+//            digest = MessageDigest.getInstance("SHA-256");
+//            byte[] bytes = prefKey.getBytes("UTF-8");
+//            digest.update(bytes, 0, bytes.length);
+//
+//            return Base64.encodeToString(digest.digest(), EncryptionUtilitiesV2.BASE64_FLAGS);
+//
+//        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
 
     /**
      * Encrypt the key in the key value pair portion of the Shared Prefs
@@ -815,7 +829,7 @@ public class SharedPrefs {
             return key;
         }
         try {
-            return EncryptionUtilities.encrypt(key, this.keyKeys).toString();
+            return EncryptionUtilities.encryptString(key, this.password, this.salt).toString();
         } catch (GeneralSecurityException e) {
             e.printStackTrace();
             return key;
@@ -835,7 +849,7 @@ public class SharedPrefs {
             return cleartext;
         }
         try {
-            return EncryptionUtilities.encrypt(cleartext, this.keys).toString();
+            return EncryptionUtilities.encryptString(cleartext, this.password, this.salt).toString();
         } catch (GeneralSecurityException e) {
             e.printStackTrace();
             return cleartext;
@@ -855,8 +869,9 @@ public class SharedPrefs {
             return cipherText;
         }
         try {
-            EncryptionUtilities.CipherTextIvMac cipherTextIvMac = new EncryptionUtilities.CipherTextIvMac(cipherText);
-            return EncryptionUtilities.decryptString(cipherTextIvMac, this.keys);
+            return EncryptionUtilities.decryptString(cipherText.getBytes(), this.password, this.salt);
+//            EncryptionUtilitiesV2.CipherTextIvMac cipherTextIvMac = new EncryptionUtilitiesV2.CipherTextIvMac(cipherText);
+//            return EncryptionUtilitiesV2.decryptString(cipherTextIvMac, this.keys);
         } catch (IllegalArgumentException iae) { //Will trigger if trying to decrypt non-mac)
             //No logging for now
         } catch (GeneralSecurityException |
@@ -876,8 +891,9 @@ public class SharedPrefs {
             return cipherText;
         }
         try {
-            EncryptionUtilities.CipherTextIvMac cipherTextIvMac = new EncryptionUtilities.CipherTextIvMac(cipherText);
-            return EncryptionUtilities.decryptString(cipherTextIvMac, this.keyKeys);
+            return EncryptionUtilities.decryptString(cipherText.getBytes(), this.password, this.salt);
+//            EncryptionUtilitiesV2.CipherTextIvMac cipherTextIvMac = new EncryptionUtilitiesV2.CipherTextIvMac(cipherText);
+//            return EncryptionUtilitiesV2.decryptString(cipherTextIvMac, this.keyKeys);
         } catch (IllegalArgumentException iae) { //Will trigger if trying to decrypt non-mac)
             //No logging for now
         } catch (GeneralSecurityException |

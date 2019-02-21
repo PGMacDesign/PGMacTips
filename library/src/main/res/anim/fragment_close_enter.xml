@@ -4,7 +4,7 @@
     android:shareInterpolator="false"
     android:zAdjustment="top">
   <alpha
-      android:duration="150"
+      android:duration="@android:integer/config_mediumAnimTime"
       android:fillAfter="true"
       android:fillBefore="false"
       android:fillEnabled="true"
@@ -13,7 +13,7 @@
       android:startOffset="100"
       android:toAlpha="0.0"/>
   <translate
-      android:duration="250"
+      android:duration="@android:integer/config_longAnimTime"
       android:fillAfter="true"
       android:fillBefore="true"
       android:fillEnabled="true"

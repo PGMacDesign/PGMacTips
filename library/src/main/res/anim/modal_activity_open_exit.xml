@@ -7,12 +7,12 @@
     android:shareInterpolator="false"
     android:zAdjustment="normal">
   <alpha
-      android:duration="250"
+      android:duration="@android:integer/config_longAnimTime"
       android:fromAlpha="1.0"
       android:interpolator="@anim/decelerate_cubic"
       android:toAlpha="0.2"/>
   <scale
-      android:duration="250"
+      android:duration="@android:integer/config_longAnimTime"
       android:fromXScale="1.0"
       android:fromYScale="1.0"
       android:interpolator="@anim/decelerate_cubic"

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shareInterpolator="false">
+    <translate
+        android:fromXDelta="-100%" android:toXDelta="0%"
+        android:duration="@android:integer/config_longAnimTime"
+        />
+    <alpha android:fromAlpha="0.0" android:toAlpha="1.0"
+        android:duration="@android:integer/config_longAnimTime"/>
+</set>
+
+    <!--
+        Animation Durations from the Android Config folder:
+        <integer name="config_shortAnimTime">200</integer> //Short
+        <integer name="config_mediumAnimTime">400</integer> //Medium
+        <integer name="config_longAnimTime">500</integer> //Long
+    -->
+    <!--
+        How to use:
+        Activities:
+            public void startActivity(Intent intent) {
+                super.startActivity(intent);
+                overridePendingTransition(R.anim.from_right_in, R.anim.from_left_out);
+            }
+
+            @Override
+            public void finish() {
+                super.finish();
+                overridePendingTransition(R.anim.from_left_in, R.anim.from_right_out);
+            }
+
+        Fragments:
+            this.getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations( R.anim.slide_up, 0, 0, R.anim.slide_down)
+                .show( m_topFragment )
+                .commit()
+            this.getSupportFragmentManager().executePendingTransactions();
+    -->
