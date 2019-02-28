@@ -2,90 +2,174 @@ package com.pgmacdesign.pgmactips.utilities;
 
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+
+import androidx.annotation.FloatRange;
+import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 
 /**
  * Created by pmacdowell on 8/12/2016.
  */
 public class ColorUtilities {
-
-    /**
-     * Determine if color is light or dark. Values pulled from these links:
-     * 1) https://en.wikipedia.org/wiki/Luma_%28video%29
-     * 2) https://stackoverflow.com/a/24261119/2480714
-     * @param color color to parse
-     * @return boolean, if true, color is dark, if false, it's a light color
-     */
-    public static boolean isColorDark(int color){
-        double darkness = 1-(0.299*Color.red(color)
-                + 0.587*Color.green(color)
-                + 0.114*Color.blue(color))/255;
-        if(darkness < 0.5){
-            return false; // It's a light color
-        }else{
-            return true; // It's a dark color
-        }
-    }
-
-    /**
-     * Build and return a Gradient Drawable
-     * @param colorDirection Direction of gradient. If null, will default to left --> right
-     *                      {@link android.graphics.drawable.GradientDrawable.Orientation}
-     * @param colors Array of color ints. Cannot be null or empty
-     * @return {@link GradientDrawable}
-     */
-    public static GradientDrawable buildGradientDrawable(GradientDrawable.Orientation colorDirection,
-                                                         @NonNull int[] colors){
-        if(colors.length <= 0){
-            return null;
-        }
-        if(colorDirection == null){
-            colorDirection = GradientDrawable.Orientation.LEFT_RIGHT;
-        }
-        GradientDrawable gradient = new GradientDrawable (
-                colorDirection, colors);
-        return gradient;
-    }
-
-    /**
-     * Build and return a Gradient Drawable
-     * Overloaded to allow for hex values to be passed
-     * @param colorDirection Direction of gradient. If null, will default to left --> right
-     *                      {@link android.graphics.drawable.GradientDrawable.Orientation}
-     * @param colors Array of String color Hex values . Cannot be null or empty
-     * @return {@link GradientDrawable}
-     */
-    public static GradientDrawable buildGradientDrawable(GradientDrawable.Orientation colorDirection,
-                                                         @NonNull String[] colors){
-        if(colors.length <= 0){
-            return null;
-        }
-        if(colorDirection == null){
-            colorDirection = GradientDrawable.Orientation.LEFT_RIGHT;
-        }
-        int[] arr = new int[colors.length];
-        for(int i = 0; i<colors.length; i++){
-            arr[i] = parseMyColor(colors[i]);
-        }
-        return buildGradientDrawable(colorDirection, arr);
-    }
-
-    /**
-     * Parse a color (Handles the parsing errors)
-     * @param color String color to parse
-     * @return If not parseable or an error occurrs, it will send back -100.
-     */
-    public static int parseMyColor(String color){
-        if(StringUtilities.isNullOrEmpty(color)){
-            return -100;
-        }
-        try {
-            int x = Color.parseColor(color);
-            return x;
-        } catch (Exception e){
-            return -100;
-        }
-    }
+	
+	/**
+	 * Determine if color is light or dark. Values pulled from these links:
+	 * 1) https://en.wikipedia.org/wiki/Luma_%28video%29
+	 * 2) https://stackoverflow.com/a/24261119/2480714
+	 *
+	 * @param color color to parse
+	 * @return boolean, if true, color is dark, if false, it's a light color
+	 */
+	public static boolean isColorDark(int color) {
+		double darkness = 1 - (0.299 * Color.red(color)
+				+ 0.587 * Color.green(color)
+				+ 0.114 * Color.blue(color)) / 255;
+		if (darkness < 0.5) {
+			return false; // It's a light color
+		} else {
+			return true; // It's a dark color
+		}
+	}
+	
+	/**
+	 * Build and return a Gradient Drawable
+	 *
+	 * @param colorDirection Direction of gradient. If null, will default to left --> right
+	 *                       {@link android.graphics.drawable.GradientDrawable.Orientation}
+	 * @param colors         Array of color ints. Cannot be null or empty
+	 * @return {@link GradientDrawable}
+	 */
+	public static GradientDrawable buildGradientDrawable(GradientDrawable.Orientation colorDirection,
+	                                                     @NonNull int[] colors) {
+		if (colors.length <= 0) {
+			return null;
+		}
+		if (colorDirection == null) {
+			colorDirection = GradientDrawable.Orientation.LEFT_RIGHT;
+		}
+		GradientDrawable gradient = new GradientDrawable(
+				colorDirection, colors);
+		return gradient;
+	}
+	
+	/**
+	 * Build and return a Gradient Drawable
+	 * Overloaded to allow for hex values to be passed
+	 *
+	 * @param colorDirection Direction of gradient. If null, will default to left --> right
+	 *                       {@link android.graphics.drawable.GradientDrawable.Orientation}
+	 * @param colors         Array of String color Hex values . Cannot be null or empty
+	 * @return {@link GradientDrawable}
+	 */
+	public static GradientDrawable buildGradientDrawable(GradientDrawable.Orientation colorDirection,
+	                                                     @NonNull String[] colors) {
+		if (colors.length <= 0) {
+			return null;
+		}
+		if (colorDirection == null) {
+			colorDirection = GradientDrawable.Orientation.LEFT_RIGHT;
+		}
+		int[] arr = new int[colors.length];
+		for (int i = 0; i < colors.length; i++) {
+			arr[i] = parseMyColor(colors[i]);
+		}
+		return buildGradientDrawable(colorDirection, arr);
+	}
+	
+	/**
+	 * Parse a color (Handles the parsing errors)
+	 *
+	 * @param color String color to parse
+	 * @return If not parseable or an error occurrs, it will send back -100.
+	 */
+	public static int parseMyColor(String color) {
+		if (StringUtilities.isNullOrEmpty(color)) {
+			return -100;
+		}
+		try {
+			int x = Color.parseColor(color);
+			return x;
+		} catch (Exception e) {
+			return -100;
+		}
+	}
+	
+	/**
+	 * Convert RDB colors to a 6 hex String.
+	 * IE, (111, 111, 111) becomes #6F6F6F
+	 * Credit for code - https://stackoverflow.com/a/3607942/2480714
+	 *
+	 * @param r Red value (Ranged from 0 - 255)
+	 * @param g Green value (Ranged from 0 - 255)
+	 * @param b Blue value (Ranged from 0 - 255)
+	 * @return Hex Color String with no alpha. If values are incorrect, returns null
+	 */
+	public static String convertRGBToHex(@IntRange(from = 0, to = 255) int r,
+	                                     @IntRange(from = 0, to = 255) int g,
+	                                     @IntRange(from = 0, to = 255) int b) {
+		if ((r < 0 || r > 255) || (g < 0 || g > 255) || (b < 0 || b > 255)) {
+			return null;
+		}
+		return String.format("#%02X%02X%02X", r, g, b);
+	}
+	
+	/**
+	 * Convert RDB colors to an 8 digit hex String.
+	 * IE, (111, 111, 111, 1.0) becomes #FF6F6F6F
+	 * IE, (111, 111, 111, 0.5) becomes #806F6F6F
+	 * IE, (111, 111, 111, 0.0) becomes #006F6F6F
+	 * Credit for code - https://stackoverflow.com/a/3607942/2480714 && https://stackoverflow.com/a/11019879/2480714
+	 *
+	 * @param r               Red value (Ranged from 0 - 255)
+	 * @param g               Green value (Ranged from 0 - 255)
+	 * @param b               Blue value (Ranged from 0 - 255)
+	 * @param alphaPercentage float value (transparency) (Ranged from 0.0 to 1.0)
+	 * @return Hex Color String with alpha. If values are incorrect, returns null
+	 */
+	public static String convertRGBToHexWithAlpha(@IntRange(from = 0, to = 255) int r,
+	                                              @IntRange(from = 0, to = 255) int g,
+	                                              @IntRange(from = 0, to = 255) int b,
+	                                              @FloatRange(from = 0.0, to = 1.0) float alphaPercentage) {
+		if ((r < 0 || r > 255) || (g < 0 || g > 255) || (b < 0 || b > 255) || (alphaPercentage < 0 || alphaPercentage > 1)) {
+			return null;
+		}
+		int alpha = (int) (alphaPercentage * 255F);
+		return String.format("#%02X%02X%02X%02X", alpha, r, g, b);
+	}
+	
+	/**
+	 * Convert a Hex String to RGB Values.
+	 * Credit for code - https://stackoverflow.com/a/4129692/2480714
+	 * IE, #6F6F6F becomes [111, 111, 111]
+	 *
+	 * @param hexColor String hex color (6 in length. If 8 in length,
+	 *                 will ignore first 2 characters as they are likely alpha)
+	 * @return int array of types: [red, green, blue]. Note that if it fails or the String
+	 * passed is invalid for any reason, it will return an array of size 3 filled with zeros.
+	 */
+	public static int[] convertHexToRGB(@NonNull String hexColor) {
+		int[] toReturn = new int[]{0, 0, 0};
+		if (StringUtilities.isNullOrEmpty(hexColor)) {
+			return toReturn;
+		}
+		hexColor = hexColor.replace("#", "");
+		if (hexColor.length() == 8) {
+			hexColor = hexColor.substring(2);
+		}
+		if (hexColor.length() != 6) {
+			return toReturn;
+		}
+		try {
+			int r = NumberUtilities.getInt(Integer.valueOf(hexColor.substring(0, 2), 16));
+			int g = NumberUtilities.getInt(Integer.valueOf(hexColor.substring(2, 4), 16));
+			int b = NumberUtilities.getInt(Integer.valueOf(hexColor.substring(4), 16));
+			toReturn[0] = r;
+			toReturn[1] = g;
+			toReturn[2] = b;
+		} catch (Exception e) {}
+		return toReturn;
+	}
+    
     /*
     Color lists below:
 
