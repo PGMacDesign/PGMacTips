@@ -1,10 +1,18 @@
 Change Log
 ==========
 
-Version 0.0.75 *(TBD)*
+Version 0.0.76 *(TBD)*
 ----------------------------
 
  * TBD
+ 
+Version 0.0.75 *(2019-02-28)*
+----------------------------
+
+ * New: Added in new [PGMaterialRippleLayout](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/customui/PGMaterialRippleLayout.java) class for Ripple effect backgrounds.
+ * New / Update: Updated old animations under the R.anim folder as well as added new ones. 
+ * New: Added in some new icons under the mipmap folders
+ * Update: Updated the [PGConnectivityReceiver](https://github.com/PGMacDesign/PGMacTips/tree/master/library/src/main/java/com/pgmacdesign/pgmactips/broadcastreceivers) to remove the camel-casing (broadcastReceivers --> broadcastreceivers). Note that this WILL break any manifest files that declare the [Connectivity Receiver](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/broadcastreceivers/PGConnectivityReceiver.java) with newer instructions on how to operate with respect to newer APIs not registering the receiver. 
 
 Version 0.0.74 *(2019-01-15)*
 ----------------------------
