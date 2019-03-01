@@ -34,6 +34,16 @@ implementation ('com.github.PGMacDesign:PGMacTips:0.0.75')
 
 Having trouble with Jitpack? [This link](https://jitpack.io/#pgmacdesign/PGMacTips) here will show what is going on with the current build as well as give you instructions on integrating Jitpack into your project. 
 
+## Proguard / Obfuscation 
+
+If you run into trouble with obfuscation / Proguard issues, add this line to your </b>proguard-rules.pro</b> file:
+
+```
+    # PGMacTips Proguard Bypass
+    -dontwarn com.pgmacdesign.pgmactips.**
+    -keep class com.pgmacdesign.pgmactips.**
+```
+
 <!-- 
 //Removed for now due to Jitpack issues 
 
