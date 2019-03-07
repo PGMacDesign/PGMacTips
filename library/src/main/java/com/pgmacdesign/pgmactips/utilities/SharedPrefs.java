@@ -829,7 +829,7 @@ public class SharedPrefs {
             return key;
         }
         try {
-            return EncryptionUtilities.encryptString(key, this.password, this.salt).toString();
+            return new String(EncryptionUtilities.encryptString(key, this.password, this.salt));
         } catch (GeneralSecurityException e) {
             e.printStackTrace();
             return key;
@@ -849,7 +849,7 @@ public class SharedPrefs {
             return cleartext;
         }
         try {
-            return EncryptionUtilities.encryptString(cleartext, this.password, this.salt).toString();
+            return new String(EncryptionUtilities.encryptString(cleartext, this.password, this.salt));
         } catch (GeneralSecurityException e) {
             e.printStackTrace();
             return cleartext;

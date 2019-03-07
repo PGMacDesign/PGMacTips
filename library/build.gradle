@@ -2,8 +2,8 @@
 Really useful link for dependency conflict issues:
 https://www.devsbedevin.com/android-understanding-gradle-dependencies-and-resolving-conflicts/
  */
-//apply plugin: 'com.android.application' //Add this when switching from lib to app
-apply plugin: 'com.android.library' //Remove this when switching from lib to app
+apply plugin: 'com.android.application' //Add this when switching from lib to app
+//apply plugin: 'com.android.library' //Remove this when switching from lib to app
 
 //apply plugin: 'kotlin-android' //Removing for now due to problems
 apply plugin: 'realm-android'

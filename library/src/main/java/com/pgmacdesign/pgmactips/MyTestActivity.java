@@ -69,7 +69,7 @@ import retrofit2.http.GET;
 @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
         CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON,
         CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
-class MyTestActivity  extends Activity implements View.OnClickListener {
+public class MyTestActivity  extends Activity implements View.OnClickListener {
 
     //Please note! these are for testing purposes only. I do not own the rights to the images below, I am referencing the URL link for testing loading times of images
     private static final String LOTR_TEST_URL_1 = "https://vignette.wikia.nocookie.net/lotr/images/8/87/Ringstrilogyposter.jpg/revision/latest?cb=20070806215413";
@@ -120,7 +120,7 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
 
 //        this.init2();
 //        this.init3();
-//        this.init5();
+        this.init5();
 //        this.testDB2();
     }
 
@@ -134,6 +134,8 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
             ge.printStackTrace();
             sp = SharedPrefs.getSharedPrefsInstance(this, "pattest1");
         }
+        sp.clearAllPrefs(true);
+        
 //        sp = SharedPrefs.getSharedPrefsInstance(this, "pattest1");
 //        init5Clear();
 //        if(true){
@@ -154,7 +156,7 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
         L.m("\n");
 
         sp.destroySensitiveData();
-        sp.save("non_encrypted_stuff", "sure, why not");
+        sp.save("non_encrypted_stuff_pretty_sure_no", "sure, why not. Though I am fairly certain this is encrypted still");
         L.m("\n");
         L.m("Printing out data after destroyAllData() and adding 1");
         MiscUtilities.printOutHashMap(sp.getAllPrefs());
@@ -198,7 +200,7 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
 //        init5Clear();
     }
 
-    private static final String KEY_STR = "STRING_TEST";
+    private static final String KEY_STR = "STRING_TEST_STRING_LONGER";
     private static final String KEY_BOOL = "BOOL_TEST";
     private static final String KEY_DBL = "DOUBLE_TEST";
     private static final String KEY_LONG = "LONG_TEST";
@@ -213,12 +215,12 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
     }
 
     private void init5Save(){
-        L.m("save shared prefs encrypted");
-        sp.save(KEY_STR, "worked?");
-//        sp.save(KEY_BOOL, true);
-//        sp.save(KEY_DBL, 123.123123);
-//        sp.save(KEY_LONG, 555555555555555L);
-//        sp.save(KEY_INT, 123);
+        L.m("saveme");
+        sp.save(KEY_STR, "true");
+        sp.save(KEY_BOOL, true);
+        sp.save(KEY_DBL, 123.123123);
+        sp.save(KEY_LONG, 555555555555555L);
+        sp.save(KEY_INT, 123);
     }
 
     private void init6Save(){

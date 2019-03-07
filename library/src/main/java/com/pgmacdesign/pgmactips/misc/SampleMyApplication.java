@@ -17,7 +17,7 @@ import io.realm.RealmConfiguration;
  * ----> android:name=".misc.MyApplication" <----
  * Created by pmacdowell on 2017-02-13.
  */
-class SampleMyApplication  extends Application {       //extends MultiDexApplication {
+public class SampleMyApplication  extends Application {       //extends MultiDexApplication {
 
     //Instance of the application
     private static SampleMyApplication sInstance;
