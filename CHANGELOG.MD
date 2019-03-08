@@ -1,11 +1,19 @@
 Change Log
 ==========
 
-Version 0.0.76 *(TBD)*
+Version 0.0.77 *(TBD)*
 ----------------------------
 
  * TBD
  
+Version 0.0.76 *(2019-03-08)*
+----------------------------
+
+ * Update: Rework of [SharedPrefs](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/SharedPrefs.java) and [EncryptionUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/EncryptionUtilities.java) to finally fix the writing encrypted values to SP bug. 
+ * Update: Updated the [MiscUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/MiscUtilities.java) class to add in the ability to print byte arrays. 
+ * New: Added a new class, [StackStringsManager](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/stackmanagement/StackStringsManager.java) which is functionally very similar to the [StackManager](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/stackmanagement/StackManager.java) class except it manages stacks of Strings as opposed to a predefined set of enum values. Also removed the old StackManagerObjects class as it was superseded by the StringsStackManager. 
+ * New: Updated the [README](https://github.com/PGMacDesign/PGMacTips/blob/master/README.md) to include instructions on Obfuscation and utilizing Proguard with PGMacTips. 
+
 Version 0.0.75 *(2019-02-28)*
 ----------------------------
 

@@ -34,6 +34,7 @@ import com.pgmacdesign.pgmactips.stackmanagement.StackManagerException;
 import com.pgmacdesign.pgmactips.utilities.CameraMediaUtilities;
 import com.pgmacdesign.pgmactips.utilities.ContactUtilities;
 import com.pgmacdesign.pgmactips.utilities.DatabaseUtilities;
+import com.pgmacdesign.pgmactips.utilities.EncryptionUtilities;
 import com.pgmacdesign.pgmactips.utilities.GsonUtilities;
 import com.pgmacdesign.pgmactips.utilities.ImageUtilities;
 import com.pgmacdesign.pgmactips.utilities.L;
@@ -69,7 +70,7 @@ import retrofit2.http.GET;
 @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
         CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON,
         CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
-public class MyTestActivity  extends Activity implements View.OnClickListener {
+class MyTestActivity  extends Activity implements View.OnClickListener {
 
     //Please note! these are for testing purposes only. I do not own the rights to the images below, I am referencing the URL link for testing loading times of images
     private static final String LOTR_TEST_URL_1 = "https://vignette.wikia.nocookie.net/lotr/images/8/87/Ringstrilogyposter.jpg/revision/latest?cb=20070806215413";
@@ -125,6 +126,7 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
     }
 
     private SharedPrefs sp;
+    @SuppressLint("NewApi")
     private void init5(){
         try {
             sp = SharedPrefs.getSharedPrefsInstance(this, "pattest1", new TempString("pattest4"));
@@ -134,33 +136,53 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
             ge.printStackTrace();
             sp = SharedPrefs.getSharedPrefsInstance(this, "pattest1");
         }
-        sp.clearAllPrefs(true);
-        
-//        sp = SharedPrefs.getSharedPrefsInstance(this, "pattest1");
-//        init5Clear();
-//        if(true){
-//            return;
-//        }
+	
+//	    sp.clearAllPrefs(true);
+//	    L.m("Initial load, printing out all prefs");
+//	    MiscUtilities.printOutHashMap(sp.getAllPrefs());
+
+	
         init5Save();
-        L.m("saved data using init5");
+        try {
+	        sp.disableEncryption();
+        } catch (Exception e){e.printStackTrace();}
+	    init5Save();
+        L.m("\nFinished saving non-encrypted values\n");
+	    init5Get();
+	    try {
+		    sp.reEnableEncryption();
+	    } catch (Exception e){e.printStackTrace();}
+	    try {
+		    sp.changePassword(new TempString("pattest991"));
+	    } catch (GeneralSecurityException ge){
+		    ge.printStackTrace();
+	    }
+	    init5Save();
+	    L.m("Finished re-saving encrypted values");
 //        init6Save();
-//        init5Get(sp);
+        init5Get();
+	    try {
+		    sp.disableEncryption();
+	    } catch (Exception e){e.printStackTrace();}
+        sp.clearAllPrefs(true, true);
+        if(true){
+            return;
+        }
+	
+	
+//	    L.m("After saving via Init5Save(), printing out all prefs");
+//	    MiscUtilities.printOutHashMap(sp.getAllPrefs());
+	    
+        L.m("\n");
+	    init5Get();
+	
+//	    L.m("After Getting via Init5Get(), printing out all prefs");
+//	    MiscUtilities.printOutHashMap(sp.getAllPrefs());
+	    
+//        L.m("Printing out data before changePassword called");
+//        MiscUtilities.printOutHashMap(sp.getAllPrefs());
+        L.m("\n");
 
-//        if(true){
-//            return;
-//        }
-
-        L.m("\n");
-        L.m("Printing out data before changePassword called");
-        MiscUtilities.printOutHashMap(sp.getAllPrefs());
-        L.m("\n");
-
-        sp.destroySensitiveData();
-        sp.save("non_encrypted_stuff_pretty_sure_no", "sure, why not. Though I am fairly certain this is encrypted still");
-        L.m("\n");
-        L.m("Printing out data after destroyAllData() and adding 1");
-        MiscUtilities.printOutHashMap(sp.getAllPrefs());
-        L.m("\n");
 
         if(true){
             return;
@@ -215,14 +237,34 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
     }
 
     private void init5Save(){
-        L.m("saveme");
-        sp.save(KEY_STR, "true");
+        L.m("Starting init5 Save");
+        sp.save(KEY_STR, "Key_str should be a lengthy String, one, in fact, that may be too large");
         sp.save(KEY_BOOL, true);
         sp.save(KEY_DBL, 123.123123);
         sp.save(KEY_LONG, 555555555555555L);
-        sp.save(KEY_INT, 123);
+        sp.save(KEY_INT, 321);
+        sp.save("email", "email@email.com");
+        sp.save("pw", "password1");
+	    L.m("Finished init5 Save");
     }
-
+    
+	private void init5Get(){
+		L.m("Starting init5 Get");
+		String str = sp.getString(KEY_STR, "nope");
+		boolean bool = sp.getBoolean(KEY_BOOL, false);
+		double dbl = sp.getDouble(KEY_DBL, -1.1);
+		long lng = sp.getLong(KEY_LONG, -1);
+		int intx = sp.getInt(KEY_INT, -1);
+		String email = sp.getString("email", null);
+		String pw = sp.getString("pw", null);
+		L.m("str == " + str);
+		L.m("bool == " + bool);
+		L.m("dbl == " + dbl);
+		L.m("lng == " + lng);
+		L.m("intx == " + intx);
+		L.m("Finished init5 Get");
+	}
+	
     private void init6Save(){
         L.m("save shared prefs encrypted");
         sp.save(KEY_STR, "DIFFERENT_worked?");
@@ -232,19 +274,6 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
         sp.save(KEY_INT, 222);
     }
 
-    private void init5Get(){
-        L.m("get shared prefs encrypted");
-        String str = sp.getString(KEY_STR, "nope");
-        boolean bool = sp.getBoolean(KEY_BOOL, false);
-        double dbl = sp.getDouble(KEY_DBL, -1.1);
-        long lng = sp.getLong(KEY_LONG, -1);
-        int intx = sp.getInt(KEY_INT, -1);
-        L.m("str == " + str);
-        L.m("bool == " + bool);
-        L.m("dbl == " + dbl);
-        L.m("lng == " + lng);
-        L.m("intx == " + intx);
-    }
 
     @SuppressLint("MissingPermission")
     private void init3(){
@@ -553,7 +582,13 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
     @SuppressLint("MissingPermission")
     @Override
     public void onClick(View view) {
-
+	
+	    this.init5();
+	    
+	    if(true){
+	    	return;
+	    }
+	    
         testPicassoImageLoads();
 
         if(true){

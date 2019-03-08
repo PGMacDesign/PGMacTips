@@ -226,7 +226,35 @@ public class MiscUtilities {
             x++;
         }
     }
-
+    
+    /**
+     * Print out an array of bytes on the same line
+     * @param myArray Array of bytes
+     */
+    public static void printOutArray(byte[] myArray, boolean separateByCommas){
+        if(myArray == null){
+            return;
+        }
+        if(myArray.length <= 0){
+            return;
+        }
+        int x = 0;
+        StringBuilder sb = new StringBuilder();
+        for(byte b : myArray){
+            try {
+                if(separateByCommas) {
+                    sb.append(b + ",");
+                } else {
+                    sb.append(b + "");
+                }
+            } catch (Exception e){
+                L.m("Could not print position " + x);
+            }
+            x++;
+        }
+        L.m(sb.toString());
+    }
+    
     /**
      * Print out a hashmap
      * @param myMap Map of type String, ?

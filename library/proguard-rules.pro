@@ -9,7 +9,7 @@
 # Add any project specific keep options here:
 
 #Keep Files
--keep class com.tozny.crypto.android.AesCbcWithIntegrity$PrngFixes$* { *; }
+
 -dontwarn com.squareup.okhttp.**
 -dontwarn okio.**
 -dontwarn javax.annotation.Nullable

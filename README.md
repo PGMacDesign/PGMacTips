@@ -29,7 +29,7 @@ allprojects {
 And include this in your dependencies section of your module .gradle file:
 
 ```java
-implementation ('com.github.PGMacDesign:PGMacTips:0.0.75')
+implementation ('com.github.PGMacDesign:PGMacTips:0.0.76')
 ```
 
 Having trouble with Jitpack? [This link](https://jitpack.io/#pgmacdesign/PGMacTips) here will show what is going on with the current build as well as give you instructions on integrating Jitpack into your project. 
@@ -41,7 +41,7 @@ If you run into trouble with obfuscation / Proguard issues, add this line to you
 ```
     # PGMacTips Proguard Bypass
     -dontwarn com.pgmacdesign.pgmactips.**
-    -keep class com.pgmacdesign.pgmactips.**
+    -keep class com.pgmacdesign.pgmactips.** { *; }
 ```
 
 <!-- 
