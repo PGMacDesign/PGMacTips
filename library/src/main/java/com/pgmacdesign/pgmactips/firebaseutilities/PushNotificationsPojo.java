@@ -39,13 +39,27 @@ public class PushNotificationsPojo {
     //Variables
     @SerializedName("to")
     private String to;
+    @SerializedName("pushNotificationTag")
+    private Integer pushNotificationTag;
+    @SerializedName("pushNotificationUUID")
+    private String pushNotificationUUID;
     @SerializedName("data")
     private Map<String, Object> mapData;
     @SerializedName("notification")
     private CustomNotificationObject notification;
     @SerializedName("priority")
     private String priority;
-
+    @SerializedName("expirationTime")
+    private Long expirationTime;
+    
+    public Long getExpirationTime() {
+        return expirationTime;
+    }
+    
+    public void setExpirationTime(Long expirationTime) {
+        this.expirationTime = expirationTime;
+    }
+    
     public CustomNotificationObject getNotification() {
         return notification;
     }
@@ -69,7 +83,23 @@ public class PushNotificationsPojo {
     public void setTo(String to) {
         this.to = to;
     }
-
+    
+    public Integer getPushNotificationTag() {
+        return pushNotificationTag;
+    }
+    
+    public void setPushNotificationTag(Integer pushNotificationTag) {
+        this.pushNotificationTag = pushNotificationTag;
+    }
+    
+    public String getPushNotificationUUID() {
+        return pushNotificationUUID;
+    }
+    
+    public void setPushNotificationUUID(String pushNotificationUUID) {
+        this.pushNotificationUUID = pushNotificationUUID;
+    }
+    
     public Map<String, Object> getMapData() {
         return mapData;
     }
@@ -82,10 +112,15 @@ public class PushNotificationsPojo {
      * Custom Notifications Object
      */
     public static class CustomNotificationObject {
+        @SerializedName("body")
         private String body;
+        @SerializedName("title")
         private String title;
+        @SerializedName("sound")
         private String sound;
+        @SerializedName("badge")
         private Integer badge;
+        @SerializedName("otherData")
         private Map<String, Object> otherData;
 
 
