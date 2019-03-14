@@ -58,54 +58,53 @@ import com.pgmacdesign.pgmactips.R;
 public class PGMaterialRippleLayout extends FrameLayout {
 	
 	/**
-	From the team over at the Github repo - https://github.com/balysv/material-ripple
-	app:pgmaterial_rippleOverlay="true"              // if true, ripple is drawn in foreground; false - background
-	app:pgmaterial_rippleColor="#ff0000"             // color of ripple
-	app:pgmaterial_rippleAlpha="0.1"                 // alpha of ripple
-	app:pgmaterial_rippleDimension="10dp"            // radius of hover and starting ripple
-	app:pgmaterial_rippleHover="true"                // if true, a hover effect is drawn when view is touched
-	app:pgmaterial_rippleRoundedCorners="10dp"       // radius of corners of ripples. Note: it uses software rendering pipeline for API 17 and below
-	app:pgmaterial_rippleInAdapter="true"            // if true, PGMaterialRippleLayout will optimize for use in AdapterViews
-	app:pgmaterial_rippleDuration="350"              // duration of ripple animation
-	app:pgmaterial_rippleFadeDuration="75"           // duration of fade out effect on ripple
-	app:pgmaterial_rippleDelayClick="true"           // if true, delays calls to OnClickListeners until ripple effect ends
-	app:pgmaterial_rippleBackground="#FFFFFF"        // background under ripple drawable; used with rippleOverlay="false"
-	app:pgmaterial_ripplePersistent="true"           // if true, ripple background color persists after animation, until setRadius(0) is called
-	
+	 * From the team over at the Github repo - https://github.com/balysv/material-ripple
+	 * app:pgmaterial_rippleOverlay="true"              // if true, ripple is drawn in foreground; false - background
+	 * app:pgmaterial_rippleColor="#ff0000"             // color of ripple
+	 * app:pgmaterial_rippleAlpha="0.1"                 // alpha of ripple
+	 * app:pgmaterial_rippleDimension="10dp"            // radius of hover and starting ripple
+	 * app:pgmaterial_rippleHover="true"                // if true, a hover effect is drawn when view is touched
+	 * app:pgmaterial_rippleRoundedCorners="10dp"       // radius of corners of ripples. Note: it uses software rendering pipeline for API 17 and below
+	 * app:pgmaterial_rippleInAdapter="true"            // if true, PGMaterialRippleLayout will optimize for use in AdapterViews
+	 * app:pgmaterial_rippleDuration="350"              // duration of ripple animation
+	 * app:pgmaterial_rippleFadeDuration="75"           // duration of fade out effect on ripple
+	 * app:pgmaterial_rippleDelayClick="true"           // if true, delays calls to OnClickListeners until ripple effect ends
+	 * app:pgmaterial_rippleBackground="#FFFFFF"        // background under ripple drawable; used with rippleOverlay="false"
+	 * app:pgmaterial_ripplePersistent="true"           // if true, ripple background color persists after animation, until setRadius(0) is called
 	 */
 	
 	
-	private static final int     DEFAULT_DURATION        = 350;
-	private static final int     DEFAULT_FADE_DURATION   = 75;
-	private static final float   DEFAULT_DIAMETER_DP     = 35;
-	private static final float   DEFAULT_ALPHA           = 0.2f;
-	private static final int     DEFAULT_COLOR           = Color.BLACK;
-	private static final int     DEFAULT_BACKGROUND      = Color.TRANSPARENT;
-	private static final boolean DEFAULT_HOVER           = true;
-	private static final boolean DEFAULT_DELAY_CLICK     = true;
-	private static final boolean DEFAULT_PERSISTENT      = false;
-	private static final boolean DEFAULT_SEARCH_ADAPTER  = false;
-	private static final boolean DEFAULT_RIPPLE_OVERLAY  = false;
-	private static final int     DEFAULT_ROUNDED_CORNERS = 0;
+	private static final int DEFAULT_DURATION = 350;
+	private static final int DEFAULT_FADE_DURATION = 75;
+	private static final float DEFAULT_DIAMETER_DP = 35;
+	private static final float DEFAULT_ALPHA = 0.2f;
+	private static final int DEFAULT_COLOR = Color.BLACK;
+	private static final int DEFAULT_BACKGROUND = Color.TRANSPARENT;
+	private static final boolean DEFAULT_HOVER = true;
+	private static final boolean DEFAULT_DELAY_CLICK = true;
+	private static final boolean DEFAULT_PERSISTENT = false;
+	private static final boolean DEFAULT_SEARCH_ADAPTER = false;
+	private static final boolean DEFAULT_RIPPLE_OVERLAY = false;
+	private static final int DEFAULT_ROUNDED_CORNERS = 0;
 	
-	private static final int  FADE_EXTRA_DELAY = 50;
-	private static final long HOVER_DURATION   = 2500;
+	private static final int FADE_EXTRA_DELAY = 50;
+	private static final long HOVER_DURATION = 2500;
 	
-	private final Paint paint  = new Paint(Paint.ANTI_ALIAS_FLAG);
+	private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 	private final Rect bounds = new Rect();
 	
-	private int      rippleColor;
-	private boolean  rippleOverlay;
-	private boolean  rippleHover;
-	private int      rippleDiameter;
-	private int      rippleDuration;
-	private int      rippleAlpha;
-	private boolean  rippleDelayClick;
-	private int      rippleFadeDuration;
-	private boolean  ripplePersistent;
+	private int rippleColor;
+	private boolean rippleOverlay;
+	private boolean rippleHover;
+	private int rippleDiameter;
+	private int rippleDuration;
+	private int rippleAlpha;
+	private boolean rippleDelayClick;
+	private int rippleFadeDuration;
+	private boolean ripplePersistent;
 	private Drawable rippleBackground;
-	private boolean  rippleInAdapter;
-	private float    rippleRoundedCorners;
+	private boolean rippleInAdapter;
+	private float rippleRoundedCorners;
 	
 	private float radius;
 	
@@ -115,18 +114,18 @@ public class PGMaterialRippleLayout extends FrameLayout {
 	private AnimatorSet rippleAnimator;
 	private ObjectAnimator hoverAnimator;
 	
-	private Point currentCoords  = new Point();
+	private Point currentCoords = new Point();
 	private Point previousCoords = new Point();
 	
 	private int layerType;
 	
 	private boolean eventCancelled;
 	private boolean prepressed;
-	private int     positionInAdapter;
+	private int positionInAdapter;
 	
 	private GestureDetector gestureDetector;
 	private PerformClickEvent pendingClickEvent;
-	private PressedEvent      pendingPressEvent;
+	private PressedEvent pendingPressEvent;
 	
 	public static RippleBuilder on(View view) {
 		return new RippleBuilder(view);
@@ -148,20 +147,20 @@ public class PGMaterialRippleLayout extends FrameLayout {
 		
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PGMaterialRippleLayout);
 		this.rippleColor = a.getColor(R.styleable.PGMaterialRippleLayout_pg_rippleColor, DEFAULT_COLOR);
-	this.rippleDiameter = a.getDimensionPixelSize(
+		this.rippleDiameter = a.getDimensionPixelSize(
 				R.styleable.PGMaterialRippleLayout_pg_rippleDimension,
 				(int) dpToPx(getResources(), DEFAULT_DIAMETER_DP)
 		);
-	    this.rippleOverlay = a.getBoolean(R.styleable.PGMaterialRippleLayout_pg_rippleOverlay, DEFAULT_RIPPLE_OVERLAY);
-	    this.rippleHover = a.getBoolean(R.styleable.PGMaterialRippleLayout_pg_rippleHover, DEFAULT_HOVER);
-	    this.rippleDuration = a.getInt(R.styleable.PGMaterialRippleLayout_pg_rippleDuration, DEFAULT_DURATION);
-	    this.rippleAlpha = (int) (255 * a.getFloat(R.styleable.PGMaterialRippleLayout_pg_rippleAlpha, DEFAULT_ALPHA));
-	    this.rippleDelayClick = a.getBoolean(R.styleable.PGMaterialRippleLayout_pg_rippleDelayClick, DEFAULT_DELAY_CLICK);
-	    this.rippleFadeDuration = a.getInteger(R.styleable.PGMaterialRippleLayout_pg_rippleFadeDuration, DEFAULT_FADE_DURATION);
-	    this.rippleBackground = new ColorDrawable(a.getColor(R.styleable.PGMaterialRippleLayout_pg_rippleBackground, DEFAULT_BACKGROUND));
-	    this.ripplePersistent = a.getBoolean(R.styleable.PGMaterialRippleLayout_pg_ripplePersistent, DEFAULT_PERSISTENT);
-	    this.rippleInAdapter = a.getBoolean(R.styleable.PGMaterialRippleLayout_pg_rippleInAdapter, DEFAULT_SEARCH_ADAPTER);
-	    this.rippleRoundedCorners = a.getDimensionPixelSize(R.styleable.PGMaterialRippleLayout_pg_rippleRoundedCorners, DEFAULT_ROUNDED_CORNERS);
+		this.rippleOverlay = a.getBoolean(R.styleable.PGMaterialRippleLayout_pg_rippleOverlay, DEFAULT_RIPPLE_OVERLAY);
+		this.rippleHover = a.getBoolean(R.styleable.PGMaterialRippleLayout_pg_rippleHover, DEFAULT_HOVER);
+		this.rippleDuration = a.getInt(R.styleable.PGMaterialRippleLayout_pg_rippleDuration, DEFAULT_DURATION);
+		this.rippleAlpha = (int) (255 * a.getFloat(R.styleable.PGMaterialRippleLayout_pg_rippleAlpha, DEFAULT_ALPHA));
+		this.rippleDelayClick = a.getBoolean(R.styleable.PGMaterialRippleLayout_pg_rippleDelayClick, DEFAULT_DELAY_CLICK);
+		this.rippleFadeDuration = a.getInteger(R.styleable.PGMaterialRippleLayout_pg_rippleFadeDuration, DEFAULT_FADE_DURATION);
+		this.rippleBackground = new ColorDrawable(a.getColor(R.styleable.PGMaterialRippleLayout_pg_rippleBackground, DEFAULT_BACKGROUND));
+		this.ripplePersistent = a.getBoolean(R.styleable.PGMaterialRippleLayout_pg_ripplePersistent, DEFAULT_PERSISTENT);
+		this.rippleInAdapter = a.getBoolean(R.styleable.PGMaterialRippleLayout_pg_rippleInAdapter, DEFAULT_SEARCH_ADAPTER);
+		this.rippleRoundedCorners = a.getDimensionPixelSize(R.styleable.PGMaterialRippleLayout_pg_rippleRoundedCorners, DEFAULT_ROUNDED_CORNERS);
 		
 		a.recycle();
 		
@@ -234,7 +233,8 @@ public class PGMaterialRippleLayout extends FrameLayout {
 						this.childView.setPressed(true);
 						postDelayed(
 								new Runnable() {
-									@Override public void run() {
+									@Override
+									public void run() {
 										childView.setPressed(false);
 									}
 								}, ViewConfiguration.getPressedStateDuration());
@@ -341,7 +341,7 @@ public class PGMaterialRippleLayout extends FrameLayout {
 	}
 	
 	private void startRipple(final Runnable animationEndRunnable) {
-		if (this.eventCancelled){
+		if (this.eventCancelled) {
 			return;
 		}
 		
@@ -349,9 +349,10 @@ public class PGMaterialRippleLayout extends FrameLayout {
 		
 		cancelAnimations();
 		
-	    this.rippleAnimator = new AnimatorSet();
-	    this.rippleAnimator.addListener(new AnimatorListenerAdapter() {
-			@Override public void onAnimationEnd(Animator animation) {
+		this.rippleAnimator = new AnimatorSet();
+		this.rippleAnimator.addListener(new AnimatorListenerAdapter() {
+			@Override
+			public void onAnimationEnd(Animator animation) {
 				if (!ripplePersistent) {
 					setRadius(0);
 					setRippleAlpha(rippleAlpha);
@@ -372,20 +373,20 @@ public class PGMaterialRippleLayout extends FrameLayout {
 		fade.setStartDelay(rippleDuration - rippleFadeDuration - FADE_EXTRA_DELAY);
 		
 		if (ripplePersistent) {
-		    this.rippleAnimator.play(ripple);
+			this.rippleAnimator.play(ripple);
 		} else if (getRadius() > endRadius) {
 			fade.setStartDelay(0);
-		    this.rippleAnimator.play(fade);
+			this.rippleAnimator.play(fade);
 		} else {
-		    this.rippleAnimator.playTogether(ripple, fade);
+			this.rippleAnimator.playTogether(ripple, fade);
 		}
-	    this.rippleAnimator.start();
+		this.rippleAnimator.start();
 	}
 	
 	private void cancelAnimations() {
 		if (rippleAnimator != null) {
-		    this.rippleAnimator.cancel();
-		    this.rippleAnimator.removeAllListeners();
+			this.rippleAnimator.cancel();
+			this.rippleAnimator.removeAllListeners();
 		}
 		
 		if (hoverAnimator != null) {
@@ -400,8 +401,8 @@ public class PGMaterialRippleLayout extends FrameLayout {
 		final int halfWidth = width / 2;
 		final int halfHeight = height / 2;
 		
-		final float radiusX = halfWidth >this.currentCoords.x ? width -this.currentCoords.x :this.currentCoords.x;
-		final float radiusY = halfHeight >this.currentCoords.y ? height -this.currentCoords.y :this.currentCoords.y;
+		final float radiusX = halfWidth > this.currentCoords.x ? width - this.currentCoords.x : this.currentCoords.x;
+		final float radiusY = halfHeight > this.currentCoords.y ? height - this.currentCoords.y : this.currentCoords.y;
 		
 		return (float) Math.sqrt(Math.pow(radiusX, 2) + Math.pow(radiusY, 2)) * 1.2f;
 	}
@@ -482,7 +483,7 @@ public class PGMaterialRippleLayout extends FrameLayout {
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
 		this.bounds.set(0, 0, w, h);
-	    this.rippleBackground.setBounds(bounds);
+		this.rippleBackground.setBounds(bounds);
 	}
 	
 	@Override
@@ -498,7 +499,7 @@ public class PGMaterialRippleLayout extends FrameLayout {
 		final boolean positionChanged = adapterPositionChanged();
 		if (this.rippleOverlay) {
 			if (!positionChanged) {
-			    this.rippleBackground.draw(canvas);
+				this.rippleBackground.draw(canvas);
 			}
 			super.draw(canvas);
 			if (!positionChanged) {
@@ -512,7 +513,7 @@ public class PGMaterialRippleLayout extends FrameLayout {
 			}
 		} else {
 			if (!positionChanged) {
-			    this.rippleBackground.draw(canvas);
+				this.rippleBackground.draw(canvas);
 				canvas.drawCircle(this.currentCoords.x, this.currentCoords.y, this.radius, this.paint);
 			}
 			super.draw(canvas);
@@ -590,8 +591,8 @@ public class PGMaterialRippleLayout extends FrameLayout {
 	}
 	
 	public void setRippleBackground(int color) {
-	    this.rippleBackground = new ColorDrawable(color);
-	    this.rippleBackground.setBounds(bounds);
+		this.rippleBackground = new ColorDrawable(color);
+		this.rippleBackground.setBounds(bounds);
 		invalidate();
 	}
 	
@@ -658,7 +659,8 @@ public class PGMaterialRippleLayout extends FrameLayout {
 	 */
 	private class PerformClickEvent implements Runnable {
 		
-		@Override public void run() {
+		@Override
+		public void run() {
 			if (hasPerformedLongPress) return;
 			
 			// if parent is an AdapterView, try to call its ItemClickListener
@@ -718,20 +720,20 @@ public class PGMaterialRippleLayout extends FrameLayout {
 	public static class RippleBuilder {
 		
 		private final Context context;
-		private final View    child;
+		private final View child;
 		
-		private int     rippleColor         = DEFAULT_COLOR;
-		private boolean rippleOverlay       = DEFAULT_RIPPLE_OVERLAY;
-		private boolean rippleHover         = DEFAULT_HOVER;
-		private float   rippleDiameter      = DEFAULT_DIAMETER_DP;
-		private int     rippleDuration      = DEFAULT_DURATION;
-		private float   rippleAlpha         = DEFAULT_ALPHA;
-		private boolean rippleDelayClick    = DEFAULT_DELAY_CLICK;
-		private int     rippleFadeDuration  = DEFAULT_FADE_DURATION;
-		private boolean ripplePersistent    = DEFAULT_PERSISTENT;
-		private int     rippleBackground    = DEFAULT_BACKGROUND;
+		private int rippleColor = DEFAULT_COLOR;
+		private boolean rippleOverlay = DEFAULT_RIPPLE_OVERLAY;
+		private boolean rippleHover = DEFAULT_HOVER;
+		private float rippleDiameter = DEFAULT_DIAMETER_DP;
+		private int rippleDuration = DEFAULT_DURATION;
+		private float rippleAlpha = DEFAULT_ALPHA;
+		private boolean rippleDelayClick = DEFAULT_DELAY_CLICK;
+		private int rippleFadeDuration = DEFAULT_FADE_DURATION;
+		private boolean ripplePersistent = DEFAULT_PERSISTENT;
+		private int rippleBackground = DEFAULT_BACKGROUND;
 		private boolean rippleSearchAdapter = DEFAULT_SEARCH_ADAPTER;
-		private float   rippleRoundedCorner = DEFAULT_ROUNDED_CORNERS;
+		private float rippleRoundedCorner = DEFAULT_ROUNDED_CORNERS;
 		
 		public RippleBuilder(View child) {
 			this.child = child;

@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="text_size">21sp</dimen>
-    <dimen name="text_size_small">17sp</dimen>
     <dimen name="text_size_large">23sp</dimen>
+    <dimen name="text_size_xlarge">26sp</dimen>
+    <dimen name="text_size_xxlarge">32sp</dimen>
+    <dimen name="text_size_xxxlarge">42sp</dimen>
+    <dimen name="text_size_small">16sp</dimen>
+    <dimen name="text_size_xsmall">14sp</dimen>
+    <dimen name="text_size_xxsmall">12sp</dimen>
+    <dimen name="text_size_xxxsmall">10sp</dimen>
     <dimen name="left_right_side_margins">42dp</dimen>
     <dimen name="left_right_side_margins_small">20dp</dimen>
     <dimen name="left_right_side_margins_very_small">12dp</dimen>

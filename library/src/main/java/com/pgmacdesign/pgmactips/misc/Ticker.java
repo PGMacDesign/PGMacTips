@@ -15,12 +15,26 @@ import java.util.Date;
 
 public class Ticker {
 
+    //region Static final Strings
     private static final String TICK_TIME_PART_1 = "Tick Time: \nActivity == ";
     private static final String TICK_TIME_PART_2 = "\nHitting Line Number == ";
     private static final String TICK_TIME_PART_3 = "\nTime taken up until this point == ";
-
+    
+    private static final String TICK_TIME_PART_1_HIDE_NL = "Tick Time: Activity == ";
+    private static final String TICK_TIME_PART_2_HIDE_NL = ", Hitting Line Number == ";
+    private static final String TICK_TIME_PART_3_HIDE_NL = ", Time taken up until this point == ";
+    //endregion
+    
+    //region Static Vars
+    private static boolean shouldHideNewLineCharacters;
+    //endregion
+    
+    //region Instance Vars
     private String screenName;
     private long timeAtInit;
+    //endregion
+    
+    //region Constructor
     /**
      * Constructor is used for time measurement method
      * @param screenName Screen name to use in print statements
@@ -38,8 +52,29 @@ public class Ticker {
         } else {
             this.timeAtInit = timeAtInit;
         }
+        Ticker.shouldHideNewLineCharacters = false;
     }
-
+    //endregion
+    
+    //region Public Static Methods
+    
+    /**
+     * Simple setter for whether or not the class should hide printing the new line characters.
+     * Defaults to false
+     * @param shouldHide If false, it will print like this:
+     *                      Tick Time: Activity == {Some Activity}
+     *                      Hitting Line number == 123
+     *                      Time Taken up until this points == 123
+     *                   If true, it will print like this:
+     *                      Tick Time: Activity == {Some Activity}, Hitting Line number == 123, Time Taken up until this points == 123
+     */
+    public static void setShouldHideNewLineCharacters(boolean shouldHide){
+        Ticker.shouldHideNewLineCharacters = shouldHide;
+    }
+    
+    //endregion
+    
+    //region Public Methods
     /**
      * Reset the ticker to a new time
      * @param timeAtNow Time (in milliseconds) of start point. If null is passed, it will
@@ -79,10 +114,18 @@ public class Ticker {
             appendEnd = "minutes";
         }
         String str = NumberUtilities.formatNumberAddCommas(gap);
-        L.m(    TICK_TIME_PART_1 + screenName
-                + TICK_TIME_PART_2 + lineStr
-                + TICK_TIME_PART_3 + (str + " " + appendEnd)
-        );
+        if(Ticker.shouldHideNewLineCharacters){
+            L.m(TICK_TIME_PART_1_HIDE_NL + screenName
+                    + TICK_TIME_PART_2_HIDE_NL + lineStr
+                    + TICK_TIME_PART_3_HIDE_NL + (str + " " + appendEnd)
+            );
+        } else {
+            L.m(TICK_TIME_PART_1 + screenName
+                    + TICK_TIME_PART_2 + lineStr
+                    + TICK_TIME_PART_3 + (str + " " + appendEnd)
+            );
+        }
 
     }
+    //endregion
 }

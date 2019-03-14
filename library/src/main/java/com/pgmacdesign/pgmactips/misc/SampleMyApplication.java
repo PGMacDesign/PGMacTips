@@ -15,9 +15,12 @@ import io.realm.RealmConfiguration;
  * This is a sample MyApplication class. This is how it would be implemented in the app.
  * NOTE! DO NOT FORGET THAT THIS NEEDS TO BE INCLUDED IN THE MANIFEST UNDER THE APPLICATION TAG!
  * ----> android:name=".misc.MyApplication" <----
+ * Note that if you want to omit realm as a required dependency, simply remove the
+ * DatabaseUtilities code references
  * Created by pmacdowell on 2017-02-13.
  */
-public class SampleMyApplication  extends Application {       //extends MultiDexApplication {
+@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Realm)
+class SampleMyApplication extends Application {       //extends MultiDexApplication {
 
     //Instance of the application
     private static SampleMyApplication sInstance;
@@ -33,6 +36,8 @@ public class SampleMyApplication  extends Application {       //extends MultiDex
     private static double lastKnownLat, lastKnownLng;
     //Google Location object
     private static Location location;
+    //Config
+    private PGMacTipsConfig config;
 
     /**
      * Constructor
@@ -44,19 +49,12 @@ public class SampleMyApplication  extends Application {       //extends MultiDex
     @Override
     public void onCreate() {
         super.onCreate();
-        SampleMyApplication.sInstance = this;
+        sInstance = this;
         context = getContext();
         dbUtilities = getDatabaseInstance();
         sp = getSharedPrefsInstance();
-        //setupLocationServices();
+        this.initPGMacTipsConfig();
     }
-
-    /*
-    private void setupLocationServices(){
-        lastKnownLat = lastKnownLng = 0;
-        location = new Location(ddd);
-    }
-    */
 
     /**
      * Get context, if it is null, get an instance first and then return it
@@ -64,7 +62,7 @@ public class SampleMyApplication  extends Application {       //extends MultiDex
      */
     public static synchronized Context getContext(){
         if(context == null){
-            SampleMyApplication.context = getInstance().getApplicationContext();
+            context = getInstance().getApplicationContext();
         }
         return context;
     }
@@ -77,8 +75,11 @@ public class SampleMyApplication  extends Application {       //extends MultiDex
         if(dbUtilities == null){
             RealmConfiguration config = DatabaseUtilities.buildRealmConfig(
                     getContext(),
+                    //Replace me with your DB Name
                     PGMacTipsConstants.DB_NAME,
+                    //Replace me with your DB Version
                     PGMacTipsConstants.DB_VERSION,
+                    //Replace me with your DB boolean flag
                     PGMacTipsConstants.DELETE_DB_IF_NEEDED
             );
             dbUtilities = new DatabaseUtilities(getContext(), config);
@@ -92,6 +93,7 @@ public class SampleMyApplication  extends Application {       //extends MultiDex
      */
     public static synchronized SharedPrefs getSharedPrefsInstance(){
         if(sp == null){
+            //Replace me with your Shared Prefs Name
             sp = SharedPrefs.getSharedPrefsInstance(getContext(),
                     PGMacTipsConstants.SHARED_PREFS_NAME);
         }
@@ -120,5 +122,21 @@ public class SampleMyApplication  extends Application {       //extends MultiDex
             sInstance = new SampleMyApplication();
         }
         return sInstance;
+    }
+    
+    /**
+     * Initialize the {@link PGMacTipsConfig} class for use. Entirely optional, but useful
+     * if you want to simply flip a boolean flag and stop logging for the entirety of the project,
+     * change the logging tag, or adjust the default database name
+     */
+    private void initPGMacTipsConfig(){
+        config = new PGMacTipsConfig.Builder()
+                //Replace with the Logging tag of your choosing
+                .setTagForLogging("Your Tag For Logging")
+                //Boolean flag for is it is a live build. Defaults to false. Used in logging (stops on live builds)
+                .setLiveBuild(false)
+                //Default DB name if you don't set one yourself. It's suggested that you do though
+                .setDefaultDatabaseName("yourapp.db")
+                .build(getContext());
     }
 }

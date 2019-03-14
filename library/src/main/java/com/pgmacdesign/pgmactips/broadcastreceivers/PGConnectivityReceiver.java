@@ -4,8 +4,18 @@ import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
+
+import com.pgmacdesign.pgmactips.utilities.L;
+import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresPermission;
 
 /**
@@ -25,32 +35,33 @@ public class PGConnectivityReceiver extends BroadcastReceiver {
     private static BroadcastReceiver mNetworkReceiver;
 
     //To register the receiver
-    public static synchronized void setConnectivityListener(PGConnectivityReceiver.ConnectivityReceiverListener listener) {
+    public static synchronized void setConnectivityListener(String activityName, PGConnectivityReceiver.ConnectivityReceiverListener listener) {
         if(MyApplication.mNetworkReceiver == null) {
             MyApplication.mNetworkReceiver = new PGConnectivityReceiver();
-            //This next line is required for versions Nougat (24) or higher
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 getContext().registerReceiver(mNetworkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
             }
         }
-        PGConnectivityReceiver.connectivityReceiverListener = listener;
+        PGConnectivityReceiver.addConnectivityReceiverListener(activityName, listener);
     }
 
     //To Unregister the receiver
-    public static synchronized void removeConnectivityListener() {
-        if(MyApplication.mNetworkReceiver != null ) {
-            getContext().unregisterReceiver(mNetworkReceiver);
+    public static synchronized void removeConnectivityListener(String activityName) {
+        PGConnectivityReceiver.removeConnectivityReceiverListener(activityName);
+        if(PGConnectivityReceiver.getNumberOfConnectivityReceivers() == 0){
+            if(MyApplication.mNetworkReceiver != null ) {
+                getContext().unregisterReceiver(mNetworkReceiver);
+            }
+            MyApplication.mNetworkReceiver = null;
         }
-        PGConnectivityReceiver.connectivityReceiverListener = null;
-        MyApplication.mNetworkReceiver = null;
     }
 
     //2)
         a) Next, in your activity/ fragment, use this code in the onCreate or onStart:
-    MyApplication.getInstance().setConnectivityListener(this);
+    MyApplication.setConnectivityListener("SomeUniqueKeyName", this);
 
         b) Make sure to include this in your onStop() so as to prevent memory leaks
-
+    MyApplication.removeConnectivityListener("SomeUniqueKeyName");
 
     //3) Make that same activity/ fragment implement:
     PGConnectivityReceiver.ConnectivityReceiverListener
@@ -76,13 +87,74 @@ public class PGConnectivityReceiver extends BroadcastReceiver {
         </receiver>
 
      */
-    public static ConnectivityReceiverListener connectivityReceiverListener;
-
+    
+    
+    //region Vars
+    private static Map<String, ConnectivityReceiverListener> connectivityReceiverListeners;
+    //endregion
+    
+    //region Setters, Appenders, and Clearers
+    
+    /**
+     * Clear all connectivity receivers
+     */
+    public static void clearAllConnectivityReceiverListeners(){
+        connectivityReceiverListeners = new HashMap<>();
+    }
+    
+    /**
+     * Remove a single connectivity receiver
+     * @param activityName The Activity Name being referenced for the Map of listeners
+     */
+    public static void removeConnectivityReceiverListener(@NonNull String activityName){
+        if(connectivityReceiverListeners == null){
+            connectivityReceiverListeners = new HashMap<>();
+        }
+        if(connectivityReceiverListeners.containsKey(activityName)) {
+            connectivityReceiverListeners.remove(activityName);
+        }
+        
+    }
+    
+    /**
+     * Add a single connectivity receiver
+     * @param activityName The Activity Name being referenced for the Map of listeners
+     * @param listener {@link ConnectivityReceiverListener}
+     */
+    public static void addConnectivityReceiverListener(@NonNull String activityName,
+                                                       @NonNull PGConnectivityReceiver.ConnectivityReceiverListener listener){
+        if(connectivityReceiverListeners == null){
+            connectivityReceiverListeners = new HashMap<>();
+        }
+        connectivityReceiverListeners.put(activityName, listener);
+    }
+    
+    /**
+     * Clear all previous and add one connectivity receiver
+     * @param activityName The Activity Name being referenced for the Map of listeners
+     * @param listener {@link ConnectivityReceiverListener}
+     */
+    public static void setConnectivityReceiverListener(@NonNull String activityName,
+                                                       @NonNull PGConnectivityReceiver.ConnectivityReceiverListener listener){
+        clearAllConnectivityReceiverListeners();
+        addConnectivityReceiverListener(activityName, listener);
+    }
+    
+    /**
+     * Get the number of connectivity receivers
+     * @return The number of connectivity receivers
+     */
+    public static int getNumberOfConnectivityReceivers(){
+        return (MiscUtilities.isMapNullOrEmpty(connectivityReceiverListeners) ? 0 : connectivityReceiverListeners.size());
+    }
+    //endregion
+    
+    //region Constructor and @Override
     @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE)
     public PGConnectivityReceiver() {
         super();
     }
-
+    
     /**
      * Note! Requires permission to run, will throw exception otherwise
      */
@@ -94,13 +166,28 @@ public class PGConnectivityReceiver extends BroadcastReceiver {
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null
                 && activeNetwork.isConnectedOrConnecting();
-
-        if (connectivityReceiverListener != null) {
-            connectivityReceiverListener.onNetworkConnectionChanged(isConnected);
+        
+        if(connectivityReceiverListeners != null){
+            if(connectivityReceiverListeners.size() > 0){
+                for(Map.Entry<String, ConnectivityReceiverListener> map : connectivityReceiverListeners.entrySet()){
+                    if(map == null){
+                        continue;
+                    }
+                    ConnectivityReceiverListener connectivityReceiverListener = map.getValue();
+                    if (connectivityReceiverListener != null) {
+                        connectivityReceiverListener.onNetworkConnectionChanged(isConnected);
+                    }
+                }
+            }
         }
+        
     }
-
+    
+    //endregion
+    
+    //region Interface Listener
     public interface ConnectivityReceiverListener {
         void onNetworkConnectionChanged(boolean isConnected);
     }
+    //endregion
 }
