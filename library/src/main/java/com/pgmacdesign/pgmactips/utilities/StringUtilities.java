@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.google.android.gms.common.util.ArrayUtils;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.misc.TempString;
 
@@ -41,6 +42,10 @@ public class StringUtilities {
     static final String REGEX_WEB_URL_ENCODING = PGMacTipsConstants.REGEX_WEB_URL_ENCODING;
     static final String REGEX_PASSWORD_PATTERN = PGMacTipsConstants.REGEX_PASSWORD_PATTERN;
     
+    /**
+     * An empty immutable {@code String} array.
+     */
+    private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
     public static final int DATE_MM_DD_YYYY = 4405;
     public static final int DATE_MM_DD_YY = 4406;
@@ -204,7 +209,177 @@ public class StringUtilities {
         } catch (Exception e){}
         return false;
     }
-
+    
+    /**
+     * Compares two version strings.
+     * <p>Pulled from 'commons-lang3-3.8.1'</p>
+     *
+     * Use this instead of String.compareTo() for a non-lexicographical
+     * comparison that works for version strings. e.g. "1.10".compareTo("1.6").
+     *
+     * @param v1 a string of alpha numerals separated by decimal points. (IE 1.1.0)
+     * @param v2 a string of alpha numerals separated by decimal points. (IE 1.1.1)
+     * @return The result is 1 if v1 is greater than v2.
+     *         The result is 2 if v2 is greater than v1.
+     *         The result is -1 if the version format is unrecognized.
+     *         The result is zero if the strings are equal.
+     */
+    
+    public static int compareVersions(String v1, String v2) {
+        if(StringUtilities.isNullOrEmpty(v1) || StringUtilities.isNullOrEmpty(v2)){
+            return -1;
+        }
+        int v1Len = StringUtilities.countMatches(v1,".");
+        int v2Len = StringUtilities.countMatches(v2,".");
+        
+        if(v1Len!=v2Len) {
+            int count=Math.abs(v1Len-v2Len);
+            if(v1Len>v2Len)
+                for(int i=1;i<=count;i++)
+                    v2+=".0";
+            else
+                for(int i=1;i<=count;i++)
+                    v1+=".0";
+        }
+        
+        if(v1.equals(v2)) {
+            return 0;
+        }
+        
+        String[] v1Str = StringUtilities.split(v1, '.');
+        String[] v2Str = StringUtilities.split(v2, '.');
+        for(int i=0; i < v1Str.length; i++) {
+            String str1="",str2="";
+            for (char c : v1Str[i].toCharArray()) {
+                if(Character.isLetter(c)) {
+                    int u=c-'a'+1;
+                    if(u<10) {
+                        str1 += String.valueOf("0" + u);
+                    } else {
+                        str1 += String.valueOf(u);
+                    }
+                } else {
+                    str1 += String.valueOf(c);
+                }
+            }
+            for (char c : v2Str[i].toCharArray()) {
+                if(Character.isLetter(c)) {
+                    int u=c-'a'+1;
+                    if(u<10) {
+                        str2 += String.valueOf("0" + u);
+                    } else {
+                        str2 += String.valueOf(u);
+                    }
+                } else {
+                    str2 += String.valueOf(c);
+                }
+            }
+            v1Str[i]="1"+str1;
+            v2Str[i]="1"+str2;
+            
+            int num1=Integer.parseInt(v1Str[i]);
+            int num2=Integer.parseInt(v2Str[i]);
+            
+            if(num1!=num2) {
+                if(num1>num2) {
+                    return 1;
+                } else {
+                    return 2;
+                }
+            }
+        }
+        return -1;
+    }
+    
+    /**
+     * <p>Counts how many times the substring appears in the larger string.</p>
+     * <p>Pulled from 'commons-lang3-3.8.1'</p>
+     *
+     * <p>A {@code null} or empty ("") String input returns {@code 0}.</p>
+     *
+     * <pre>
+     * StringUtils.countMatches(null, *)       = 0
+     * StringUtils.countMatches("", *)         = 0
+     * StringUtils.countMatches("abba", null)  = 0
+     * StringUtils.countMatches("abba", "")    = 0
+     * StringUtils.countMatches("abba", "a")   = 2
+     * StringUtils.countMatches("abba", "ab")  = 1
+     * StringUtils.countMatches("abba", "xxx") = 0
+     * </pre>
+     *
+     * @param str  the CharSequence to check, may be null
+     * @param sub  the substring to count, may be null
+     * @return the number of occurrences, 0 if either CharSequence is {@code null}
+     * @since 3.0 Changed signature from countMatches(String, String) to countMatches(CharSequence, CharSequence)
+     */
+    public static int countMatches(final CharSequence str, final CharSequence sub) {
+        if (StringUtilities.isNullOrEmpty(str) || StringUtilities.isNullOrEmpty(sub)) {
+            return 0;
+        }
+        int count = 0;
+        int idx = 0;
+        while ((idx = (str.toString().indexOf(sub.toString(), idx))) != -1) {
+            count++;
+            idx += sub.length();
+        }
+        return count;
+    }
+    
+    /**
+     * Override method to allow for less vars to pass
+     * @param str
+     * @param separatorChar
+     * @return
+     */
+    private static String[] split(final String str, final char separatorChar) {
+        return StringUtilities.split(str, separatorChar, false);
+    }
+    
+    /**
+     * Performs the logic for the {@code split} and
+     * {@code splitPreserveAllTokens} methods that do not return a
+     * maximum array length.
+     * <p>Pulled from 'commons-lang3-3.8.1'</p>
+     *
+     * @param str  the String to parse, may be {@code null}
+     * @param separatorChar the separate character
+     * @param preserveAllTokens if {@code true}, adjacent separators are
+     * treated as empty token separators; if {@code false}, adjacent
+     * separators are treated as one separator.
+     * @return an array of parsed Strings, {@code null} if null String input
+     */
+    public static String[] split(final String str, final char separatorChar, final boolean preserveAllTokens) {
+        if (str == null) {
+            return null;
+        }
+        final int len = str.length();
+        if (len == 0) {
+            return EMPTY_STRING_ARRAY;
+        }
+        final List<String> list = new ArrayList<>();
+        int i = 0, start = 0;
+        boolean match = false;
+        boolean lastMatch = false;
+        while (i < len) {
+            if (str.charAt(i) == separatorChar) {
+                if (match || preserveAllTokens) {
+                    list.add(str.substring(start, i));
+                    match = false;
+                    lastMatch = true;
+                }
+                start = ++i;
+                continue;
+            }
+            lastMatch = false;
+            match = true;
+            i++;
+        }
+        if (match || preserveAllTokens && lastMatch) {
+            list.add(str.substring(start, i));
+        }
+        return list.toArray(new String[list.size()]);
+    }
+    
     /**
      * Checks if the one String contains another while ignoring case
      * within a certain position within the String

@@ -470,6 +470,19 @@ public class PermissionUtilities {
             //Insert here if used (marker **)
             PermissionUtilities.makeDialogForSettings(activity, whichPerms);
 
+            //todo added in on 2019-03-21 due to issues mentioned in the makeDialogForSettings function
+            try {
+                handler.post(new Runnable() {
+                                 @Override
+                                 public void run() {
+                                     ActivityCompat.requestPermissions(activity, permStringArray,
+                                             PERMISSIONS_REQUEST_BASE_CALL);
+                                 }
+                             }
+                );
+            } catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 
@@ -525,6 +538,20 @@ public class PermissionUtilities {
                         .onPermissionsRationale(whichPerms);
             } else {
                 PermissionUtilities.makeDialogForSettings(activity, whichPerms);
+    
+                //todo added in on 2019-03-21 due to issues mentioned in the makeDialogForSettings function
+                try {
+                    handler.post(new Runnable() {
+                                     @Override
+                                     public void run() {
+                                         ActivityCompat.requestPermissions(activity, permStringArray,
+                                                 PERMISSIONS_REQUEST_BASE_CALL);
+                                     }
+                                 }
+                    );
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
             }
 
         }
@@ -537,6 +564,10 @@ public class PermissionUtilities {
      * @param perms
      */
     public static void makeDialogForSettings(@NonNull final Activity activity, @NonNull String[] perms){
+        if(true){
+            // TODO: 3/21/19 Removed this for now as the Overlay is causing issues on devices that have dialogs conflicting
+            return;
+        }
         String message = null;
         if(perms != null){
             if(perms.length > 0){
@@ -595,6 +626,10 @@ public class PermissionUtilities {
      * @param perms
      */
     public static void makeDialogForSettings(@NonNull final Activity activity, @NonNull permissionsEnum[] perms){
+        if(true){
+            // TODO: 3/21/19 Removed this for now as the Overlay is causing issues on devices that have dialogs conflicting
+            return;
+        }
         String message = null;
         if(perms != null){
             if(perms.length > 0){

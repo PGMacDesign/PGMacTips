@@ -8,6 +8,7 @@ Version 0.0.77 *(TBD)*
  * Delete: Removed the FunctionalRecyclerview class + Package as it did not serve a purpose anymore.
  * Update: Updated the [Ticker](https://github.com/PGMacDesign/PGMacTips/blob/a0258459d1d1f2df05e3fc97e1da9bc89498b22d/library/src/main/java/com/pgmacdesign/pgmactips/misc/Ticker.java) class to include a public static method that allows changing of the output logging to a single line for less logcat clutter. 
  * New: Added in new Dimentions (@dimen/) vars for the different Text sizes for reference. 
+ * Update: Changed the [Permission Utilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/PermissionUtilities.java) logic to remove the show rationale dialog as it was causing problems for people who had other dialogs in place to manage it. 
  
 Version 0.0.76 *(2019-03-08)*
 ----------------------------
