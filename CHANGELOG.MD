@@ -1,7 +1,13 @@
 Change Log
 ==========
 
-Version 0.0.77 *(TBD)*
+
+Version 0.0.78 *(TBD)*
+----------------------------
+
+ * 
+ 
+Version 0.0.77 *(2019-03-21)*
 ----------------------------
 
  * Update: Changed the logic for [PGConnectivityReceiver](https://github.com/PGMacDesign/PGMacTips/tree/master/library/src/main/java/com/pgmacdesign/pgmactips/broadcastreceivers) to remove the camel-casing (broadcastReceivers --> broadcastreceivers). Note that this WILL break any manifest files that declare the [Connectivity Receiver](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/broadcastreceivers/PGConnectivityReceiver.java) to allow more than one listener to be present in the class. 

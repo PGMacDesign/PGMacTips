@@ -29,7 +29,7 @@ allprojects {
 And include this in your dependencies section of your module .gradle file:
 
 ```java
-implementation ('com.github.PGMacDesign:PGMacTips:0.0.76')
+implementation ('com.github.PGMacDesign:PGMacTips:0.0.77')
 ```
 
 Having trouble with Jitpack? [This link](https://jitpack.io/#pgmacdesign/PGMacTips) here will show what is going on with the current build as well as give you instructions on integrating Jitpack into your project. 
@@ -139,6 +139,21 @@ As this library uses multiple nested dependencies, there can sometimes be confli
 When all of these recommendations below fail, try simply invalidating caches and restarting (<i>File --> 'Incalidate Caches / Restart...'</i>).
 
 Note, many of the errors / issues here have been resolved, but I am leaving them in for future reference.
+
+### DexArchiveBuilderException
+
+Occassionally you will run into a Dex Archive Builder Exception `Error:com.android.builder.dexing.DexArchiveBuilderException` or something similar to that error message where it will prevent you from running a build, but will sync gradle just fine. This is usually caused by conflicts relating to warring dependencies. 
+
+There is one thing you can do though which may resolve the issue without much effort. In your module level build.gradle file, add this code underneath the *Android* section:
+
+```
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    } 
+```
+
+Try that before you attempt to dig through your dependencies for conflicts. 
 
 ### Manifest merger errors 
 
