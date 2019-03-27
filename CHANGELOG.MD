@@ -5,7 +5,8 @@ Change Log
 Version 0.0.78 *(TBD)*
 ----------------------------
 
- * 
+ * Update: Fixed a bug in [EncryptionUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/EncryptionUtilities.java) relating to devices that don't support the 256 encryption algorithm
+ * New: Added in a new class, [DynamicShortcutManager](link tbd) as a boilerplate saver / code wrapper for the [Android Shortcuts](https://developer.android.com/guide/topics/ui/shortcuts) api. 
  
 Version 0.0.77 *(2019-03-21)*
 ----------------------------

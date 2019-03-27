@@ -194,7 +194,12 @@ public class EncryptionUtilities {
         if (password == null || salt == null || keyLen <= 0) {
             throw new IllegalArgumentException();
         }
-        SecretKeyFactory factory = SecretKeyFactory.getInstance(PUBLIC_KEY_CRYPT_STANDARD2);
+        SecretKeyFactory factory;
+        try {
+            factory = SecretKeyFactory.getInstance(PUBLIC_KEY_CRYPT_STANDARD2);
+        } catch (NoSuchAlgorithmException e){
+            factory = SecretKeyFactory.getInstance(PUBLIC_KEY_CRYPT_STANDARD);
+        }
         KeySpec spec = new PBEKeySpec(password, salt, PBKDF2_ITERATIONS, keyLen);
         SecretKey pbeKey = factory.generateSecret(spec);
         
