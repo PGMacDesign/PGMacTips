@@ -545,10 +545,6 @@ public class DynamicShortcutManager {
 			return classToOpen;
 		}
 		
-		public void setClassToOpen(Class classToOpen) {
-			this.classToOpen = classToOpen;
-		}
-		
 		public String getShortcutString() {
 			return shortcutString;
 		}
@@ -569,10 +565,6 @@ public class DynamicShortcutManager {
 			return shortcutId;
 		}
 		
-		public void setShortcutId(String shortcutId) {
-			this.shortcutId = shortcutId;
-		}
-		
 		public int getResourceDrawableId() {
 			return resourceDrawableId;
 		}
@@ -585,9 +577,6 @@ public class DynamicShortcutManager {
 			return customUriToOpen;
 		}
 		
-		public void setCustomUriToOpen(Uri customUriToOpen) {
-			this.customUriToOpen = customUriToOpen;
-		}
 	}
 	
 	//endregion
