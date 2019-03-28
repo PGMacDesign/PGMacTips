@@ -140,26 +140,29 @@ public class FileUtilities {
         if(inputAmount <= 0){
             return inputAmount;
         }
+        if(inputType == null){
+            inputType = ByteSizeNames.Bytes;
+        }
         //Loop through and determine type, then calculate bytes and return
         switch (inputType){
             case Bytes:
                 return  inputAmount;
             case Kilobytes:
-                return (inputAmount * 1024);
+                return (inputAmount * 1024D);
             case Megabytes:
-                return (inputAmount * 1024 * 1024);
+                return (inputAmount * 1024D * 1024D);
             case Gigabytes:
-                return (inputAmount * 1024 * 1024 * 1024);
+                return (inputAmount * 1024D * 1024D * 1024D);
             case Terabytes:
-                return (inputAmount * 1024 * 1024 * 1024 * 1024);
+                return (inputAmount * 1024D * 1024D * 1024D * 1024D);
             case PetaBytes:
-                return (inputAmount * 1024 * 1024 * 1024 * 1024 * 1024);
+                return (inputAmount * 1024D * 1024D * 1024D * 1024D * 1024D);
             case Exabytes:
-                return (inputAmount * 1024 * 1024 * 1024 * 1024 * 1024 * 1024);
+                return (inputAmount * 1024D * 1024D * 1024D * 1024D * 1024D * 1024D);
             case ZettaBytes:
-                return (inputAmount * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024);
+                return (inputAmount * 1024D * 1024D * 1024D * 1024D * 1024D * 1024D * 1024D);
             case Yottabytes:
-                return (inputAmount * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024);
+                return (inputAmount * 1024D * 1024D * 1024D * 1024D * 1024D * 1024D * 1024D * 1024D);
             default:
                 return inputAmount;
         }

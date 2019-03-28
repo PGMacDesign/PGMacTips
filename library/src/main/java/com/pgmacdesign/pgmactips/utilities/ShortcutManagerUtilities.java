@@ -13,6 +13,7 @@ import android.os.Bundle;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,9 +30,10 @@ import androidx.annotation.RequiresApi;
  * Note that I made this instead of using Shortbread because I needed to be able to declare the
  * shortcuts dynamically on the fly within the app and the library did not support that.
  */
-public class DynamicShortcutManager {
+public class ShortcutManagerUtilities {
 	//region Static final Strings
 	public static final String SHORTCUT_BUNDLE_KEY = "pb_shortcut_key";
+	public static final String SHORTCUT_BUNDLE_ADDITIONAL_DATA = "pb_xtra_data_key";
 	//endregion
 	
 	//region Public Accessors to Set && Add Shortcuts
@@ -315,6 +317,9 @@ public class DynamicShortcutManager {
 			shouldAddClearTask = true;
 			intent = new Intent(Intent.ACTION_MAIN, Uri.EMPTY, context, shortcutPojo.getClassToOpen());
 			intent.putExtra(SHORTCUT_BUNDLE_KEY, shortcutPojo.getShortcutId());
+			if(!StringUtilities.isNullOrEmpty(shortcutPojo.getAdditionalDataForIntent())) {
+				intent.putExtra(SHORTCUT_BUNDLE_ADDITIONAL_DATA, shortcutPojo.getAdditionalDataForIntent());
+			}
 		} else {
 			throw buildMissingRequiredFieldNotIdException();
 		}
@@ -341,15 +346,13 @@ public class DynamicShortcutManager {
 	//endregion
 	
 	//region Public Utilities
+
 	
 	/**
 	 * Gets the shortcut manager {@link ShortcutManager}
 	 * Note that ideally you should pass the {@link Context#getApplicationContext()} instead of
 	 * the Activity context.
-	 */
-	/**
-	 * Get the {@link ShortcutManager}
-	 * @param context Context
+	 * @param context Context {@link Context#getApplicationContext()}
 	 * @return Shortcut manager, but null if it cannot get it.
 	 */
 	@RequiresApi(api = Build.VERSION_CODES.O)
@@ -398,6 +401,42 @@ public class DynamicShortcutManager {
 		try {
 			Bundle bundle = intent.getExtras();
 			String str = bundle.getString(SHORTCUT_BUNDLE_KEY);
+			if(!StringUtilities.isNullOrEmpty(str)) {
+				return str;
+			}
+		} catch (Exception e){}
+		return null;
+	}
+	
+	/**
+	 * Gets the additional data {@link ShortcutPojo#additionalDataForIntent} String
+	 * @param activity
+	 * @return
+	 */
+	@RequiresApi(api = Build.VERSION_CODES.O)
+	public static String getAdditionalDataString(@NonNull Activity activity){
+		if (activity != null) {
+			return getLastClickedShortcut(activity.getIntent());
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the additional data {@link ShortcutPojo#additionalDataForIntent} String
+	 * @param intent the intent received from {@link Activity#getIntent()}
+	 * @return
+	 */
+	@RequiresApi(api = Build.VERSION_CODES.O)
+	public static String getAdditionalDataString(@NonNull Intent intent){
+		try {
+			String str = intent.getStringExtra(SHORTCUT_BUNDLE_ADDITIONAL_DATA);
+			if(!StringUtilities.isNullOrEmpty(str)){
+				return str;
+			}
+		} catch (Exception e){}
+		try {
+			Bundle bundle = intent.getExtras();
+			String str = bundle.getString(SHORTCUT_BUNDLE_ADDITIONAL_DATA);
 			if(!StringUtilities.isNullOrEmpty(str)) {
 				return str;
 			}
@@ -492,6 +531,17 @@ public class DynamicShortcutManager {
 		private int resourceDrawableId;
 		@SerializedName("rankInList")
 		private int rankInList;
+		/**
+		 * Additional data to pass in for your use. Tip, if you want to pass a larger amount of
+		 * data, just convert an object to a JSON String using
+		 * {@link GsonUtilities#convertObjectToJson(Object, Type)} or
+		 * {@link GsonUtilities#convertObjectToJson(Object, Class)}
+		 * Note that it has a cap of 500kb in size as per this link:
+		 * https://stackoverflow.com/a/18030595/2480714
+		 * To check length of passed String, use {@link StringUtilities#getStringSizeInBytes(String str)}
+		 */
+		@SerializedName("additionalDataForIntent")
+		private String additionalDataForIntent;
 		@SerializedName("customUriToOpen")
 		private Uri customUriToOpen;
 		@SerializedName("classToOpen")
@@ -523,6 +573,21 @@ public class DynamicShortcutManager {
 			this.shortcutId = shortcutId;
 			this.customUriToOpen = customUriToOpen;
 			this.classToOpen = null;
+		}
+		
+		public String getAdditionalDataForIntent() {
+			return additionalDataForIntent;
+		}
+		
+		public void setAdditionalDataForIntent(String additionalDataForIntent) {
+			if(!StringUtilities.isNullOrEmpty(additionalDataForIntent)){
+				long dataLength = StringUtilities.getSizeInBytes(additionalDataForIntent);
+				if(dataLength > (FileUtilities.convertToBytes(500, FileUtilities.ByteSizeNames.Kilobytes))){
+					L.m("String data passed > 500KB, (Actual size == " + dataLength + ") unable to save");
+					return;
+				}
+			}
+			this.additionalDataForIntent = additionalDataForIntent;
 		}
 		
 		public int[] getIntentFlagsToAdd() {

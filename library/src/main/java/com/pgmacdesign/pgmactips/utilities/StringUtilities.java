@@ -2091,5 +2091,25 @@ public class StringUtilities {
     public static String removeNewLineCharacters(@NonNull String str){
         return convertStringToSingleLine(str);
     }
+    
+    /**
+     * Get the number of bytes the String is using up.
+     * Pulled from: https://stackoverflow.com/a/18030595/2480714
+     * @param str String to check
+     * @return Value (in bytes) that the String is using
+     */
+    public static long getStringSizeInBytes(@Nullable String str){
+        if(StringUtilities.isNullOrEmpty(str)){
+            return 0;
+        }
+        return (32 + str.length() * 2);
+    }
+    
+    /**
+     * Overloaded method for naming scheme reference. (Easier for me to remember!)
+     */
+    public static long getSizeInBytes(@Nullable String str){
+        return getStringSizeInBytes(str);
+    }
 }
 
