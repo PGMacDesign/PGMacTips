@@ -5,6 +5,11 @@ Change Log
 Version 0.0.79 *(TBD)*
 ----------------------------
 
+* TBD
+
+Version 0.0.79 *(2019-03-28)*
+----------------------------
+
  * Update: Updates to the [ShortcutManagerUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ShortcutManagerUtilities.java) class to include additional data save options and a quick bug fix. 
 
 Version 0.0.78 *(2019-03-27)*
