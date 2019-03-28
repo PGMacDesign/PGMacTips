@@ -416,7 +416,7 @@ public class ShortcutManagerUtilities {
 	@RequiresApi(api = Build.VERSION_CODES.O)
 	public static String getAdditionalDataString(@NonNull Activity activity){
 		if (activity != null) {
-			return getLastClickedShortcut(activity.getIntent());
+			return getAdditionalDataString(activity.getIntent());
 		}
 		return null;
 	}
