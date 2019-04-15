@@ -1,5 +1,7 @@
 package com.pgmacdesign.pgmactips.utilities;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -7,17 +9,22 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import android.util.Base64;
 import android.widget.ImageView;
@@ -53,6 +60,8 @@ public class ImageUtilities {
     public static final String INVALID_PIXEL_POSITIONS =
             "Invalid pixel positions. Please check the passed params and start again";
 
+    //region Picasso
+    
     //region Picasso Circular Images With Caching
     /**
      * Set a circular image into a view and set caching.
@@ -418,6 +427,8 @@ public class ImageUtilities {
 
     //endregion
 
+    //endregion
+    
     //region Bitmap Operations
 
     /**
@@ -949,13 +960,17 @@ public class ImageUtilities {
      * @return Drawable
      * @throws NullPointerException, if it fails, throws a null pointer
      */
-    public static Drawable colorDrawable(@NonNull Drawable drawable, int colorToSet) {
+    public static Drawable colorDrawable(@NonNull Context context, @NonNull Drawable drawable, int colorToSet) {
         try {
-            drawable.mutate().setColorFilter(colorToSet, PorterDuff.Mode.MULTIPLY);
+            drawable.mutate().setColorFilter(ContextCompat.getColor(context, colorToSet), PorterDuff.Mode.SRC_ATOP);
             return drawable;
         } catch (Exception e) {
-            e.printStackTrace();
-            return drawable;
+            try {
+                drawable.mutate().setColorFilter(colorToSet, PorterDuff.Mode.SRC_ATOP);
+                return drawable;
+            } catch (Exception e1){
+                return drawable;
+            }
         }
     }
 
@@ -967,19 +982,253 @@ public class ImageUtilities {
      * @return Drawable
      * @throws NullPointerException, if it fails, throws a null pointer
      */
-    public static Drawable colorDrawable(int drawableId, int colorToSet, Context context) {
+    public static Drawable colorDrawable(@NonNull Context context, int drawableId, int colorToSet) {
         try {
             Drawable drawable = ContextCompat.getDrawable(context, drawableId);
-            drawable.mutate().setColorFilter(colorToSet, PorterDuff.Mode.MULTIPLY);
+            drawable.mutate().setColorFilter(ContextCompat.getColor(context, colorToSet), PorterDuff.Mode.SRC_ATOP);
             return drawable;
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            try {
+                Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+                drawable.mutate().setColorFilter(colorToSet, PorterDuff.Mode.SRC_ATOP);
+                return drawable;
+            } catch (Exception e1){
+                return null;
+            }
         }
     }
-
+    
+    /**
+     * Adjust the drawable color. Note that for SVG Vector Drawables, it is recommended to use
+     * {@link ImageUtilities#changeViewColor(Context, ImageView, int)}
+     *
+     * @param context    Context
+     * @param drawableId Drawable ID, IE, R.drawable.your_icon or R.mipmap.your_icon
+     * @param colorId    The color ID, IE, R.color.black or android.R.color.red
+     * @return Augmented {@link Drawable}
+     * @throws android.content.res.Resources.NotFoundException If the resources cannot be found, throws exception
+     */
+    public static Drawable changeDrawableColor(@NonNull Context context,
+                                               int drawableId,
+                                               int colorId) throws android.content.res.Resources.NotFoundException {
+        if (context == null) {
+            return null;
+        }
+        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+        if (drawable == null) {
+            throw new Resources.NotFoundException("Drawable not found");
+        }
+        int color;
+        try {
+            color = ContextCompat.getColor(context, colorId);
+        } catch (Resources.NotFoundException nfe){
+            color = colorId;
+        }
+        // TODO: 4/10/19 this mutate() call may need to be in the original instantiation
+        drawable = drawable.mutate();
+        drawable.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP));
+        return drawable;
+    }
+    
+    /**
+     * Adjust the drawable color. Note that for SVG Vector Drawables, it is recommended to use
+     * {@link ImageUtilities#changeViewColor(Context, ImageView, int)}
+     *
+     * @param context    Context
+     * @param drawableId Drawable ID, IE, R.drawable.your_icon or R.mipmap.your_icon
+     * @param hexColor   The hex color to use, IE, #ffffff or #f0f0f0
+     * @return Augmented {@link Drawable}
+     * @throws android.content.res.Resources.NotFoundException If the resources cannot be found, throws exception
+     */
+    public static Drawable changeDrawableColor(@NonNull Context context,
+                                               int drawableId,
+                                               @NonNull String hexColor) throws android.content.res.Resources.NotFoundException {
+        if (context == null) {
+            return null;
+        }
+        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+        if (drawable == null) {
+            throw new Resources.NotFoundException("Drawable not found");
+        }
+        int colorId;
+        try {
+            colorId = Color.parseColor(hexColor);
+        } catch (IllegalArgumentException ile) {
+            //May change this logic in the future, changing it from an ile to a resource exception so the end-user only has to account for one exception
+            throw new Resources.NotFoundException("The Hex color passed could not be parsed");
+        }
+        // TODO: 4/10/19 this mutate() call may need to be in the original instantiation
+        drawable = drawable.mutate();
+        drawable.setColorFilter(new PorterDuffColorFilter(colorId, PorterDuff.Mode.SRC_ATOP));
+        return drawable;
+    }
+    
     //endregion
 
+    //region ValueAnimator (Color Changing Animation of an Image View)
+    
+    /**
+     * Build an Image Color Animator {@link ValueAnimator}
+     * Code pulled from - https://medium.com/@ali.muzaffar/android-change-colour-of-drawable-asset-programmatically-with-animation-e42ca595fabb
+     *
+     * @param imageView The imageview to adjust
+     * @param context   The context
+     * @param colorId   The color (IR  R.color.black)
+     * @return {@link ValueAnimator} object. to start the animation / operation, call
+     * {@link ValueAnimator#start()}
+     */
+    public static ValueAnimator buildImageColorAnimator(@NonNull final ImageView imageView,
+                                                        @NonNull Context context, int colorId) {
+        return buildImageColorAnimator(imageView, context, colorId,
+                null, null, null);
+    }
+    
+    /**
+     * Build an Image Color Animator {@link ValueAnimator}
+     * Code pulled from - https://medium.com/@ali.muzaffar/android-change-colour-of-drawable-asset-programmatically-with-animation-e42ca595fabb
+     *
+     * @param imageView                         The imageview to adjust
+     * @param context                           The context
+     * @param colorId                           The color (IR  R.color.black)
+     * @param updateListener                    Optional update listener once the animation is complete. Note, if this
+     *                                          is customized, it is recommended that you add in this code:
+     *                                          ```
+     *                                          float multiplier = (Float) animation.getAnimatedValue();
+     *                                          int alphaColor = adjustAlpha(color, multiplier);
+     *                                          imageView.setColorFilter(alphaColor, PorterDuff.Mode.SRC_ATOP);
+     *                                          if(multiplier == 0.0){
+     *                                          imageView.setColorFilter(null);
+     *                                          }
+     *                                          ```
+     * @param durationOfAnimationInMilliseconds Number of milliseconds for animation to take place.
+     *                                          If null or zero, no animation will take place
+     * @param animationRepeatCount              Number of times the animation should repeat
+     * @return {@link ValueAnimator} object. to start the animation / operation, call
+     * {@link ValueAnimator#start()}
+     */
+    public static ValueAnimator buildImageColorAnimator(@NonNull final ImageView imageView,
+                                                        @NonNull Context context, int colorId,
+                                                        @Nullable ValueAnimator.AnimatorUpdateListener updateListener,
+                                                        @Nullable Long durationOfAnimationInMilliseconds,
+                                                        @Nullable Integer animationRepeatCount) {
+        if (imageView == null || context == null) {
+            return null;
+        }
+        int color1;
+        try {
+            color1 = ContextCompat.getColor(context, colorId);
+        } catch (Resources.NotFoundException nfe) {
+            color1 = colorId;
+        }
+        final int color = color1;
+        final ValueAnimator valueAnimator = ObjectAnimator.ofFloat(0F, 1F);
+        if (updateListener == null) {
+            updateListener = new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    try {
+                        float multiplier = (Float) animation.getAnimatedValue();
+                        int alphaColor = adjustAlpha(color, multiplier);
+                        imageView.setColorFilter(alphaColor, PorterDuff.Mode.SRC_ATOP);
+                        if (multiplier == 0.0) {
+                            imageView.setColorFilter(null);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+        }
+        valueAnimator.addUpdateListener(updateListener);
+        if (durationOfAnimationInMilliseconds == null) {
+            durationOfAnimationInMilliseconds = -1L;
+        }
+        if (durationOfAnimationInMilliseconds <= 0) {
+            valueAnimator.setDuration(0);
+            valueAnimator.setRepeatCount(-1);
+            valueAnimator.setRepeatMode(ValueAnimator.REVERSE);
+            return valueAnimator;
+        }
+        valueAnimator.setDuration(durationOfAnimationInMilliseconds);
+        if (animationRepeatCount == null) {
+            animationRepeatCount = -1;
+        }
+        valueAnimator.setRepeatCount(animationRepeatCount);
+        valueAnimator.setRepeatMode(ValueAnimator.REVERSE);
+        return valueAnimator;
+    }
+    
+    //endregion
+    
+    //region ImageView and TextView Color Changing
+    
+
+    
+    /**
+     * Adjust the drawable color. This uses the setTint() logic and requires an API of 21 or
+     * higher to work. Note that this is ideal for augmenting the SVG Vector Drawables
+     *
+     * @param context Context
+     * @param iv      the ImageView you are using
+     * @param colorId The color ID, IE, R.color.black or android.R.color.red
+     * @return Augmented {@link Drawable}
+     * @throws android.content.res.Resources.NotFoundException If the resources cannot be found, throws exception
+     */
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public static Drawable changeViewColor(@NonNull Context context,
+                                           @NonNull ImageView iv,
+                                           int colorId) throws android.content.res.Resources.NotFoundException {
+        if (context == null || iv == null) {
+            return null;
+        }
+        Drawable drawable = iv.getDrawable();
+        if (drawable == null) {
+            drawable = new ColorDrawable();
+        }
+        int color;
+        try {
+            color = ContextCompat.getColor(context, colorId);
+        } catch (Resources.NotFoundException nfe){
+            color = colorId;
+        }
+        drawable.setTint(color);
+        return drawable;
+    }
+    
+    /**
+     * Adjust the drawable color. This uses the setTint() logic and requires an API of 21 or
+     * higher to work. Note that this is ideal for augmenting the SVG Vector Drawables
+     *
+     * @param context  Context
+     * @param iv       the ImageView you are using
+     * @param hexColor The hex color to use, IE, #ffffff or #f0f0f0
+     * @return Augmented {@link Drawable}
+     * @throws android.content.res.Resources.NotFoundException If the resources cannot be found, throws exception
+     */
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public static Drawable changeViewColor(@NonNull Context context,
+                                           @NonNull ImageView iv,
+                                           String hexColor) throws android.content.res.Resources.NotFoundException {
+        if (context == null || iv == null) {
+            return null;
+        }
+        Drawable drawable = iv.getDrawable();
+        if (drawable == null) {
+            drawable = new ColorDrawable();
+        }
+        int colorId;
+        try {
+            colorId = Color.parseColor(hexColor);
+        } catch (IllegalArgumentException ile) {
+            //May change this logic in the future, changing it from an ile to a resource exception so the end-user only has to account for one exception
+            throw new Resources.NotFoundException("The Hex color passed could not be parsed");
+        }
+        drawable.setTint(colorId);
+        return drawable;
+    }
+    
+    //endregion
+    
     //region Misc Operations
 
     /**
@@ -1025,11 +1274,27 @@ public class ImageUtilities {
     }
 
     //endregion
-
-    ///////////////////////////////////////////
-    //Base64 String Image --> String Encoding//
-    ///////////////////////////////////////////
-
+    
+    //region Alpha Alterations
+    
+    /**
+     * Adjust the alpha of a color by the factor passed
+     *
+     * @param color  Color to adjust
+     * @param factor Factor to adjust it by. If 0 is passed, means the overlay is transparent.
+     *               If 1 is passed, means the value is the actual color hex code
+     * @return Adjusted color int
+     */
+    public static int adjustAlpha(int color, float factor) {
+        int alpha = Math.round(Color.alpha(color) * factor);
+        int red = Color.red(color);
+        int green = Color.green(color);
+        int blue = Color.blue(color);
+        return Color.argb(alpha, red, green, blue);
+    }
+    
+    //endregion
+    
     //region Base64 Encoding
 
     /**

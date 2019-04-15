@@ -60,11 +60,11 @@ public class SystemDrawableUtilities {
         try {
             upArrow = ContextCompat.getDrawable(context, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         } catch (Exception e){
-            upArrow = ContextCompat.getDrawable(context, R.drawable.abc_ic_ab_back_material);
-
+            e.printStackTrace();
+            upArrow = null;
         }
         if(upArrow == null){
-            upArrow = ContextCompat.getDrawable(context, R.drawable.abc_ic_ab_back_material);
+            return null;
         }
         if(colorToSet != -2){
             upArrow.setColorFilter(colorToSet, PorterDuff.Mode.SRC_ATOP);

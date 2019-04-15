@@ -214,8 +214,8 @@ public class DialogUtilities {
 //        }
         webView.loadUrl(webUrlToLoad);
         if(Build.VERSION.SDK_INT >= 23) {
-            webView.setForegroundGravity(
-                    Gravity.CENTER_HORIZONTAL | Gravity.CENTER_HORIZONTAL | Gravity.CENTER);
+            webView.setForegroundGravity(Gravity.CENTER_HORIZONTAL |
+                    Gravity.CENTER_VERTICAL | Gravity.CENTER);
         }
         builder.setView(webView);
         builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {

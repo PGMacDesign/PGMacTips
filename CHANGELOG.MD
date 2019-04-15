@@ -5,7 +5,8 @@ Change Log
 Version 0.0.81 *(TBD)*
 ----------------------------
 
-* TBD
+* Update: Added in some new features to the [ImageUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ImageUtilities.java) to allow for drawable coloring, imageview alterations, and a few other minor operations. 
+* 
 
 Version 0.0.80 *(2019-03-28)*
 ----------------------------

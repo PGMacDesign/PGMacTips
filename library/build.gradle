@@ -81,7 +81,6 @@ android {
         //Picasso. Link: https://github.com/square/picasso
         api 'com.squareup.picasso:picasso:2.71828'
 
-
         //Retrofit, Retrofit Converters, and OKHTTP.
         //Retrofit - https://github.com/square/retrofit
         //OKHttp - https://github.com/square/okhttp
