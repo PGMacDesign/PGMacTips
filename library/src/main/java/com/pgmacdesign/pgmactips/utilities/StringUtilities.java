@@ -1190,7 +1190,24 @@ public class StringUtilities {
         }
         return false;
     }
-
+    
+    /**
+     * Checks if the passed String is null or empty
+     * @param strs Strings to check. If any of them are null or empty, will return true
+     * @return Boolean, true if it is null or empty, false if it is not.
+     */
+    public static boolean isNullOrEmpty(@Nullable String... strs){
+        for(String str : strs){
+            if(str == null){
+                return true;
+            }
+            if(str.isEmpty()){
+                return true;
+            }
+        }
+        return false;
+    }
+    
     /**
      * Checks if the passed String is null or empty
      * @param str String to check
@@ -1201,12 +1218,6 @@ public class StringUtilities {
             return true;
         }
         if(str.isEmpty()){
-            return true;
-        }
-        if(str.length() == 0){
-            return true;
-        }
-        if(str.equalsIgnoreCase(" ")){
             return true;
         }
         return false;

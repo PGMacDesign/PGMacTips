@@ -5,8 +5,8 @@ Change Log
 Version 0.0.81 *(TBD)*
 ----------------------------
 
-* Update: Added in some new features to the [ImageUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ImageUtilities.java) to allow for drawable coloring, imageview alterations, and a few other minor operations. 
-* 
+* New: Added in some new features to the [ImageUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ImageUtilities.java) to allow for drawable coloring, imageview alterations, and a few other minor operations. 
+* New: Added in an overloaded method for `"isNullOrEmpty(String... strs)"` in the [StringUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/StringUtilities.java) class for easier checking of multiple values.
 
 Version 0.0.80 *(2019-03-28)*
 ----------------------------
@@ -132,7 +132,7 @@ Version 0.0.61 *(2018-07-24)*
 ----------------------------
 
  * Fix: Fixed bugs relating to [RetrofitParser](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/networkclasses/retrofitutilities/RetrofitParser.java) and updated the responses. 
- * New: Added in some new StringUtilities to calculate the [LevenshteinDistance](https://en.wikipedia.org/wiki/Levenshtein_distance)
+ * New: Added in some new [StringUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/StringUtilities.java) to calculate the [LevenshteinDistance](https://en.wikipedia.org/wiki/Levenshtein_distance)
  
 Version 0.0.60 *(2018-07-10)*
 ----------------------------

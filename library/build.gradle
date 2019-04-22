@@ -76,7 +76,7 @@ android {
         api 'com.android.volley:volley:1.1.0'
 
         //GSON. Link https://github.com/google/gson
-        api 'com.google.code.gson:gson:2.8.2'
+        api 'com.google.code.gson:gson:2.8.5'
 
         //Picasso. Link: https://github.com/square/picasso
         api 'com.squareup.picasso:picasso:2.71828'
