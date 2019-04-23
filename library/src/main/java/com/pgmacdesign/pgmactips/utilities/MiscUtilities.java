@@ -97,7 +97,46 @@ public class MiscUtilities {
         }
         return false;
     }
-
+    
+    /**
+     * Overloaded for naming simplicity (and because I forget the names sometimes)
+     * Checks a list for whether or not the passed position is valid within it (IE, passing 10
+     * in a list that has a size of 4 would return false. Passing 2 in a list of size 3 would
+     * return true. Passing -1 would always return false.)
+     * @param myList List to check
+     * @param posToCheck int position to check
+     * @return Boolean, true if it is a valid position (won't throw {@link ArrayIndexOutOfBoundsException}).
+     *         Will also return false if the list is of size 0.
+     */
+    public static boolean isValidPosInList(List<?> myList, int posToCheck){
+        return isValidPositionInList(myList, posToCheck);
+    }
+    
+    /**
+     * Checks a list for whether or not the passed position is valid within it (IE, passing 10
+     * in a list that has a size of 4 would return false. Passing 2 in a list of size 3 would
+     * return true. Passing -1 would always return false.)
+     * @param myList List to check
+     * @param posToCheck int position to check
+     * @return Boolean, true if it is a valid position (won't throw {@link ArrayIndexOutOfBoundsException}).
+     *         Will also return false if the list is of size 0.
+     */
+    public static boolean isValidPositionInList(List<?> myList, int posToCheck){
+        if(myList == null){
+            return false;
+        }
+        if(myList.size() <= 0){
+            return false;
+        }
+        if(posToCheck < 0){
+            return false;
+        }
+        if(posToCheck >= myList.size()){
+            return false;
+        }
+        return true;
+    }
+    
     /**
      * Checks system preferences for if user has 24 hour (18:04 == 6:04 pm) in their settings
      * @param context {@link Context}
