@@ -82,7 +82,47 @@ public class MiscUtilities {
         }
         return false;
     }
-
+    
+    
+    /**
+     * Overloaded for naming simplicity (and because I forget the names sometimes)
+     * Checks an array for whether or not the passed position is valid within it (IE, passing 10
+     * in a array that has a size of 4 would return false. Passing 2 in a array of size 3 would
+     * return true. Passing -1 would always return false.)
+     * @param myArray Array to check
+     * @param posToCheck int position to check
+     * @return Boolean, true if it is a valid position (won't throw {@link ArrayIndexOutOfBoundsException}).
+     *         Will also return false if the array is of size 0.
+     */
+    public static <T extends Object> boolean isValidPosition(T[] myArray, int posToCheck){
+        return isValidPositionInArray(myArray, posToCheck);
+    }
+    
+    /**
+     * Checks an array for whether or not the passed position is valid within it (IE, passing 10
+     * in a array that has a size of 4 would return false. Passing 2 in a array of size 3 would
+     * return true. Passing -1 would always return false.)
+     * @param myArray Array to check
+     * @param posToCheck int position to check
+     * @return Boolean, true if it is a valid position (won't throw {@link ArrayIndexOutOfBoundsException}).
+     *         Will also return false if the array is of size 0.
+     */
+    public static <T extends Object> boolean isValidPositionInArray(T[] myArray, int posToCheck){
+        if(myArray == null){
+            return false;
+        }
+        if(myArray.length <= 0){
+            return false;
+        }
+        if(posToCheck < 0){
+            return false;
+        }
+        if(posToCheck >= myArray.length){
+            return false;
+        }
+        return true;
+    }
+    
     /**
      * Checks a list for either being empty or containing objects within it
      * @param myList List to check
@@ -108,7 +148,7 @@ public class MiscUtilities {
      * @return Boolean, true if it is a valid position (won't throw {@link ArrayIndexOutOfBoundsException}).
      *         Will also return false if the list is of size 0.
      */
-    public static boolean isValidPosInList(List<?> myList, int posToCheck){
+    public static boolean isValidPosition(List<?> myList, int posToCheck){
         return isValidPositionInList(myList, posToCheck);
     }
     
