@@ -14,6 +14,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
@@ -51,6 +52,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by pmacdowell on 8/15/2016.
@@ -950,8 +953,52 @@ public class ImageUtilities {
     }
 
     //endregion
-
+    
     //region Drawable Operations
+    
+    /**
+     * Convert a Drawable to a Bitmap
+     * @param drawableResId Drawable resource ID (IE: R.drawable.something)
+     * @return Converted Bitmap
+     */
+    public static Bitmap convertDrawableToBitmap(@Nonnull Context context, int drawableResId){
+        try {
+            return convertDrawableToBitmap(ContextCompat.getDrawable(context, drawableResId));
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    /**
+     * Convert a Drawable to a Bitmap
+     * @param drawable Drawable to convert
+     * @return Converted Bitmap
+     */
+    public static Bitmap convertDrawableToBitmap(@Nonnull Drawable drawable){
+        if(drawable == null){
+            return null;
+        }
+        Bitmap bitmap = null;
+        if (drawable instanceof BitmapDrawable) {
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+            if(bitmapDrawable.getBitmap() != null) {
+                return bitmapDrawable.getBitmap();
+            }
+        }
+        
+        if(drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+        } else {
+            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        }
+        
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        return bitmap;
+    }
+    
     /**
      * Set the drawable to a specific color and return it
      *

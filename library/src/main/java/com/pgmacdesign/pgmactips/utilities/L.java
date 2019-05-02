@@ -1,5 +1,6 @@
 package com.pgmacdesign.pgmactips.utilities;
 
+import android.app.Activity;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import android.util.Log;
@@ -80,23 +81,47 @@ public class L {
 
 
     /**
-     * Short toast
+     * Short toast.
+     * Deprecated on 2019-05-01 to use Activity to force a run on the main UI thread
      * @param context context
      * @param myObject String to print (If OTHER things are passed in, it converts it to a String first)
      */
+    @Deprecated
     public static <E> void toast(@NonNull Context context, E myObject){
         if(context == null){
             context = getContext();
         }
         String str = myObject + ""; //Cast it to a String
+        
         Toast.makeText(context, str, Toast.LENGTH_SHORT).show();
+    }
+    
+    /**
+     * Short toast
+     * @param activity Activity to force a {@link Activity#runOnUiThread(Runnable)} call
+     * @param myObject String to print (If OTHER things are passed in, it converts it to a String first)
+     */
+    public static <E> void toast(@NonNull final Activity activity, E myObject){
+        if(activity == null){
+            return;
+        }
+        final String str = myObject + ""; //Cast it to a String
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(activity.getApplicationContext(), str, Toast.LENGTH_SHORT).show();
+            }
+        });
+        
     }
 
     /**
      * Long toast
+     * Deprecated on 2019-05-01 to use Activity to force a run on the main UI thread
      * @param context context
      * @param myObject String to print (If OTHER things are passed in, it converts it to a String first)
      */
+    @Deprecated
     public static <E> void Toast(@NonNull Context context, E myObject){
         if(context == null){
             context = getContext();
@@ -104,19 +129,38 @@ public class L {
         String str = myObject + ""; //Cast it to a String
         Toast.makeText(context, str, Toast.LENGTH_LONG).show();
     }
-
+    
     /**
-     * Long toast. Overloaded to include option to alter length
-     * @param context context
+     * Long toast
+     * @param activity Activity to force a {@link Activity#runOnUiThread(Runnable)} call
      * @param myObject String to print (If OTHER things are passed in, it converts it to a String first)
      */
-    public static <E> void Toast(@NonNull Context context, E myObject, int length){
-        if(context == null){
-            context = getContext();
+    public static <E> void Toast(final @NonNull Activity activity, E myObject){
+        if(activity == null){
+            return;
         }
-        String str = myObject + ""; //Cast it to a String
-        Toast.makeText(context, str, length).show();
+        final String str = myObject + ""; //Cast it to a String
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(activity.getApplicationContext(), str, Toast.LENGTH_LONG).show();
+            }
+        });
+        
     }
+
+//    /**
+//     * Long toast. Overloaded to include option to alter length
+//     * @param context context
+//     * @param myObject String to print (If OTHER things are passed in, it converts it to a String first)
+//     */
+//    public static <E> void Toast(@NonNull Context context, E myObject, int length){
+//        if(context == null){
+//            context = getContext();
+//        }
+//        String str = myObject + ""; //Cast it to a String
+//        Toast.makeText(context, str, length).show();
+//    }
 
     private static boolean isLiveBuild(){
         try {

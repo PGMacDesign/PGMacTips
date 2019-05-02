@@ -54,6 +54,7 @@ import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.ResponseBody;
@@ -118,6 +119,7 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
         this.image4 = (ImageView) this.findViewById(R.id.image4);
         this.image5 = (ImageView) this.findViewById(R.id.image5);
         this.image6 = (ImageView) this.findViewById(R.id.image6);
+        L.Toast(this, "dd");
 
 //        this.init2();
 //        this.init3();
@@ -785,5 +787,13 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
 
         @GET(BASE1 + BASE2)
         Call<ResponseBody> checkTLS();
+    }
+    
+    @SuppressLint("ValidFragment")
+    static class MyTestFrag extends Fragment {
+	    @Override
+	    public void onCreate(@Nullable Bundle savedInstanceState) {
+		    super.onCreate(savedInstanceState);
+	    }
     }
 }
