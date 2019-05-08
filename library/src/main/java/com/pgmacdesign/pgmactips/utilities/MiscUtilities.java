@@ -1,5 +1,6 @@
 package com.pgmacdesign.pgmactips.utilities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -9,11 +10,17 @@ import android.content.pm.Signature;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Looper;
+
+import androidx.annotation.FloatRange;
+import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import android.provider.Settings;
 import android.text.format.DateFormat;
 import android.util.Base64;
 import android.util.Log;
+import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 
@@ -31,6 +38,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by pmacdowell on 8/15/2016.
@@ -736,4 +745,86 @@ public class MiscUtilities {
         }
     }
 
+    //region Screen Brightness
+    
+    /**
+     * Get the current screen brightness
+     * @param context {@link Context}
+     * @return an int (range from 0 - 255) for brightness representation. If cannot be obtained,
+     *         will return -1.
+     */
+    public static int getScreenBrightness(@Nonnull Context context){
+        try {
+            int x = Settings.System.getInt(context.getContentResolver(),
+                    Settings.System.SCREEN_BRIGHTNESS);
+            return x;
+        } catch (Settings.SettingNotFoundException e){
+            e.printStackTrace();
+            return -1;
+        }
+    }
+    
+    /**
+     * Simple utility method
+     */
+    private static float convertIntAlphaToFloatPercent(int num){
+        return ((float)num) / ((float)255);
+    }
+    
+    /**
+     * Get the current screen brightness
+     * @param context {@link Context}
+     * @return a float (range from 0 - 1) for brightness representation. If cannot be obtained,
+     *         will return -1.
+     */
+    public static float getScreenBrightnessAsFloat(@Nonnull Context context){
+        try {
+            int x = Settings.System.getInt(context.getContentResolver(),
+                    Settings.System.SCREEN_BRIGHTNESS);
+            float y = convertIntAlphaToFloatPercent(x);
+            return y;
+        } catch (Settings.SettingNotFoundException e){
+            e.printStackTrace();
+            return -1;
+        }
+    }
+    
+    /**
+     * Set the screen brightness level
+     * @param valueToSet value to set, must be within 0 to 255.
+     */
+    public static void setScreenBrightness(@Nonnull Activity activity,
+                                           @IntRange(from = 0, to = 255) int valueToSet){
+        if(valueToSet < 0 || valueToSet > 255){
+            return;
+        }
+        float newBrightness = convertIntAlphaToFloatPercent(valueToSet);
+        try {
+            WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
+            lp.screenBrightness = newBrightness;
+            activity.getWindow().setAttributes(lp);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Set the screen brightness level
+     * @param valueToSet value to set, must be within 0 to 1.
+     */
+    public static void setScreenBrightness(@Nonnull Activity activity,
+                                           @FloatRange(from = 0, to = 1) float valueToSet){
+        if(valueToSet < 0 || valueToSet > 1){
+            return;
+        }
+        try {
+            WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
+            lp.screenBrightness = valueToSet;
+            activity.getWindow().setAttributes(lp);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    
+    //endregion
 }
