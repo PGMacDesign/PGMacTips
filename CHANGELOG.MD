@@ -2,12 +2,14 @@ Change Log
 ==========
 
 
-Version 0.0.81 *(TBD)*
+Version 0.0.81 *(2019-05-09)*
 ----------------------------
 
 * New: Added in some new features to the [ImageUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ImageUtilities.java) to allow for drawable coloring, imageview alterations, and a few other minor operations.
 * New: Added in an overloaded method for `"isNullOrEmpty(String... strs)"` in the [StringUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/StringUtilities.java) class for easier checking of multiple values.
 * New: Added in some new methods for checking that the passed int position in an array or list will not throw an ArrayIndexOutOfBoundsException in the [StringUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/StringUtilities.java) class.
+* New: Added in code to adjust screen brightness (without Permissions) in the [MiscUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/MiscUtilities.java) class.
+* Update: Updated the [Display Manager Utilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/DisplayManagerUtilities.java) to have more measurement options for the screen. Also updated the code folding / regions for easier reading
 
 Version 0.0.80 *(2019-03-28)*
 ----------------------------

@@ -5,11 +5,22 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
+import android.content.res.Resources;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Xfermode;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -34,6 +45,7 @@ import com.pgmacdesign.pgmactips.stackmanagement.StackManagerException;
 import com.pgmacdesign.pgmactips.utilities.CameraMediaUtilities;
 import com.pgmacdesign.pgmactips.utilities.ContactUtilities;
 import com.pgmacdesign.pgmactips.utilities.DatabaseUtilities;
+import com.pgmacdesign.pgmactips.utilities.DisplayManagerUtilities;
 import com.pgmacdesign.pgmactips.utilities.EncryptionUtilities;
 import com.pgmacdesign.pgmactips.utilities.GsonUtilities;
 import com.pgmacdesign.pgmactips.utilities.ImageUtilities;
@@ -53,7 +65,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.IntRange;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -94,6 +109,7 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
     private ContactUtilities contactUtilities;
     private OnTaskCompleteListener contactUtilsListener;
 
+    private RelativeLayout testing_layout_rootview;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -103,6 +119,7 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
         //et.setState(MultipurposeEditText.EditTextState.FOCUSED);
         TextView tv1 = new TextView(this);
         tv1.setTextColor(getResources().getColor(R.color.black));
+        this.testing_layout_rootview = this.findViewById(R.id.testing_layout_rootview);
         button = (Button) this.findViewById(R.id.button);
         button.setTag("button");
         button.setTransformationMethod(null);
@@ -123,10 +140,15 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
 
 //        this.init2();
 //        this.init3();
-        this.init5();
+//        this.init5();
 //        this.testDB2();
+	    this.startDisplayMetricTests();
     }
 
+    private void startDisplayMetricTests(){
+    
+    }
+    
     private SharedPrefs sp;
     @SuppressLint("NewApi")
     private void init5(){
@@ -796,4 +818,7 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
 		    super.onCreate(savedInstanceState);
 	    }
     }
+	
+	
+	
 }

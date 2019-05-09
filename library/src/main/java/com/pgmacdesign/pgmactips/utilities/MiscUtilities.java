@@ -745,6 +745,24 @@ public class MiscUtilities {
         }
     }
 
+    //region Misc Screen Utilities
+    
+    
+    /**
+     * Calculates the % opacity I want to use. higher number means less see-through
+     * @param percent % to convert, 0 means transparent, 100 means completely blocking background
+     * @return int, used like this, view.getBackground().setAlpha(opacityPercent(55));
+     */
+    public static int opacityPercent(float percent){
+        float x = 255;
+        if(percent < 0 || percent > 100){
+            return 255;
+        } else {
+            int y = (int) (x * (percent/100));
+            return y;
+        }
+    }
+    
     //region Screen Brightness
     
     /**
@@ -825,6 +843,8 @@ public class MiscUtilities {
             e.printStackTrace();
         }
     }
+    
+    //endregion
     
     //endregion
 }
