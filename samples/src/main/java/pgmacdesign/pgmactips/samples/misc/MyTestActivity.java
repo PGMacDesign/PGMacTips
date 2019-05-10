@@ -1,22 +1,12 @@
-package com.pgmacdesign.pgmactips;
+package pgmacdesign.pgmactips.samples.misc;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
-import android.content.res.Resources;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.Xfermode;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -45,8 +35,6 @@ import com.pgmacdesign.pgmactips.stackmanagement.StackManagerException;
 import com.pgmacdesign.pgmactips.utilities.CameraMediaUtilities;
 import com.pgmacdesign.pgmactips.utilities.ContactUtilities;
 import com.pgmacdesign.pgmactips.utilities.DatabaseUtilities;
-import com.pgmacdesign.pgmactips.utilities.DisplayManagerUtilities;
-import com.pgmacdesign.pgmactips.utilities.EncryptionUtilities;
 import com.pgmacdesign.pgmactips.utilities.GsonUtilities;
 import com.pgmacdesign.pgmactips.utilities.ImageUtilities;
 import com.pgmacdesign.pgmactips.utilities.L;
@@ -65,28 +53,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import androidx.annotation.IntRange;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
+import pgmacdesign.pgmactips.samples.activitysamples.SampleDBClass;
+import pgmacdesign.pgmactips.samples.activitysamples.SampleDBClassKotlin;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.http.GET;
 
 /**
- * Test activity for experimenting, please ignore
+ * Test activity for experimenting with various Library components
  * Created by pmacdowell on 8/12/2016.
  */
 @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
         CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.GSON,
         CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
-class MyTestActivity  extends Activity implements View.OnClickListener {
+public class MyTestActivity  extends Activity implements View.OnClickListener {
 
     //Please note! these are for testing purposes only. I do not own the rights to the images below, I am referencing the URL link for testing loading times of images
     private static final String LOTR_TEST_URL_1 = "https://vignette.wikia.nocookie.net/lotr/images/8/87/Ringstrilogyposter.jpg/revision/latest?cb=20070806215413";
@@ -114,28 +101,28 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.testing_layout);
+        setContentView(com.pgmacdesign.pgmactips.R.layout.testing_layout);
         //et = (MultipurposeEditText) this.findViewById(R.id.et);
         //et.setState(MultipurposeEditText.EditTextState.FOCUSED);
         TextView tv1 = new TextView(this);
-        tv1.setTextColor(getResources().getColor(R.color.black));
-        this.testing_layout_rootview = this.findViewById(R.id.testing_layout_rootview);
-        button = (Button) this.findViewById(R.id.button);
+        tv1.setTextColor(getResources().getColor(com.pgmacdesign.pgmactips.R.color.black));
+        this.testing_layout_rootview = this.findViewById(com.pgmacdesign.pgmactips.R.id.testing_layout_rootview);
+        button = (Button) this.findViewById(com.pgmacdesign.pgmactips.R.id.button);
         button.setTag("button");
         button.setTransformationMethod(null);
         button.setOnClickListener(this);
         L.m("setOnClickListener");
 	    testing_layout_recyclerview = (RecyclerView) this.findViewById(
-	    		R.id.testing_layout_recyclerview);
+	    		com.pgmacdesign.pgmactips.R.id.testing_layout_recyclerview);
 	    testing_layout_recyclerview.setLayoutManager(new LinearLayoutManager(this));
-        this.testing_layout_scrollview = (ScrollView) this.findViewById(R.id.testing_layout_scrollview);
+        this.testing_layout_scrollview = (ScrollView) this.findViewById(com.pgmacdesign.pgmactips.R.id.testing_layout_scrollview);
         this.testing_layout_scrollview.setVisibility(View.GONE);
-        this.image1 = (ImageView) this.findViewById(R.id.image1);
-        this.image2 = (ImageView) this.findViewById(R.id.image2);
-        this.image3 = (ImageView) this.findViewById(R.id.image3);
-        this.image4 = (ImageView) this.findViewById(R.id.image4);
-        this.image5 = (ImageView) this.findViewById(R.id.image5);
-        this.image6 = (ImageView) this.findViewById(R.id.image6);
+        this.image1 = (ImageView) this.findViewById(com.pgmacdesign.pgmactips.R.id.image1);
+        this.image2 = (ImageView) this.findViewById(com.pgmacdesign.pgmactips.R.id.image2);
+        this.image3 = (ImageView) this.findViewById(com.pgmacdesign.pgmactips.R.id.image3);
+        this.image4 = (ImageView) this.findViewById(com.pgmacdesign.pgmactips.R.id.image4);
+        this.image5 = (ImageView) this.findViewById(com.pgmacdesign.pgmactips.R.id.image5);
+        this.image6 = (ImageView) this.findViewById(com.pgmacdesign.pgmactips.R.id.image6);
         L.Toast(this, "dd");
 
 //        this.init2();
@@ -143,6 +130,9 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
 //        this.init5();
 //        this.testDB2();
 	    this.startDisplayMetricTests();
+	
+	    this.startActivity(new Intent(
+			    MyTestActivity.this, SampleDBClassKotlin.class));
     }
 
     private void startDisplayMetricTests(){
@@ -353,7 +343,7 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
 			    MyTestHolder holder = (MyTestHolder) holder0;
 			    holder.button.setText("AWESOMESAUCE");
 		    }
-	    }, this, R.layout.testing_layout, MyTestHolder.class);
+	    }, this, com.pgmacdesign.pgmactips.R.layout.testing_layout, MyTestHolder.class);
 	    testing_layout_recyclerview.setHasFixedSize(true);
 	    testing_layout_recyclerview.setAdapter(adapter);
 	    SamplePojo sp1 = new SamplePojo();
@@ -370,8 +360,8 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
     	private MultiColorLine multi_color_line;
 		public MyTestHolder(View itemView) {
 			super(itemView);
-			multi_color_line = (MultiColorLine) itemView.findViewById(R.id.multi_color_line);
-			button = (Button) itemView.findViewById(R.id.button);
+			multi_color_line = (MultiColorLine) itemView.findViewById(com.pgmacdesign.pgmactips.R.id.multi_color_line);
+			button = (Button) itemView.findViewById(com.pgmacdesign.pgmactips.R.id.button);
 		}
 	}
 
@@ -655,12 +645,12 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
     private void testPicassoImageLoads(){
         try {
             this.testing_layout_scrollview.setVisibility(View.VISIBLE);
-            ImageUtilities.setImageWithPicasso(LOTR_TEST_URL_1, this.image1, R.color.black);
-            ImageUtilities.setImageWithPicasso(LOTR_TEST_URL_2, this.image2, R.color.blue);
-            ImageUtilities.setImageWithPicasso(LOTR_TEST_URL_3, this.image3, R.color.black);
-            ImageUtilities.setImageWithPicasso(LOTR_TEST_URL_4, this.image4, R.color.blue);
-            ImageUtilities.setImageWithPicasso(LOTR_TEST_URL_5, this.image5, R.color.black);
-            ImageUtilities.setImageWithPicasso(LOTR_TEST_URL_6, this.image6, R.color.blue);
+            ImageUtilities.setImageWithPicasso(LOTR_TEST_URL_1, this.image1, com.pgmacdesign.pgmactips.R.color.black);
+            ImageUtilities.setImageWithPicasso(LOTR_TEST_URL_2, this.image2, com.pgmacdesign.pgmactips.R.color.blue);
+            ImageUtilities.setImageWithPicasso(LOTR_TEST_URL_3, this.image3, com.pgmacdesign.pgmactips.R.color.black);
+            ImageUtilities.setImageWithPicasso(LOTR_TEST_URL_4, this.image4, com.pgmacdesign.pgmactips.R.color.blue);
+            ImageUtilities.setImageWithPicasso(LOTR_TEST_URL_5, this.image5, com.pgmacdesign.pgmactips.R.color.black);
+            ImageUtilities.setImageWithPicasso(LOTR_TEST_URL_6, this.image6, com.pgmacdesign.pgmactips.R.color.blue);
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -755,7 +745,7 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
     }
 
     private void makeMultiColorLine() {
-        MultiColorLine line = (MultiColorLine) this.findViewById(R.id.multi_color_line);
+        MultiColorLine line = (MultiColorLine) this.findViewById(com.pgmacdesign.pgmactips.R.id.multi_color_line);
         line.setAnimateStrokes(true, 1000);
         line.setDrawAsSingleLine(true);
         line.setDrawBoarderWithLine(false);
@@ -763,14 +753,14 @@ class MyTestActivity  extends Activity implements View.OnClickListener {
         line.setFps(MultiColorLine.FPS.FPS_90);
         line.setWidthOfLineStroke(40);
         line.setWidthOfBoarderStroke(8);
-        line.setColorOfBoarderStroke(getResources().getColor(R.color.aqua));
+        line.setColorOfBoarderStroke(getResources().getColor(com.pgmacdesign.pgmactips.R.color.aqua));
         List<MultiColorLine.CustomStrokeObject> strokes = new ArrayList<>();
 
         MultiColorLine.CustomStrokeObject l1 = new MultiColorLine.CustomStrokeObject(
-                50, 0, getResources().getColor(R.color.red)
+                50, 0, getResources().getColor(com.pgmacdesign.pgmactips.R.color.red)
         );
         MultiColorLine.CustomStrokeObject l2 = new MultiColorLine.CustomStrokeObject(
-                50, 50, getResources().getColor(R.color.blue)
+                50, 50, getResources().getColor(com.pgmacdesign.pgmactips.R.color.blue)
         );
         strokes.add(l1);
         strokes.add(l2);
