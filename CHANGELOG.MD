@@ -1,10 +1,16 @@
 Change Log
 ==========
 
-Version 0.0.82 *(TBD)*
+Version 1.0.1 *(TBD)*
 ----------------------------
 
 * 
+
+Version 1.0.0 *(2019-05-10)*
+----------------------------
+
+* Update: Refactored the MySampleApplication and MyTestActivity into a new samples module.
+* New: Added a Java and Kotlin sample class for interacting with the [DatabaseUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/DatabaseUtilities.java) class and how to use it.
 
 Version 0.0.81 *(2019-05-09)*
 ----------------------------
