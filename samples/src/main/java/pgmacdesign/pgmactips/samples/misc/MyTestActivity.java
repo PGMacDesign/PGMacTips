@@ -130,9 +130,6 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
 //        this.init5();
 //        this.testDB2();
 	    this.startDisplayMetricTests();
-	
-	    this.startActivity(new Intent(
-			    MyTestActivity.this, SampleDBClassKotlin.class));
     }
 
     private void startDisplayMetricTests(){
@@ -597,6 +594,13 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 	
+	    this.startActivity(new Intent(
+			    MyTestActivity.this, SampleDBClassKotlin.class));
+	    
+    	if(true){
+    		return;
+	    }
+	    
 	    this.init5();
 	    
 	    if(true){
