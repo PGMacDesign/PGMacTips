@@ -34,6 +34,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -344,7 +345,7 @@ public class MiscUtilities {
     }
     
     /**
-     * Print out a hashmap
+     * Print out a hashmap {@link java.util.HashMap}
      * @param myMap Map of type String, ?
      */
     public static void printOutHashMap(Map<?,?> myMap){
@@ -360,6 +361,21 @@ public class MiscUtilities {
             L.m(keyStr + ", " + valueStr);
         }
         L.m("\nEnd printing out Hashmap:");
+    }
+    
+    /**
+     * Print out a hashSet {@link HashSet}
+     * @param hashSet HashSet of type String, ?
+     */
+    public static void printOutHashSet(HashSet<?> hashSet){
+        if(hashSet == null){
+            return;
+        }
+        L.m("Printing out entire HashSet:\n");
+        for(Object o : hashSet){
+            L.m(o);
+        }
+        L.m("\nEnd printing out HashSet:");
     }
 
     /**

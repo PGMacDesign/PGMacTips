@@ -14,6 +14,8 @@ import io.realm.RealmConfiguration;
 
 public class SampleMyApplication  extends Application {       //extends MultiDexApplication {
 	
+	//Boolean for live build or not
+	private static final boolean IS_LIVE_BUILD = false;
 	//Instance of the application
 	private static SampleMyApplication sInstance;
 	//Context
@@ -124,11 +126,11 @@ public class SampleMyApplication  extends Application {       //extends MultiDex
 	private void initPGMacTipsConfig(){
 		config = new PGMacTipsConfig.Builder()
 				//Replace with the Logging tag of your choosing
-				.setTagForLogging("Your Tag For Logging")
+				.setTagForLogging("PGMacTips-Samples")
 				//Boolean flag for is it is a live build. Defaults to false. Used in logging (stops on live builds)
-				.setLiveBuild(false)
+				.setLiveBuild(IS_LIVE_BUILD)
 				//Default DB name if you don't set one yourself. It's suggested that you do though
-				.setDefaultDatabaseName("yourapp.db")
+				.setDefaultDatabaseName("PGMacTips-Samples.db")
 				.build(getContext());
 	}
 }

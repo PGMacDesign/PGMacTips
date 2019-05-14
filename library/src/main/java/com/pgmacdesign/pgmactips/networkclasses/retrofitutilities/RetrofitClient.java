@@ -4,12 +4,15 @@ import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import android.util.Log;
 
+import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConfig;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.networkclasses.sslsocketsandprotocols.SSLProtocolOptions;
 import com.pgmacdesign.pgmactips.networkclasses.sslsocketsandprotocols.Tls12SocketFactory;
 import com.pgmacdesign.pgmactips.utilities.L;
 import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
+import com.pgmacdesign.pgmactips.utilities.NumberUtilities;
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 
 import java.io.IOException;
@@ -25,14 +28,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nonnull;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
+import androidx.annotation.Nullable;
 import okhttp3.ConnectionSpec;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
@@ -57,41 +63,62 @@ import retrofit2.Retrofit;
         CustomAnnotationsBase.Dependencies.Okio})
 public class RetrofitClient {
 
+    //region Local Strings
     private static final String APPLICATION_JSON = "application/json";
     private static final String MULTIPART_FORM_DATA = "multipart/form-data";
     private static final String CONTENT_TYPE = "Content-Type";
+    
+    //endregion
+    
+    //region Public Strings
 
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     public static final String DEFAULT_DATE_FORMAT_WITHOUT_MILLISECONDS = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    
+    //endregion
+    
+    //region Public Tags
+    /**
+     * Sent back along the {@link OnTaskCompleteListener} with a HashSet<String> of cookies received
+     */
+    public static final int TAG_COOKIES_HASHSET_RESPONSE = PGMacTipsConstants.TAG_COOKIES_HASHSET_RESPONSE;
+    //endregion
     
     private String urlBase;
     private Map<String, String> headers;
     private HttpLoggingInterceptor.Level logLevel;
     private int retryCount;
+    private int[] retryOnStatusCodes;
     private long readTimeout, writeTimeout;
     private String dateFormat;
+    private String[] customCookieHeaderStrings;
     private Class serviceInterface;
     private Converter.Factory customConverterFactory;
     private CallAdapter.Factory customCallAdapterFactory;
     private SSLProtocolOptions sslProtocolOption;
-    private boolean forceAcceptAllCertificates;
+    private boolean forceAcceptAllCertificates, shouldSaveResponseCookies;
+    private OnTaskCompleteListener cookieResponseListener;
 
     /**
      * Constructor
      */
     private RetrofitClient(RetrofitClient.Builder builder) {
-        this.retryCount = builder.retryCount;
         this.urlBase = builder.builder_urlBase;
         this.headers = builder.builder_headers;
         this.logLevel = builder.builder_logLevel;
+        this.retryCount = builder.builder_retryCount;
         this.dateFormat = builder.builder_dateFormat;
         this.readTimeout = builder.builder_readTimeout;
         this.writeTimeout = builder.builder_writeTimeout;
-        this.sslProtocolOption = builder.sslProtocolOption;
+        this.sslProtocolOption = builder.builder_sslProtocolOption;
         this.serviceInterface = builder.builder_serviceInterface;
-        this.customConverterFactory = builder.customConverterFactory;
-        this.customCallAdapterFactory = builder.customCallAdapterFactory;
-        this.forceAcceptAllCertificates = builder.forceAcceptAllCertificates;
+        this.retryOnStatusCodes = builder.builder_retryOnStatusCodes;
+        this.customConverterFactory = builder.builder_customConverterFactory;
+        this.cookieResponseListener = builder.builder_cookieResponseListener;
+        this.customCallAdapterFactory = builder.builder_customCallAdapterFactory;
+        this.customCookieHeaderStrings = builder.builder_customCookieHeaderString;
+        this.shouldSaveResponseCookies = builder.builder_shouldSaveResponseCookies;
+        this.forceAcceptAllCertificates = builder.builder_forceAcceptAllCertificates;
     }
 
     /**
@@ -119,16 +146,45 @@ public class RetrofitClient {
      * @return
      */
     private Headers buildHeaders(){
+        return buildHeaders(null);
+    }
+    
+    /**
+     * Build headers from the headers map + the original headers.
+     * Note that the custom {@link RetrofitClient#headers} set will overwrite the original ones
+     * {@link Headers}
+     * @return
+     */
+    private Headers buildHeaders(@Nullable Request request){
         Headers.Builder builder = new Headers.Builder();
-        if(MiscUtilities.isMapNullOrEmpty(headers)){
+        Headers originalHeaders = null;
+        Set<String> originalHeaderKeys = null;
+        if(request != null){
+            originalHeaders = request.headers();
+            originalHeaderKeys = originalHeaders.names();
+        }
+        if(MiscUtilities.isMapNullOrEmpty(headers) && MiscUtilities.isSetNullOrEmpty(originalHeaderKeys)){
             return builder.build();
         } else {
-            for (Map.Entry<String, String> myMap : headers.entrySet()) {
-                String key = myMap.getKey();
-                String value = myMap.getValue();
-                if (!StringUtilities.isNullOrEmpty(key) &&
-                        !StringUtilities.isNullOrEmpty(value)) {
-                    builder.add(key, value);
+            if(originalHeaders != null){
+                for (String key : originalHeaderKeys) {
+                    if(StringUtilities.isNullOrEmpty(key)){
+                        continue;
+                    }
+                    String value = originalHeaders.get(key);
+                    if(!StringUtilities.isNullOrEmpty(value)){
+                        builder.add(key, value);
+                    }
+                }
+            }
+            if(!MiscUtilities.isMapNullOrEmpty(headers)) {
+                for (Map.Entry<String, String> myMap : headers.entrySet()) {
+                    String key = myMap.getKey();
+                    String value = myMap.getValue();
+                    if (!StringUtilities.isNullOrEmpty(key) &&
+                            !StringUtilities.isNullOrEmpty(value)) {
+                        builder.add(key, value);
+                    }
                 }
             }
             return builder.build();
@@ -144,60 +200,108 @@ public class RetrofitClient {
         Interceptor interceptor = new Interceptor() {
             @Override
             public Response intercept(Interceptor.Chain chain) throws IOException {
+                //First Set the headers
+                Request originalRequest = chain.request();
                 Request.Builder builder = chain.request().newBuilder();
                 if(headers != null){
                     if(headers.size() > 0){
-                        Headers headers = buildHeaders();
+                        Headers headers = buildHeaders(originalRequest);
                         builder.headers(headers);
                     }
                 }
-                // TODO: 2/6/19 research here if this will cause problems relating to builder above
-                Response originalResponse = chain.proceed(chain.request());
+                //Next make the outbound call
+//                Response originalResponse = null;
+//                try {
+//                    originalResponse = chain.proceed(chain.request());
+//                } catch (IOException ioe){
+//                    ioe.printStackTrace();
+//                }
+//                Response originalResponse = chain.proceed(chain.request());
+                Response originalResponse = chain.proceed(builder.build());
                 if(originalResponse != null) {
-                    if (!MiscUtilities.isListNullOrEmpty(originalResponse.headers(PGMacTipsConstants.COOKIE_1))) {
+                    if(shouldSaveResponseCookies && cookieResponseListener != null) {
                         HashSet<String> cookies = new HashSet<>();
-                        try {
-                            cookies.addAll(originalResponse.headers(PGMacTipsConstants.COOKIE_1));
-                            // Save the cookies (I saved in SharedPreference), you save wherever you want to save
-//                            preferencesHelper.putStringSet(PreferenceKey.PREF_KEY_COOKIES, cookies); //Unused ATM
-                        } catch (Exception e){
-                            //Catching in the event of custom cookie responses
+                        if (!MiscUtilities.isListNullOrEmpty(originalResponse.headers(PGMacTipsConstants.COOKIE_1))) {
+                            try {
+                                cookies.addAll(originalResponse.headers(PGMacTipsConstants.COOKIE_1));
+                            } catch (Exception e) {
+                                //Catching in the event of custom cookie responses
+                            }
                         }
+                        if (!MiscUtilities.isListNullOrEmpty(originalResponse.headers(PGMacTipsConstants.COOKIE_2))) {
+                            try {
+                                cookies.addAll(originalResponse.headers(PGMacTipsConstants.COOKIE_2));
+                            } catch (Exception e) {
+                                //Catching in the event of custom cookie responses
+                            }
+                        }
+                        if(!MiscUtilities.isArrayNullOrEmpty(customCookieHeaderStrings)){
+                        	for(String str : customCookieHeaderStrings){
+                        		if(StringUtilities.isNullOrEmpty(str)){
+                        			continue;
+		                        }
+		                        if (!MiscUtilities.isListNullOrEmpty(originalResponse.headers(str))) {
+			                        try {
+				                        cookies.addAll(originalResponse.headers(str));
+			                        } catch (Exception e) {
+				                        //Catching in the event of custom cookie responses
+			                        }
+		                        }
+	                        }
+
+                        }
+                        cookieResponseListener.onTaskComplete(cookies, RetrofitClient.TAG_COOKIES_HASHSET_RESPONSE);
                     }
-                    if (!MiscUtilities.isListNullOrEmpty(originalResponse.headers(PGMacTipsConstants.COOKIE_2))) {
-                        HashSet<String> cookies = new HashSet<>();
-                        try {
-                            cookies.addAll(originalResponse.headers(PGMacTipsConstants.COOKIE_2));
-                            // Save the cookies (I saved in SharedPreference), you save wherever you want to save
-//                            preferencesHelper.putStringSet(PreferenceKey.PREF_KEY_COOKIES, cookies); //Unused ATM
-                        } catch (Exception e){
-                            //Catching in the event of custom cookie responses
+                    
+                    if(retryCount > 0){
+                        if(!originalResponse.isSuccessful()) {
+                            boolean shouldRetry;
+                            int localRetryCount = retryCount;
+                            int retryNumber = 0;
+                            int responseCode = originalResponse.code();
+                            if (retryOnStatusCodes == null) {
+                                shouldRetry = (responseCode != 200);
+                            } else {
+                                shouldRetry = (NumberUtilities.doesArrayContain(retryOnStatusCodes, responseCode));
+                            }
+                            if(shouldRetry) {
+                                Response myNewResponse = null;
+                                while (localRetryCount > 0) {
+                                    //I am aware keeping 2 is wasteful, but I have an idea for future reference, so keeping both for now
+                                    localRetryCount--;
+                                    retryNumber++;
+                                    try {
+                                        if (!PGMacTipsConfig.getInstance().getIsLiveBuild()){
+                                            L.m("Call Failed, retry number " + retryNumber);
+                                        }
+                                    } catch (Exception e){
+                                        //Catching in case user manually blocks PGMacTipsConfig on setup
+                                    }
+                                    myNewResponse = chain.proceed(chain.request());
+                                    if (myNewResponse != null) {
+                                        if (!myNewResponse.isSuccessful()){
+                                            int responseCodeX = myNewResponse.code();
+                                            if (retryOnStatusCodes == null) {
+                                                shouldRetry = (responseCodeX != 200);
+                                            } else {
+                                                shouldRetry = (NumberUtilities.doesArrayContain(retryOnStatusCodes, responseCodeX));
+                                            }
+                                            if (!shouldRetry) {
+                                                //Return the response if this one was successful
+                                                return myNewResponse;
+                                            }
+                                        }
+                                    }
+                                }
+                                if(myNewResponse != null){
+                                    //Return the last response if multiple failed
+                                    return myNewResponse;
+                                }
+                            }
                         }
                     }
                 }
-    
-                //region Retry Count
-                //Unused for now
-//                Request request = chain.request();
-//                if(request == null){
-//                    return null;
-//                }
-//                if(RetrofitClient.this.retryCount > 0) {
-//                    Response response = chain.proceed(request);
-//                    if (response != null) {
-//                        int tryCount = 0;
-//                        while (!response.isSuccessful() && tryCount < retryCount) {
-//                            tryCount++;
-//                            L.m("Call failed, retry triggered. Retry #" + tryCount);
-//                            // retry the request
-//                            response = chain.proceed(request);
-//                        }
-//                    }
-//                }
-                //endregion
-                
-                Request newRequest = builder.build();
-                return chain.proceed(newRequest);
+                return originalResponse;
             }
         };
         /*
@@ -329,6 +433,7 @@ public class RetrofitClient {
             builder.sslSocketFactory(sslSocketFactory, trustManager);
 
             if(true){
+                // TODO: 5/14/19 currently not utilizing the TLS code, will implement in a later release
                 return builder;
             }
 
@@ -373,7 +478,10 @@ public class RetrofitClient {
 
         return builder;
     }
-
+    
+    /**
+     * Get an instance of the {@link RetrofitClient.Builder} class
+     */
     @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Retrofit2,
             CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.OkHttp3,
             CustomAnnotationsBase.Dependencies.GSON, CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor,
@@ -390,17 +498,21 @@ public class RetrofitClient {
             CustomAnnotationsBase.Dependencies.Okio})
     public static final class Builder <T> {
 
-        int retryCount;
+        int builder_retryCount;
+        int[] builder_retryOnStatusCodes;
         String builder_urlBase;
         String builder_dateFormat;
+        String[] builder_customCookieHeaderString;
         Class<T> builder_serviceInterface;
         Map<String, String> builder_headers;
         HttpLoggingInterceptor.Level builder_logLevel;
         long builder_readTimeout, builder_writeTimeout;
-        Converter.Factory customConverterFactory;
-        CallAdapter.Factory customCallAdapterFactory;
-        SSLProtocolOptions sslProtocolOption;
-        boolean forceAcceptAllCertificates;
+        Converter.Factory builder_customConverterFactory;
+        CallAdapter.Factory builder_customCallAdapterFactory;
+        SSLProtocolOptions builder_sslProtocolOption;
+        OnTaskCompleteListener builder_cookieResponseListener;
+        boolean builder_shouldSaveResponseCookies;
+        boolean builder_forceAcceptAllCertificates;
 
         static final int SIXTY_SECONDS = (int)(1000*60);
 
@@ -415,11 +527,16 @@ public class RetrofitClient {
                        @NonNull String urlBase){
             this.builder_headers = null;
             this.builder_urlBase = urlBase;
-            this.forceAcceptAllCertificates = false;
+            this.builder_forceAcceptAllCertificates = false;
             this.setDateFormat(DEFAULT_DATE_FORMAT);
             this.setTimeouts(SIXTY_SECONDS, SIXTY_SECONDS);
-            this.sslProtocolOption = SSLProtocolOptions.TLS;
+            this.builder_sslProtocolOption = SSLProtocolOptions.TLS;
             this.builder_serviceInterface = serviceInterface;
+            this.builder_retryCount = 0;
+            this.builder_retryOnStatusCodes = null;
+            this.builder_shouldSaveResponseCookies = false;
+            this.builder_cookieResponseListener = null;
+            this.builder_customCookieHeaderString = null;
         }
 
         /**
@@ -445,32 +562,89 @@ public class RetrofitClient {
          * @return this
          */
         public Builder forceAcceptAllCertificates(boolean passTrueToEnable, boolean passFalseToEnable){
-            this.forceAcceptAllCertificates = (passTrueToEnable && !passFalseToEnable);
+            this.builder_forceAcceptAllCertificates = (passTrueToEnable && !passFalseToEnable);
             return this;
         }
-
+    
+        /**
+         * Set the response to return cookies (as a HashSet of Strings) along the passed listener.
+         * You can also use this to parse other headers if you want.
+         * Note that this will trigger a response if the following header values are received:
+         *     "Cookie"  or   "Set-Cookie";
+         * If you want to add in another custom cookie header to check for, use the overloaded method:
+         * {@link Builder#shouldSaveResponseCookies(OnTaskCompleteListener, String[])}
+         * Note that only cookies from the first call (not retries) will trigger this callback
+         * {@link OnTaskCompleteListener}
+         * @param cookieResponseListener listener HashSet of cookies are sent back on this listener.
+         *                               If null is passed, listener is removed and cookies will
+         *                               not be sent back
+         * @return this
+         */
+        public Builder shouldSaveResponseCookies(OnTaskCompleteListener cookieResponseListener){
+            return shouldSaveResponseCookies(cookieResponseListener, null);
+        }
+        
+        /**
+         * Set the response to return cookies (as a HashSet of Strings) along the passed listener.
+         * Note that this will trigger a response if the following header values are received:
+         *     "Cookie"  or   "Set-Cookie"  or    {whatever_value_you_send}
+         * Note that only cookies from the first call (not retries) will trigger this callback
+         * {@link OnTaskCompleteListener}
+         * @param cookieResponseListener listener HashSet of cookies are sent back on this listener.
+         *                               If null is passed, listener is removed and cookies will
+         *                               not be sent back
+         * @param customCookieHeaderStrings Array of Strings to parse on headers
+         * @return this
+         */
+        public Builder shouldSaveResponseCookies(OnTaskCompleteListener cookieResponseListener,
+                                                 String[] customCookieHeaderStrings){
+            if(cookieResponseListener != null) {
+                this.builder_shouldSaveResponseCookies = true;
+                this.builder_cookieResponseListener = cookieResponseListener;
+            } else {
+                this.builder_shouldSaveResponseCookies = false;
+                this.builder_cookieResponseListener = null;
+            }
+            this.builder_customCookieHeaderString = customCookieHeaderStrings;
+            return this;
+        }
+        
         /**
          * Add a retry interceptor that will attempt the call again should it fail.
-         * @param retryCount
+         * @param retryCount Number of attempts to retry. Defaults to 0
          * @return
          */
-        public Builder setRetryCount(@IntRange(from = 1) final int retryCount){
+        public Builder setRetryCount(@IntRange(from = 0) final int retryCount){
+            return setRetryCount(retryCount, null);
+        }
+    
+    
+        /**
+         * Add a retry interceptor that will attempt the call again should it fail. Defaults
+         * to code != 200, but specific retry code integers can be set here too
+         * @param retryCount Number of attempts to retry. Defaults to 0
+         * @param retryOnStatusCodes int status codes you wish to allow retries on. If nothing is
+         *                           passed, will default to anything not == 200.
+         * @return
+         */
+        public Builder setRetryCount(@IntRange(from = 0) final int retryCount, @Nullable int[] retryOnStatusCodes){
             if(retryCount >= 1){
-                this.retryCount = retryCount;
+                this.builder_retryCount = retryCount;
             } else {
-                this.retryCount = 0;
+                this.builder_retryCount = 0;
             }
+            this.builder_retryOnStatusCodes = retryOnStatusCodes;
             return this;
         }
-
+        
         /**
          * Set a custom factory in case you want to add a special one (IE RX Java)
          * Note! If left out or not set, will default to {@link CustomConverterFactory}
          * @param factory {@link Converter.Factory}
          * @return this
          */
-        public Builder setCustomConverterFactory(Converter.Factory factory){
-            this.customConverterFactory = factory;
+        public Builder setCustomConverterFactory(@Nonnull Converter.Factory factory){
+            this.builder_customConverterFactory = factory;
             return this;
         }
 
@@ -480,8 +654,8 @@ public class RetrofitClient {
          * @param factory An example of this would be an RX Java call adapter
          * @return this
          */
-        public Builder setCustomAdapterFactory(CallAdapter.Factory factory){
-            this.customCallAdapterFactory = factory;
+        public Builder setCustomAdapterFactory(@Nonnull CallAdapter.Factory factory){
+            this.builder_customCallAdapterFactory = factory;
             return this;
         }
 
@@ -508,7 +682,7 @@ public class RetrofitClient {
          * @return this
          */
         public Builder setSSLProtocolOption(SSLProtocolOptions sslProtocolOption){
-            this.sslProtocolOption = (sslProtocolOption != null) ? sslProtocolOption : SSLProtocolOptions.TLS;
+            this.builder_sslProtocolOption = (sslProtocolOption != null) ? sslProtocolOption : SSLProtocolOptions.TLS;
             return this;
         }
 
@@ -592,8 +766,47 @@ public class RetrofitClient {
             return new RetrofitClient(this);
         }
     }
-
-
+    
+    //region Error Response Codes
+    
+    private static final int[] ERROR_CODES_4XX = {
+            400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415,
+            417, 418, 420, 422, 423, 424, 425, 426, 428, 429, 431, 444, 449, 450, 451, 499
+    };
+    private static final int[] ERROR_CODES_5XX = {
+            500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 598, 599
+    };
+    
+    /**
+     * Get all 4xx response codes
+     * Reference: https://www.restapitutorial.com/httpstatuscodes.html
+     * @return int array of the 4xx error codes (IE 404)
+     */
+    public static int[] getAll4xxErrorCodes(){
+        return ERROR_CODES_4XX;
+    }
+    
+    /**
+     * Get all 5xx response codes
+     * Reference: https://www.restapitutorial.com/httpstatuscodes.html
+     * @return int array of the 5xx error codes (IE 503)
+     */
+    public static int[] getAll5xxErrorCodes(){
+        return ERROR_CODES_5XX;
+    }
+    
+    /**
+     * Get all of the 4xx and 5xx error codes
+     * Reference: https://www.restapitutorial.com/httpstatuscodes.html
+     * @return int array with the combined 4xx and 5xx error codes (IE 401 and 500)
+     */
+    public static int[] getAll4xx5xxErrorCodes(){
+        int[] toReturn = new int[getAll4xxErrorCodes().length + getAll5xxErrorCodes().length];
+        System.arraycopy(getAll4xxErrorCodes(), 0, toReturn, 0, getAll4xxErrorCodes().length);
+        System.arraycopy(getAll5xxErrorCodes(), 0, toReturn, getAll4xxErrorCodes().length, getAll5xxErrorCodes().length);
+        return toReturn;
+    }
+    //endregion
 }
 
 

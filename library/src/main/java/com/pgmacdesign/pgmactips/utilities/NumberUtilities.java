@@ -383,4 +383,67 @@ public class NumberUtilities {
             return Integer.MIN_VALUE;
         }
     }
+    
+    /**
+     * Simple utility to check if an array contains an int value. There are faster ways to do so,
+     * see https://stackoverflow.com/questions/12020361/java-simplified-check-if-int-array-contains-int
+     * but some require Java 8 while other require external libraries, which may pose a conflict
+     * for those using the library. If you want a faster method, use the link above.
+     * @param array int array to check the values in
+     * @param toCheck int to check if it is in an array
+     * @return boolean, true if it does contain it, false if not
+     */
+    public static boolean doesArrayContain(int[] array, int toCheck){
+        if(array == null){
+            return false;
+        }
+        for(int x : array){
+            if(x == toCheck){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Simple utility to check if an array contains an double value. There are faster ways to do so,
+     * see https://stackoverflow.com/questions/12020361/java-simplified-check-if-int-array-contains-int
+     * but some require Java 8 while other require external libraries, which may pose a conflict
+     * for those using the library. If you want a faster method, use the link above.
+     * @param array int array to check the values in
+     * @param toCheck int to check if it is in an array
+     * @return boolean, true if it does contain it, false if not
+     */
+    public static boolean doesArrayContain(double[] array, double toCheck){
+        if(array == null){
+            return false;
+        }
+        for(double x : array){
+            if(x == toCheck){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Simple utility to check if an array contains an float value. There are faster ways to do so,
+     * see https://stackoverflow.com/questions/12020361/java-simplified-check-if-int-array-contains-int
+     * but some require Java 8 while other require external libraries, which may pose a conflict
+     * for those using the library. If you want a faster method, use the link above.
+     * @param array int array to check the values in
+     * @param toCheck int to check if it is in an array
+     * @return boolean, true if it does contain it, false if not
+     */
+    public static boolean doesArrayContain(float[] array, float toCheck){
+        if(array == null){
+            return false;
+        }
+        for(float x : array){
+            if(x == toCheck){
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -163,7 +163,7 @@ public class PGMacTipsConstants {
     public static final int TAG_INVALID_BITMAP_IMAGE = 4479;
     public static final int TAG_BITMAP_BASE64_CONVERSION_FAIL = 4480;
     public static final int TAG_LIFE_CYCLE_LISTENER = 4481;
-    public static final int TBD1 = 4482;
+    public static final int TAG_COOKIES_HASHSET_RESPONSE = 4482;
     public static final int TBD2 = 4483;
     public static final int TBD3 = 4484;
 

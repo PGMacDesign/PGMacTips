@@ -22,6 +22,7 @@ import com.pgmacdesign.pgmactips.biometricutilities.FingerprintException;
 import com.pgmacdesign.pgmactips.customui.MultiColorLine;
 import com.pgmacdesign.pgmactips.datamodels.SamplePojo;
 import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConfig;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.misc.TempString;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitClient;
@@ -50,6 +51,7 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -104,6 +106,7 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
         setContentView(com.pgmacdesign.pgmactips.R.layout.testing_layout);
         //et = (MultipurposeEditText) this.findViewById(R.id.et);
         //et.setState(MultipurposeEditText.EditTextState.FOCUSED);
+	    SampleMyApplication.getInstance();
         TextView tv1 = new TextView(this);
         tv1.setTextColor(getResources().getColor(com.pgmacdesign.pgmactips.R.color.black));
         this.testing_layout_rootview = this.findViewById(com.pgmacdesign.pgmactips.R.id.testing_layout_rootview);
@@ -594,8 +597,13 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 	
-	    this.startActivity(new Intent(
-			    MyTestActivity.this, SampleDBClassKotlin.class));
+	    loadTestCall();
+    	
+    	if(true){
+    		return;
+	    }
+	    
+	    this.startActivity(new Intent(MyTestActivity.this, SampleDBClassKotlin.class));
 	    
     	if(true){
     		return;
@@ -781,16 +789,35 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
         ProfanityCheckerInterface serviceInterface = new RetrofitClient.Builder(
                 ProfanityCheckerInterface.class, BASE_URL)
                 .setTimeouts(60000,60000)
-                .setLogLevel(HttpLoggingInterceptor.Level.NONE)
+//		        .setRetryCount(0)
+		        .callIsJSONFormat()
+		        .shouldSaveResponseCookies(new OnTaskCompleteListener() {
+			        @Override
+			        public void onTaskComplete(Object result, int customTag) {
+						try {
+							HashSet<String> cookies = (HashSet<String>) result;
+							if(!MiscUtilities.isSetNullOrEmpty(cookies)){
+								L.m("Received callback from cookies header == ");
+								MiscUtilities.printOutHashSet(cookies);
+							}
+						} catch (Exception e ){
+							e.printStackTrace();
+						}
+			        }
+		        })//, new String[]{"Content-Type"}) //Add this back in to print out the header listener for the String "Content-Type"
+                .setLogLevel(HttpLoggingInterceptor.Level.BODY)
                 .build().buildServiceClient();
         SamplePojo pojo = new SamplePojo();
-        Call call = serviceInterface.checkProfanity2(pojo);
+//        Call call = serviceInterface.checkProfanity2(pojo);
+        Call call = serviceInterface.checkProfanity("test word");
         RetrofitParser.parse(new OnTaskCompleteListener() {
             @Override
             public void onTaskComplete(Object result, int customTag) {
                 L.m("CALLBACK TAG == " + customTag);
+                L.m("CALLBACK RESULT == " + result);
             }
-        }, call, RetrofitParser.TYPE_INTEGER, RetrofitParser.TYPE_BOOLEAN, 1, 0, true);
+        }, call, RetrofitParser.TYPE_BOOLEAN, RetrofitParser.TYPE_INTEGER,
+		        1, 0, true);
     }
 
     interface TestSSLInterface {
