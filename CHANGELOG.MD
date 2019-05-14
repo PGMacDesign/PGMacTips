@@ -4,7 +4,9 @@ Change Log
 Version 1.0.1 *(TBD)*
 ----------------------------
 
-* 
+* Bugfix: Fixed multiple calls bug in the [RetrofitClient](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/networkclasses/retrofitutilities/RetrofitClient.java) class
+* Update: Added in new customization options in the [RetrofitClient](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/networkclasses/retrofitutilities/RetrofitClient.java)  with respect to cookie response listeners, added in support for the retry count, and added in multiple new builder options.
+* Update: Updated the [NumberUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/NumberUtilities.java) class to add in some simple functions for int array checks.
 
 Version 1.0.0 *(2019-05-10)*
 ----------------------------
