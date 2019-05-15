@@ -29,11 +29,18 @@ import androidx.annotation.RequiresApi;
  * 3) Great library for declarative shortcuts - https://github.com/MatthiasRobbers/shortbread
  * Note that I made this instead of using Shortbread because I needed to be able to declare the
  * shortcuts dynamically on the fly within the app and the library did not support that.
+ * Note! The shortcut manager class has a maximum of 5 shortcuts allowed so if you have more than
+ * that and try to add one, it will throw an exception. {@link ShortcutManagerUtilities#MAX_NUMBER_OF_SHORTCUTS}
+ * todo add in better logic for alerting user to max 5:
  */
 public class ShortcutManagerUtilities {
 	//region Static final Strings
 	public static final String SHORTCUT_BUNDLE_KEY = "pb_shortcut_key";
 	public static final String SHORTCUT_BUNDLE_ADDITIONAL_DATA = "pb_xtra_data_key";
+	/**
+	 * Set as per: https://github.com/googlesamples/android-AppShortcuts/issues/12
+	 */
+	private static final int MAX_NUMBER_OF_SHORTCUTS = 5;
 	//endregion
 	
 	//region Public Accessors to Set && Add Shortcuts
