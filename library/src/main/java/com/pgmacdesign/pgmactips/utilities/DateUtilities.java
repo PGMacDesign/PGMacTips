@@ -85,7 +85,7 @@ public class DateUtilities {
 
         //Get rid of nulls
         if (delimiter == null) {
-            delimiter = " ";
+            delimiter = "/";
         }
         if (locale == null) {
             locale = Locale.US;
@@ -114,10 +114,10 @@ public class DateUtilities {
             if (formatType == PGMacTipsConstants.DATE_MM_DD_YYYY_HH_MM) {
                 simpleDateFormat = new SimpleDateFormat("MM" + delimiter + "dd" + delimiter + "yyyy" + " HH:mm", locale);
             }
-            if (formatType == PGMacTipsConstants.DATE_EEEE_MMM_dd_HH_mm_ss_z_yyyy) {
+            if (formatType == PGMacTipsConstants.DATE_YYYY_MM_DD_T_HH_MM_SS_SSS_Z) {
                 simpleDateFormat = new SimpleDateFormat("yyyy" + delimiter + "MM" + delimiter + "dd" + "'T'" + " HH:mm:ss.SSS'Z", locale);
             }
-            if (formatType == PGMacTipsConstants.DATE_YYYY_MM_DD_T_HH_MM_SS_SSS_Z) {
+            if (formatType == PGMacTipsConstants.DATE_EEEE_MMM_dd_HH_mm_ss_z_yyyy) {
                 simpleDateFormat = new SimpleDateFormat("EEEE MMM dd HH:mm:ss z yyyy", locale);
             }
             if (formatType == PGMacTipsConstants.DATE_YYYY_MM_DD_T_HH_MM_SS_Z) {
@@ -128,6 +128,18 @@ public class DateUtilities {
         }
 
         return simpleDateFormat;
+    }
+    
+    /**
+     * Get the SimpleDateFormat to be used without a manually specified Delimiter.
+     * Note, uses "/" by default
+     *
+     * @param formatType The format type to do (See PGMacTipsConstants, IE DATE_YYYY_MM_DD)
+     * @param locale     Locale object {@link Locale} . If null, defaults to United States (US)
+     * @return SimpleDateFormat
+     */
+    public static SimpleDateFormat getSimpleDateFormat(int formatType, @Nullable Locale locale) {
+        return getSimpleDateFormat(formatType, "/", locale);
     }
 
     /**
@@ -153,33 +165,25 @@ public class DateUtilities {
         String convertedString = null;
         //simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
         try {
-            if (formatType == PGMacTipsConstants.DATE_MM_DD_YYYY) {
-                convertedString = simpleDateFormat.format(date);
-            }
-            if (formatType == PGMacTipsConstants.DATE_MM_DD_YY) {
-                convertedString = simpleDateFormat.format(date);
-            }
-            if (formatType == PGMacTipsConstants.DATE_YYYY_MM_DD) {
-                convertedString = simpleDateFormat.format(date);
-            }
-            if (formatType == PGMacTipsConstants.DATE_MM_DD) {
-                convertedString = simpleDateFormat.format(date);
-            }
-            if (formatType == PGMacTipsConstants.DATE_MM_YY) {
-                convertedString = simpleDateFormat.format(date);
-            }
-            if (formatType == PGMacTipsConstants.DATE_MM_YYYY) {
-                convertedString = simpleDateFormat.format(date);
-            }
-            if (formatType == PGMacTipsConstants.DATE_MM_DD_YYYY_HH_MM) {
-                convertedString = simpleDateFormat.format(date);
-            }
-            if (formatType == PGMacTipsConstants.DATE_EEEE_MMM_dd_HH_mm_ss_z_yyyy) {
-                convertedString = simpleDateFormat.format(date);
-            }
-            if (formatType == PGMacTipsConstants.DATE_MILLISECONDS) {
-                long millis = date.getTime();
-                convertedString = Long.toString(millis);
+            switch (formatType){
+                case PGMacTipsConstants.DATE_MILLISECONDS:
+                    long millis = date.getTime();
+                    convertedString = Long.toString(millis);
+                    break;
+                    
+                case PGMacTipsConstants.DATE_MM_DD_YYYY:
+                case PGMacTipsConstants.DATE_MM_DD_YY:
+                case PGMacTipsConstants.DATE_YYYY_MM_DD:
+                case PGMacTipsConstants.DATE_MM_DD:
+                case PGMacTipsConstants.DATE_MM_YY:
+                case PGMacTipsConstants.DATE_MM_YYYY:
+                case PGMacTipsConstants.DATE_MM_DD_YYYY_HH_MM:
+                case PGMacTipsConstants.DATE_EEEE_MMM_dd_HH_mm_ss_z_yyyy:
+                default:
+                    convertedString = simpleDateFormat.format(date);
+                    break;
+
+                    
             }
             return convertedString;
             //} catch (ParseException e1){
@@ -838,8 +842,43 @@ public class DateUtilities {
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         return year + "/" + month + "/" + day;
     }
-
-
+    
+    /**
+     * Simple method for getting the YYYY/MM/DD String returned
+     * @return String in format YYYY/MM/DD
+     */
+    public static String getSimpleDate2(){
+        return getSimpleDate2(Calendar.getInstance());
+    }
+    
+    /**
+     * Simple method for getting the date String returned like this:
+     * "Fri, 17 May 2019 21:37:48 GMT"
+     * @param date If null, will initialize new instance
+     * @return String in format "Fri, 17 May 2019 21:37:48 GMT"
+     */
+    public static String getSimpleDate2(Date date){
+        if(date == null){
+            date = new Date();
+        }
+        return getSimpleDateFormat(PGMacTipsConstants.DATE_EEEE_MMM_dd_HH_mm_ss_z_yyyy,
+                Locale.getDefault()).format(date);
+    }
+    
+    
+    /**
+     * Simple method for getting the YYYY/MM/DD String returned
+     * @param calendar If null, will initialize new instance
+     * @return String in format YYYY/MM/DD
+     */
+    public static String getSimpleDate2(@Nullable Calendar calendar){
+        if(calendar == null){
+            calendar = Calendar.getInstance();
+        }
+        Date date = calendar.getTime();
+        return getSimpleDate2(date);
+    }
+    
     /**
      * For when I need a quick date in the year 1985. Don't judge me, I get lazy and don't
      * want to type my birthday multiple times.
