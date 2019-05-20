@@ -311,6 +311,7 @@ public class NumberUtilities {
         }
         return str;
     }
+    
     /**
      * Get a random number between a min and max
      * @param min lower end min
@@ -357,7 +358,6 @@ public class NumberUtilities {
         }
     }
 
-
     /**
      * Get the minimum value of a set of numbers
      * @param numbers variable number of numbers
@@ -383,6 +383,8 @@ public class NumberUtilities {
             return Integer.MIN_VALUE;
         }
     }
+    
+    //region Check if an int is contained within an array
     
     /**
      * Simple utility to check if an array contains an int value. There are faster ways to do so,
@@ -446,4 +448,53 @@ public class NumberUtilities {
         }
         return false;
     }
+    
+    //endregion
+    
+    //region X.ParseX Methods
+    
+    /**
+     * Parse and return a long without worrying about null checks
+     * @param lng String to parse
+     * @param fallbackNumber Fallback number to return if it failed parsing
+     * @return Parsed long or fallback number if it failed conversion
+     */
+    public static long parseLongSafe(String lng, long fallbackNumber){
+        try {
+            return Long.parseLong(lng);
+        } catch (NumberFormatException e){
+            return fallbackNumber;
+        }
+    }
+    
+    /**
+     * Parse and return a double without worrying about null checks
+     * @param dbl String to parse
+     * @param fallbackNumber Fallback number to return if it failed parsing
+     * @return Parsed long or fallback number if it failed conversion
+     */
+    public static double parseDoubleSafe(String dbl, double fallbackNumber){
+        try {
+            return Double.parseDouble(dbl);
+        } catch (NumberFormatException e){
+            return fallbackNumber;
+        }
+    }
+    
+    /**
+     * Parse and return a float without worrying about null checks
+     * @param flt String to parse
+     * @param fallbackNumber Fallback number to return if it failed parsing
+     * @return Parsed long or fallback number if it failed conversion
+     */
+    public static float parseFloatSafe(String flt, float fallbackNumber){
+        try {
+            return Long.parseLong(flt);
+        } catch (NumberFormatException e){
+            return fallbackNumber;
+        }
+    }
+    
+    //endregion
+    
 }
