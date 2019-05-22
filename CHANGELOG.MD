@@ -1,7 +1,16 @@
 Change Log
 ==========
 
-Version 1.0.1 *(TBD)*
+
+Version 1.0.2 *(TBD)*
+----------------------------
+
+* Update: Updates to the [ShortcutManagerUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ShortcutManagerUtilities.java) class to include some new methods as well as catch the 'max number of shortcuts' exception thrown when passing more than 5. (Current max within the OS is 5 at the time of writing this)
+* Bugfix: Fixed a bug in DateUtilities where the wrong date formatter was being used in accordance with a mismatched tag
+* Update: Added some new methods in the [NumberUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/NumberUtilities.java) class to help with getting number values without worrying about null checks.
+
+
+Version 1.0.1 *(2019-05-14)*
 ----------------------------
 
 * Bugfix: Fixed multiple calls bug in the [RetrofitClient](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/networkclasses/retrofitutilities/RetrofitClient.java) class

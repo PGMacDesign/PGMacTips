@@ -18,6 +18,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
+import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
@@ -75,7 +78,6 @@ public class ShortcutManagerUtilities {
 		if (Build.VERSION.SDK_INT < 26) {
 			throw buildInvalidAPILevelException();
 		}
-		
 		Context context = context1.getApplicationContext();
 		ShortcutManager shortcutManager = getShortcutManager(context);
 		if(shortcutManager == null){
@@ -84,6 +86,10 @@ public class ShortcutManagerUtilities {
 		boolean isSupported = shortcutManager.isRequestPinShortcutSupported();
 		if (!isSupported) {
 			throw buildShortcutsNotSupportedException();
+		}
+		int numberOfShortcutsCurrently = ShortcutManagerUtilities.getNumberOfShortcuts(context);
+		if((numberOfShortcutsCurrently + shortcutPojos.size()) >= MAX_NUMBER_OF_SHORTCUTS){
+			throw buildTooManyShortcutsException();
 		}
 		try {
 			List<ShortcutInfo> s = new ArrayList<>();
@@ -137,7 +143,6 @@ public class ShortcutManagerUtilities {
 		if (Build.VERSION.SDK_INT < 26) {
 			throw buildInvalidAPILevelException();
 		}
-		
 		Context context = context1.getApplicationContext();
 		ShortcutManager shortcutManager = getShortcutManager(context);
 		if(shortcutManager == null){
@@ -146,6 +151,9 @@ public class ShortcutManagerUtilities {
 		boolean isSupported = shortcutManager.isRequestPinShortcutSupported();
 		if (!isSupported) {
 			throw buildShortcutsNotSupportedException();
+		}
+		if((shortcutPojos.size()) >= MAX_NUMBER_OF_SHORTCUTS){
+			throw buildTooManyShortcutsException();
 		}
 		try {
 			List<ShortcutInfo> s = new ArrayList<>();
@@ -296,9 +304,61 @@ public class ShortcutManagerUtilities {
 		}
 	}
 	
+	/**
+	 * Remove a shortcut at the 'last' position of the list.
+	 * IE: If 4 shortcuts exist, will remove at position 3. If 1 exist, will remove at position 0.
+	 * @param context
+	 * @return boolean, true if it was removed successfully, false if not
+	 */
+	@RequiresApi(api = 26)
+	public static boolean removeShortcutAtPosition(@Nonnull Context context){
+		return ShortcutManagerUtilities.removeShortcutAtPosition(context,
+				ShortcutManagerUtilities.getPositionOfLastPositionShortcut(context));
+	}
+	
+	/**
+	 * Remove a shortcut at the position passed. If position does not exist, will not remove any
+	 * @param position
+	 * @return
+	 */
+	@RequiresApi(api = 26)
+	public static boolean removeShortcutAtPosition(@Nonnull Context context,
+	                                               @IntRange(from = 0 , to = 4) int position){
+		List<ShortcutInfo> shortcuts = ShortcutManagerUtilities.getAllShortcuts(context);
+		if(MiscUtilities.isListNullOrEmpty(shortcuts)){
+			return false;
+		}
+		if(!MiscUtilities.isValidPosition(shortcuts, position)){
+			return false;
+		}
+		ShortcutInfo i = shortcuts.get(position);
+		if(i == null){
+			return false;
+		}
+		return ShortcutManagerUtilities.removeShortcut(context, i.getId());
+	}
+	
 	//endregion
 	
 	//region Private Utilities
+	
+	/**
+	 * Get the position of the last position shortcut in the list
+	 * @param context
+	 * @return
+	 */
+	@RequiresApi(api = 26)
+	private static int getPositionOfLastPositionShortcut(@Nonnull Context context){
+		try {
+			List<ShortcutInfo> infos = ShortcutManagerUtilities.getAllShortcuts(context);
+			if(MiscUtilities.isListNullOrEmpty(infos)){
+				return 0;
+			}
+			return (infos.size() - 1);
+		} catch (Exception e){
+			return 0;
+		}
+	}
 	
 	/**
 	 * Convert a {@link ShortcutPojo} to a {@link ShortcutInfo} object
@@ -678,6 +738,12 @@ public class ShortcutManagerUtilities {
 	
 	private static PGShortcutException buildShortcutInstantiationException(){
 		return new PGShortcutException("Could not instantiate ShortcutManager, unable to add shortcut; was your context valid?");
+	}
+	
+	private static PGShortcutException buildTooManyShortcutsException(){
+		return new PGShortcutException("Too many shortcuts, cannot add new one. The current OS maxes out at "
+				+ MAX_NUMBER_OF_SHORTCUTS + " shortcuts. Either remove some by calling 'removeShortcut()' " +
+				"or call 'setShortcuts()' with " + MAX_NUMBER_OF_SHORTCUTS + " shortcuts or less instead");
 	}
 	
 	private static PGShortcutException buildMissingRequiredFieldNotIdException(){
