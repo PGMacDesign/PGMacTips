@@ -3,7 +3,10 @@ package com.pgmacdesign.pgmactips.utilities;
 import android.content.Intent;
 import android.net.Uri;
 
+import javax.annotation.Nonnull;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class IntentUtilities {
 	
@@ -57,5 +60,25 @@ public class IntentUtilities {
 		Intent i = new Intent(Intent.ACTION_VIEW);
 		i.setData(Uri.parse("https://play.google.com/store/apps/details?id=" + packageString));
 		return i;
+	}
+	
+	/**
+	 * Build a Send email intent
+	 * @param to To field (email@email.com)
+	 * @param subject Subject (Re: Stuff)
+	 * @param body Message / Body (To whom it may concern....)
+	 * @return Intent ready to fire. Sample:
+	 *         startActivity(Intent.createChooser(emailIntent, "Send email..."));
+	 */
+	public static Intent buildEmailIntent(@Nullable String to, @Nonnull String subject, @Nonnull String body){
+		Intent emailIntent;
+		emailIntent = new Intent(Intent.ACTION_SENDTO);
+		if(!StringUtilities.isNullOrEmpty(to)){
+			emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{to});
+		}
+		emailIntent.setData(Uri.parse("mailto:"));
+		emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+		emailIntent.putExtra(Intent.EXTRA_TEXT, body);
+		return emailIntent;
 	}
 }
