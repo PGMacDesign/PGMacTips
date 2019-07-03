@@ -47,7 +47,7 @@ import io.realm.annotations.RealmModule;
  */
 @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Realm,
         CustomAnnotationsBase.Dependencies.GSON})
-// TODO: 2019-07-03 Add in function for deleteAllExcept() with overloaded for list and regular options for those who want to clear the DB, but not specific classes. 
+// TODO: 2019-07-03 Add in function for deleteAllExcept() with overloaded for list and regular options for those who want to clear the DB, but not specific classes.
 public class DatabaseUtilities {
 
     //Misc Type and Typetoken samples

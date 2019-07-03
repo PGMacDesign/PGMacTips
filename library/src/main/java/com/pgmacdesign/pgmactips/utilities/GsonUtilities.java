@@ -121,6 +121,7 @@ public class GsonUtilities {
      * @return
      */
     @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
+    @Deprecated
     public static String convertObjectToString(@NonNull final Object o, @NonNull final Type type){
 //        JsonElement jsonElement = new Gson().toJsonTree(o);
         JsonElement jsonElement = new Gson().toJsonTree(o, type);
@@ -168,6 +169,7 @@ public class GsonUtilities {
      * @return
      */
     @CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
+    @Deprecated
     public static String convertJsonObjectToString(JsonObject jsonObject){
         if(jsonObject == null){
             return null;
