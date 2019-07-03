@@ -1,7 +1,12 @@
 package com.pgmacdesign.pgmactips.utilities;
 
 import android.app.Activity;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -18,6 +23,8 @@ import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.annotation.Nonnull;
 
 /**
  * Class for managing views in various ways
@@ -485,4 +492,45 @@ public class ViewUtilities {
 
         return o;
     }
+    
+    //region Convert View to Bitmap or Drawable
+    
+    /**
+     * Create a bitmap from a view
+     * @param v View to convert
+     * @return Bitmap created form the view
+     */
+    public static Bitmap createBitmapFromView(@Nonnull View v) {
+        try {
+            Bitmap b = Bitmap.createBitmap(v.getLayoutParams().width, v.getLayoutParams().height, Bitmap.Config.ARGB_8888);
+            Canvas c = new Canvas(b);
+            v.layout(0, 0, v.getLayoutParams().width, v.getLayoutParams().height);
+            v.draw(c);
+            return b;
+        } catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    /**
+     * Create a bitmap from a view
+     * @param v View to convert
+     * @return Bitmap created form the view
+     */
+    public static Drawable createDrawableFromView(@Nonnull Resources resources, @Nonnull View v) {
+        try {
+            Bitmap b = Bitmap.createBitmap(v.getLayoutParams().width, v.getLayoutParams().height, Bitmap.Config.ARGB_8888);
+            Canvas c = new Canvas(b);
+            v.layout(0, 0, v.getLayoutParams().width, v.getLayoutParams().height);
+            v.draw(c);
+            return new BitmapDrawable(resources, b);
+        } catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    //endregion
+    
 }

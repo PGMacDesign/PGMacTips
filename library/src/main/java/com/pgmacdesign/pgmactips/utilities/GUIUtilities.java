@@ -17,6 +17,8 @@ import android.view.inputmethod.InputMethodManager;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
+import javax.annotation.Nonnull;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
@@ -25,19 +27,52 @@ import androidx.appcompat.app.AlertDialog;
  */
 public class GUIUtilities {
 
+    
+    /**
+     * Adjust the status bar color
+     * @param statusBarColor
+     */
+    private void setStatusBarColor(@Nonnull Activity activity, int statusBarColor){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            try {
+                Window window = activity.getWindow();
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                window.setStatusBarColor(statusBarColor);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    /**
+     * Set the status bar to a transparent color
+     * @param activity
+     */
 	public static void setTransparentToolbar(@NonNull Activity activity){
-		if (Build.VERSION.SDK_INT >= 19 && Build.VERSION.SDK_INT < 21) {
-			setWindowFlag(activity, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, true);
-		}
-		if (Build.VERSION.SDK_INT >= 19) {
-			activity.getWindow().getDecorView().setSystemUiVisibility(
-					View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-		}
-		if (Build.VERSION.SDK_INT >= 21) {
-			setWindowFlag(activity, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, false);
-			activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
-		}
+	    try {
+            if (Build.VERSION.SDK_INT >= 19 && Build.VERSION.SDK_INT < 21) {
+                setWindowFlag(activity, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, true);
+            }
+            if (Build.VERSION.SDK_INT >= 19) {
+                activity.getWindow().getDecorView().setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+            }
+            if (Build.VERSION.SDK_INT >= 21) {
+                setWindowFlag(activity, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, false);
+                activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
+            }
+        } catch (Exception e){
+	        e.printStackTrace();
+        }
 	}
+    
+    /**
+     * Set various window flags
+     * @param activity
+     * @param bits
+     * @param on
+     */
 	private static void setWindowFlag(Activity activity, final int bits, boolean on) {
 		Window win = activity.getWindow();
 		WindowManager.LayoutParams winParams = win.getAttributes();

@@ -47,6 +47,7 @@ import io.realm.annotations.RealmModule;
  */
 @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Realm,
         CustomAnnotationsBase.Dependencies.GSON})
+// TODO: 2019-07-03 Add in function for deleteAllExcept() with overloaded for list and regular options for those who want to clear the DB, but not specific classes. 
 public class DatabaseUtilities {
 
     //Misc Type and Typetoken samples
@@ -767,7 +768,33 @@ public class DatabaseUtilities {
     public boolean dePersistObjectCustom(@NonNull final TypeToken myClass, final String customSuffix) {
         return this.dePersistObjectCustom(myClass.getClass(), customSuffix);
     }
-
+	
+	
+	/**
+	 * Delete an object from the Master Table. For deleting persisted objects
+	 *
+	 * @param myClass      Class will be converted to string and used to reference the id / primary
+	 *                     key to find the item / row.
+	 * @param customSuffix String of a custom suffix to be appended to the class name. This is
+	 *                     used in the event that you want to have a secondary persisted object
+	 *                     of the same type in the master table. An example would be that you have
+	 *                     2 user objects and want to persist both for X long. To do that, just
+	 *                     add a custom suffix string (ie -user2) and it will be written into the
+	 *                     masterobject table with an id (primary key) that matches that custom
+	 *                     suffix. Use that same suffix again to delete it from the db.
+	 * @return Boolean, true if it succeeded, false if it did not
+	 */
+	public boolean deletePersistedObjectCustom(@NonNull final Class myClass, final String customSuffix) {
+		return this.deleteFromMasterDB(myClass, customSuffix);
+	}
+	
+	/**
+	 * Overloaded to allow for {@link TypeToken}
+	 */
+	public boolean deletePersistedObjectCustom(@NonNull final TypeToken myClass, final String customSuffix) {
+		return this.dePersistObjectCustom(myClass.getClass(), customSuffix);
+	}
+	
     /**
      * Delete an object from the Master Table. For deleting persisted objects
      *

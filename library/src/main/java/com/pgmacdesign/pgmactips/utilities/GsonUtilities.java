@@ -182,6 +182,23 @@ public class GsonUtilities {
             JsonElement value = map.getValue();
             if(!StringUtilities.isNullOrEmpty(key) && value != null){
                 try {
+                	/*
+                	todo fix issue below:
+                	Bug is happening here:
+W: java.lang.IllegalStateException
+W:     at com.google.gson.JsonArray.getAsString(JsonArray.java:226)
+W:     at com.pgmacdesign.pgmactips.utilities.GsonUtilities.convertJsonObjectToString(GsonUtilities.java:185)
+W:     at com.pgmacdesign.pgmactips.utilities.GsonUtilities.convertObjectToString(GsonUtilities.java:143)
+W:     at my.app.networking.APICalls$3.onResponse(APICalls.java:231)
+W:     at retrofit2.ExecutorCallAdapterFactory$ExecutorCallbackCall$1$1.run(ExecutorCallAdapterFactory.java:70)
+W:     at android.os.Handler.handleCallback(Handler.java:873)
+W:     at android.os.Handler.dispatchMessage(Handler.java:99)
+W:     at android.os.Looper.loop(Looper.java:193)
+W:     at android.app.ActivityThread.main(ActivityThread.java:6718)
+W:     at java.lang.reflect.Method.invoke(Native Method)
+W:     at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:493)
+W:     at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:858)
+                	 */
                     sb.append(key + " : " + value.getAsString() + "\n");
                 } catch (UnsupportedOperationException o){
                     sb.append(key + " : " + value.toString() + "\n");

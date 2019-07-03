@@ -293,6 +293,7 @@ public class NumberUtilities {
 
         return str;
     }
+    
     /**
      * This used when a double ends in 0 (IE 100.0) and you want 2 decimal places instead (IE 100.00)
      * @param value The double to convert
