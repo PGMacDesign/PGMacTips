@@ -36,6 +36,7 @@ import com.pgmacdesign.pgmactips.stackmanagement.StackManagerException;
 import com.pgmacdesign.pgmactips.utilities.CameraMediaUtilities;
 import com.pgmacdesign.pgmactips.utilities.ContactUtilities;
 import com.pgmacdesign.pgmactips.utilities.DatabaseUtilities;
+import com.pgmacdesign.pgmactips.utilities.DateUtilities;
 import com.pgmacdesign.pgmactips.utilities.GsonUtilities;
 import com.pgmacdesign.pgmactips.utilities.ImageUtilities;
 import com.pgmacdesign.pgmactips.utilities.L;
@@ -133,6 +134,20 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
 //        this.init5();
 //        this.testDB2();
 	    this.startDisplayMetricTests();
+	    
+	    L.m("TESTING TIME CALL: ");
+	    String str1 = DateUtilities.convertMillisecondsToTimeString(System.currentTimeMillis(),
+			    true, true);
+	    String str2 = DateUtilities.convertMillisecondsToTimeString(PGMacTipsConstants.ONE_WEEK * 3 + (PGMacTipsConstants.ONE_SECOND),
+			    true, false);
+	    String str3 = DateUtilities.convertMillisecondsToTimeString(PGMacTipsConstants.ONE_MINUTE * 4 + (PGMacTipsConstants.ONE_WEEK),
+			    false, true);
+	    String str4 = DateUtilities.convertMillisecondsToTimeString(PGMacTipsConstants.ONE_SECOND * 2 + (PGMacTipsConstants.ONE_YEAR),
+			    false, false);
+	    L.m(str1);
+	    L.m(str2);
+	    L.m(str3);
+	    L.m(str4);
     }
 
     private void startDisplayMetricTests(){

@@ -26,8 +26,114 @@ public class DateUtilities {
     private static final long HOUR_MILLIS = PGMacTipsConstants.ONE_HOUR;
     private static final long DAY_MILLIS = PGMacTipsConstants.ONE_DAY;
     private static final long MONTH_MILLIS = PGMacTipsConstants.ONE_MONTH;
-
-
+	
+    //region Simple Millisecond Converters
+	
+	/**
+	 *
+	 * @param milliseconds Milliseconds to convert
+	 * @param useCommasToSeparate Use commas to separate, will use space otherwise
+	 * @param useTitleCaseForStrings Use title case (First letter is capitalized, IE Year vs year)
+	 * @return String formatted like this: "49 Years, 35 Weeks, 5 Days, 21 Hours, 16 Minutes, 53 Seconds" or
+	 *         String formatted like this: "1 Year 3 Weeks 1 Hour 16 Minutes"
+	 */
+	public static String convertMillisecondsToTimeString(long milliseconds, boolean useCommasToSeparate, boolean useTitleCaseForStrings){
+		StringBuilder sb = new StringBuilder();
+		long seconds = milliseconds / 1000;
+		long minutes = seconds / 60;
+		long hours = minutes / 60;
+		long days = hours / 24;
+		long weeks = days / 7;
+		long years = weeks / 52;
+		
+		//Years
+		if(years > 0){
+			sb.append((years));
+			sb.append(" ");
+			sb.append((useTitleCaseForStrings) ? "Year" : "year");
+			if(years > 1){
+				sb.append("s");
+			}
+			sb.append((useCommasToSeparate) ? ", " : " ");
+		}
+		
+		//Weeks
+		if((weeks % 52) > 0){
+			sb.append((weeks % 52));
+			sb.append(" ");
+			sb.append((useTitleCaseForStrings) ? "Week" : "week");
+			if((weeks % 52) > 1){
+				sb.append("s");
+			}
+			sb.append((useCommasToSeparate) ? ", " : " ");
+		}
+		
+		//Days
+		if((days % 7) > 0){
+			sb.append((days % 7));
+			sb.append(" ");
+			sb.append((useTitleCaseForStrings) ? "Day" : "day");
+			if((days % 7) > 1){
+				sb.append("s");
+			}
+			sb.append((useCommasToSeparate) ? ", " : " ");
+		}
+		
+		//Hours
+		if((hours % 24) > 0){
+			sb.append((hours % 24));
+			sb.append(" ");
+			sb.append((useTitleCaseForStrings) ? "Hour" : "hour");
+			if((hours % 24) > 1){
+				sb.append("s");
+			}
+			sb.append((useCommasToSeparate) ? ", " : " ");
+		}
+		
+		//Minutes
+		if((minutes % 60) > 0){
+			sb.append((minutes % 60));
+			sb.append(" ");
+			sb.append((useTitleCaseForStrings) ? "Minute" : "minute");
+			if((minutes % 60) > 1){
+				sb.append("s");
+			}
+			sb.append((useCommasToSeparate) ? ", " : " ");
+		}
+		
+		//Seconds
+		if((seconds % 60) > 0){
+			sb.append((seconds % 60));
+			sb.append(" ");
+			sb.append((useTitleCaseForStrings) ? "Second" : "second");
+			if((seconds % 60) > 1){
+				sb.append("s");
+			}
+			sb.append((useCommasToSeparate) ? ", " : " ");
+		}
+		
+		String timeString = sb.toString();
+		if(StringUtilities.isNullOrEmpty(timeString)){
+			timeString = "";
+		}
+		if(timeString.endsWith(", ")){
+			timeString = timeString.substring(0, (timeString.length()-2));
+		}
+		return timeString.trim();
+	}
+	
+	/**
+	 * Build and return a String representing the number of milliseconds left matching the variable
+	 * passed. Ideally used for countdown timers or the like
+	 * @param milliseconds Number of milliseconds to convert
+	 * @return String formatted like this: "49 Years, 35 Weeks, 5 Days, 21 Hours, 16 Minutes, 53 Seconds"
+	 */
+	public static String convertMillisecondsToTimeString(long milliseconds){
+    	return DateUtilities.convertMillisecondsToTimeString(milliseconds, true, true);
+    }
+    
+	//endregion
+	
     /**
      * Copyright 2012 Google Inc. (Apache License)
      * From: https://stackoverflow.com/a/13018647/2480714
@@ -334,8 +440,7 @@ public class DateUtilities {
 
         return age;
     }
-
-
+    
     /**
      * Quick calculator to get a person's age (as an int)
      *
