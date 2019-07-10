@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import androidx.annotation.FloatRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -133,6 +134,28 @@ public class DateUtilities {
     }
     
 	//endregion
+	
+	//region Time Estimates
+	
+	/**
+	 * Calculate the estimated time remaining based on the percent complete and the time elapsed using proportions
+	 * @param startTime
+	 * @param percentComplete
+	 * @return
+	 */
+	public static long estimateTimeRemaining(long startTime, @FloatRange(from = 0.0, to = 1.0) float percentComplete){
+		
+		long now = System.currentTimeMillis();
+		long timeSinceStart = now - startTime;
+		if(percentComplete <= 0 || percentComplete >= 1 || startTime >= now){
+			return 0;
+		}
+		float lengthOfTimeToComplete = (((float)timeSinceStart) / percentComplete);
+		return (startTime + (long)lengthOfTimeToComplete - now);
+	}
+	
+	//endregion
+	
 	
     /**
      * Copyright 2012 Google Inc. (Apache License)
