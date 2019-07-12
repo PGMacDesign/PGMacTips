@@ -5,6 +5,7 @@ import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
+import android.os.Build;
 import android.os.CancellationSignal;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
@@ -108,7 +109,7 @@ public class BiometricVerification {
 
     private static final String ANDROID_KEYSTORE = "AndroidKeyStore";
     private static final String FINGERPRINT_SUFFIX_STRING = ".fingerprint";
-    private static final String ERROR_MISSING_PERMISSION = "Missing required permission [android.permission.USE_FINGERPRINT].";
+    private static final String ERROR_MISSING_PERMISSION = "Missing required permission [android.permission.USE_FINGERPRINT] or [android.permission.USE_BIOMETRIC].";
     private static final String MUST_CALL_START_BEFORE_STOP = "You must call startFingerprintAuth() before you can call stopFingerprintAuth()";
     private static final String UNKNOWN_ERROR = "An unknown error has occurred. Please try again";
     private static final String HARDWARE_UNAVAILABLE = "Fingerprint sensor hardware not available on this device.";
@@ -212,7 +213,7 @@ public class BiometricVerification {
      * Init method
      * @throws FingerprintException {@link FingerprintException}
      */
-    @RequiresPermission(Manifest.permission.USE_FINGERPRINT)
+    @RequiresPermission(anyOf = {Manifest.permission.USE_FINGERPRINT, Manifest.permission.USE_BIOMETRIC})
     private void init() throws FingerprintException{
         try {
             if (!this.doesHaveFingerprintPermission()) {
@@ -252,7 +253,7 @@ public class BiometricVerification {
      * Checks if the the fingerprint sensor hardware is available on the device
      * @return boolean, if true sensor is available on the device, false if not
      */
-    @RequiresPermission(Manifest.permission.USE_FINGERPRINT)
+    @RequiresPermission(anyOf = {Manifest.permission.USE_FINGERPRINT, Manifest.permission.USE_BIOMETRIC})
     public boolean isFingerprintSensorAvailable(){
         try {
             return this.fingerprintManager.isHardwareDetected();
@@ -265,7 +266,7 @@ public class BiometricVerification {
      * Checks if the user has enrolled fingerprints in the phone itself
      * @return boolean, true if they have, false if they have not
      */
-    @RequiresPermission(Manifest.permission.USE_FINGERPRINT)
+    @RequiresPermission(anyOf = {Manifest.permission.USE_FINGERPRINT, Manifest.permission.USE_BIOMETRIC})
     public boolean doesUserHaveEnrolledFingerprints(){
         try {
             return fingerprintManager.hasEnrolledFingerprints();
@@ -280,7 +281,9 @@ public class BiometricVerification {
      */
     public boolean doesHaveFingerprintPermission(){
         try {
-            int x = ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT);
+            int x = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+		            ? ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_BIOMETRIC)
+		            : ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT);
             return (x == PackageManager.PERMISSION_GRANTED);
         } catch (Exception e){
             return false;
@@ -303,7 +306,7 @@ public class BiometricVerification {
      * Simple method to combine all of of the checker methods into one so as to reduce code.
      * @return boolean, will return true if all criteria has been met, false if not
      */
-    @RequiresPermission(Manifest.permission.USE_FINGERPRINT)
+    @RequiresPermission(anyOf = {Manifest.permission.USE_FINGERPRINT, Manifest.permission.USE_BIOMETRIC})
     public boolean isCriteriaMet(){
         return (this.doesHaveFingerprintPermission() && this.doesUserHaveLockEnabled() &&
                 this.doesUserHaveEnrolledFingerprints() && this.isFingerprintSensorAvailable());
@@ -425,10 +428,13 @@ public class BiometricVerification {
      * If any of these criteria are not met, a FingerprintException will be thrown.
      * @throws FingerprintException {@link FingerprintException}
      */
-    @RequiresPermission(Manifest.permission.USE_FINGERPRINT)
+    @RequiresPermission(anyOf = {Manifest.permission.USE_FINGERPRINT, Manifest.permission.USE_BIOMETRIC})
     public void startFingerprintAuth() throws FingerprintException{
         this.init();
         if(this.cancellationSignal == null) {
+            this.cancellationSignal = new CancellationSignal();
+        }
+        if(this.cancellationSignal.isCanceled()) {
             this.cancellationSignal = new CancellationSignal();
         }
         try {

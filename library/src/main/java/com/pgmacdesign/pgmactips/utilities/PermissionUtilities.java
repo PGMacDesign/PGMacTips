@@ -12,6 +12,7 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -36,6 +37,12 @@ public class PermissionUtilities {
     //Write external Storage
     private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE =
             PGMacTipsConstants.TAG_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE;
+    //Bluetooth
+    private static final int MY_PERMISSIONS_BLUETOOTH =
+            PGMacTipsConstants.TAG_PERMISSIONS_BLUETOOTH;
+    //Bluetooth Admin
+    private static final int MY_PERMISSIONS_BLUETOOTH_ADMIN =
+            PGMacTipsConstants.TAG_PERMISSIONS_BLUETOOTH_ADMIN;
     //Read External Storage
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE =
             PGMacTipsConstants.TAG_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE;
@@ -60,6 +67,12 @@ public class PermissionUtilities {
     //Location (GPS)
     private static final int MY_PERMISSIONS_ACCESS_FINE_LOCATION =
             PGMacTipsConstants.TAG_PERMISSIONS_ACCESS_FINE_LOCATION;
+    //Fingerprint (< API 28)
+    private static final int MY_PERMISSIONS_FINGERPRINT =
+            PGMacTipsConstants.TAG_PERMISSIONS_FINGERPRINT;
+    //Biometrics (Replaced Fingerprint >= API 28))
+    private static final int MY_PERMISSIONS_BIOMETRICS =
+            PGMacTipsConstants.TAG_PERMISSIONS_BIOMETRICS;
     //Location (GPS)
     private static final int MY_PERMISSIONS_ACCESS_COARSE_LOCATION =
             PGMacTipsConstants.TAG_PERMISSIONS_ACCESS_COARSE_LOCATION;
@@ -210,15 +223,22 @@ public class PermissionUtilities {
                 Manifest.permission.ACCESS_NETWORK_STATE,
                 MY_PERMISSIONS_ACCESS_NETWORK_STATE, false),
         BLUETOOTH("BlueTooth", "Used for connection with bluetooth devices.",
-                Manifest.permission.BLUETOOTH, 29, false),
+                Manifest.permission.BLUETOOTH, MY_PERMISSIONS_BLUETOOTH, false),
         BLUETOOTH_ADMIN("BlueTooth Admin", "Used for making changes to the Bluetooth settings. " +
                 "Some location-based services require this.",
-                Manifest.permission.BLUETOOTH_ADMIN, 30, false),
+                Manifest.permission.BLUETOOTH_ADMIN, MY_PERMISSIONS_BLUETOOTH_ADMIN, false),
         RECEIVE_BOOT_COMPLETED("Receive Boot Completed", "Used for determining when the device " +
                 "has finished rebooting. This is used to restart services that are shut off when a " +
                 "phone is rebooted.",
-                Manifest.permission.READ_PHONE_STATE,
-                MY_PERMISSIONS_RECEIVE_BOOT_COMPLETED, false),
+                Manifest.permission.READ_PHONE_STATE, MY_PERMISSIONS_RECEIVE_BOOT_COMPLETED, false),
+	    @RequiresApi(api = 23)
+	    FINGERPRINT("Fingerprint", "Used for accessing the biometrics " +
+			    "API for unlocking, identification, etc using your fingerprint. Note, requires Min API 23 to use",
+			    Manifest.permission.USE_FINGERPRINT, MY_PERMISSIONS_FINGERPRINT, false),
+	    @RequiresApi(api = 28)
+	    Biometrics("Fingerprint", "Used for accessing the biometrics " +
+			    "API for unlocking, identification, etc using your fingerprint. Note, requires Min API 28 to use",
+			    Manifest.permission.USE_BIOMETRIC, MY_PERMISSIONS_BIOMETRICS, false),
         ;
 
         String permissionName;

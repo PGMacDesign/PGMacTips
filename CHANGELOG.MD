@@ -2,13 +2,23 @@ Change Log
 ==========
 
 
-Version 1.0.2 *(TBD)*
+Version 1.0.3 *(TBD)*
+----------------------------
+
+
+Version 1.0.2 *(2019-07-12)*
 ----------------------------
 
 * Update: Updates to the [ShortcutManagerUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ShortcutManagerUtilities.java) class to include some new methods as well as catch the 'max number of shortcuts' exception thrown when passing more than 5. (Current max within the OS is 5 at the time of writing this)
 * Bugfix: Fixed a bug in DateUtilities where the wrong date formatter was being used in accordance with a mismatched tag
 * Update: Added some new methods in the [NumberUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/NumberUtilities.java) class to help with getting number values without worrying about null checks.
-
+* Bugfix: Updated the [BiometricVerification](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/biometricutilities/BiometricVerification.java) class to update the required permissions for Android API level 28 (P) and fixed a bug relating to the cancellation listener. 
+* Update: Updated [Permission Utilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/PermissionUtilities.java) to include the Biometric permission for for Android API level 28 (P).
+* Update: Updated the [DateUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/DateUtilities.java) to include some new calculators. 
+* Update: Updated the [DatabaseUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/DatabaseUtilities.java) to include some overloaded methods for maintaining the naming pattern. 
+* Update: Updated the [GUIUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/GUIUtilities.java) to include code for adjusting the status bar color.
+* Update: Included new code in the [ImageUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ImageUtilities.java) class for obtaining the absolute Uri path correctly. 
+* Update: Updated the [ViewUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ViewUtilities.java) class to include code to convert bitmaps, views, and Drawables among different types. 
 
 Version 1.0.1 *(2019-05-14)*
 ----------------------------
@@ -161,7 +171,7 @@ Version 0.0.61 *(2018-07-24)*
 Version 0.0.60 *(2018-07-10)*
 ----------------------------
 
- * New: Added in BiometricUtilities and BiometricVerification, which allows access to fingerprint checking.
+ * New: Added in the BiometricUtilities package and [BiometricVerification](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/biometricutilities/BiometricVerification.java) class, which allows access to fingerprint checking.
  * Improvement: Refactored [SharedPrefs](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/SharedPrefs.java) to have all Encrypted aspects merged into the one file. Deprecated the older SharedPrefsEncrypted class and removed the dependency. The class should work identical to before but now has the option to use either encryption or not on the fly without having to issue a new build.
  * Update: Altered the ThreeButtonDialog in [DialogUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/DialogUtilities.java) class to resize proportionally for less text and allowed auto-resizing whenever one button text is sent in as null; this will allow for <3 buttons should someone choose to omit one purposefully.
  * Update: Refactored the [EncryptionUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/EncryptionUtilities.java) class to utilize better practices in saving and persisting data. Pulled most of the code from [this](https://github.com/tozny/java-aes-crypto/blob/master/aes-crypto/src/main/java/com/tozny/crypto/android/AesCbcWithIntegrity.java) repository.

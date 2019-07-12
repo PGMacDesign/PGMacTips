@@ -59,10 +59,10 @@ public class PGMacTipsConstants {
     public static final int TAG_PERMISSIONS_RECEIVE_BOOT_COMPLETED = 3310;
     public static final int TAG_RETROFIT_PARSE_ERROR = 3311;
     public static final int TAG_RETROFIT_CALL_ERROR = 3312;
-    public static final int TAG_TBD2 = 3313;
-    public static final int TAG_TBD3 = 3314;
-    public static final int TAG_TBD4 = 3315;
-    public static final int TAG_TBD5 = 3316;
+    public static final int TAG_PERMISSIONS_FINGERPRINT = 3313;
+    public static final int TAG_PERMISSIONS_BIOMETRICS = 3314;
+    public static final int TAG_PERMISSIONS_BLUETOOTH = 3315;
+    public static final int TAG_PERMISSIONS_BLUETOOTH_ADMIN = 3316;
     public static final int TAG_TBD6 = 3317;
     public static final int TAG_TBD7 = 3318;
     public static final int TAG_TBD8 = 3319;
