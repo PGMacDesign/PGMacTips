@@ -17,6 +17,12 @@ import com.pgmacdesign.pgmactips.R;
 
 import java.lang.reflect.InvocationTargetException;
 
+/*
+todo
+eventually add in public static methods for simple conversions using these formulae
+https://stackoverflow.com/a/42108115/2480714
+
+ */
 /**
  * This class helps to determine the screen height and width in Density Pixels (DP)
  * Created by pmacdowell on 8/15/2016.
