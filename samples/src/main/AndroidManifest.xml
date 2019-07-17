@@ -22,7 +22,7 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/MyMainTheme">
         <activity
-            android:name=".misc.MyTestActivity"
+            android:name=".MyTestActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

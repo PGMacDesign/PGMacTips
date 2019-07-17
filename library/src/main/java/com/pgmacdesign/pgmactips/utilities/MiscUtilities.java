@@ -365,7 +365,7 @@ public class MiscUtilities {
     
     /**
      * Print out a hashSet {@link HashSet}
-     * @param hashSet HashSet of type String, ?
+     * @param hashSet HashSet of type ?
      */
     public static void printOutHashSet(HashSet<?> hashSet){
         if(hashSet == null){
@@ -376,6 +376,21 @@ public class MiscUtilities {
             L.m(o);
         }
         L.m("\nEnd printing out HashSet:");
+    }
+  
+    /**
+     * Print out a Set {@link Set}
+     * @param set Set of type ?
+     */
+    public static void printOutHashSet(Set<?> set){
+        if(set == null){
+            return;
+        }
+        L.m("Printing out entire Set:\n");
+        for(Object o : set){
+            L.m(o);
+        }
+        L.m("\nEnd printing out Set:");
     }
 
     /**

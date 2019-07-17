@@ -1,4 +1,4 @@
-package pgmacdesign.pgmactips.samples.misc;
+package pgmacdesign.pgmactips.samples;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -15,6 +15,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
+import com.google.android.gms.security.ProviderInstaller;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.GenericRecyclerviewAdapter;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.biometricutilities.BiometricVerification;
@@ -22,7 +23,6 @@ import com.pgmacdesign.pgmactips.biometricutilities.FingerprintException;
 import com.pgmacdesign.pgmactips.customui.MultiColorLine;
 import com.pgmacdesign.pgmactips.datamodels.SamplePojo;
 import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
-import com.pgmacdesign.pgmactips.misc.PGMacTipsConfig;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.misc.TempString;
 import com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitClient;
@@ -62,12 +62,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
-import pgmacdesign.pgmactips.samples.activitysamples.SampleDBClass;
 import pgmacdesign.pgmactips.samples.activitysamples.SampleDBClassKotlin;
+import pgmacdesign.pgmactips.samples.misc.SampleMyApplication;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 
 /**
  * Test activity for experimenting with various Library components

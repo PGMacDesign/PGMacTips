@@ -97,7 +97,7 @@ public class ClientSSLSocketFactory extends SSLCertificateSocketFactory {
                     }
 
                     public X509Certificate[] getAcceptedIssuers() {
-                        return null;
+                        return new X509Certificate[]{};
                     }
                 };
             } else {
@@ -120,6 +120,7 @@ public class ClientSSLSocketFactory extends SSLCertificateSocketFactory {
             boolean needToForce1dot2 = SSLProtocolOptions.requiresForcedTLS1dot2();
             if (needToForce1dot2 && sslProtocolOption == SSLProtocolOptions.TLSv1dot2) {
                 try {
+	                // TODO: 2019-07-17 replace with TLSSocketFactory once the code is verified working
                     SSLContext sc = SSLContext.getInstance(SSLProtocolOptions.TLSv1dot2.name);
                     sc.init(null, new TrustManager[]{trustManager}, null);
                     ssf = new Tls12SocketFactory(sc.getSocketFactory());
@@ -131,6 +132,7 @@ public class ClientSSLSocketFactory extends SSLCertificateSocketFactory {
                             new SSLSessionCache(context));
                 }
             } else {
+	            // TODO: 2019-07-17 replace with TLSSocketFactory once the code is verified working
                 ssf = ClientSSLSocketFactory.getDefault(
                         (handshakeTimeoutMilliseconds != null) ? handshakeTimeoutMilliseconds : 10000,
                         new SSLSessionCache(context));

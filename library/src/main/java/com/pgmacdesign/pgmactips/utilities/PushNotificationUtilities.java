@@ -55,7 +55,8 @@ public class PushNotificationUtilities {
         if(importance == null){
             importanceI = NotificationManager.IMPORTANCE_DEFAULT;
         } else {
-            if(importance >= 0 && importance <= 4){
+            if(importance >= NotificationManager.IMPORTANCE_NONE &&
+		            importance <= NotificationManager.IMPORTANCE_HIGH){
                 importanceI = importance;
             } else {
                 importanceI = NotificationManager.IMPORTANCE_DEFAULT;
@@ -66,7 +67,8 @@ public class PushNotificationUtilities {
         notificationChannel.setLightColor((notificationColor == null) ? Color.RED : notificationColor);
         notificationChannel.enableVibration((enableVibration == null) ? true : enableVibration);
         notificationChannel.setVibrationPattern((vibPatternOk) ? vibrationPattern :
-                new long[]{100, 200, 300, 400, 500, 400, 300, 200, 100});
+//                new long[]{100, 200, 300, 400, 500, 400, 300, 200, 100});
+                new long[]{200, 200});
         return notificationChannel;
     }
 }

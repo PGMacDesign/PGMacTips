@@ -9,7 +9,7 @@ import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConfig;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.networkclasses.sslsocketsandprotocols.SSLProtocolOptions;
-import com.pgmacdesign.pgmactips.networkclasses.sslsocketsandprotocols.Tls12SocketFactory;
+import com.pgmacdesign.pgmactips.networkclasses.sslsocketsandprotocols.TLSSocketFactory;
 import com.pgmacdesign.pgmactips.utilities.L;
 import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
 import com.pgmacdesign.pgmactips.utilities.NumberUtilities;
@@ -39,6 +39,9 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import androidx.annotation.Nullable;
+
+import org.apache.http.params.HttpParams;
+
 import okhttp3.ConnectionSpec;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
@@ -426,28 +429,48 @@ public class RetrofitClient {
 
             SSLContext sslContext;
             SSLSocketFactory sslSocketFactory;
-
-            sslContext = SSLContext.getInstance(this.sslProtocolOption.name);
-            sslContext.init(null, new TrustManager[]{trustManager}, null);
-            sslSocketFactory = sslContext.getSocketFactory();
-            builder.sslSocketFactory(sslSocketFactory, trustManager);
-
-            if(true){
-                // TODO: 5/14/19 currently not utilizing the TLS code, will implement in a later release
-                return builder;
-            }
+//
+//            sslContext = SSLContext.getInstance(this.sslProtocolOption.name);
+//            sslContext.init(null, new TrustManager[]{trustManager}, null);
+//            sslSocketFactory = sslContext.getSocketFactory();
+//            builder.sslSocketFactory(sslSocketFactory, trustManager);
+//            if(true){
+//                // TODO: 5/14/19 currently not utilizing the TLS code, will implement in a later release
+//                return builder;
+//            }
 
             //todo remove this if not needed. Keeping here for reference
             //Check on SSL Protocol to use
-            boolean needToForce1dot2 = SSLProtocolOptions.requiresForcedTLS1dot2();
-            if(needToForce1dot2 && this.sslProtocolOption == SSLProtocolOptions.TLSv1dot2){
+//            boolean needToForce1dot2 = SSLProtocolOptions.requiresForcedTLS1dot2();
+//            if(needToForce1dot2 && this.sslProtocolOption == SSLProtocolOptions.TLSv1dot2){
+            if(this.sslProtocolOption != null){
                 try {
-                    SSLContext sc = SSLContext.getInstance(SSLProtocolOptions.TLSv1dot2.name);
-                    sc.init(null, null, null);
-                    builder.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()), trustManager);
+                	TlsVersion v;
+                	switch (this.sslProtocolOption){
+		                case TLSv1:
+		                	v = TlsVersion.TLS_1_0;
+		                	break;
+		                case TLSv1dot1:
+		                	v = TlsVersion.TLS_1_1;
+		                	break;
+		                case TLSv1dot2:
+		                	v = TlsVersion.TLS_1_1;
+		                	break;
+		                case TLS:
+		                	v = TlsVersion.TLS_1_0;
+		                	break;
+		                case SSLv3:
+		                	v = TlsVersion.SSL_3_0;
+		                	break;
+		                default:
+		                	v = TlsVersion.TLS_1_2;
+		                	break;
+	                }
+//                    SSLContext sc = SSLContext.getInstance(SSLProtocolOptions.TLSv1dot2.name);
+//                    sc.init(null, null, null);
+                    builder.sslSocketFactory(new TLSSocketFactory(this.sslProtocolOption), trustManager);
                     ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-                            .tlsVersions(TlsVersion.TLS_1_2)
-                            .build();
+                            .tlsVersions(v).build();
                     List<ConnectionSpec> specs = new ArrayList<>();
                     specs.add(cs);
                     specs.add(ConnectionSpec.COMPATIBLE_TLS);
@@ -461,7 +484,7 @@ public class RetrofitClient {
                     builder.sslSocketFactory(sslSocketFactory, trustManager);
                 }
             } else {
-                sslContext = SSLContext.getInstance(this.sslProtocolOption.name);
+                sslContext = SSLContext.getInstance(SSLProtocolOptions.TLS.name);
                 sslContext.init(null, new TrustManager[]{trustManager}, null);
                 sslSocketFactory = sslContext.getSocketFactory();
                 builder.sslSocketFactory(sslSocketFactory, trustManager);
@@ -479,6 +502,7 @@ public class RetrofitClient {
         return builder;
     }
     
+	
     /**
      * Get an instance of the {@link RetrofitClient.Builder} class
      */
