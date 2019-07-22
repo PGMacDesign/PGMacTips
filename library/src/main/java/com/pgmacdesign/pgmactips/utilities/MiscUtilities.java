@@ -34,6 +34,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -878,4 +879,52 @@ public class MiscUtilities {
     //endregion
     
     //endregion
+	
+	//region Url Path Param Splitting
+	
+	
+	/**
+	 * Build and return a Map<String, String> from the path queryUrl passed in. IE:
+	 * Convert this - "?name=pat&age=1&isMale=true&title=android_developer" into a map like this:
+	 * [{"name", "Pat"}, {"age", "1"}, {"isMale", "true"}, "title", "android_developer"}]
+	 * @param source String source to convert
+	 * @return
+	 */
+	public static Map<String, String> convertQueryStringToHashMap(String source)  {
+		Map<String, String> data = new HashMap<String, String>();
+		
+		if(StringUtilities.isNullOrEmpty(source)){
+			return data;
+		}
+		if(source.startsWith("?")){
+			source = source.replaceFirst("\\?", "&");
+		}
+		final String[] arrParameters = source.split("&");
+		for (final String tempParameterString : arrParameters) {
+			
+			final String[] arrTempParameter = tempParameterString
+					.split("=");
+			if(arrTempParameter.length == 0){
+				continue;
+			}
+			if (arrTempParameter.length >= 2) {
+				final String parameterKey = arrTempParameter[0];
+				final String parameterValue = arrTempParameter[1];
+				if(StringUtilities.isNullOrEmpty(parameterKey) &&
+						StringUtilities.isNullOrEmpty(parameterValue)){
+					continue;
+				}
+				data.put(parameterKey, parameterValue);
+			} else {
+				final String parameterKey = arrTempParameter[0];
+				if(!StringUtilities.isNullOrEmpty(parameterKey)){
+					data.put(parameterKey, "");
+				}
+			}
+		}
+		
+		return data;
+	}
+	
+	//endregion
 }
