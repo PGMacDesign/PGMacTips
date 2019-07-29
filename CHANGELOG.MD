@@ -3,7 +3,9 @@ Change Log
 
 
 Version 1.0.3 *(TBD)*
+
 ----------------------------
+* New: Added in code in the [MiscUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/MiscUtilities.java) class to add more getter methods for use with Maps and also added in regions for easier viewing in an IDE
 
 
 Version 1.0.2 *(2019-07-12)*

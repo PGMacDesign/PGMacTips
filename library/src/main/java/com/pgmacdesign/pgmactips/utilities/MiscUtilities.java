@@ -48,25 +48,13 @@ import javax.annotation.Nonnull;
  */
 public class MiscUtilities {
 
+	//region Private Static Vars
     // https://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html#MessageDigest
     private static final String SHA = "SHA";
+    //endregion
 
-    public static void printOutMyHashKey(Context context, String packageName){
-        try {
-            PackageInfo info = context.getPackageManager().getPackageInfo(
-                    packageName, PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md = MessageDigest.getInstance(SHA);
-                md.update(signature.toByteArray());
-                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-    }
-
+	//region Misc Thread Management Utilities
+	
     /**
      * This class will determine if the current loop being run is on the main thread or not
      * @return boolean, true if on main ui thread, false if not
@@ -78,116 +66,11 @@ public class MiscUtilities {
             return true;
         }
     }
-    /**
-     * Checks a list for either being empty or containing objects within it
-     * @param myArray array to check
-     * @param <T> T extends object
-     * @return boolean, true if it is null or empty, false it if is not
-     */
-    public static <T extends Object> boolean isArrayNullOrEmpty(T[] myArray){
-        if(myArray == null){
-            return true;
-        }
-        if(myArray.length <= 0){
-            return true;
-        }
-        return false;
-    }
     
-    
-    /**
-     * Overloaded for naming simplicity (and because I forget the names sometimes)
-     * Checks an array for whether or not the passed position is valid within it (IE, passing 10
-     * in a array that has a size of 4 would return false. Passing 2 in a array of size 3 would
-     * return true. Passing -1 would always return false.)
-     * @param myArray Array to check
-     * @param posToCheck int position to check
-     * @return Boolean, true if it is a valid position (won't throw {@link ArrayIndexOutOfBoundsException}).
-     *         Will also return false if the array is of size 0.
-     */
-    public static <T extends Object> boolean isValidPosition(T[] myArray, int posToCheck){
-        return isValidPositionInArray(myArray, posToCheck);
-    }
-    
-    /**
-     * Checks an array for whether or not the passed position is valid within it (IE, passing 10
-     * in a array that has a size of 4 would return false. Passing 2 in a array of size 3 would
-     * return true. Passing -1 would always return false.)
-     * @param myArray Array to check
-     * @param posToCheck int position to check
-     * @return Boolean, true if it is a valid position (won't throw {@link ArrayIndexOutOfBoundsException}).
-     *         Will also return false if the array is of size 0.
-     */
-    public static <T extends Object> boolean isValidPositionInArray(T[] myArray, int posToCheck){
-        if(myArray == null){
-            return false;
-        }
-        if(myArray.length <= 0){
-            return false;
-        }
-        if(posToCheck < 0){
-            return false;
-        }
-        if(posToCheck >= myArray.length){
-            return false;
-        }
-        return true;
-    }
-    
-    /**
-     * Checks a list for either being empty or containing objects within it
-     * @param myList List to check
-     * @return Boolean, true if it is null or empty, false it if is not
-     */
-    public static boolean isListNullOrEmpty(List<?> myList){
-        if(myList == null){
-            return true;
-        }
-        if(myList.size() <= 0){
-            return true;
-        }
-        return false;
-    }
-    
-    /**
-     * Overloaded for naming simplicity (and because I forget the names sometimes)
-     * Checks a list for whether or not the passed position is valid within it (IE, passing 10
-     * in a list that has a size of 4 would return false. Passing 2 in a list of size 3 would
-     * return true. Passing -1 would always return false.)
-     * @param myList List to check
-     * @param posToCheck int position to check
-     * @return Boolean, true if it is a valid position (won't throw {@link ArrayIndexOutOfBoundsException}).
-     *         Will also return false if the list is of size 0.
-     */
-    public static boolean isValidPosition(List<?> myList, int posToCheck){
-        return isValidPositionInList(myList, posToCheck);
-    }
-    
-    /**
-     * Checks a list for whether or not the passed position is valid within it (IE, passing 10
-     * in a list that has a size of 4 would return false. Passing 2 in a list of size 3 would
-     * return true. Passing -1 would always return false.)
-     * @param myList List to check
-     * @param posToCheck int position to check
-     * @return Boolean, true if it is a valid position (won't throw {@link ArrayIndexOutOfBoundsException}).
-     *         Will also return false if the list is of size 0.
-     */
-    public static boolean isValidPositionInList(List<?> myList, int posToCheck){
-        if(myList == null){
-            return false;
-        }
-        if(myList.size() <= 0){
-            return false;
-        }
-        if(posToCheck < 0){
-            return false;
-        }
-        if(posToCheck >= myList.size()){
-            return false;
-        }
-        return true;
-    }
-    
+    //endregion
+	
+	//region Checking User Settings Preferences
+	
     /**
      * Checks system preferences for if user has 24 hour (18:04 == 6:04 pm) in their settings
      * @param context {@link Context}
@@ -200,86 +83,113 @@ public class MiscUtilities {
             return false;
         }
     }
-
-    /**
-     * Checks a set for either being empty or containing objects within it
-     * @param mySet set to check
-     * @return Boolean, true if it is null or empty, false it if is not
-     */
-    public static boolean isSetNullOrEmpty(Set<?> mySet){
-        if(mySet == null){
-            return true;
-        }
-        if(mySet.size() <= 0){
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Checks a boolean for null (returns false if it is null) and then returns actual
-     * bool if not null
-     * @param bool boolean to check
-     * @return Boolean, true if it is null or empty, false it if is not
-     * @Deprecated moved to {@link BoolUtilities#isTrue(Boolean)}
-     */
-    @Deprecated
-    public static boolean isBooleanNullTrueFalse(Boolean bool){
-        if(bool == null){
-            return false;
-        } else {
-            return bool;
-        }
-    }
-
-    /**
-     * Checks a map for either being empty or containing objects within it
-     * @param myMap map to check
-     * @return Boolean, true if it is null or empty, false it if is not
-     */
-    public static boolean isMapNullOrEmpty(Map<?, ?> myMap){
-        if(myMap == null){
-            return true;
-        }
-        if(myMap.size() <= 0){
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Get the 'first' (only) key in a map. Useful for maps with only one thing in them
-     * @param myMap
-     * @return
-     */
-    public static Object getOnlyKeyInMap(Map<?, ?> myMap){
-        if(MiscUtilities.isMapNullOrEmpty(myMap)){
-            return null;
-        }
-        try {
-            return myMap.entrySet().iterator().next().getKey();
-        } catch (Exception e){
-            return null;
-        }
-    }
-
-    /**
-     * Get the 'first' (only) value in a map. Useful for maps with only one thing in them
-     * @param myMap
-     * @return
-     */
-    public static Object getOnlyValueInMap(Map<?, ?> myMap){
-        if(MiscUtilities.isMapNullOrEmpty(myMap)){
-            return null;
-        }
-        try {
-            return myMap.entrySet().iterator().next().getValue();
-        } catch (Exception e){
-            return null;
-        }
-    }
-
-    /**
+	
+    //endregion
+	
+	//region Hash Key Utilities
+	
+	/**
+	 * Print out your hashkey which is unique to your machine you are on
+	 * @param context
+	 * @param packageName
+	 */
+	public static void printOutMyHashKey(Context context, String packageName){
+		try {
+			PackageInfo info = context.getPackageManager().getPackageInfo(
+					packageName, PackageManager.GET_SIGNATURES);
+			for (Signature signature : info.signatures) {
+				MessageDigest md = MessageDigest.getInstance(SHA);
+				md.update(signature.toByteArray());
+				Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+			}
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Return your hashkey which is unique to your machine you are on
+	 * @param context
+	 * @param packageName
+	 */
+	public static String getMyHashKey(Context context, String packageName){
+		try {
+			PackageInfo info = context.getPackageManager().getPackageInfo(
+					packageName, PackageManager.GET_SIGNATURES);
+			for (Signature signature : info.signatures) {
+				MessageDigest md = MessageDigest.getInstance(SHA);
+				md.update(signature.toByteArray());
+				return Base64.encodeToString(md.digest(), Base64.DEFAULT);
+			}
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	//endregion
+	
+	//region List Utilities
+	
+	/**
+	 * Checks a list for either being empty or containing objects within it
+	 * @param myList List to check
+	 * @return Boolean, true if it is null or empty, false it if is not
+	 */
+	public static boolean isListNullOrEmpty(List<?> myList){
+		if(myList == null){
+			return true;
+		}
+		if(myList.size() <= 0){
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Overloaded for naming simplicity (and because I forget the names sometimes)
+	 * Checks a list for whether or not the passed position is valid within it (IE, passing 10
+	 * in a list that has a size of 4 would return false. Passing 2 in a list of size 3 would
+	 * return true. Passing -1 would always return false.)
+	 * @param myList List to check
+	 * @param posToCheck int position to check
+	 * @return Boolean, true if it is a valid position (won't throw {@link ArrayIndexOutOfBoundsException}).
+	 *         Will also return false if the list is of size 0.
+	 */
+	public static boolean isValidPosition(List<?> myList, int posToCheck){
+		return isValidPositionInList(myList, posToCheck);
+	}
+	
+	/**
+	 * Checks a list for whether or not the passed position is valid within it (IE, passing 10
+	 * in a list that has a size of 4 would return false. Passing 2 in a list of size 3 would
+	 * return true. Passing -1 would always return false.)
+	 * @param myList List to check
+	 * @param posToCheck int position to check
+	 * @return Boolean, true if it is a valid position (won't throw {@link ArrayIndexOutOfBoundsException}).
+	 *         Will also return false if the list is of size 0.
+	 */
+	public static boolean isValidPositionInList(List<?> myList, int posToCheck){
+		if(myList == null){
+			return false;
+		}
+		if(myList.size() <= 0){
+			return false;
+		}
+		if(posToCheck < 0){
+			return false;
+		}
+		if(posToCheck >= myList.size()){
+			return false;
+		}
+		return true;
+	}
+	
+	/**
      * Print out a list of objects
      * @param myList
      */
@@ -297,8 +207,66 @@ public class MiscUtilities {
             x++;
         }
     }
-
-    /**
+	//endregion
+	
+    //region Array Utilities
+	
+	/**
+	 * Checks a list for either being empty or containing objects within it
+	 * @param myArray array to check
+	 * @param <T> T extends object
+	 * @return boolean, true if it is null or empty, false it if is not
+	 */
+	public static <T extends Object> boolean isArrayNullOrEmpty(T[] myArray){
+		if(myArray == null){
+			return true;
+		}
+		if(myArray.length <= 0){
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Overloaded for naming simplicity (and because I forget the names sometimes)
+	 * Checks an array for whether or not the passed position is valid within it (IE, passing 10
+	 * in a array that has a size of 4 would return false. Passing 2 in a array of size 3 would
+	 * return true. Passing -1 would always return false.)
+	 * @param myArray Array to check
+	 * @param posToCheck int position to check
+	 * @return Boolean, true if it is a valid position (won't throw {@link ArrayIndexOutOfBoundsException}).
+	 *         Will also return false if the array is of size 0.
+	 */
+	public static <T extends Object> boolean isValidPosition(T[] myArray, int posToCheck){
+		return isValidPositionInArray(myArray, posToCheck);
+	}
+	
+	/**
+	 * Checks an array for whether or not the passed position is valid within it (IE, passing 10
+	 * in a array that has a size of 4 would return false. Passing 2 in a array of size 3 would
+	 * return true. Passing -1 would always return false.)
+	 * @param myArray Array to check
+	 * @param posToCheck int position to check
+	 * @return Boolean, true if it is a valid position (won't throw {@link ArrayIndexOutOfBoundsException}).
+	 *         Will also return false if the array is of size 0.
+	 */
+	public static <T extends Object> boolean isValidPositionInArray(T[] myArray, int posToCheck){
+		if(myArray == null){
+			return false;
+		}
+		if(myArray.length <= 0){
+			return false;
+		}
+		if(posToCheck < 0){
+			return false;
+		}
+		if(posToCheck >= myArray.length){
+			return false;
+		}
+		return true;
+	}
+	
+	/**
      * Print out an array of objects
      * @param myArray Array of objects
      */
@@ -345,6 +313,25 @@ public class MiscUtilities {
         L.m(sb.toString());
     }
     
+    //endregion
+	
+    //region HashMap / Map Utilities
+	
+	/**
+	 * Checks a map for either being empty or containing objects within it
+	 * @param myMap map to check
+	 * @return Boolean, true if it is null or empty, false it if is not
+	 */
+	public static boolean isMapNullOrEmpty(Map<?, ?> myMap){
+		if(myMap == null){
+			return true;
+		}
+		if(myMap.size() <= 0){
+			return true;
+		}
+		return false;
+	}
+	
     /**
      * Print out a hashmap {@link java.util.HashMap}
      * @param myMap Map of type String, ?
@@ -363,7 +350,133 @@ public class MiscUtilities {
         }
         L.m("\nEnd printing out Hashmap:");
     }
-    
+	
+	/**
+	 * Get the 'first' (only) key in a map. Useful for maps with only one thing in them
+	 * @param myMap
+	 * @return
+	 */
+	public static Object getOnlyKeyInMap(Map<?, ?> myMap){
+		if(MiscUtilities.isMapNullOrEmpty(myMap)){
+			return null;
+		}
+		try {
+			return myMap.entrySet().iterator().next().getKey();
+		} catch (Exception e){
+			return null;
+		}
+	}
+	
+	/**
+	 * Get the 'first' (only) value in a map. Useful for maps with only one thing in them
+	 * @param myMap
+	 * @return
+	 */
+	public static Object getOnlyValueInMap(Map<?, ?> myMap){
+		if(MiscUtilities.isMapNullOrEmpty(myMap)){
+			return null;
+		}
+		try {
+			return myMap.entrySet().iterator().next().getValue();
+		} catch (Exception e){
+			return null;
+		}
+	}
+	
+	/**
+	 * Get the Keys from a Map where the key is of type Generic
+	 * @param map The Map to iterate through
+	 * @param <T> Generic type to match the type passed in
+	 * @return Will return a list of the keys from the map, if the original map passed in is null or empty, will return empty list
+	 */
+	public static <T> List<T> getKeysFromMap(Map<T, ?> map){
+		return MiscUtilities.getKeysFromMap(map, false);
+	}
+	
+	/**
+	 * Get the Keys from a Map where the key is of type Generic
+	 * @param map The Map to iterate through
+	 * @param includeNullValues If true, will add null keys to the returned list, if false, will skip. Defaults to false
+	 * @param <T> Generic type to match the type passed in
+	 * @return Will return a list of the keys from the map, if the original map passed in is null or empty, will return empty list
+	 * @return
+	 */
+	public static <T> List<T> getKeysFromMap(Map<T, ?> map, boolean includeNullValues){
+		List<T> lst = new ArrayList<>();
+		if(MiscUtilities.isMapNullOrEmpty(map)){
+			return lst;
+		}
+		for(Map.Entry<T, ?> m : map.entrySet()){
+			if(m != null){
+				T t = m.getKey();
+				if(t != null){
+					lst.add(t);
+				} else {
+					if(includeNullValues){
+						lst.add(t);
+					}
+				}
+			}
+		}
+		return lst;
+	}
+		
+	/**
+	 * Get the Values from a Map where the Value is of type Generic
+	 * @param map The Map to iterate through
+	 * @param <T> Generic type to match the type passed in
+	 * @return Will return a list of the values from the map, if the original map passed in is null or empty, will return empty list
+	 */
+	public static <T> List<T> getValuesFromMap(Map<?, T> map){
+		return MiscUtilities.getValuesFromMap(map, false);
+	}
+	
+	/**
+	 * Get the Values from a Map where the Value is of type generic
+	 * @param map The Map to iterate through
+	 * @param includeNullValues If true, will add null values to the returned list, if false, will skip. Defaults to false
+	 * @param <T> Generic type to match the type passed in
+	 * @return Will return a list of the values from the map, if the original map passed in is null or empty, will return empty list
+	 */
+	public static <T> List<T> getValuesFromMap(Map<?, T> map, boolean includeNullValues){
+		List<T> lst = new ArrayList<>();
+		if(MiscUtilities.isMapNullOrEmpty(map)){
+			return lst;
+		}
+		for(Map.Entry<?, T> m : map.entrySet()){
+			if(m != null){
+				T t = m.getValue();
+				if(t != null){
+					lst.add(t);
+				} else {
+					if(includeNullValues){
+						lst.add(t);
+					}
+				}
+			}
+		}
+		return lst;
+	}
+	
+    //endregion
+	
+    //region HashSet / Set Utilities
+	
+	/**
+	 * Checks a set for either being empty or containing objects within it
+	 * @param mySet set to check
+	 * @return Boolean, true if it is null or empty, false it if is not
+	 */
+	public static boolean isSetNullOrEmpty(Set<?> mySet){
+		if(mySet == null){
+			return true;
+		}
+		if(mySet.size() <= 0){
+			return true;
+		}
+		return false;
+	}
+	
     /**
      * Print out a hashSet {@link HashSet}
      * @param hashSet HashSet of type ?
@@ -394,42 +507,10 @@ public class MiscUtilities {
         L.m("\nEnd printing out Set:");
     }
 
-    /**
-     * Gets the package name. If null returned, send call again with context
-     * @return
-     * @deprecated Please redirect to {@link SystemUtilities#getPackageName()}
-     */
-    @Deprecated
-    public static String getPackageName(){
-        try {
-            return BuildConfig.APPLICATION_ID;
-        } catch (Exception e){
-            return null;
-        }
-    }
-
-    /**
-     * Overloaded method in case getPackageName returns null
-     * @param context context
-     * @return
-     * @deprecated Please redirect to {@link SystemUtilities#getPackageName(Context)}
-     */
-    @Deprecated
-    public static String getPackageName(Context context){
-        String packageName = null;
-        try {
-            packageName = context.getPackageManager().getPackageInfo(
-                    getPackageName(), 0).packageName;
-            if(!StringUtilities.isNullOrEmpty(packageName)){
-                return packageName;
-            }
-        } catch (Exception e){}
-        try{
-            packageName = context.getPackageName();
-        } catch (Exception e){e.printStackTrace();}
-        return packageName;
-    }
-
+    //endregion
+	
+    //region Simple Utilities for Removing Nulls from Lists
+	
     /**
      * Remove nulls from a list of list of objects
      * @param nestedListObject
@@ -473,45 +554,10 @@ public class MiscUtilities {
         return listToReturn;
     }
 
-    /*
-    public static Class getClass(String classname) throws ClassNotFoundException {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        if(classLoader == null)
-            classLoader = Singleton.class.getClassLoader();
-        return (classLoader.loadClass(classname));
-    }
-    */
-
-    //Not used atm. Re-working to fix exception issues. Supposed to work via reflection.
-    //Link: http://stackoverflow.com/questions/6591665/merging-two-objects-in-java
-    private Object mergeObjects(Object obj, Object update){
-        if(!obj.getClass().isAssignableFrom(update.getClass())){
-            return null;
-        }
-
-        Method[] methods = obj.getClass().getMethods();
-
-        for(Method fromMethod: methods){
-            if(fromMethod.getDeclaringClass().equals(obj.getClass())
-                    && fromMethod.getName().startsWith("get")){
-
-                String fromName = fromMethod.getName();
-                String toName = fromName.replace("get", "set");
-
-                try {
-                    Method toMetod = obj.getClass().getMethod(toName, fromMethod.getReturnType());
-                    Object value = fromMethod.invoke(update, (Object[])null);
-                    if(value != null){
-                        toMetod.invoke(obj, value);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return null;
-    }
-
+    //endregion
+	
+    //region Manual Pause Callbacks
+	
     /**
      * Simple class for pausing a certain number of milliseconds. Useful for interacting with the
      * Main UI Thread when running on things like timers and can't cross threads
@@ -552,6 +598,10 @@ public class MiscUtilities {
         }
     }
 
+    //endregion
+	
+	//region Cookie Management
+	
     /**
      * Clear cookies
      * @param context context
@@ -573,6 +623,10 @@ public class MiscUtilities {
         }
     }
 
+    //endregion
+	
+    //region Utilities for checking installed apps on the device
+	
     /**
      * Checks if a user has the facebook application installed on their phone
      * @param context Context used to ge the package manager
@@ -633,6 +687,10 @@ public class MiscUtilities {
         return null;
     }
 
+    //endregion
+	
+	//region AtomicInteger Utilities
+	
     /**
      * Simple method to allow for less null checks in code
      * @param atomicInteger {@link AtomicInteger}
@@ -646,7 +704,10 @@ public class MiscUtilities {
         }
     }
 
-
+    //endregion
+	
+	//region Clipboard Utilities
+	
     /**
      * copy something to the clipboard. Overloaded to allow for empty label
      * @param context Context for referencing system service
@@ -681,6 +742,10 @@ public class MiscUtilities {
         }
     }
 
+    //endregion
+	
+    //region Enum Utils
+	
     /**
      * Get all values from an enum type (list of all the values)
      * @param enumToGet The enum to get all of
@@ -699,6 +764,10 @@ public class MiscUtilities {
         }
     }
 
+    //endregion
+	
+    //region Static Charset Getters
+	
     /**
      * Simple getter for UTF-8 String since it is recommended to use StandardCharsets after SDK level 19,
      * but this library currently supports 15 as the minimum.
@@ -777,6 +846,8 @@ public class MiscUtilities {
         }
     }
 
+    //endregion
+	
     //region Misc Screen Utilities
     
     
@@ -925,6 +996,104 @@ public class MiscUtilities {
 		
 		return data;
 	}
+	
+	//endregion
+	
+	//region Deprecated or Unused
+	
+	
+	/**
+	 * Checks a boolean for null (returns false if it is null) and then returns actual
+	 * bool if not null
+	 * @param bool boolean to check
+	 * @return Boolean, true if it is null or empty, false it if is not
+	 * @Deprecated moved to {@link BoolUtilities#isTrue(Boolean)}
+	 */
+	@Deprecated
+	public static boolean isBooleanNullTrueFalse(Boolean bool){
+		if(bool == null){
+			return false;
+		} else {
+			return bool;
+		}
+	}
+	
+	/**
+	 * Gets the package name. If null returned, send call again with context
+	 * @return
+	 * @deprecated Please redirect to {@link SystemUtilities#getPackageName()}
+	 */
+	@Deprecated
+	public static String getPackageName(){
+		try {
+			return BuildConfig.APPLICATION_ID;
+		} catch (Exception e){
+			return null;
+		}
+	}
+	
+	/**
+	 * Overloaded method in case getPackageName returns null
+	 * @param context context
+	 * @return
+	 * @deprecated Please redirect to {@link SystemUtilities#getPackageName(Context)}
+	 */
+	@Deprecated
+	public static String getPackageName(Context context){
+		String packageName = null;
+		try {
+			packageName = context.getPackageManager().getPackageInfo(
+					getPackageName(), 0).packageName;
+			if(!StringUtilities.isNullOrEmpty(packageName)){
+				return packageName;
+			}
+		} catch (Exception e){}
+		try{
+			packageName = context.getPackageName();
+		} catch (Exception e){e.printStackTrace();}
+		return packageName;
+	}
+
+    /*
+    public static Class getClass(String classname) throws ClassNotFoundException {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if(classLoader == null)
+            classLoader = Singleton.class.getClassLoader();
+        return (classLoader.loadClass(classname));
+    }
+    */
+	
+	//Not used atm. Re-working to fix exception issues. Supposed to work via reflection.
+	//Link: http://stackoverflow.com/questions/6591665/merging-two-objects-in-java
+	@Deprecated
+	private Object mergeObjects(Object obj, Object update){
+		if(!obj.getClass().isAssignableFrom(update.getClass())){
+			return null;
+		}
+		
+		Method[] methods = obj.getClass().getMethods();
+		
+		for(Method fromMethod: methods){
+			if(fromMethod.getDeclaringClass().equals(obj.getClass())
+					&& fromMethod.getName().startsWith("get")){
+				
+				String fromName = fromMethod.getName();
+				String toName = fromName.replace("get", "set");
+				
+				try {
+					Method toMetod = obj.getClass().getMethod(toName, fromMethod.getReturnType());
+					Object value = fromMethod.invoke(update, (Object[])null);
+					if(value != null){
+						toMetod.invoke(obj, value);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return null;
+	}
+	
 	
 	//endregion
 }
