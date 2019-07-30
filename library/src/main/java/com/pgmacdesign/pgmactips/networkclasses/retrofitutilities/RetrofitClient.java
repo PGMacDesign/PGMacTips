@@ -469,12 +469,12 @@ public class RetrofitClient {
 //                    SSLContext sc = SSLContext.getInstance(SSLProtocolOptions.TLSv1dot2.name);
 //                    sc.init(null, null, null);
                     builder.sslSocketFactory(new TLSSocketFactory(this.sslProtocolOption), trustManager);
-                    ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+                    ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.RESTRICTED_TLS)
                             .tlsVersions(v).build();
                     List<ConnectionSpec> specs = new ArrayList<>();
                     specs.add(cs);
-                    specs.add(ConnectionSpec.COMPATIBLE_TLS);
-                    specs.add(ConnectionSpec.CLEARTEXT);
+//                    specs.add(ConnectionSpec.COMPATIBLE_TLS);
+//                    specs.add(ConnectionSpec.CLEARTEXT);
                     builder.connectionSpecs(specs);
                 } catch (Exception exc) {
                     L.m("Error while setting TLS 1.2");

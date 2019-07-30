@@ -60,6 +60,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import io.realm.log.LogLevel;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import pgmacdesign.pgmactips.samples.activitysamples.SampleDBClassKotlin;
@@ -151,7 +153,7 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
 	    L.m(str4);
     }
 
-    private void startDisplayMetricTests(){
+	private void startDisplayMetricTests(){
     
     }
     
@@ -835,20 +837,20 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
         }, call, RetrofitParser.TYPE_BOOLEAN, RetrofitParser.TYPE_INTEGER,
 		        1, 0, true);
     }
-
-    interface TestSSLInterface {
-        //Not used here, but left for example. Could technically use this if empty String is passed to Client class
-        static final String BASE_URL = "https://www.ssllabs.com/";
-
-        //API pathways
-        static final String BASE1 = "/ssltest";
-        static final String BASE2 = "/viewMyClient.html";
-
-        @GET(BASE1 + BASE2)
-        Call<ResponseBody> checkTLS();
-    }
-    
-    @SuppressLint("ValidFragment")
+	
+	interface TestSSLInterface {
+		//Not used here, but left for example. Could technically use this if empty String is passed to Client class
+		static final String BASE_URL = "https://www.ssllabs.com/";
+		
+		//API pathways
+		static final String BASE1 = "/ssltest";
+		static final String BASE2 = "/viewMyClient.html";
+		
+		@GET(BASE1 + BASE2)
+		Call<ResponseBody> checkTLS();
+	}
+	
+	@SuppressLint("ValidFragment")
     static class MyTestFrag extends Fragment {
 	    @Override
 	    public void onCreate(@Nullable Bundle savedInstanceState) {
