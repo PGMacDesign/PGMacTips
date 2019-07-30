@@ -468,6 +468,7 @@ public class RetrofitClient {
 	                }
 //                    SSLContext sc = SSLContext.getInstance(SSLProtocolOptions.TLSv1dot2.name);
 //                    sc.init(null, null, null);
+	                // TODO: 2019-07-30 add in the ability to manually change connection spec here 
                     builder.sslSocketFactory(new TLSSocketFactory(this.sslProtocolOption), trustManager);
                     ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.RESTRICTED_TLS)
                             .tlsVersions(v).build();
