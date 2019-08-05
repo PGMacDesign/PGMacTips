@@ -21,14 +21,114 @@ public class SamplePojo {
     private String name;
 	@SerializedName("age")
     private int age;
+	@SerializedName("someLong")
+    private long someLong;
+	@SerializedName("someDouble")
+    private double someDouble;
+	@SerializedName("someFloat")
+    private float someFloat;
     @SerializedName("gender")
     private String gender;
     @SerializedName("strs")
     private List<String> strs;
     @SerializedName("fauxEnums")
     private List<MyFauxTestEnum> fauxEnums;
-
-    public List<MyFauxTestEnum> getFauxEnums() {
+    @SerializedName("fauxEnum")
+    private MyFauxTestEnum fauxEnum;
+	@SerializedName("someArrayOfStrings")
+	private String[] someArrayOfStrings;
+	@SerializedName("someArrayOfInts")
+	private int[] someArrayOfInts;
+	@SerializedName("someArrayOfLongs")
+	private long[] someArrayOfLongs;
+	@SerializedName("someArrayOfDoubles")
+	private double[] someArrayOfDoubles;
+	@SerializedName("someArrayOfFloats")
+	private float[] someArrayOfFloats;
+	@SerializedName("someArray")
+	private Object[] someArray;
+	
+	public long[] getSomeArrayOfLongs() {
+		return someArrayOfLongs;
+	}
+	
+	public void setSomeArrayOfLongs(long[] someArrayOfLongs) {
+		this.someArrayOfLongs = someArrayOfLongs;
+	}
+	
+	public double[] getSomeArrayOfDoubles() {
+		return someArrayOfDoubles;
+	}
+	
+	public void setSomeArrayOfDoubles(double[] someArrayOfDoubles) {
+		this.someArrayOfDoubles = someArrayOfDoubles;
+	}
+	
+	public float[] getSomeArrayOfFloats() {
+		return someArrayOfFloats;
+	}
+	
+	public void setSomeArrayOfFloats(float[] someArrayOfFloats) {
+		this.someArrayOfFloats = someArrayOfFloats;
+	}
+	
+	public int[] getSomeArrayOfInts() {
+		return someArrayOfInts;
+	}
+	
+	public void setSomeArrayOfInts(int[] someArrayOfInts) {
+		this.someArrayOfInts = someArrayOfInts;
+	}
+	
+	public Object[] getSomeArray() {
+		return someArray;
+	}
+	
+	public void setSomeArray(Object[] someArray) {
+		this.someArray = someArray;
+	}
+	
+	public String[] getSomeArrayOfStrings() {
+		return someArrayOfStrings;
+	}
+	
+	public void setSomeArrayOfStrings(String[] someArrayOfStrings) {
+		this.someArrayOfStrings = someArrayOfStrings;
+	}
+	
+	public MyFauxTestEnum getFauxEnum() {
+		return fauxEnum;
+	}
+	
+	public void setFauxEnum(MyFauxTestEnum fauxEnum) {
+		this.fauxEnum = fauxEnum;
+	}
+	
+	public float getSomeFloat() {
+		return someFloat;
+	}
+	
+	public void setSomeFloat(float someFloat) {
+		this.someFloat = someFloat;
+	}
+	
+	public long getSomeLong() {
+		return someLong;
+	}
+	
+	public void setSomeLong(long someLong) {
+		this.someLong = someLong;
+	}
+	
+	public double getSomeDouble() {
+		return someDouble;
+	}
+	
+	public void setSomeDouble(double someDouble) {
+		this.someDouble = someDouble;
+	}
+	
+	public List<MyFauxTestEnum> getFauxEnums() {
         return fauxEnums;
     }
 
@@ -56,6 +156,10 @@ public class SamplePojo {
         return name;
     }
 
+    public String overideCustomSuperLongNameStringReturnThingyUsedForTesting(){
+		return this.name;
+    }
+    
     public void setName(String name) {
         this.name = name;
     }

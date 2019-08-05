@@ -3,10 +3,12 @@ Change Log
 
 
 Version 1.0.3 *(TBD)*
-
 ----------------------------
-* New: Added in code in the [MiscUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/MiscUtilities.java) class to add more getter methods for use with Maps and also added in regions for easier viewing in an IDE
 
+* New: Added in code in the [MiscUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/MiscUtilities.java) class to add more getter methods for use with Maps and also added in regions for easier viewing in an IDE. Also added in some sorting methods and a Generic Sorting class.
+* Update: Updated the [RetrofitClient](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/networkclasses/retrofitutilities/RetrofitClient.java) class to include some additional options including customizing the Okhttp ConnectionSpec var. 
+* New: Adding in a new class, [GenericComparator](link tbd) which is used in the MiscUtilities update mentioned above for comparing objects dynamically as per their fields. Adds in a huge amount of flexibility with regards to Comparator sorting and should be able to support most data types.  
+* New: Added in some sample usages of the various new comparator functions listed above in the [MyTestActivity](https://github.com/PGMacDesign/PGMacTips/blob/master/samples/src/main/java/pgmacdesign/pgmactips/samples/MyTestActivity.java) class; the name of the function is `sortAndPrintLists()` 
 
 Version 1.0.2 *(2019-07-12)*
 ----------------------------

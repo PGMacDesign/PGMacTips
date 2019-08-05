@@ -40,8 +40,6 @@ import javax.net.ssl.X509TrustManager;
 
 import androidx.annotation.Nullable;
 
-import org.apache.http.params.HttpParams;
-
 import okhttp3.ConnectionSpec;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
@@ -93,6 +91,7 @@ public class RetrofitClient {
     private int retryCount;
     private int[] retryOnStatusCodes;
     private long readTimeout, writeTimeout;
+    private ConnectionSpec connectionSpec;
     private String dateFormat;
     private String[] customCookieHeaderStrings;
     private Class serviceInterface;
@@ -113,13 +112,14 @@ public class RetrofitClient {
         this.dateFormat = builder.builder_dateFormat;
         this.readTimeout = builder.builder_readTimeout;
         this.writeTimeout = builder.builder_writeTimeout;
-        this.sslProtocolOption = builder.builder_sslProtocolOption;
-        this.serviceInterface = builder.builder_serviceInterface;
-        this.retryOnStatusCodes = builder.builder_retryOnStatusCodes;
-        this.customConverterFactory = builder.builder_customConverterFactory;
-        this.cookieResponseListener = builder.builder_cookieResponseListener;
-        this.customCallAdapterFactory = builder.builder_customCallAdapterFactory;
-        this.customCookieHeaderStrings = builder.builder_customCookieHeaderString;
+	    this.connectionSpec = builder.builder_connectionSpec;
+	    this.sslProtocolOption = builder.builder_sslProtocolOption;
+	    this.serviceInterface = builder.builder_serviceInterface;
+	    this.retryOnStatusCodes = builder.builder_retryOnStatusCodes;
+	    this.customConverterFactory = builder.builder_customConverterFactory;
+	    this.cookieResponseListener = builder.builder_cookieResponseListener;
+	    this.customCallAdapterFactory = builder.builder_customCallAdapterFactory;
+	    this.customCookieHeaderStrings = builder.builder_customCookieHeaderString;
         this.shouldSaveResponseCookies = builder.builder_shouldSaveResponseCookies;
         this.forceAcceptAllCertificates = builder.builder_forceAcceptAllCertificates;
     }
@@ -403,7 +403,7 @@ public class RetrofitClient {
                     public void checkServerTrusted(X509Certificate[] xcs, String string)
                             throws CertificateException {}
                     public X509Certificate[] getAcceptedIssuers() {
-                        return null;
+                        return new java.security.cert.X509Certificate[]{};
                     }
                 };
 //                trustManager = new X509TrustManager() {
@@ -429,20 +429,6 @@ public class RetrofitClient {
 
             SSLContext sslContext;
             SSLSocketFactory sslSocketFactory;
-//
-//            sslContext = SSLContext.getInstance(this.sslProtocolOption.name);
-//            sslContext.init(null, new TrustManager[]{trustManager}, null);
-//            sslSocketFactory = sslContext.getSocketFactory();
-//            builder.sslSocketFactory(sslSocketFactory, trustManager);
-//            if(true){
-//                // TODO: 5/14/19 currently not utilizing the TLS code, will implement in a later release
-//                return builder;
-//            }
-
-            //todo remove this if not needed. Keeping here for reference
-            //Check on SSL Protocol to use
-//            boolean needToForce1dot2 = SSLProtocolOptions.requiresForcedTLS1dot2();
-//            if(needToForce1dot2 && this.sslProtocolOption == SSLProtocolOptions.TLSv1dot2){
             if(this.sslProtocolOption != null){
                 try {
                 	TlsVersion v;
@@ -466,19 +452,20 @@ public class RetrofitClient {
 		                	v = TlsVersion.TLS_1_2;
 		                	break;
 	                }
-//                    SSLContext sc = SSLContext.getInstance(SSLProtocolOptions.TLSv1dot2.name);
-//                    sc.init(null, null, null);
-	                // TODO: 2019-07-30 add in the ability to manually change connection spec here 
                     builder.sslSocketFactory(new TLSSocketFactory(this.sslProtocolOption), trustManager);
-                    ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.RESTRICTED_TLS)
+                    ConnectionSpec cs = new ConnectionSpec.Builder((this.connectionSpec == null)
+		                    ? ConnectionSpec.MODERN_TLS : this.connectionSpec)
                             .tlsVersions(v).build();
                     List<ConnectionSpec> specs = new ArrayList<>();
                     specs.add(cs);
-//                    specs.add(ConnectionSpec.COMPATIBLE_TLS);
-//                    specs.add(ConnectionSpec.CLEARTEXT);
+	                if(this.forceAcceptAllCertificates) {
+	                	//Unsure if needed, will test more
+//		                specs.add(ConnectionSpec.CLEARTEXT);
+//                      specs.add(ConnectionSpec.COMPATIBLE_TLS);
+	                }
                     builder.connectionSpecs(specs);
                 } catch (Exception exc) {
-                    L.m("Error while setting TLS 1.2");
+                    L.m("Error while setting TLS / Connection Spec, using defaults. \nError == " + exc.getMessage());
                     sslContext = SSLContext.getInstance(this.sslProtocolOption.name);
                     sslContext.init(null, new TrustManager[]{trustManager}, null);
                     sslSocketFactory = sslContext.getSocketFactory();
@@ -521,14 +508,14 @@ public class RetrofitClient {
             CustomAnnotationsBase.Dependencies.Retrofit2GSONConverter, CustomAnnotationsBase.Dependencies.OkHttp3,
             CustomAnnotationsBase.Dependencies.GSON, CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor,
             CustomAnnotationsBase.Dependencies.Okio})
-    public static final class Builder <T> {
+    public static final class Builder <G> {
 
         int builder_retryCount;
         int[] builder_retryOnStatusCodes;
         String builder_urlBase;
         String builder_dateFormat;
         String[] builder_customCookieHeaderString;
-        Class<T> builder_serviceInterface;
+        Class<G> builder_serviceInterface;
         Map<String, String> builder_headers;
         HttpLoggingInterceptor.Level builder_logLevel;
         long builder_readTimeout, builder_writeTimeout;
@@ -538,6 +525,7 @@ public class RetrofitClient {
         OnTaskCompleteListener builder_cookieResponseListener;
         boolean builder_shouldSaveResponseCookies;
         boolean builder_forceAcceptAllCertificates;
+	    ConnectionSpec builder_connectionSpec;
 
         static final int SIXTY_SECONDS = (int)(1000*60);
 
@@ -548,7 +536,7 @@ public class RetrofitClient {
          * @param urlBase String url base to use, IE, http://www.myapi.com
          *                This excludes any paths and any versioning here (IE /V1 and no /users/...)
          */
-        public Builder(@NonNull final Class<T> serviceInterface,
+        public Builder(@NonNull final Class<G> serviceInterface,
                        @NonNull String urlBase){
             this.builder_headers = null;
             this.builder_urlBase = urlBase;
@@ -562,6 +550,7 @@ public class RetrofitClient {
             this.builder_shouldSaveResponseCookies = false;
             this.builder_cookieResponseListener = null;
             this.builder_customCookieHeaderString = null;
+            this.builder_connectionSpec = ConnectionSpec.MODERN_TLS;
         }
 
         /**
@@ -572,6 +561,17 @@ public class RetrofitClient {
         public Builder setLogLevel(HttpLoggingInterceptor.Level logLevel){
             if(logLevel != null){
                 this.builder_logLevel = logLevel;
+            }
+            return this;
+        }
+
+        /**
+         * Set the chosen Connection spec. Defaults to {@link ConnectionSpec#MODERN_TLS}
+         * @param connectionSpec The {@link ConnectionSpec} you wish to use
+        */
+        public Builder setConnectionSpec(ConnectionSpec connectionSpec){
+            if(connectionSpec != null){
+                this.builder_connectionSpec = connectionSpec;
             }
             return this;
         }

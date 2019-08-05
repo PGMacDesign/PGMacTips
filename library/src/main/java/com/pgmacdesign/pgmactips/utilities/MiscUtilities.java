@@ -26,13 +26,19 @@ import android.webkit.CookieSyncManager;
 
 import com.pgmacdesign.pgmactips.BuildConfig;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
+import com.pgmacdesign.pgmactips.misc.GenericComparator;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -314,6 +320,325 @@ public class MiscUtilities {
     }
     
     //endregion
+	
+	//region Comparators / Sorting
+	
+	//region Strings
+	
+	/**
+	 * Sort a list of Strings. Defaults to sorting alphabetically ascending
+	 * Null values and empty Strings will always move to the end of the list
+	 * Note, you can use the {@link MiscUtilities#sortGenericList(List)} for this as well, but
+	 * this will run faster due to not needing to use reflection
+	 * @param lst List to sort
+	 * @return Sorted list
+	 */
+	public static List<String> sortStringList(List<String> lst){
+    	return MiscUtilities.sortStringList(lst, true);
+	}
+	
+	/**
+	 * Sort a list of Strings.
+	 * Null values and empty Strings will always move to the end of the list
+	 * Note, you can use the {@link MiscUtilities#sortGenericList(List)} for this as well, but
+	 * this will run faster due to not needing to use reflection
+	 * @param lst List to sort
+	 * @param sortByAsc If true, sorts ascending, else, sorts descending
+	 * @return Sorted list
+	 */
+	public static List<String> sortStringList(List<String> lst, final boolean sortByAsc){
+    	if(MiscUtilities.isListNullOrEmpty(lst)){
+    		return lst;
+	    }
+		Collections.sort(lst, new Comparator<String>() {
+			@Override
+			public int compare(String o1, String o2) {
+				if(StringUtilities.isNullOrEmpty(o1)){
+					return 1;
+				}
+				if(StringUtilities.isNullOrEmpty(o2)){
+					return -1;
+				}
+				return (sortByAsc) ? o1.compareTo(o2) : o2.compareTo(o1);
+			}
+		});
+    	return lst;
+	}
+	
+	//endregion
+	
+	//region Integers
+	
+	/**
+	 * Sort a list of Integers. Defaults to sorting ascending
+	 * Null values will always move to the end of the list
+	 * Note, you can use the {@link MiscUtilities#sortGenericList(List)} for this as well, but
+	 * this will run faster due to not needing to use reflection
+	 * @param lst List to sort
+	 * @return Sorted list
+	 */
+	public static List<Integer> sortIntList(List<Integer> lst){
+    	return MiscUtilities.sortIntList(lst, true);
+	}
+	
+	/**
+	 * Sort a list of Integers.
+	 * Null values will always move to the end of the list
+	 * Note, you can use the {@link MiscUtilities#sortGenericList(List)} for this as well, but
+	 * this will run faster due to not needing to use reflection
+	 * @param lst List to sort
+	 * @param sortByAsc If true, sorts ascending, else, sorts descending
+	 * @return Sorted list
+	 */
+	public static List<Integer> sortIntList(List<Integer> lst, final boolean sortByAsc){
+    	if(MiscUtilities.isListNullOrEmpty(lst)){
+    		return lst;
+	    }
+		Collections.sort(lst, new Comparator<Integer>() {
+			@Override
+			public int compare(Integer o1, Integer o2) {
+				if(StringUtilities.isNullOrEmpty(o1)){
+					return 1;
+				}
+				if(StringUtilities.isNullOrEmpty(o2)){
+					return -1;
+				}
+				return (sortByAsc) ? o1.compareTo(o2) : o2.compareTo(o1);
+			}
+		});
+    	return lst;
+	}
+	
+	//endregion
+	
+	//region Doubles
+	
+	/**
+	 * Sort a list of Integers. Defaults to sorting ascending
+	 * Null values will always move to the end of the list
+	 * Note, you can use the {@link MiscUtilities#sortGenericList(List)} for this as well, but
+	 * this will run faster due to not needing to use reflection
+	 * @param lst List to sort
+	 * @return Sorted list
+	 */
+	public static List<Double> sortDoubleList(List<Double> lst){
+		return MiscUtilities.sortDoubleList(lst, true);
+	}
+	
+	/**
+	 * Sort a list of Doubles.
+	 * Null values will always move to the end of the list
+	 * Note, you can use the {@link MiscUtilities#sortGenericList(List)} for this as well, but
+	 * this will run faster due to not needing to use reflection
+	 * @param lst List to sort
+	 * @param sortByAsc If true, sorts ascending, else, sorts descending
+	 * @return Sorted list
+	 */
+	public static List<Double> sortDoubleList(List<Double> lst, final boolean sortByAsc){
+		if(MiscUtilities.isListNullOrEmpty(lst)){
+			return lst;
+		}
+		Collections.sort(lst, new Comparator<Double>() {
+			@Override
+			public int compare(Double o1, Double o2) {
+				if(StringUtilities.isNullOrEmpty(o1)){
+					return 1;
+				}
+				if(StringUtilities.isNullOrEmpty(o2)){
+					return -1;
+				}
+				return (sortByAsc) ? o1.compareTo(o2) : o2.compareTo(o1);
+			}
+		});
+		return lst;
+	}
+	
+	//endregion
+	
+	//region Floats
+	
+	/**
+	 * Sort a list of Floats. Defaults to sorting ascending
+	 * Null values will always move to the end of the list
+	 * Note, you can use the {@link MiscUtilities#sortGenericList(List)} for this as well, but
+	 * this will run faster due to not needing to use reflection
+	 * @param lst List to sort
+	 * @return Sorted list
+	 */
+	public static List<Float> sortFloatList(List<Float> lst){
+		return MiscUtilities.sortFloatList(lst, true);
+	}
+	
+	/**
+	 * Sort a list of Floats.
+	 * Null values will always move to the end of the list
+	 * Note, you can use the {@link MiscUtilities#sortGenericList(List)} for this as well, but
+	 * this will run faster due to not needing to use reflection
+	 * @param lst List to sort
+	 * @param sortByAsc If true, sorts ascending, else, sorts descending
+	 * @return Sorted list
+	 */
+	public static List<Float> sortFloatList(List<Float> lst, final boolean sortByAsc){
+		if(MiscUtilities.isListNullOrEmpty(lst)){
+			return lst;
+		}
+		Collections.sort(lst, new Comparator<Float>() {
+			@Override
+			public int compare(Float o1, Float o2) {
+				if(StringUtilities.isNullOrEmpty(o1)){
+					return 1;
+				}
+				if(StringUtilities.isNullOrEmpty(o2)){
+					return -1;
+				}
+				return (sortByAsc) ? o1.compareTo(o2) : o2.compareTo(o1);
+			}
+		});
+		return lst;
+	}
+	
+	//endregion
+	
+	//region Longs
+	
+	/**
+	 * Sort a list of Longs. Defaults to sorting ascending
+	 * Null values will always move to the end of the list
+	 * Note, you can use the {@link MiscUtilities#sortGenericList(List)} for this as well, but
+	 * this will run faster due to not needing to use reflection
+	 * @param lst List to sort
+	 * @return Sorted list
+	 */
+	public static List<Long> sortLongList(List<Long> lst){
+		return MiscUtilities.sortLongList(lst, true);
+	}
+	
+	/**
+	 * Sort a list of Long.
+	 * Null values will always move to the end of the list
+	 * Note, you can use the {@link MiscUtilities#sortGenericList(List)} for this as well, but
+	 * this will run faster due to not needing to use reflection
+	 * @param lst List to sort
+	 * @param sortByAsc If true, sorts ascending, else, sorts descending
+	 * @return Sorted list
+	 */
+	public static List<Long> sortLongList(List<Long> lst, final boolean sortByAsc){
+		if(MiscUtilities.isListNullOrEmpty(lst)){
+			return lst;
+		}
+		Collections.sort(lst, new Comparator<Long>() {
+			@Override
+			public int compare(Long o1, Long o2) {
+				if(StringUtilities.isNullOrEmpty(o1)){
+					return 1;
+				}
+				if(StringUtilities.isNullOrEmpty(o2)){
+					return -1;
+				}
+				return (sortByAsc) ? o1.compareTo(o2) : o2.compareTo(o1);
+			}
+		});
+		return lst;
+	}
+	
+	//endregion
+	
+	//region Generic Comparators (Can Handle Misc Object Types too)
+	
+	/**
+	 * Sort a list of Generics. Defaults to sorting alphabetically / numerically ascending
+	 * Null values and empty Strings will always move to the end of the list
+	 * @param lst list to sort
+	 * @param <T> Generic
+	 * @return sorted list
+	 */
+	public static <T> List<T> sortGenericList(List<T> lst){
+		return sortGenericList(lst, true);
+	}
+	
+	/**
+	 * Sort a list of Generics. Defaults to sorting alphabetically / numerically ascending
+	 * Null values and empty Strings will always move to the end of the list
+	 * @param lst list to sort
+	 * @param sortAscending if true, sort ascending, else, sorts descending
+	 * @param <T> Generic
+	 * @return sorted list
+	 */
+	public static <T> List<T> sortGenericList(List<T> lst, boolean sortAscending){
+		if(MiscUtilities.isListNullOrEmpty(lst)){
+			return lst;
+		}
+		try {
+			Collections.sort(lst, new GenericComparator(sortAscending));
+			return lst;
+		} catch (Exception e){
+			e.getMessage();
+			return lst;
+		}
+	}
+	
+	/**
+	 * Sort a list of Generics. Defaults to sorting alphabetically / numerically ascending
+	 * Null values and empty Strings will always move to the end of the list
+	 * @param lst list to sort
+	 * @param fieldName Field name you would like to use for the sorting
+	 *                  Note that if the field passed gets an array or list, it will sort by the length / size of said collection
+	 * @param <T> Generic
+	 * @return sorted list
+	 */
+	public static <T> List<T> sortGenericList(List<T> lst, String fieldName){
+		return sortGenericList(lst, fieldName, true);
+	}
+	
+	/**
+	 *
+	 * @param lst list to sort
+	 * @param fieldName Field name you would like to use for the sorting
+	 *                  Note that if the field passed gets an array or list, it will sort by the length / size of said collection
+	 * @param sortAscending boolean for sorting by ascending or descending
+	 * @param <T> Generic
+	 * @return sorted list
+	 */
+	public static <T> List<T> sortGenericList(List<T> lst, String fieldName, boolean sortAscending){
+		if(MiscUtilities.isListNullOrEmpty(lst) || StringUtilities.isNullOrEmpty(fieldName)){
+			return lst;
+		}
+		try {
+			Collections.sort(lst, new GenericComparator(fieldName, sortAscending));
+			return lst;
+		} catch (Exception e){
+			e.getMessage();
+			return lst;
+		}
+	}
+	
+	/**
+	 * Sort a list using the custom-defined method name as opposed to the field name
+	 * @param lst list to sort
+	 * @param customOverrideMethodName Custom override getter method name you are using in place
+	 *                                 of the standard generated getters. This is useful if you have
+	 *                                 a non-normal named getter for a var.
+	 *                                 Note that if the type passed is an array or list, it will sort by the length / size of said collection
+	 * @param sortAscending boolean for sorting by ascending or descending
+	 * @param <T> Generic
+	 * @return sorted list
+	 */
+	public static <T> List<T> sortGenericListCustom(List<T> lst, String customOverrideMethodName, boolean sortAscending){
+		if(MiscUtilities.isListNullOrEmpty(lst) || StringUtilities.isNullOrEmpty(customOverrideMethodName)){
+			return lst;
+		}
+		try {
+			Collections.sort(lst, new GenericComparator(false, customOverrideMethodName, sortAscending));
+			return lst;
+		} catch (Exception e){
+			e.getMessage();
+			return lst;
+		}
+	}
+	
+	//endregion
+	
+	//endregion
 	
     //region HashMap / Map Utilities
 	

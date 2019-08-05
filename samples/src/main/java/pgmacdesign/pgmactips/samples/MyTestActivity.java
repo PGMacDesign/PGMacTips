@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.google.android.gms.security.ProviderInstaller;
+import com.google.gson.Gson;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.GenericRecyclerviewAdapter;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.biometricutilities.BiometricVerification;
@@ -62,6 +63,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import io.realm.log.LogLevel;
+import okhttp3.ConnectionSpec;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import pgmacdesign.pgmactips.samples.activitysamples.SampleDBClassKotlin;
@@ -151,12 +153,188 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
 	    L.m(str2);
 	    L.m(str3);
 	    L.m(str4);
+	    
+	    this.sortAndPrintLists();
     }
 
 	private void startDisplayMetricTests(){
     
     }
-    
+	
+	/**
+	 * Sample sort and print using the {@link MiscUtilities#sortGenericList(List, String)} method
+	 */
+	private void sortAndPrintLists(){
+	    List<SamplePojo> lst = new ArrayList<>();
+	
+	    SamplePojo s1 = new SamplePojo();
+	    s1.setAge(4);
+	    s1.setGender("MALE");
+	    s1.setId(123);
+	    s1.setName("Pat");
+	    s1.setSomeDouble(12.12);
+	    s1.setSomeLong(123123);
+	    s1.setSomeFloat(12.12F);
+		s1.setFauxEnum(SamplePojo.MyFauxTestEnum.Two);
+		s1.setFauxEnums(Arrays.asList(SamplePojo.MyFauxTestEnum.One, SamplePojo.MyFauxTestEnum.Two, SamplePojo.MyFauxTestEnum.Three));
+		s1.setSomeArray(new String[]{"1", "2", "a", "z"});
+		s1.setSomeArrayOfInts(new int[]{1, 4, 5});
+		s1.setSomeArrayOfLongs(new long[]{11, 44, 55});
+		s1.setSomeArrayOfDoubles(new double[]{11.11, 44.44, 55.55});
+		s1.setSomeArrayOfFloats(new float[]{11.21F, 44.14F, 55.15F});
+	    lst.add(s1);
+	
+	    lst.add(null);
+	
+	    SamplePojo s2 = new SamplePojo();
+	    s2.setAge(99);
+	    s2.setGender("FEMALE");
+	    s2.setId(5555);
+	    s2.setName("BOB");
+	    s2.setSomeDouble(99.99);
+	    s2.setSomeLong(55555555);
+	    s2.setSomeFloat(21.21F);
+		s2.setFauxEnum(SamplePojo.MyFauxTestEnum.One);
+		s2.setFauxEnums(Arrays.asList(SamplePojo.MyFauxTestEnum.Three, SamplePojo.MyFauxTestEnum.Two, SamplePojo.MyFauxTestEnum.One));
+		//Set Values
+		s2.setSomeArray(new String[]{"3", "1", "dddd", "zzzzz", "test"});
+		s2.setSomeArrayOfInts(new int[]{1, 4, 22, 5, 5});
+		s2.setSomeArrayOfLongs(new long[]{11, 44, 55, 22, 990});
+		s2.setSomeArrayOfDoubles(new double[]{11.11, 44.44, 55.55, 41.41, 22.22});
+		s2.setSomeArrayOfFloats(new float[]{11.21F, 44.14F, 55.15F, 51.41F, 91.99F});
+		//Null Values
+//		s2.setSomeArray(null);
+//		s2.setSomeArrayOfInts(null);
+//		s2.setSomeArrayOfLongs(null);
+//		s2.setSomeArrayOfDoubles(null);
+//		s2.setSomeArrayOfFloats(null);
+		//Empty Values
+//		s2.setSomeArray(new String[]{});
+//		s2.setSomeArrayOfInts(new int[]{});
+//		s2.setSomeArrayOfLongs(new long[]{});
+//		s2.setSomeArrayOfDoubles(new double[]{});
+//		s2.setSomeArrayOfFloats(new float[]{});
+	    lst.add(s2);
+	
+	    SamplePojo s3 = new SamplePojo();
+	    s3.setAge(1);
+	    s3.setGender("MALE");
+	    s3.setId(321);
+	    s3.setName("Zack");
+	    s3.setSomeDouble(10.10);
+	    s3.setSomeLong(321321);
+	    s3.setSomeFloat(15.15F);
+	    s3.setFauxEnum(SamplePojo.MyFauxTestEnum.Three);
+		s3.setFauxEnums(Arrays.asList(SamplePojo.MyFauxTestEnum.Two, SamplePojo.MyFauxTestEnum.Two, SamplePojo.MyFauxTestEnum.Two));
+		s3.setSomeArray(new String[]{"aaaa", "zzzz", "3333", "11", "222222", "1212"});
+		s3.setSomeArrayOfInts(new int[]{1, 120, 121, 99, 4, 22, 5});
+		s3.setSomeArrayOfLongs(new long[]{11, 44, 55, 22, 990, 1010, 1});
+		s3.setSomeArrayOfDoubles(new double[]{11.11, 44.44, 55.55, 41.41, 22.22, 231.21, 131.2});
+		s3.setSomeArrayOfFloats(new float[]{11.21F, 44.14F, 55.15F, 51.41F, 91.99F, 77.77F, 1.12F});
+	    lst.add(s3);
+	
+	    //Print List 1
+	    L.m("Printing list beforehand - ");
+	    for(SamplePojo s : lst){
+		    L.m(((s == null) ? "null" : new Gson().toJson(s, SamplePojo.class)));
+	    }
+	    String field = "name";
+	    L.m("Sort by Field: " + field);
+	    lst = MiscUtilities.sortGenericList(lst, field, true);
+	    L.m("Printing Newly Sorted List: ");
+	    for(SamplePojo s : lst){
+		    L.m(((s == null) ? "null" : new Gson().toJson(s, SamplePojo.class)));
+	    }
+	    
+	    //Print List 2
+	    field = "age";
+	    L.m("Sort by Field: " + field);
+	    lst = MiscUtilities.sortGenericList(lst, field, false);
+	    L.m("Printing Newly Sorted List: ");
+	    for(SamplePojo s : lst){
+		    L.m(((s == null) ? "null" : new Gson().toJson(s, SamplePojo.class)));
+	    }
+	    
+	    //Print List 3 - Custom using a customized getter method name passed in
+	    field = "overideCustomSuperLongNameStringReturnThingyUsedForTesting";
+	    L.m("Sort by Field: " + field);
+	    lst = MiscUtilities.sortGenericListCustom(lst, field, true);
+	    L.m("Printing Newly Sorted List: ");
+	    for(SamplePojo s : lst){
+		    L.m(((s == null) ? "null" : new Gson().toJson(s, SamplePojo.class)));
+	    }
+	    
+	    //Print List 4 - This one will fail and throw a NoSuchMethodException (caught) as this field does not exist
+	    field = "fictitiousField";
+	    L.m("Sort by Field: " + field);
+//	    lst = MiscUtilities.sortGenericList(lst, field, false); todo add back in after tests are done
+	    L.m("Printing Newly Sorted List: ");
+	    for(SamplePojo s : lst){
+		    L.m(((s == null) ? "null" : new Gson().toJson(s, SamplePojo.class)));
+	    }
+	    
+	    //Print List 5
+	    field = "someDouble";
+	    L.m("Sort by Field: " + field);
+	    lst = MiscUtilities.sortGenericList(lst, field, true);
+	    L.m("Printing Newly Sorted List: ");
+	    for(SamplePojo s : lst){
+		    L.m(((s == null) ? "null" : new Gson().toJson(s, SamplePojo.class)));
+	    }
+	    
+	    //Print List 6
+	    field = "someArray";
+	    L.m("Sort by Field: " + field);
+	    lst = MiscUtilities.sortGenericList(lst, field, true);
+	    L.m("Printing Newly Sorted List: ");
+	    for(SamplePojo s : lst){
+		    L.m(((s == null) ? "null" : new Gson().toJson(s, SamplePojo.class)));
+	    }
+	    
+	    //Print List 7
+	    field = "someArrayOfInts";
+	    L.m("Sort by Field: " + field);
+	    lst = MiscUtilities.sortGenericList(lst, field, false);
+	    L.m("Printing Newly Sorted List: ");
+	    for(SamplePojo s : lst){
+		    L.m(((s == null) ? "null" : new Gson().toJson(s, SamplePojo.class)));
+	    }
+	    
+	    //Print List 8
+	    field = "someArrayOfLongs";
+	    L.m("Sort by Field: " + field);
+	    lst = MiscUtilities.sortGenericList(lst, field, true);
+	    L.m("Printing Newly Sorted List: ");
+	    for(SamplePojo s : lst){
+		    L.m(((s == null) ? "null" : new Gson().toJson(s, SamplePojo.class)));
+	    }
+	    
+	    //Print List 9
+	    field = "someArrayOfDoubles";
+	    L.m("Sort by Field: " + field);
+	    lst = MiscUtilities.sortGenericList(lst, field, false);
+	    L.m("Printing Newly Sorted List: ");
+	    for(SamplePojo s : lst){
+		    L.m(((s == null) ? "null" : new Gson().toJson(s, SamplePojo.class)));
+	    }
+	    
+	    //Print List 10
+	    field = "someArrayOfFloats";
+	    L.m("Sort by Field: " + field);
+	    lst = MiscUtilities.sortGenericList(lst, field, true);
+	    L.m("Printing Newly Sorted List: ");
+	    for(SamplePojo s : lst){
+		    L.m(((s == null) ? "null" : new Gson().toJson(s, SamplePojo.class)));
+	    }
+	    
+	    //Print List 11
+	    L.m("Sort by no field; attempts to parse what is passed in");
+	    List<Integer> ints = Arrays.asList(1, 4, 5, 1, 2, 1, 0, 99, 111, 1);
+	    MiscUtilities.sortGenericList(ints, true);
+	    L.m("Printing Newly Sorted List: " + ints.toString());
+	   
+	    
+    }
     private SharedPrefs sp;
     @SuppressLint("NewApi")
     private void init5(){
@@ -615,6 +793,13 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 	
+	
+	    testNewWebClient();
+	    
+	    if(true){
+	    	return;
+	    }
+	    
 	    loadTestCall();
     	
     	if(true){
@@ -691,8 +876,17 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
         L.m("testNewWebClient()");
         if(service == null) {
             RetrofitClient.Builder b = new RetrofitClient.Builder(TestSSLInterface.class, TestSSLInterface.BASE_URL);
-            b.forceAcceptAllCertificates(true, false);
-            b.setSSLProtocolOption(SSLProtocolOptions.TLSv1dot2);
+//            b.forceAcceptAllCertificates(true, false);
+//            b.setSSLProtocolOption(SSLProtocolOptions.TLSv1dot2);
+            b.shouldSaveResponseCookies(new OnTaskCompleteListener() {
+	            @Override
+	            public void onTaskComplete(Object result, int customTag) {
+					L.m("Cookie Listener result == " + result);
+	            }
+            });
+//	          b.setConnectionSpec(ConnectionSpec.RESTRICTED_TLS); //Using restricted here will throw the SSLHandshakeException As it cannot connect
+	        b.setConnectionSpec(ConnectionSpec.MODERN_TLS); //Using restricted here will throw the SSLHandshakeException
+	        b.setTimeouts(60000, 60000);
             service = b.build().buildServiceClient();
         }
         if(service != null){
