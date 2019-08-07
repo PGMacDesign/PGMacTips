@@ -5,7 +5,8 @@ Change Log
 Version 1.0.4 *(TBD)*
 ----------------------------
 
-* 
+* New: Added in new Layouts in the cutomui package. [CustomRelativeLayout](link tbd), [CustomFrameLayout](link tbd), & [CustomLinearLayout](link tbd). Each of them is used for specifying customized width and height values (IE, max size) which can be tedious if done normally through custom defined UI 
+* Update: Updated the [NumberUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/NumberUtilities.java) to include a safe Integer parser. 
 
 
 Version 1.0.3 *(2019-08-05)*

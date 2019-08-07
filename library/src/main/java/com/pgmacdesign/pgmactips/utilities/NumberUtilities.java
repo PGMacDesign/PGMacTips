@@ -455,6 +455,20 @@ public class NumberUtilities {
     //region X.ParseX Methods
     
     /**
+     * Parse and return an integer without worrying about null checks
+     * @param intx String to parse
+     * @param fallbackNumber Fallback number to return if it failed parsing
+     * @return Parsed long or fallback number if it failed conversion
+     */
+    public static long parseIntegerSafe(String intx, long fallbackNumber){
+        try {
+            return Integer.parseInt(intx);
+        } catch (NumberFormatException e){
+            return fallbackNumber;
+        }
+    }
+    
+    /**
      * Parse and return a long without worrying about null checks
      * @param lng String to parse
      * @param fallbackNumber Fallback number to return if it failed parsing
