@@ -706,7 +706,7 @@ public class DatabaseUtilities {
             return false;
         }
         Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
-        String className = myClass.toString();
+        String className = myClass.getType().toString();
         String jsonString = null;
         try {
             jsonString = new Gson().toJson(obj, myClass.getType());
@@ -912,8 +912,8 @@ public class DatabaseUtilities {
                 //IF it is null, it has already been deleted, return true and move on
 	            if(this.loggingEnabled){
 		            L.m("Attempting to delete " + myClassName +
-				            ((StringUtilities.isNullOrEmpty(customSuffix) ? "" : ", custom suffix -- "
-						            + customSuffix)) + ", but item not found in DB; nothing to delete.");
+				            ((StringUtilities.isNullOrEmpty(customSuffix) ? "" : customSuffix))
+				            + ", but item not found in DB; nothing to delete.");
 	            }
                 return true;
             }
@@ -1014,7 +1014,7 @@ public class DatabaseUtilities {
             return false;
         }
         //Class name String
-        final String myClassName = myClass.toString();
+        final String myClassName = myClass.getType().toString();
 
         //Returned object from the master search
         Object obj = this.queryDatabaseMasterSingle(myClass);
@@ -1024,8 +1024,8 @@ public class DatabaseUtilities {
                 //IF it is null, it has already been deleted, return true and move on
 	            if(this.loggingEnabled){
 		            L.m("Attempting to delete " + myClassName +
-				            ((StringUtilities.isNullOrEmpty(customSuffix) ? "" : ", custom suffix -- "
-						            + customSuffix)) + ", but item not found in DB; nothing to delete.");
+				            ((StringUtilities.isNullOrEmpty(customSuffix) ? "" : customSuffix))
+				            + ", but item not found in DB; nothing to delete.");
 	            }
                 return true;
             }
@@ -1291,7 +1291,7 @@ public class DatabaseUtilities {
             return true;
         } catch (IllegalArgumentException e1) {
             e1.printStackTrace();
-            L.m("A RealmObject with no PrimaryKey cannot be updated. Does " + myClass.toString() +
+            L.m("A RealmObject with no PrimaryKey cannot be updated. Does " + myClass.getType().toString() +
                     "have a @PrimaryKey designation over a variable?");
         } catch (Exception e) {
             e.printStackTrace();
@@ -1451,7 +1451,7 @@ public class DatabaseUtilities {
      */
     private Object queryDatabaseMasterSingle(@NonNull final TypeToken myClass,
                                              final String customSuffix) {
-        String className = myClass.toString();
+        String className = myClass.getType().toString();
         if (customSuffix != null) {
             className = className + customSuffix;
         }

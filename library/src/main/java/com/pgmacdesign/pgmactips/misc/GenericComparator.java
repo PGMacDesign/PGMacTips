@@ -20,6 +20,7 @@ import java.util.Set;
  * https://myjeeva.com/generic-comparator-in-java.html
  * Additional features were added after forking
  */
+@SuppressWarnings("ConfusingArgumentToVarargsMethod")
 public class GenericComparator  implements Comparator, Serializable {
 	private static final int LESSER = -1;
 	private static final int EQUAL = 0;

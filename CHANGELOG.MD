@@ -2,10 +2,15 @@ Change Log
 ==========
 
 
-Version 1.0.4 *(TBD)*
+Version 1.0.6 *(TBD)*
 ----------------------------
 
-* New: Added in new Layouts in the cutomui package. [CustomRelativeLayout](link tbd), [CustomFrameLayout](link tbd), & [CustomLinearLayout](link tbd). Each of them is used for specifying customized width and height values (IE, max size) which can be tedious if done normally through custom defined UI 
+*
+
+Version 1.0.5 *(2019-08-08)*
+----------------------------
+
+* New: Added in new Layouts in the cutomui package. [CustomRelativeLayout](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/customui/CustomRelativeLayout.java), [CustomFrameLayout](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/customui/CustomFrameLayout.java), & [CustomLinearLayout](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/customui/CustomLinearLayout.java). Each of them is used for specifying customized width and height values (IE, max size) which can be tedious if done normally through custom defined UI 
 * Update: Updated the [NumberUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/NumberUtilities.java) to include a safe Integer parser. 
 * Update: Updated the [DateUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/DateUtilities.java) to include a logging option for CRUD operations. 
 
