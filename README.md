@@ -277,7 +277,3 @@ This issue can be caused by a few things, but the most common solutions are thes
 ## New Issues
 
 If you run into any compatability issues or bugs, please [make a new issue](https://github.com/PGMacDesign/PGMacTips/issues/new) ASAP so I can take a look at it. 
-
-## Important Notes
-
-Please keep in mind that as this is still in the beta phase, it will change dramatically before launch. 
