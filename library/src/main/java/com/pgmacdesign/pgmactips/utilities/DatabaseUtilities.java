@@ -72,10 +72,10 @@ public class DatabaseUtilities {
     //region Instance Variables
     private RealmConfiguration realmConfiguration;
     private Context context;
-
+	private boolean loggingEnabled;
     //endregion
 
-    ////////////////////////
+    //////////////////////
     //region Constructors - init //
     ////////////////////////
 
@@ -302,15 +302,19 @@ public class DatabaseUtilities {
                         try {
                             realm.createOrUpdateObjectFromJson(myClass, is);
                         } catch (Exception e) {
-                            L.m("IOException. Error reading file");
-                            e.printStackTrace();
+	                        if(loggingEnabled){
+		                        L.m("IOException. Error reading IS");
+		                        e.printStackTrace();
+	                        }
                         }
                     } else {
                         try {
                             realm.createObjectFromJson(myClass, is);
                         } catch (IOException e) {
-                            L.m("IOException. Error reading file");
-                            e.printStackTrace();
+	                        if(loggingEnabled){
+		                        L.m("IOException. Error reading IS");
+		                        e.printStackTrace();
+	                        }
                         }
                     }
                 }
@@ -453,14 +457,22 @@ public class DatabaseUtilities {
         try {
             jsonString = new Gson().toJson(obj, myClass);
         } catch (IllegalArgumentException ile) {
-            L.m(COULD_NOT_PERSIST_OBJECT_ILE + ile.getMessage());
+        	if(this.loggingEnabled) {
+		        L.m(COULD_NOT_PERSIST_OBJECT_ILE + ile.getMessage());
+	        }
         } catch (Exception e) {
+        	if(this.loggingEnabled){
+        		e.printStackTrace();
+	        }
         }
 
         if (jsonString == null) {
             try {
                 realm.close();
             } catch (Exception e) {
+	            if(this.loggingEnabled){
+		            e.printStackTrace();
+	            }
             }
             return false;
         }
@@ -481,15 +493,22 @@ public class DatabaseUtilities {
             realm.close();
             return true;
         } catch (IllegalArgumentException e1) {
-            e1.printStackTrace();
+	        if(this.loggingEnabled){
+		        e1.printStackTrace();
+	        }
         } catch (Exception e) {
-            e.printStackTrace();
+	        if(this.loggingEnabled){
+		        e.printStackTrace();
+	        }
         } finally {
             try {
                 if (!realm.isClosed()) {
                     realm.close();
                 }
             } catch (Exception e) {
+	            if(this.loggingEnabled){
+		            e.printStackTrace();
+	            }
             }
         }
         return false;
@@ -516,15 +535,22 @@ public class DatabaseUtilities {
         try {
             jsonString = new Gson().toJson(obj, myClass.getType());
         } catch (IllegalArgumentException ile) {
-            L.m(COULD_NOT_PERSIST_OBJECT_ILE + ile.getMessage());
+	        if(this.loggingEnabled){
+		        L.m(COULD_NOT_PERSIST_OBJECT_ILE + ile.getMessage());
+	        }
         } catch (Exception e) {
+	        if(this.loggingEnabled){
+		        e.printStackTrace();
+	        }
         }
 
         if (jsonString == null) {
             try {
                 realm.close();
             } catch (Exception e) {
-                e.printStackTrace();
+	            if(this.loggingEnabled){
+		            e.printStackTrace();
+	            }
             }
             return false;
         }
@@ -544,15 +570,22 @@ public class DatabaseUtilities {
             realm.close();
             return true;
         } catch (IllegalArgumentException e1) {
-            e1.printStackTrace();
+	        if(this.loggingEnabled){
+		        e1.printStackTrace();
+	        }
         } catch (Exception e) {
-            e.printStackTrace();
+	        if(this.loggingEnabled){
+		        e.printStackTrace();
+	        }
         } finally {
             try {
                 if (!realm.isClosed()) {
                     realm.close();
                 }
             } catch (Exception e) {
+	            if(this.loggingEnabled){
+		            e.printStackTrace();
+	            }
             }
         }
         return false;
@@ -594,14 +627,22 @@ public class DatabaseUtilities {
         try {
             jsonString = new Gson().toJson(obj, myClass);
         } catch (IllegalArgumentException ile) {
-            L.m(COULD_NOT_PERSIST_OBJECT_ILE + ile.getMessage());
+	        if(this.loggingEnabled){
+		        L.m(COULD_NOT_PERSIST_OBJECT_ILE + ile.getMessage());
+	        }
         } catch (Exception e) {
+	        if(this.loggingEnabled){
+		        e.printStackTrace();
+	        }
         }
 
         if (jsonString == null) {
             try {
                 realm.close();
             } catch (Exception e) {
+	            if(this.loggingEnabled){
+		            e.printStackTrace();
+	            }
             }
             return false;
         }
@@ -625,15 +666,22 @@ public class DatabaseUtilities {
             realm.close();
             return true;
         } catch (IllegalArgumentException e1) {
-            e1.printStackTrace();
+	        if(this.loggingEnabled){
+		        e1.printStackTrace();
+	        }
         } catch (Exception e) {
-            e.printStackTrace();
+	        if(this.loggingEnabled){
+		        e.printStackTrace();
+	        }
         } finally {
             try {
                 if (!realm.isClosed()) {
                     realm.close();
                 }
             } catch (Exception e) {
+	            if(this.loggingEnabled){
+		            e.printStackTrace();
+	            }
             }
         }
         return false;
@@ -663,14 +711,22 @@ public class DatabaseUtilities {
         try {
             jsonString = new Gson().toJson(obj, myClass.getType());
         } catch (IllegalArgumentException ile) {
-            L.m(COULD_NOT_PERSIST_OBJECT_ILE + ile.getMessage());
+	        if(this.loggingEnabled){
+		        L.m(COULD_NOT_PERSIST_OBJECT_ILE + ile.getMessage());
+	        }
         } catch (Exception e) {
+	        if(this.loggingEnabled){
+		        e.printStackTrace();
+	        }
         }
 
         if (jsonString == null) {
             try {
                 realm.close();
             } catch (Exception e) {
+	            if(this.loggingEnabled){
+		            e.printStackTrace();
+	            }
             }
             return false;
         }
@@ -694,15 +750,22 @@ public class DatabaseUtilities {
             realm.close();
             return true;
         } catch (IllegalArgumentException e1) {
-            e1.printStackTrace();
+	        if(this.loggingEnabled){
+		        e1.printStackTrace();
+	        }
         } catch (Exception e) {
-            e.printStackTrace();
+	        if(this.loggingEnabled){
+		        e.printStackTrace();
+	        }
         } finally {
             try {
                 if (!realm.isClosed()) {
                     realm.close();
                 }
             } catch (Exception e) {
+	            if(this.loggingEnabled){
+		            e.printStackTrace();
+	            }
             }
         }
         return false;
@@ -846,8 +909,12 @@ public class DatabaseUtilities {
         if (obj == null) {
             Object obj2 = this.getPersistedObjectCustom(myClass, customSuffix);
             if (obj2 == null) {
-                // TODO: 2017-04-18 may need one more check on customSuffix outside of this if statement
                 //IF it is null, it has already been deleted, return true and move on
+	            if(this.loggingEnabled){
+		            L.m("Attempting to delete " + myClassName +
+				            ((StringUtilities.isNullOrEmpty(customSuffix) ? "" : ", custom suffix -- "
+						            + customSuffix)) + ", but item not found in DB; nothing to delete.");
+	            }
                 return true;
             }
         }
@@ -858,10 +925,15 @@ public class DatabaseUtilities {
         try {
             query = realm.where(MasterDatabaseObject.class);
         } catch (IllegalStateException il) {
-            il.printStackTrace();
+	        if(this.loggingEnabled){
+		        il.printStackTrace();
+	        }
             return false;
         }
         if(query == null){
+	        if(this.loggingEnabled){
+		        L.m("Query is null, returning false and unable to complete transaction");
+	        }
             return false;
         }
         realm.executeTransaction(new Realm.Transaction() {
@@ -882,10 +954,15 @@ public class DatabaseUtilities {
                                 if (customId.equals(id)) {
                                     try {
                                         mdo.deleteFromRealm();
-                                        L.m("delete from DB succeeded");
+	                                    if(loggingEnabled){
+		                                    L.m("delete from DB succeeded");
+	                                    }
                                         return;
                                     } catch (Exception e) {
-                                        L.m("delete failed");
+	                                    if(loggingEnabled){
+		                                    L.m("delete failed");
+		                                    e.printStackTrace();
+	                                    }
                                     }
                                 }
                             } else {
@@ -893,10 +970,15 @@ public class DatabaseUtilities {
                                 if (myClassName.equals(id)) {
                                     try {
                                         mdo.deleteFromRealm();
-                                        L.m("delete succeeded");
-                                        return;
+	                                    if(loggingEnabled){
+		                                    L.m("delete from DB succeeded");
+	                                    }
+	                                    return;
                                     } catch (Exception e) {
-                                        L.m("delete failed");
+	                                    if(loggingEnabled){
+		                                    L.m("delete failed");
+		                                    e.printStackTrace();
+	                                    }
                                     }
                                 }
                             }
@@ -910,6 +992,9 @@ public class DatabaseUtilities {
         try {
             realm.close();
         } catch (Exception e) {
+	        if(loggingEnabled){
+		        e.printStackTrace();
+	        }
         }
         return true;
     }
@@ -936,8 +1021,12 @@ public class DatabaseUtilities {
         if (obj == null) {
             Object obj2 = this.getPersistedObjectCustom(myClass, customSuffix);
             if (obj2 == null) {
-                // TODO: 2017-04-18 may need one more check on customSuffix outside of this if statement
                 //IF it is null, it has already been deleted, return true and move on
+	            if(this.loggingEnabled){
+		            L.m("Attempting to delete " + myClassName +
+				            ((StringUtilities.isNullOrEmpty(customSuffix) ? "" : ", custom suffix -- "
+						            + customSuffix)) + ", but item not found in DB; nothing to delete.");
+	            }
                 return true;
             }
         }
@@ -949,7 +1038,9 @@ public class DatabaseUtilities {
 //            query = realm.where(myClass.getRawType());
             query = realm.where(MasterDatabaseObject.class);
         } catch (IllegalStateException il) {
-            il.printStackTrace();
+	        if(loggingEnabled){
+		        il.printStackTrace();
+	        }
             return false;
         }
         if(query == null){
@@ -973,10 +1064,15 @@ public class DatabaseUtilities {
                                 if (customId.equals(id)) {
                                     try {
                                         mdo.deleteFromRealm();
-                                        L.m("delete from DB succeeded");
-                                        return;
+                                        if(loggingEnabled){
+		                                    L.m("delete from DB succeeded");
+	                                    }
+	                                    return;
                                     } catch (Exception e) {
-                                        L.m("delete failed");
+	                                    if(loggingEnabled){
+		                                    L.m("delete failed");
+		                                    e.printStackTrace();
+	                                    }
                                     }
                                 }
                             } else {
@@ -984,10 +1080,15 @@ public class DatabaseUtilities {
                                 if (myClassName.equals(id)) {
                                     try {
                                         mdo.deleteFromRealm();
-                                        L.m("delete succeeded");
-                                        return;
+	                                    if(loggingEnabled){
+		                                    L.m("delete from DB succeeded");
+	                                    }
+	                                    return;
                                     } catch (Exception e) {
-                                        L.m("delete failed");
+	                                    if(loggingEnabled){
+		                                    L.m("delete failed");
+		                                    e.printStackTrace();
+	                                    }
                                     }
                                 }
                             }
@@ -1001,6 +1102,9 @@ public class DatabaseUtilities {
         try {
             realm.close();
         } catch (Exception e) {
+	        if(loggingEnabled){
+		        e.printStackTrace();
+	        }
         }
         return true;
 
@@ -1023,7 +1127,9 @@ public class DatabaseUtilities {
             return false;
         }
         try {
-            L.m("Deleting entire database!");
+	        if(loggingEnabled){
+		        L.m("Deleting entire database!");
+	        }
             Set<Class<? extends RealmModel>> allClasses = getDBTableTypes();
             if (allClasses != null) {
                 if (allClasses.size() >= 0) {
@@ -1031,13 +1137,19 @@ public class DatabaseUtilities {
                         try {
                             deleteFromMasterDB(c);
                         } catch (Exception e) {
-                            L.m("A class could not be deleted: " + c.getCanonicalName());
+	                        if(loggingEnabled){
+		                        L.m("A class could not be deleted: " + ((c == null) ? "Unknown" : c.getCanonicalName()));
+		                        e.printStackTrace();
+	                        }
                         }
                     }
                 }
             }
             return (deleteRealmFileInStorage(realmConfiguration));
         } catch (Exception e) {
+	        if(loggingEnabled){
+		        e.printStackTrace();
+	        }
             return false;
         }
     }
@@ -1091,7 +1203,9 @@ public class DatabaseUtilities {
                         try {
                             t.deleteFromRealm();
                         } catch (Exception e) {
-                            L.m("delete failed");
+	                        if(loggingEnabled){
+		                        L.m("Delete Failed");
+	                        }
                         }
                     }
                 }
@@ -1971,6 +2085,33 @@ public class DatabaseUtilities {
 
     //endregion
 
+	///////////////////////
+	//region Public Misc Methods
+	
+	/**
+	 * Enable logging (Defaults to disabled)
+	 */
+	public void enableLogging(){
+		this.setLogging(true);
+	}
+	
+	/**
+	 * Disable logging (Defaults to disabled)
+	 */
+	public void disableLogging(){
+    	this.setLogging(false);
+	}
+	
+	/**
+	 * Set the logging functionality
+	 * @param bool
+	 */
+	private void setLogging(boolean bool){
+        this.loggingEnabled = bool;
+	}
+	
+	//endregion
+	
     ///////////
     //region Modules//
     ///////////
