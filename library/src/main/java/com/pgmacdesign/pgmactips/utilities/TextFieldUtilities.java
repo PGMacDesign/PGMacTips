@@ -7,8 +7,12 @@ import android.text.Html;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.view.KeyEvent;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -18,9 +22,28 @@ import android.widget.TextView;
  * Created by pmacdowell on 8/15/2016.
  */
 public class TextFieldUtilities {
-
+	
+	/**
+	 * Fix issues where the text is getting cut off within a TextView. For more info, see link:
+	 * https://stackoverflow.com/a/24406361/2480714
+	 * @param parentLayout Parent layout that houses the TextView
+	 */
+	public static void fixTextCutoffIssues(@NonNull LinearLayout parentLayout){
+		if(parentLayout != null){
+			parentLayout.setBaselineAligned(false);
+		}
+	}
+	
+	/**
+	 * Set the shadow values
+	 * @param textView
+	 * @param translationZ
+	 * @param elevation
+	 * @param <T>
+	 */
     public static <T extends TextView>  void setShadow(@NonNull T textView,
-                                                       float translationZ, float elevation){
+                                                       float translationZ,
+                                                       float elevation){
         try {
             if(Build.VERSION.SDK_INT >= 21) {
                 textView.setTranslationZ(translationZ);

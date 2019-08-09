@@ -5,15 +5,16 @@ Change Log
 Version 1.0.6 *(TBD)*
 ----------------------------
 
-*
+* Update: Updated the [TextField Utilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/TextFieldUtilities.java) to include a fix for when text is getting cut off in a TextView nested underneath a Linear Layout.
+* New: Added in some commented reference code in the [ColorUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ColorUtilities.java) that can be used to reference alpha --> Hex code value conversions.  
 
 Version 1.0.5 *(2019-08-08)*
 ----------------------------
 
 * New: Added in new Layouts in the cutomui package. [CustomRelativeLayout](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/customui/CustomRelativeLayout.java), [CustomFrameLayout](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/customui/CustomFrameLayout.java), & [CustomLinearLayout](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/customui/CustomLinearLayout.java). Each of them is used for specifying customized width and height values (IE, max size) which can be tedious if done normally through custom defined UI 
 * Update: Updated the [NumberUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/NumberUtilities.java) to include a safe Integer parser. 
-* Update: Updated the [DateUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/DateUtilities.java) to include a logging option for CRUD operations. 
-
+* Update: Updated the [DatabaseUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/DatabaseUtilities.java) to include a logging option for CRUD operations. 
+* Bugfix: Fixed the Database Custom CRUD Operations in the DatabaseUtilities that were using the wrong TypeToken Strings 
 
 Version 1.0.3 *(2019-08-05)*
 ----------------------------
