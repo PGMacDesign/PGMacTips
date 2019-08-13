@@ -109,13 +109,13 @@ public class CreditCardUtilities {
                     add_new_card_card_image.setBackgroundColor(Constants.COLOR_BLACK);
                     break;
                 case MASTERCARD:
-                    add_new_card_card_image.setBackgroundColor(Constants.COLOR_WONDER_DISABLED);
+                    add_new_card_card_image.setBackgroundColor(Constants.COLOR_DISABLED);
                     break;
                 case DINERS_CLUB:
                     add_new_card_card_image.setBackgroundColor(Constants.COLOR_LINEN);
                     break;
                 case DISCOVER:
-                    add_new_card_card_image.setBackgroundColor(Constants.COLOR_WONDER_TURQUOISE);
+                    add_new_card_card_image.setBackgroundColor(Constants.COLOR_TURQUOISE);
                     break;
                 case JCB:
                     add_new_card_card_image.setBackgroundColor(Constants.COLOR_LIGHT_BLUE);
