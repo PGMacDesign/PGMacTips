@@ -32,7 +32,11 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
-
+	
+	compileOptions {
+		sourceCompatibility JavaVersion.VERSION_1_8
+		targetCompatibility JavaVersion.VERSION_1_8
+	}
     buildTypes {
         release {
             minifyEnabled false
@@ -50,6 +54,12 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation project(':library')
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+	
+	
+	//Butterknife - http://jakewharton.github.io/butterknife/
+	implementation 'com.jakewharton:butterknife:10.1.0'
+	annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
+	
 }
 repositories {
     mavenCentral()

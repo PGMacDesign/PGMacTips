@@ -23,4 +23,12 @@
         <attr name="pg_rippleRoundedCorners" format="dimension" localization="suggested" />
     </declare-styleable>
 
+
+    <declare-styleable name="PGCircleImageView">
+        <attr name="strokeColor" format="color"/>
+        <attr name="strokeWidth" format="dimension"/>
+        <attr name="highlightEnable" format="boolean"/>
+        <attr name="highlightColor" format="color"/>
+    </declare-styleable>
+
 </resources>

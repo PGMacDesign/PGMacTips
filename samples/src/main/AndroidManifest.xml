@@ -21,25 +21,34 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:theme="@style/MyMainTheme">
+
         <activity
             android:name=".MyTestActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
         <activity
             android:name=".activitysamples.SampleDBClassKotlin"
             android:screenOrientation="portrait"
-            />
+            >
+        </activity>
 
         <activity
             android:name=".activitysamples.SampleDBClass"
             android:screenOrientation="portrait"
-            />
+            >
+        </activity>
+
+        <activity
+            android:name=".activitysamples.PGCircleImageViewActivity"
+            android:screenOrientation="portrait"
+            >
+        </activity>
 
         <service
             android:name="com.pgmacdesign.pgmactips.services.ServiceFlash"
