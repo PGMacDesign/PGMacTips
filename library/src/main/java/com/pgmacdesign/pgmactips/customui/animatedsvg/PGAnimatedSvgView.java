@@ -33,7 +33,7 @@ import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
  * Custom view for animating SVG images.
  *
  * Full credit of this class / code goes to Jared Rummler:
- * https://github.com/jaredrummler/PGAnimatedSvgView
+ * https://github.com/jaredrummler/AnimatedSvgView
  */
 public class PGAnimatedSvgView extends View {
 	
