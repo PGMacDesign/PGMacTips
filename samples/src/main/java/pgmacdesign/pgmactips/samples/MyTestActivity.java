@@ -15,13 +15,14 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
-import com.google.android.gms.security.ProviderInstaller;
 import com.google.gson.Gson;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.GenericRecyclerviewAdapter;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.biometricutilities.BiometricVerification;
 import com.pgmacdesign.pgmactips.biometricutilities.FingerprintException;
 import com.pgmacdesign.pgmactips.customui.MultiColorLine;
+import com.pgmacdesign.pgmactips.customui.animatedsvg.PGAnimatedSvgView;
+import com.pgmacdesign.pgmactips.customui.animatedsvg.PGSVG;
 import com.pgmacdesign.pgmactips.datamodels.SamplePojo;
 import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
@@ -62,7 +63,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import io.realm.log.LogLevel;
 import okhttp3.ConnectionSpec;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -72,7 +72,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.http.GET;
-import retrofit2.http.Path;
 
 /**
  * Test activity for experimenting with various Library components
@@ -95,7 +94,9 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
     private ImageView image1, image2, image3, image4, image5, image6;
     private Button button;
     private RecyclerView testing_layout_recyclerview;
+    private PGAnimatedSvgView pganimated_svg_view;
 
+    private boolean svgIsRunning = false;
     private DatabaseUtilities dbUtilities;
     private CameraMediaUtilities cam;
     private BiometricVerification biometricVerification;
@@ -117,6 +118,7 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
         tv1.setTextColor(getResources().getColor(com.pgmacdesign.pgmactips.R.color.black));
         this.testing_layout_rootview = this.findViewById(com.pgmacdesign.pgmactips.R.id.testing_layout_rootview);
         button = (Button) this.findViewById(com.pgmacdesign.pgmactips.R.id.button);
+	    pganimated_svg_view = (PGAnimatedSvgView) this.findViewById(com.pgmacdesign.pgmactips.R.id.pganimated_svg_view);
         button.setTag("button");
         button.setTransformationMethod(null);
         button.setOnClickListener(this);
@@ -793,6 +795,33 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 	
+    	if(this.svgIsRunning){
+    		this.svgIsRunning = false;
+    		this.pganimated_svg_view.reset();
+    		return;
+	    }
+    	this.pganimated_svg_view.setOnStateChangeListener(state -> {
+			if (state == PGAnimatedSvgView.STATE_FINISHED){
+				//Continuous loop
+				this.pganimated_svg_view.reset();
+				pganimated_svg_view.start();
+			} else {
+			
+			}
+	    });
+    	this.pganimated_svg_view.setVisibility(View.VISIBLE);
+    	this.pganimated_svg_view.setSVGData(PGSVG.SAND_CLOCK);
+    	this.pganimated_svg_view.setFillTime(1000);
+    	this.pganimated_svg_view.setTraceTime(1000);
+    	this.pganimated_svg_view.setTraceTimePerGlyph(1000);
+    	this.pganimated_svg_view.setFillStart(1000);
+    	this.pganimated_svg_view.start();
+    	this.svgIsRunning = true;
+    	this.button.bringToFront();
+    	
+    	if(true){
+    		return;
+	    }
 	
 	    testNewWebClient();
 	    

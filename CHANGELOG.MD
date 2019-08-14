@@ -2,11 +2,12 @@ Change Log
 ==========
 
 
-Version 1.0.6 *(TBD)*
+Version 1.0.6 *(2019-08-14)*
 ----------------------------
 
 * Update: Updated the [TextField Utilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/TextFieldUtilities.java) to include a fix for when text is getting cut off in a TextView nested underneath a Linear Layout.
 * New: Added in some commented reference code in the [ColorUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ColorUtilities.java) that can be used to reference alpha --> Hex code value conversions.  
+* New: Added in a new custom UI Element, the [PGAnimatedSvgView](tbd) class that is used for drawing animated SVG views / icons.   
 
 Version 1.0.5 *(2019-08-08)*
 ----------------------------

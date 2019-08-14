@@ -31,4 +31,19 @@
         <attr name="highlightColor" format="color"/>
     </declare-styleable>
 
+
+    <declare-styleable name="PGAnimatedSvgView">
+        <attr name="animatedSvgImageSizeX" format="integer"/>
+        <attr name="animatedSvgImageSizeY" format="integer"/>
+        <attr name="animatedSvgTraceTime" format="string"/>
+        <attr name="animatedSvgTraceTimePerGlyph" format="string"/>
+        <attr name="animatedSvgFillStart" format="string"/>
+        <attr name="animatedSvgFillTime" format="string"/>
+        <attr name="animatedSvgGlyphStrings" format="reference"/>
+        <attr name="animatedSvgTraceColors" format="reference"/>
+        <attr name="animatedSvgTraceResidueColors" format="reference"/>
+        <attr name="animatedSvgTraceMarkerLength" format="integer"/>
+        <attr name="animatedSvgFillColors" format="reference"/>
+    </declare-styleable>
+
 </resources>
