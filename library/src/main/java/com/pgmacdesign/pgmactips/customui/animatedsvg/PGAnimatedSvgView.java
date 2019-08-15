@@ -476,26 +476,26 @@ public class PGAnimatedSvgView extends View {
 		if(pgsvg == null){
 			return;
 		}
-		if(pgsvg.colors == null || pgsvg.colors.length <= 0){
+		if(pgsvg.getColors() == null || pgsvg.getColors().length <= 0){
 			L.m("Colors array must not be null or empty");
 			return;
 		}
-		if(pgsvg.glyphs == null || pgsvg.glyphs.length <= 0){
+		if(pgsvg.getGlyphs() == null || pgsvg.getGlyphs().length <= 0){
 			L.m("Glyphs array must not be null or empty");
 			return;
 		}
-		if(pgsvg.glyphs.length != pgsvg.colors.length){
+		if(pgsvg.getGlyphs().length != pgsvg.getColors().length){
 			L.m("Glyphs and Colors must match in length");
 			return;
 		}
-		if(pgsvg.width <= 0 || pgsvg.height <= 0){
+		if(pgsvg.getWidth() <= 0 || pgsvg.getHeight() <= 0){
 			L.m("Width and Height must be greater than 0");
 			return;
 		}
 		
-		this.setGlyphStrings(pgsvg.glyphs);
-		this.setFillColors(pgsvg.colors);
-		this.setViewportSize(pgsvg.width, pgsvg.height);
+		this.setGlyphStrings(pgsvg.getGlyphs());
+		this.setFillColors(pgsvg.getColors());
+		this.setViewportSize(pgsvg.getWidth(), pgsvg.getHeight());
 	}
 	
 	/**

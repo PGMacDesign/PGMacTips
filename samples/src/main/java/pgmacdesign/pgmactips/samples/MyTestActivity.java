@@ -810,7 +810,7 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
 			}
 	    });
     	this.pganimated_svg_view.setVisibility(View.VISIBLE);
-    	this.pganimated_svg_view.setSVGData(PGSVG.SAND_CLOCK);
+    	this.pganimated_svg_view.setSVGData(PGSVG.getSVGSandClock());
     	this.pganimated_svg_view.setFillTime(1000);
     	this.pganimated_svg_view.setTraceTime(1000);
     	this.pganimated_svg_view.setTraceTimePerGlyph(1000);
