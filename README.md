@@ -130,7 +130,13 @@ I started deviating from Realm's updates once they started requiring accounts / 
 I originally used version 3.0.0, but have since upgraded to 4.2.0. See the list of releases [here](https://github.com/realm/realm-java/releases)
 I am unsure of forwards compatibility, but if newer versions will work or break the current project, please let me know and I will update to the highest possible one without making changes to the source code. 
 
+## AndroidX
 
+This project fully supports and utilizes AndroidX. If you are unfamiliar with it and are using legacy code, in Android studio go to `Refactor` and then click `Migrate to AndroidX`. 
+You should probably do this sooner rather than later if you have not because once you start using dependencies that utilize AndroidX (Like this one) you will either need to update or utilize [Jetifier](https://developer.android.com/studio/command-line/jetifier) instead.
+Furthermore, Google Play dependencies have started requiring the migration to AndroidX if you want to use the most current versions. 
+
+One last note here, if you are seeing Manifest Merge issues, no amount of Googling has resolved your problem, and have not yet migrated to AndroidX, that has been the culprit for me multiple times.    
 
 ## Issues / Exceptions
 
