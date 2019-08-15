@@ -2,12 +2,12 @@ Change Log
 ==========
 
 
-Version 1.0.7 *(TBD)*
+Version 1.0.8 *(TBD)*
 ----------------------------
 
 * 
 
-Version 1.0.6 *(2019-08-14)*
+Version 1.0.7 *(2019-08-15)*
 ----------------------------
 
 * Update: Updated the [TextField Utilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/TextFieldUtilities.java) to include a fix for when text is getting cut off in a TextView nested underneath a Linear Layout.
