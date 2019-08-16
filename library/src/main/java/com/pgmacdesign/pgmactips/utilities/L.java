@@ -24,6 +24,17 @@ public class L {
      * @param <E> Extends object
      */
     public static <E> void m (E myObject){
+        L.m(myObject, false);
+    }
+
+    /**
+     * Quick println
+     * @param myObject The string to print (or double, int, whatever)
+     * @param omitChunkPrefixString boolean, if true, will omit writing the chunk string prefix
+     *                              so you will not see "chunk 2 of 20:" for longer length strings
+     * @param <E> Extends object
+     */
+    public static <E> void m (E myObject, boolean omitChunkPrefixString){
         String str = myObject + "";
         if(StringUtilities.isNullOrEmpty(str)){
             return;
@@ -36,10 +47,12 @@ public class L {
             int chunkCount = str.length() / 4000;     // integer division
             for (int i = 0; i <= chunkCount; i++) {
                 int max = 4000 * (i + 1);
+                String chunkString = (!omitChunkPrefixString)
+		                ? "chunk " + i + " of " + chunkCount + ":" : "";
                 if (max >= str.length()) {
-                    Log.d(getTag(), "chunk " + i + " of " + chunkCount + ":" + str.substring(4000 * i));
+                    Log.d(getTag(), chunkString + str.substring(4000 * i));
                 } else {
-                    Log.d(getTag(), "chunk " + i + " of " + chunkCount + ":" + str.substring(4000 * i, max));
+                    Log.d(getTag(), chunkString + str.substring(4000 * i, max));
                 }
             }
         } else {
@@ -81,7 +94,7 @@ public class L {
 
 
     /**
-     * Short toast.
+     * Short toast. {@link Toast}
      * Deprecated on 2019-05-01 to use Activity to force a run on the main UI thread
      * @param context context
      * @param myObject String to print (If OTHER things are passed in, it converts it to a String first)
@@ -91,13 +104,16 @@ public class L {
         if(context == null){
             context = getContext();
         }
+        if(context == null){
+        	return;
+        }
         String str = myObject + ""; //Cast it to a String
         
         Toast.makeText(context, str, Toast.LENGTH_SHORT).show();
     }
     
     /**
-     * Short toast
+     * Short toast {@link Toast}
      * @param activity Activity to force a {@link Activity#runOnUiThread(Runnable)} call
      * @param myObject String to print (If OTHER things are passed in, it converts it to a String first)
      */
@@ -116,7 +132,7 @@ public class L {
     }
 
     /**
-     * Long toast
+     * Long toast {@link Toast}
      * Deprecated on 2019-05-01 to use Activity to force a run on the main UI thread
      * @param context context
      * @param myObject String to print (If OTHER things are passed in, it converts it to a String first)
@@ -126,12 +142,15 @@ public class L {
         if(context == null){
             context = getContext();
         }
+	    if(context == null){
+		    return;
+	    }
         String str = myObject + ""; //Cast it to a String
         Toast.makeText(context, str, Toast.LENGTH_LONG).show();
     }
     
     /**
-     * Long toast
+     * Long toast {@link Toast}
      * @param activity Activity to force a {@link Activity#runOnUiThread(Runnable)} call
      * @param myObject String to print (If OTHER things are passed in, it converts it to a String first)
      */
