@@ -1,5 +1,6 @@
 package com.pgmacdesign.pgmactips.utilities;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.ContentUris;
 import android.content.Context;
@@ -9,6 +10,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
+import android.os.StatFs;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import androidx.annotation.NonNull;
@@ -35,7 +37,10 @@ import static com.pgmacdesign.pgmactips.utilities.StringUtilities.getDataColumn;
  * Created by pmacdowell on 8/12/2016.
  */
 public class FileUtilities {
-
+	
+	/**
+	 * Enyum for storage Sizes
+	 */
     public enum ByteSizeNames{
         Bytes, Kilobytes, Megabytes, Gigabytes, Terabytes, PetaBytes, Exabytes, ZettaBytes, Yottabytes
     }
@@ -614,4 +619,198 @@ public class FileUtilities {
         return encImage;
 
     }
+    
+    //region Determining Storage Available and respective converter methods
+	
+	/**
+	 * Determine whether or not there is an external memory source available
+	 * @return if true, is attached, if false, is not
+	 */
+	public static boolean externalMemoryAvailable() {
+		try {
+			return android.os.Environment.getExternalStorageState().equals(
+					android.os.Environment.MEDIA_MOUNTED);
+		} catch (Exception e){
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	/**
+	 * Get the available internal memory size as a String
+	 * @return
+	 */
+	@SuppressLint("NewApi")
+	public static String getAvailableInternalMemorySizeString() {
+		File path = Environment.getDataDirectory();
+		StatFs stat = new StatFs(path.getPath());
+		long blockSize = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+				? stat.getBlockSizeLong() : (long) stat.getBlockSize();
+		long availableBlocks = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+				? stat.getAvailableBlocksLong() : (long) stat.getAvailableBlocks();
+		return formatSize(availableBlocks * blockSize);
+	}
+	
+	/**
+	 * Get the available internal memory size as a long. (in bytes)
+	 * @return
+	 */
+	@SuppressLint("NewApi")
+	public static long getAvailableInternalMemorySize() {
+		File path = Environment.getDataDirectory();
+		StatFs stat = new StatFs(path.getPath());
+		long blockSize = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+				? stat.getBlockSizeLong() : (long) stat.getBlockSize();
+		long availableBlocks = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+				? stat.getAvailableBlocksLong() : (long) stat.getAvailableBlocks();
+		return (availableBlocks * blockSize);
+	}
+	
+	/**
+	 * Get the internal memory size as a String.
+	 * @return
+	 */
+	@SuppressLint("NewApi")
+	public static String getTotalInternalMemorySizeString() {
+		File path = Environment.getDataDirectory();
+		StatFs stat = new StatFs(path.getPath());
+		long blockSize = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+				? stat.getBlockSizeLong() : (long) stat.getBlockSize();
+		long totalBlocks = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+				? stat.getBlockCountLong() : (long) stat.getAvailableBlocks();
+		return formatSize(totalBlocks * blockSize);
+	}
+	
+	/**
+	 * Get the internal memory size as a long. (in bytes)
+	 * @return
+	 */
+	@SuppressLint("NewApi")
+	public static long getTotalInternalMemorySize() {
+		File path = Environment.getDataDirectory();
+		StatFs stat = new StatFs(path.getPath());
+		long blockSize = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+				? stat.getBlockSizeLong() : (long) stat.getBlockSize();
+		long totalBlocks = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+				? stat.getBlockCountLong() : (long) stat.getAvailableBlocks();
+		return (totalBlocks * blockSize);
+	}
+	
+	/**
+	 * Get the available external memory size as a String
+	 * @return
+	 */
+	@SuppressLint("NewApi")
+	public static String getAvailableExternalMemorySizeString() {
+		if (externalMemoryAvailable()) {
+			File path = Environment.getExternalStorageDirectory();
+			StatFs stat = new StatFs(path.getPath());
+			long blockSize = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+					? stat.getBlockSizeLong() : (long) stat.getBlockSize();
+			long availableBlocks = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+					? stat.getAvailableBlocksLong() : (long) stat.getAvailableBlocks();
+			return formatSize(availableBlocks * blockSize);
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * Get the available external memory size as a long. (in bytes)
+	 * @return long of memory size in bytes. If it cannot determine a correct value, will return -1
+	 */
+	@SuppressLint("NewApi")
+	public static long getAvailableExternalMemorySize() {
+		if (externalMemoryAvailable()) {
+			File path = Environment.getExternalStorageDirectory();
+			StatFs stat = new StatFs(path.getPath());
+			long blockSize = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+					? stat.getBlockSizeLong() : (long) stat.getBlockSize();
+			long availableBlocks = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+					? stat.getAvailableBlocksLong() : (long) stat.getAvailableBlocks();
+			return (availableBlocks * blockSize);
+		} else {
+			return -1;
+		}
+	}
+	
+	/**
+	 * Get the total external memory storage size as a String
+	 * @return
+	 */
+	@SuppressLint("NewApi")
+	public static String getTotalExternalMemorySizeString() {
+		if (externalMemoryAvailable()) {
+			File path = Environment.getExternalStorageDirectory();
+			StatFs stat = new StatFs(path.getPath());
+			long blockSize = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+					? stat.getBlockSizeLong() : (long) stat.getBlockSize();
+			long totalBlocks = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+					? stat.getBlockCountLong() : (long) stat.getAvailableBlocks() ;
+			return formatSize(totalBlocks * blockSize);
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * Get the total external memory size as a long. (in bytes)
+	 * @return long of memory size in bytes. If it cannot determine a correct value, will return -1
+	 */
+	@SuppressLint("NewApi")
+	public static long getTotalExternalMemorySize() {
+		if (externalMemoryAvailable()) {
+			File path = Environment.getExternalStorageDirectory();
+			StatFs stat = new StatFs(path.getPath());
+			long blockSize = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+					? stat.getBlockSizeLong() : (long) stat.getBlockSize();
+			long totalBlocks = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+					? stat.getBlockCountLong() : (long) stat.getAvailableBlocks();
+			return (totalBlocks * blockSize);
+		} else {
+			return -1;
+		}
+	}
+	
+	/**
+	 * Format the size into gb
+	 * @param size
+	 * @return
+	 */
+	private static String formatSize(long size) {
+		if(size <= 0){
+			return "0 Bytes";
+		}
+		double decimalSuffix = 0;
+		String suffix = null;
+		if (size >= 1024) {
+			suffix = "KB";
+			size /= 1024;
+			if (size >= 1024) {
+				suffix = "MB";
+				size /= 1024;
+				if (size >= 1024) {
+					suffix = "GB";
+//					decimalSuffix = (double) (size /= (double)1024);
+					size /= 1024;
+				}
+			}
+		}
+		
+		StringBuilder resultBuffer = new StringBuilder(Long.toString(size));
+		
+		int commaOffset = resultBuffer.length() - 3;
+		while (commaOffset > 0) {
+			resultBuffer.insert(commaOffset, ',');
+			commaOffset -= 3;
+		}
+		
+		if (suffix != null){
+			resultBuffer.append(" ");
+			resultBuffer.append(suffix);
+		}
+		return resultBuffer.toString();
+	}
+	
+	//endregion
 }
