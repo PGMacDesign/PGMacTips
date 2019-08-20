@@ -926,13 +926,13 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
                     L.m("Response was successful? " + response.isSuccessful());
                     if(response.isSuccessful()){
                         try {
-                            L.m("RESPONSE == \n" + response.body().string());
+                            L.m("RESPONSE ==  response.body().string()");
                         } catch (Exception e){
                             e.printStackTrace();
                         }
                     } else {
                         try {
-                            L.m("RESPONSE == \n" + response.errorBody().string());
+                            L.m("RESPONSE ==  response.errorBody().string()");
                         } catch (Exception e){
                             e.printStackTrace();
                         }

@@ -134,8 +134,10 @@
         android:layout_height="match_parent"
         android:id="@+id/pganimated_svg_view"
         android:visibility="gone"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
         android:layout_margin="8dp"
         />
+
+    <!--android:layout_centerVertical="true"-->
+    <!--android:layout_centerHorizontal="true"-->
 </RelativeLayout>
