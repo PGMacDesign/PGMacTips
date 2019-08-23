@@ -6,12 +6,14 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
+import android.graphics.LinearGradient;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.graphics.Shader;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -23,11 +25,11 @@ import android.view.animation.Interpolator;
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 
 import com.pgmacdesign.pgmactips.R;
 import com.pgmacdesign.pgmactips.utilities.L;
-import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
 
 /**
  * Custom view for animating SVG images.
@@ -72,13 +74,16 @@ public class PGAnimatedSvgView extends View {
 	private int[] mTraceColors;
 	private float mViewportWidth;
 	private float mViewportHeight;
-	private boolean shouldCenter;
+	private boolean shouldCenter, okToUseGradient;
 	private PointF mViewport = new PointF(mViewportWidth, mViewportHeight);
 	private float aspectRatioWidth = 1;
 	private float aspectRatioHeight = 1;
 	
 	private Paint mFillPaint;
 	private int[] mFillColors;
+	private boolean gradientIsVertical;
+	private float[] gradientPositionValues;
+	private int[][] mFillColorsGradient;
 	private PGAnimatedSvgView.GlyphData[] mGlyphData;
 	private String[] mGlyphStrings;
 	private float mMarkerLength;
@@ -107,6 +112,7 @@ public class PGAnimatedSvgView extends View {
 	
 	private void init(Context context, AttributeSet attrs) {
 		this.gotOriginalSize = false;
+		this.mFillColorsGradient = null;
 		mFillPaint = new Paint();
 		mFillPaint.setAntiAlias(true);
 		mFillPaint.setStyle(Paint.Style.FILL);
@@ -163,6 +169,7 @@ public class PGAnimatedSvgView extends View {
 			setLayerType(LAYER_TYPE_SOFTWARE, null);
 		}
 		
+		this.okToUseGradient = this.checkGradientValues();
 	}
 	
 	//endregion
@@ -247,13 +254,40 @@ public class PGAnimatedSvgView extends View {
 			float phase = constrain(0, 1, (t - mFillStart) * 1f / mFillTime);
 			for (int i = 0; i < mGlyphData.length; i++) {
 				PGAnimatedSvgView.GlyphData glyphData = mGlyphData[i];
-				int fillColor = mFillColors[i];
+				int fillColor = (i < this.mFillColors.length && i >= 0) ? this.mFillColors[i] : this.mFillColors[0];
 				int a = (int) (phase * ((float) Color.alpha(fillColor) / (float) 255) * 255);
 				int r = Color.red(fillColor);
 				int g = Color.green(fillColor);
 				int b = Color.blue(fillColor);
-				mFillPaint.setARGB(a, r, g, b);
-				canvas.drawPath(glyphData.path, mFillPaint);
+				this.mFillPaint.setARGB(a, r, g, b);
+				if(this.okToUseGradient){
+					int[] colorsFromGradientPosition = (i < this.mFillColorsGradient.length && i >= 0)
+							? this.mFillColorsGradient[i] : this.mFillColorsGradient[0];
+					if(colorsFromGradientPosition != null){
+						if(colorsFromGradientPosition.length >= 1){
+							float[] pathsToSet = null;
+							if(this.gradientPositionValues != null){
+								if(gradientPositionValues.length == colorsFromGradientPosition.length){
+									pathsToSet = this.gradientPositionValues;
+								}
+							}
+							/*
+							 * @param x0           The x-coordinate for the start of the gradient line
+							 * @param y0           The y-coordinate for the start of the gradient line
+							 * @param x1           The x-coordinate for the end of the gradient line
+							 * @param y1           The y-coordinate for the end of the gradient line
+							 */
+							LinearGradient myGradient = new LinearGradient(0f, 0,
+									(this.gradientIsVertical) ? 0 : (float)getWidth(),
+									(this.gradientIsVertical) ? (float)getHeight() : 0, colorsFromGradientPosition,
+									pathsToSet, Shader.TileMode.CLAMP);
+							this.mFillPaint.setShader(myGradient);
+							canvas.drawPath(glyphData.path, this.mFillPaint);
+							continue;
+						}
+					}
+				}
+				canvas.drawPath(glyphData.path, this.mFillPaint);
 			}
 		}
 		
@@ -381,13 +415,51 @@ public class PGAnimatedSvgView extends View {
 	}
 	
 	/**
+	 * Overloaded to allow for omission of 2 params
+	 * Set the color gradients for each path of the SVG. This corresponds with each data path.
+	 *
+	 * @param fillColorsGradient The color gradient values for each SVG data path.
+	 */
+	public void setFillColorsGradient(@NonNull int[][] fillColorsGradient) {
+		this.setFillColorsGradient(fillColorsGradient, null);
+	}
+	
+	/**
+	 * Overloaded to allow for omission of 1 param
+	 * Set the color gradients for each path of the SVG. This corresponds with each data path.
+	 *
+	 * @param fillColorsGradient The color gradient values for each SVG data path.
+	 * @param positions The color positions where the values should be set. May be null.
+	 */
+	public void setFillColorsGradient(@NonNull int[][] fillColorsGradient,
+	                                  @Nullable float[] positions) {
+		this.setFillColorsGradient(fillColorsGradient, positions, false);
+	}
+	
+	/**
+	 * Set the color gradients for each path of the SVG. This corresponds with each data path.
+	 *
+	 * @param fillColorsGradient The color gradient values for each SVG data path.
+	 * @param positions The color positions where the values should be set. May be null.
+	 * @param positions boolean value, if true, will be vertical, else, will be horizontal
+	 */
+	public void setFillColorsGradient(@NonNull int[][] fillColorsGradient,
+	                                  @Nullable float[] positions,
+	                                  boolean isVerticalGradient) {
+		this.mFillColorsGradient = fillColorsGradient;
+		this.gradientPositionValues = positions;
+		this.gradientIsVertical = isVerticalGradient;
+		this.okToUseGradient = this.checkGradientValues();
+	}
+	
+	/**
 	 * Set the color used for tracing. This will be applied to all data paths.
 	 *
 	 * @param color The color
 	 */
 	public void setTraceResidueColor(@ColorInt int color) {
 		if (mGlyphStrings == null) {
-			throw new RuntimeException("You need to set the glyphs first.");
+			throw new IllegalArgumentException("You need to set the glyphs first.");
 		}
 		int length = mGlyphStrings.length;
 		int[] colors = new int[length];
@@ -399,12 +471,13 @@ public class PGAnimatedSvgView extends View {
 	
 	/**
 	 * Set the color used for tracing. This will be applied to all data paths.
+	 * Note, you must set the Glyph Strings first by calling {@link #setGlyphStrings(String...)}
 	 *
 	 * @param color The color
 	 */
 	public void setTraceColor(@ColorInt int color) {
 		if (mGlyphStrings == null) {
-			throw new RuntimeException("You need to set the glyphs first.");
+			throw new IllegalArgumentException("You need to set the glyphs first.");
 		}
 		int length = mGlyphStrings.length;
 		int[] colors = new int[length];
@@ -416,12 +489,13 @@ public class PGAnimatedSvgView extends View {
 	
 	/**
 	 * Set the color used for the icon. This will apply the color to all SVG data paths.
+	 * Note, you must set the Glyph Strings first by calling {@link #setGlyphStrings(String...)}
 	 *
 	 * @param color The color
 	 */
 	public void setFillColor(@ColorInt int color) {
 		if (mGlyphStrings == null) {
-			throw new RuntimeException("You need to set the glyphs first.");
+			throw new IllegalArgumentException("You need to set the glyphs first.");
 		}
 		int length = mGlyphStrings.length;
 		int[] colors = new int[length];
@@ -550,6 +624,25 @@ public class PGAnimatedSvgView extends View {
 	//endregion
 	
 	//region Private Methods
+	
+	/**
+	 * Check if the gradient values are ok to use
+	 * @return
+	 */
+	private boolean checkGradientValues(){
+		boolean okToUseGradient = false;
+		if(this.mFillColorsGradient != null){
+			if(this.mFillColorsGradient.length >= 1){
+				int[] xx = this.mFillColorsGradient[0];
+				if(xx != null){
+					if(xx.length >= 1){
+						okToUseGradient = true;
+					}
+				}
+			}
+		}
+		return okToUseGradient;
+	}
 	
 	private void changeState(@PGAnimatedSvgView.State int state) {
 		if (mState == state) {

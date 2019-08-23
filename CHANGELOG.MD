@@ -6,7 +6,7 @@ Version 1.0.8 *(TBD)*
 ----------------------------
 
 * Update: Added an overloaded method in the [L](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/L.java) class to allow for an overloaded call to omit the "chunk 2 of 20:" string for easier logging copying.
-* New: Added in new Utilities to the 
+* Update: Updated the [PGAnimatedSvgView](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/customui/animatedsvg/PGAnimatedSvgView.java) class to add in the option to use a gradient.  
 
 
 Version 1.0.7 *(2019-08-15)*
