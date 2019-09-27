@@ -213,6 +213,46 @@ As of January 2019, the above command is now deprecated and will not work. One b
 
 ### Realm Exceptions (TransformExceptions && AbstractMethodError)
 
+#### IllegalArgumentException With the `PGMacTipsModule` 
+
+You may run into this issue when running your app on production environments:
+
+```java
+com.pgmacdesign.pgmactips.utilities.DatabaseUtilities.PGMacTipsModule is not a RealmModule. Add @RealmModule to the class definition.
+	at android.app.ActivityThread.handleBindApplication(ActivityThread.java:5946)
+	at android.app.ActivityThread.access$1100(ActivityThread.java:205)
+	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:1661)
+	at android.os.Handler.dispatchMessage(Handler.java:106)
+	at android.os.Looper.loop(Looper.java:280)
+	at android.app.ActivityThread.main(ActivityThread.java:6748)
+	at java.lang.reflect.Method.invoke(Native Method)
+	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:493)
+	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:858)
+Caused by: java.lang.IllegalArgumentException: com.pgmacdesign.pgmactips.utilities.DatabaseUtilities.PGMacTipsModule is not a RealmModule. Add @RealmModule to the class definition.
+	at f.c.v$a.a(:3)
+	at com.pgmacdesign.pgmactips.utilities.DatabaseUtilities.a(:11)
+	at kajabi.kajabiapp.misc.MyApplication.c(Unknown Source:22)
+	at kajabi.kajabiapp.misc.MyApplication.onCreate(Unknown Source:11)
+	at android.app.Instrumentation.callApplicationOnCreate(Instrumentation.java:1155)
+	at android.app.ActivityThread.handleBindApplication(ActivityThread.java:5941)
+	... 8 more
+```
+
+This is caused by a combination of the `PGMacTips` dependency not being included in the Proguard file + Utilizing Realm DB + minification being set to true.
+
+To resolve this issue, just add PGMacTips and realm to your Proguard file and you should be good to go:
+
+```groovy
+    # PGMacTips Proguard Bypass
+    -dontwarn com.pgmacdesign.pgmactips.**
+    -keep class com.pgmacdesign.pgmactips.** { *; }
+	-keep class io.realm.annotations.RealmModule
+	-keep @io.realm.annotations.RealmModule class *
+	-keep class io.realm.internal.Keep
+	-keep @io.realm.internal.Keep class * { *; }
+	-keepnames public class * extends io.realm.RealmObject    
+```
+
 #### TransformException
 Your build may work just fine when debugging, but break when you try to make an APK file. If it does not work when you do this and this error appears:
 

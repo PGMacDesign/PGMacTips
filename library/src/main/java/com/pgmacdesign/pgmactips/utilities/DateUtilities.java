@@ -201,7 +201,9 @@ public class DateUtilities {
     /**
      * Get the SimpleDateFormat to be used
      *
-     * @param formatType The format type to do (See PGMacTipsConstants, IE DATE_YYYY_MM_DD)
+     * @param formatType The format type to do (See PGMacTipsConstants,
+     *                   {@link PGMacTipsConstants#DATE_YYYY_MM_DD_T_HH_MM_SS_SSS_Z}
+     *                   Defaults to the linked constant above.
      * @param delimiter  delimiter to separate them. (IE / or - or ,). If null, will use nothing
      * @param locale     Locale object {@link Locale} . If null, defaults to United States (US)
      * @return SimpleDateFormat
@@ -251,6 +253,9 @@ public class DateUtilities {
             }
             if (formatType == PGMacTipsConstants.DATE_YYYY_MM_DD_T_HH_MM_SS_Z) {
                 simpleDateFormat = new SimpleDateFormat("yyyy" + delimiter + "MM" + delimiter + "dd" + "'T'" + " HH:mm:ss'Z", locale);
+            }
+            if(simpleDateFormat == null){
+	            simpleDateFormat = new SimpleDateFormat("yyyy" + delimiter + "MM" + delimiter + "dd" + "'T'" + " HH:mm:ss'Z", locale);
             }
         } catch (Exception e){
             e.printStackTrace();
@@ -422,6 +427,47 @@ public class DateUtilities {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(timestamp);
         return cal.getTime();
+    }
+
+    /**
+     * Returns the Simple String date
+     *
+     * @return Returns a Simple date in the following format: `yyyy-MM-dd`. Maintains the
+     *         significant figures in the event that month < 10 or day < 10
+     */
+    public static String getSimpleDateWithSignificantFigures() {
+        return DateUtilities.getSimpleDateWithSignificantFigures(Calendar.getInstance());
+    }
+	
+	/**
+	 * Returns the Simple String date
+	 *
+	 * @return Returns a Simple date in the following format: `yyyy-MM-dd`. Maintains the
+	 *         significant figures in the event that month < 10 or day < 10
+	 */
+	public static String getSimpleDateWithSignificantFigures(Date now) {
+		Calendar n = Calendar.getInstance();
+		if(now != null) {
+			n.setTime(now);
+		}
+		return DateUtilities.getSimpleDateWithSignificantFigures(n);
+	}
+	
+    /**
+     * Returns the Simple String date
+     *
+     * @return Returns a Simple date in the following format: `yyyy-MM-dd`. Maintains the
+     *         significant figures in the event that month < 10 or day < 10
+     */
+    public static String getSimpleDateWithSignificantFigures(Calendar now) {
+        if(now == null){
+        	now = Calendar.getInstance();
+        }
+        int year = now.get(Calendar.YEAR);
+        int month = (1 + now.get(Calendar.MONTH));
+        int day = now.get(Calendar.DAY_OF_MONTH);
+        return ("" + year + "-" + (month < 10 ? ("0" + month) : ("" + month))
+		        + "-" + (day < 10 ? ("0" + day) : ("" + day)));
     }
 
     /**
