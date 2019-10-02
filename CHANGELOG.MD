@@ -2,7 +2,12 @@ Change Log
 ==========
 
 
-Version 1.0.8 *(TBD)*
+Version 1.0.9 *(TBD)*
+----------------------------
+
+* TBD: 
+
+Version 1.0.8 *(2019-10-01)*
 ----------------------------
 
 * Update: Added an overloaded method in the [L](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/L.java) class to allow for an overloaded call to omit the "chunk 2 of 20:" string for easier logging copying / pasting / usage.
