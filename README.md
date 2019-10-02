@@ -246,11 +246,17 @@ To resolve this issue, just add PGMacTips and realm to your Proguard file and yo
     # PGMacTips Proguard Bypass
     -dontwarn com.pgmacdesign.pgmactips.**
     -keep class com.pgmacdesign.pgmactips.** { *; }
+    # Realm Proguard Bypass
+	-keep @interface io.realm.annotations.RealmModule { *; }
+	-keep class io.realm.annotations.RealmModule { *; }
 	-keep class io.realm.annotations.RealmModule
 	-keep @io.realm.annotations.RealmModule class *
 	-keep class io.realm.internal.Keep
-	-keep @io.realm.internal.Keep class * { *; }
-	-keepnames public class * extends io.realm.RealmObject    
+	-keep @io.realm.internal.Keep class *
+	-dontwarn javax.
+	-dontwarn io.realm.**
+	-keepnames public class * extends io.realm.RealmObject
+	-keep class * extends io.realm.RealmObject 
 ```
 
 #### TransformException

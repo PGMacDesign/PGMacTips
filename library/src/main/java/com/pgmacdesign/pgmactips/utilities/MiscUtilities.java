@@ -1324,6 +1324,19 @@ public class MiscUtilities {
 	
 	//endregion
 	
+	//region Checking Rooted Devices
+	
+	/**
+	 * Check if a device is rooted
+	 * Overloaded so as to make it more easily accessible.
+	 * @return True means the device is rooted, false means it is not
+	 */
+	public static boolean isDeviceRooted() {
+		return SystemUtilities.isDeviceRooted();
+	}
+	
+	//endregion
+	
 	//region Deprecated or Unused
 	
 	

@@ -5,10 +5,13 @@ Change Log
 Version 1.0.8 *(TBD)*
 ----------------------------
 
-* Update: Added an overloaded method in the [L](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/L.java) class to allow for an overloaded call to omit the "chunk 2 of 20:" string for easier logging copying.
+* Update: Added an overloaded method in the [L](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/L.java) class to allow for an overloaded call to omit the "chunk 2 of 20:" string for easier logging copying / pasting / usage.
 * Update: Updated the [PGAnimatedSvgView](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/customui/animatedsvg/PGAnimatedSvgView.java) class to add in the option to use a gradient.  
 * Update: New Utilities in the [DateUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/DateUtilities.java) class for getting simple date via an overloaded method.
 * Update: Clarifying an error that can happen by updating the README.
+* Update: Updated the [SystemUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/SystemUtilities.java) to include references to [Pie](https://developer.android.com/about/versions/pie/android-9.0) and [Android 10](https://developer.android.com/about/versions/10/features). 
+* New: Adding new methods into both the [SystemUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/SystemUtilities.java) and the [MiscUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/MiscUtilities.java) to include code for checking if a device is rooted.
+* Update: Updated the [DisplayManagerUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/DisplayManagerUtilities.java) to include more accurate updates and info. Updated references came from [here](https://stackoverflow.com/a/16629223/2480714) and [here](https://stackoverflow.com/a/8633003/2480714) 
 
 Version 1.0.7 *(2019-08-15)*
 ----------------------------

@@ -8,6 +8,10 @@ import android.text.TextUtils;
 
 import com.pgmacdesign.pgmactips.BuildConfig;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+
 /**
  * SystemUtilities is used for quick referencing builds, versions, and other various tools so
  * as to minimize having to google which version was which.
@@ -47,6 +51,8 @@ public class SystemUtilities {
         N_MR1(25, "N", "N_MR1"),
         O(26, "O", "Oreo"),
         O_MR1(27, "O", "O_MR1"),
+        P(28, "P", "Pie"),
+        TEN(29, "10", "10"),
         CUR_DEVELOPMENT(10000, "NA", "NA");
 
         //The build name within the source code itself
@@ -300,7 +306,6 @@ public class SystemUtilities {
         return packageName;
     }
 
-
     /**
      * Get the maximum system cache size for the app. Designed after this answer:
      * https://stackoverflow.com/a/15763477/2480714
@@ -317,4 +322,64 @@ public class SystemUtilities {
         }
     }
 
+    //region Checking For Rooted Device
+	
+	/**
+	 * Check if a device is rooted.
+	 * Credit to 'Kevin Parker' for his code here: https://stackoverflow.com/a/8097801/2480714
+	 * @return True means the device is rooted, false means it is not
+	 */
+	public static boolean isDeviceRooted() {
+		return checkRootMethod1() || checkRootMethod2() || checkRootMethod3();
+	}
+	
+	/**
+	 * Check if a device is rooted
+	 * @return
+	 */
+	private static boolean checkRootMethod1() {
+		try {
+			String buildTags = android.os.Build.TAGS;
+			return buildTags != null && buildTags.contains("test-keys");
+		} catch (Exception e){
+			return false;
+		}
+	}
+	
+	/**
+	 * Check if a device is rooted
+	 * @return
+	 */
+	private static boolean checkRootMethod2() {
+		String[] paths = { "/system/app/Superuser.apk", "/sbin/su", "/system/bin/su", "/system/xbin/su", "/data/local/xbin/su", "/data/local/bin/su", "/system/sd/xbin/su",
+				"/system/bin/failsafe/su", "/data/local/su", "/su/bin/su"};
+		for (String path : paths) {
+			try {
+				if (new File(path).exists()) {
+					return true;
+				}
+			} catch (Exception e){}
+		}
+		return false;
+	}
+	
+	/**
+	 * Check if a device is rooted
+	 * @return
+	 */
+	private static boolean checkRootMethod3() {
+		Process process = null;
+		try {
+			process = Runtime.getRuntime().exec(new String[] { "/system/xbin/which", "su" });
+			BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			if (in.readLine() != null) return true;
+			return false;
+		} catch (Throwable t) {
+			return false;
+		} finally {
+			if (process != null) process.destroy();
+		}
+	}
+	
+	//endregion
 }

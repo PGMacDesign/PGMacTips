@@ -10,7 +10,6 @@ import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
-import android.view.Window;
 import android.view.WindowManager;
 
 import com.pgmacdesign.pgmactips.R;
@@ -24,7 +23,9 @@ https://stackoverflow.com/a/42108115/2480714
 
  */
 /**
- * This class helps to determine the screen height and width in Density Pixels (DP)
+ * This class helps to determine the screen height and width in Density Pixels (DP).
+ * Note! Make sure to `null` out the object when you are finished with it so as to prevent
+ * memory leak issues as the context is maintained in this class.
  * Created by pmacdowell on 8/15/2016.
  */
 public class DisplayManagerUtilities {
@@ -57,13 +58,13 @@ public class DisplayManagerUtilities {
     //region Vars
     
     //Display display;
-    private DisplayMetrics outMetrics, api17OutMetrics; //The latter is for APIs 17 or higher
+    private DisplayMetrics outMetrics, api17OutMetrics, inAppMetrics; //The latter is for APIs 17 or higher
     private WindowManager windowManager;
     private Display mDisplay;
     private Configuration mConfig;
     private float densityRatio, scaledDensity;
     private float dpWidth, dpHeight, xdpi, ydpi;
-    private int pixelsWidth, pixelsHeight;
+    private int pixelsWidth, pixelsHeight, screenSizeDP;
     private String totalScreenDimensionsPixels, totalScreenDimensionsDP;
 
     //Misc values
@@ -81,55 +82,54 @@ public class DisplayManagerUtilities {
         this.context = context;
         init();
     }
-
-    private void init(){
-        outMetrics = new DisplayMetrics();
-        windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        windowManager.getDefaultDisplay().getMetrics(outMetrics);
-        mDisplay = windowManager.getDefaultDisplay();
-        mConfig = context.getResources().getConfiguration();
-
+	
+	/**
+	 * Initialization. Pulls numbers using first answer instead of second one mentioned here:
+	 * https://stackoverflow.com/questions/8632970/how-to-get-screen-metrics-outside-an-activity
+	 */
+	private void init(){
+		this.outMetrics = new DisplayMetrics();
+		this.windowManager = (WindowManager) this.context.getSystemService(Context.WINDOW_SERVICE);
+		this.windowManager.getDefaultDisplay().getMetrics(this.outMetrics);
+		this.mDisplay = this.windowManager.getDefaultDisplay();
+		this.mConfig = this.context.getResources().getConfiguration();
+		this.inAppMetrics = this.context.getResources().getDisplayMetrics();
         if(Build.VERSION.SDK_INT >= 17) {
-            api17OutMetrics = new DisplayMetrics();
-            mDisplay.getRealMetrics(api17OutMetrics);
+	        this.api17OutMetrics = new DisplayMetrics();
+	        this.mDisplay.getRealMetrics(this.api17OutMetrics);
+        } else {
+	        this.api17OutMetrics = null;
         }
 
         //Height and width in pixels
         if(Build.VERSION.SDK_INT >= 13) {
             Point point = new Point();
-            mDisplay.getSize(point);
-            pixelsWidth = point.x;
-            pixelsHeight = point.y;
+	        this.mDisplay.getSize(point);
+	        this.pixelsWidth = point.x;
+	        this.pixelsHeight = point.y;
         } else {
-            pixelsWidth = mDisplay.getWidth();
-            pixelsHeight = mDisplay.getHeight();
+	        this.pixelsWidth = this.mDisplay.getWidth();
+	        this.pixelsHeight = this.mDisplay.getHeight();
         }
-        totalScreenDimensionsPixels = pixelsWidth + "x" + pixelsHeight;
+		this. totalScreenDimensionsPixels = this.pixelsWidth + "x" + this.pixelsHeight;
 
         //Height and weight in DP
-        int tempx = -1, tempy = -1;
-        if(Build.VERSION.SDK_INT >= 17) {
-            tempx = api17OutMetrics.widthPixels;
-            tempy = api17OutMetrics.heightPixels;
-        }
-        if(tempx > 0 && tempy >  0){
-            //API 17+
-            densityRatio = api17OutMetrics.density;
-            scaledDensity = api17OutMetrics.scaledDensity;
-            dpHeight = (float)((tempy / densityRatio) + 0.5);
-            dpWidth = (float)((tempx / densityRatio) + 0.5);
-            xdpi = api17OutMetrics.xdpi;
-            ydpi = api17OutMetrics.ydpi;
+        if(Build.VERSION.SDK_INT >= 17){
+	        this.densityRatio = this.api17OutMetrics.density;
+	        this.scaledDensity = this.inAppMetrics.scaledDensity;
+	        this.screenSizeDP = this.mConfig.densityDpi;
+	        this.xdpi = this.api17OutMetrics.xdpi;
+	        this.ydpi = this.api17OutMetrics.ydpi;
         } else {
-            //API 16-
-            densityRatio = outMetrics.density;
-            scaledDensity = outMetrics.scaledDensity;
-            dpHeight = (float)((pixelsHeight / densityRatio) + 0.5);
-            dpWidth = (float)((pixelsWidth / densityRatio) + 0.5);
-            xdpi = outMetrics.xdpi;
-            ydpi = outMetrics.ydpi;
+	        this.densityRatio = this.outMetrics.density;
+	        this.scaledDensity = this.inAppMetrics.scaledDensity;
+	        this.screenSizeDP = (int)(160F * (float)outMetrics.density);
+	        this.xdpi = this.outMetrics.xdpi;
+	        this.ydpi = this.outMetrics.ydpi;
         }
-        totalScreenDimensionsDP = dpWidth + "x" + dpHeight;
+		this.dpWidth = (int)((float)(this.pixelsWidth) / (this.densityRatio));
+		this.dpHeight = (int)((float)(this.pixelsHeight) / (this.densityRatio));
+		this.totalScreenDimensionsDP = this.dpWidth + "x" + this.dpHeight;
     }
 
     //endregion
@@ -158,10 +158,10 @@ public class DisplayManagerUtilities {
         float dp;
         if(Build.VERSION.SDK_INT >= 17) {
             dp = (float) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP, px, api17OutMetrics);
+                    TypedValue.COMPLEX_UNIT_DIP, px, this.api17OutMetrics);
         } else {
             dp = (float) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP, px, outMetrics);
+                    TypedValue.COMPLEX_UNIT_DIP, px, this.outMetrics);
         }
         return dp;
     }
@@ -181,9 +181,9 @@ public class DisplayManagerUtilities {
      */
     public float convertToPixels(ComplexUnits unit, float value) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1){ //17
-            return TypedValue.applyDimension(unit.unitNum, value, api17OutMetrics);
+            return TypedValue.applyDimension(unit.unitNum, value, this.api17OutMetrics);
         } else {
-            return TypedValue.applyDimension(unit.unitNum, value, outMetrics);
+            return TypedValue.applyDimension(unit.unitNum, value, this.outMetrics);
         }
     }
     
@@ -195,9 +195,9 @@ public class DisplayManagerUtilities {
      */
     public float convertToPixels(int unit, float value) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1){ //17
-            return TypedValue.applyDimension(unit, value, api17OutMetrics);
+            return TypedValue.applyDimension(unit, value, this.api17OutMetrics);
         } else {
-            return TypedValue.applyDimension(unit, value, outMetrics);
+            return TypedValue.applyDimension(unit, value, this.outMetrics);
         }
     }
     
@@ -228,7 +228,7 @@ public class DisplayManagerUtilities {
      * @return returns a float
      */
     public float getScreenWidthDP(){
-        return dpWidth;
+        return this.dpWidth;
     }
 
     /**
@@ -236,7 +236,7 @@ public class DisplayManagerUtilities {
      * @return returns a float
      */
     public float getScreenHeightDP(){
-        return dpHeight;
+        return this.dpHeight;
     }
 
     /**
@@ -244,7 +244,7 @@ public class DisplayManagerUtilities {
      * @return int
      */
     public int getPixelsWidth(){
-        return pixelsWidth;
+        return this.pixelsWidth;
     }
 
     /**
@@ -252,7 +252,7 @@ public class DisplayManagerUtilities {
      * @return int
      */
     public int getPixelsHeight(){
-        return pixelsHeight;
+        return this.pixelsHeight;
     }
     
     /**
@@ -260,7 +260,7 @@ public class DisplayManagerUtilities {
      * @return
      */
     public float getDensityRatio(){
-        return densityRatio;
+        return this.densityRatio;
     }
     
     /**
@@ -268,7 +268,7 @@ public class DisplayManagerUtilities {
      * @return
      */
     public float getScaledDensity() {
-        return scaledDensity;
+        return this.inAppMetrics.scaledDensity;
     }
     
     /**
@@ -276,9 +276,17 @@ public class DisplayManagerUtilities {
      * {@link Configuration}
      * @return ScreenLayouts {@link DisplayManagerUtilities.ScreenLayoutSizes}
      */
+//    @SuppressLint("NewApi")
     public ScreenLayoutSizes getScreenSize(){
         try {
-            int x = mConfig.densityDpi;
+        	//Will fail on API level <= 16
+	        int x;
+	        if(Build.VERSION.SDK_INT >= 17){
+		        x = (this.mConfig.densityDpi);
+	        } else {
+	            float outMetricsDensity = this.outMetrics.density;
+	            x = (int)(160F * outMetricsDensity);
+	        }
             if(x <= 120){
                 return ScreenLayoutSizes.ldpi;
             } else if(x > 120 && x <= 160){
@@ -295,7 +303,7 @@ public class DisplayManagerUtilities {
         } catch (Exception e){
             e.printStackTrace();
         }
-        //Default
+	    //Default
         return ScreenLayoutSizes.xhdpi;
     }
 
@@ -306,7 +314,7 @@ public class DisplayManagerUtilities {
      * @return float adjusted text size in SP (scalable pixels)
      */
     public float getScalablePixelTextSize(int baseSize){
-        float x = baseSize * densityRatio;
+        float x = baseSize * this.densityRatio;
         return x;
     }
 
@@ -315,9 +323,8 @@ public class DisplayManagerUtilities {
      * If you want to make this smaller, simply divide it by X%
      * @return
      */
-
     public float getWidthRadius(){
-        return (pixelsWidth / 2);
+        return ((float)this.pixelsWidth / 2F);
     }
 
     /**
@@ -326,9 +333,9 @@ public class DisplayManagerUtilities {
      */
     public DisplayMetrics getDisplayMetrics(){
         if(Build.VERSION.SDK_INT >= 17) {
-            return api17OutMetrics; //API 17 or higher
+            return this.api17OutMetrics; //API 17 or higher
         } else {
-            return outMetrics;
+            return this.outMetrics;
         }
     }
 
@@ -343,7 +350,7 @@ public class DisplayManagerUtilities {
      * @return {@link Point} X is the width, Y is the height
      */
     public Point getNavigationBarPoint() {
-        Point appUsableSize = getAppUsableScreenSize();
+        Point appUsableSize = getFullScreenSize();
         Point realScreenSize = getRealScreenSize();
         
         // navigation bar on the right
@@ -365,7 +372,7 @@ public class DisplayManagerUtilities {
      * @return {@link Point} X is the width, Y is the height
      */
     public int getNavigationBarSize() {
-        Point appUsableSize = getAppUsableScreenSize();
+        Point appUsableSize = getFullScreenSize();
         Point realScreenSize = getRealScreenSize();
 
         // navigation bar on the right
@@ -383,12 +390,11 @@ public class DisplayManagerUtilities {
     }
 
     /**
-     * Gets the usable screen size. This would be applicable if there were an action bar / navigation bar
-     * covering an area, which reduces usable screen size
+     * Gets the full screen size as if immersion mode were set and the top and bottom bars were gone
      * @return {@link Point} X is the width, Y is the height
      */
-    public Point getAppUsableScreenSize() {
-        Display display = windowManager.getDefaultDisplay();
+    public Point getFullScreenSize() {
+        Display display = this.windowManager.getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         return size;
@@ -399,7 +405,7 @@ public class DisplayManagerUtilities {
      * @return {@link Point} X is the width, Y is the height
      */
     public Point getRealScreenSize() {
-        Display display = windowManager.getDefaultDisplay();
+        Display display = this.windowManager.getDefaultDisplay();
         Point size = new Point();
         if (Build.VERSION.SDK_INT >= 17) {
             display.getRealSize(size);
@@ -414,15 +420,30 @@ public class DisplayManagerUtilities {
 
         return size;
     }
-    
-    /**
+	
+	/**
+	 * Get the usable screen size (in-between the top status bar + bottom nav bar)
+	 * @return {@link Point} X is the width, Y is the height
+	 */
+	public Point getAppUsableScreenSize() {
+		Rect rect = getUsableScreenRect();
+		Point size = new Point();
+		float densityLocal = this.inAppMetrics.density;
+		int screenWidthDp = this.mConfig.screenWidthDp; //The current width of the available screen space, in dp units, corresponding to screen width resource qualifier.
+		int screenHeightDp = this.mConfig.screenHeightDp; //The current width of the available screen space, in dp units, corresponding to screen width resource qualifier.
+		size.x = (int)(((float)screenWidthDp * (float)densityLocal) - (float)rect.left);
+		size.y = (int)(((float)screenHeightDp * (float)densityLocal) - ((float)rect.top));
+		return size;
+	}
+	
+	/**
      * Get a Rect of the usable screen size. This means a rectangle (Left, Top, Right, Bottom)
      * that represents the area below the status bar and above the action bar / navigation bar
      * Reference - https://stackoverflow.com/a/28965901/2480714
      * @return
      */
     public Rect getUsableScreenRect(){
-        Point usableScreenSize = this.getAppUsableScreenSize();
+        Point usableScreenSize = this.getFullScreenSize();
         return new Rect(0, (getStatusBarHeight()), usableScreenSize.x, usableScreenSize.y);
     }
     
@@ -433,7 +454,7 @@ public class DisplayManagerUtilities {
      * @return
      */
     public RectF getUsableScreenRectF(){
-        Point usableScreenSize = this.getAppUsableScreenSize();
+        Point usableScreenSize = this.getFullScreenSize();
         return new RectF(0, (getStatusBarHeight()), usableScreenSize.x, usableScreenSize.y);
     }
     
@@ -491,9 +512,13 @@ public class DisplayManagerUtilities {
         L.m("\nPrinting All Display Metrics: \n");
         L.m("Screen width in pixels == " + getPixelsWidth());
         L.m("Screen height in pixels == " + getPixelsHeight());
+        if(getFullScreenSize() != null){
+            L.m("Full Screen Width in pixels == " + getFullScreenSize().x);
+            L.m("Full Screen Height in pixels == " + getFullScreenSize().y);
+        }
         if(getAppUsableScreenSize() != null){
-            L.m("Usable width in pixels == " + getAppUsableScreenSize().x);
-            L.m("Usable height in pixels == " + getAppUsableScreenSize().y);
+            L.m("Usable Screen Width in pixels == " + getAppUsableScreenSize().x);
+            L.m("Usable Screen Height in pixels == " + getAppUsableScreenSize().y);
         }
         Rect screenRect = getUsableScreenRect();
         L.m("Usable Screen Rectangle (Area below the status bar, above the navigation bar, " +
@@ -504,6 +529,9 @@ public class DisplayManagerUtilities {
             L.m("Center X,Y Coordinates == " + getCenterXYCoordinates().x
                     + "," + getCenterXYCoordinates().y);
         }
+        L.m("getScreenSize == " + getScreenSize());
+        L.m("getNavigationBarPoint == " + getNavigationBarPoint());
+        L.m("getWidthRadius == " + getWidthRadius());
         L.m("Density Ratio == " + getDensityRatio());
         L.m("Scaled Density == " +  getScaledDensity());
         L.m("Screen width in DP == " + getScreenWidthDP());

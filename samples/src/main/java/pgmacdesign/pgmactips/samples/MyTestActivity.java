@@ -39,6 +39,7 @@ import com.pgmacdesign.pgmactips.utilities.CameraMediaUtilities;
 import com.pgmacdesign.pgmactips.utilities.ContactUtilities;
 import com.pgmacdesign.pgmactips.utilities.DatabaseUtilities;
 import com.pgmacdesign.pgmactips.utilities.DateUtilities;
+import com.pgmacdesign.pgmactips.utilities.DisplayManagerUtilities;
 import com.pgmacdesign.pgmactips.utilities.GsonUtilities;
 import com.pgmacdesign.pgmactips.utilities.ImageUtilities;
 import com.pgmacdesign.pgmactips.utilities.L;
@@ -157,6 +158,9 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
 	    L.m(str4);
 	    
 	    this.sortAndPrintLists();
+		L.m("PAT TEST HERE");
+	    DisplayManagerUtilities dmu = new DisplayManagerUtilities(this);
+	    dmu.printOutAllDisplayMetrics();
     }
 
 	private void startDisplayMetricTests(){
