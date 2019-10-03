@@ -7,6 +7,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.Signature;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Looper;
@@ -20,6 +21,7 @@ import android.provider.Settings;
 import android.text.format.DateFormat;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
@@ -1333,6 +1335,42 @@ public class MiscUtilities {
 	 */
 	public static boolean isDeviceRooted() {
 		return SystemUtilities.isDeviceRooted();
+	}
+	
+	//endregion
+	
+	//region Screenshots
+	
+	/**
+	 * take a screenshot
+	 * @param v
+	 * @return
+	 */
+	public static Bitmap takeScreenshot(View v) {
+		try {
+			v.setDrawingCacheEnabled(true);
+			v.buildDrawingCache(true);
+			Bitmap b = Bitmap.createBitmap(v.getDrawingCache());
+			v.setDrawingCacheEnabled(false);
+			return b;
+		} catch (Exception e){
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
+	 * take a screenshot
+	 * @param v
+	 * @return
+	 */
+	public static Bitmap takeScreenshotOfRootView(View v) {
+		try {
+			return takeScreenshot(v.getRootView());
+		} catch (Exception e){
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	//endregion

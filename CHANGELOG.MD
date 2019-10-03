@@ -5,7 +5,8 @@ Change Log
 Version 1.0.9 *(TBD)*
 ----------------------------
 
-* TBD: 
+* New: Added in the code for taking screen shots in the [MiscUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/MiscUtilities.java) class.
+
 
 Version 1.0.8 *(2019-10-01)*
 ----------------------------
