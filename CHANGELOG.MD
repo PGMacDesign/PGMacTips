@@ -2,10 +2,17 @@ Change Log
 ==========
 
 
-Version 1.0.9 *(TBD)*
+Version 1.0.10 *(TBD)*
+----------------------------
+
+*
+
+
+Version 1.0.9 *(2019-01-04)*
 ----------------------------
 
 * New: Added in the code for taking screen shots in the [MiscUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/MiscUtilities.java) class.
+* Bugfix: Fixed a bug in the [DatabaseUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/DatabaseUtilities.java) class that as preventing custom persisted objects from being deleted properly. 
 
 
 Version 1.0.8 *(2019-10-01)*
