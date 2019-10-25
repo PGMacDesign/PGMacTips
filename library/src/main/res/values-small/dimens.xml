@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text_size">15sp</dimen>
+    <dimen name="text_size_large">17sp</dimen>
+    <dimen name="text_size_xlarge">19sp</dimen>
+    <dimen name="text_size_xxlarge">24sp</dimen>
+    <dimen name="text_size_xxxlarge">32sp</dimen>
+    <dimen name="text_size_small">12sp</dimen>
+    <dimen name="text_size_xsmall">10sp</dimen>
+    <dimen name="text_size_xxsmall">8sp</dimen>
+    <dimen name="text_size_xxxsmall">6sp</dimen>
+    <dimen name="left_right_side_margins">24dp</dimen>
+    <dimen name="left_right_side_margins_small">8dp</dimen>
+    <dimen name="left_right_side_margins_very_small">2dp</dimen>
+    <dimen name="left_right_side_margins_large">32dp</dimen>
+    <dimen name="top_bottom_margins">8dp</dimen>
+    <dimen name="top_bottom_margins_large">32dp</dimen>
+    <dimen name="toolbar_center_tv_width">125dp</dimen>
+    <dimen name="toolbar_center_tv_height">32dp</dimen>
+    <dimen name="square_image_sizing">32dp</dimen>
+    <dimen name="toolbar_top_right_tv_size">28dp</dimen>
+    <dimen name="translationZ">2dp</dimen>
+    <dimen name="elevation">2dp</dimen>
+    <dimen name="app_bar_height">40dp</dimen>
+    <dimen name="screen_max_height_dp">426dp</dimen>
+    <dimen name="half_screen_max_height_dp">213dp</dimen>
+    <dimen name="screen_max_width_dp">320dp</dimen>
+    <dimen name="half_screen_max_width_dp">160dp</dimen>
+</resources>

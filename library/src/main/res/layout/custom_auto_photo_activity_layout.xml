@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+
+    <!-- Main layout -->
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/auto_photo_activity_main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextureView
+            android:id="@+id/auto_photo_activity_textureview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible"
+            />
+
+        <!-- Full screen layout -->
+        <LinearLayout
+            android:id="@+id/auto_photo_activity_main_layout2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="100"
+            android:keepScreenOn="true"
+            android:orientation="vertical">
+
+            <!-- Messaging Section -->
+            <RelativeLayout
+                android:id="@+id/auto_photo_activity_message_layout"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="15"
+                android:background="@color/black">
+
+                <!-- Coordinator layout for Snackbars -->
+                <android.support.design.widget.CoordinatorLayout
+                    android:id="@+id/auto_photo_activity_coordinator_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </RelativeLayout>
+
+            <!-- Preview -->
+            <com.pgmacdesign.pgmactips.enhancedphotoclasses.CameraSourcePreview
+                android:id="@+id/camera_source_preview"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="85">
+
+                <!-- Overlay for your face (oval  /  circle) -->
+                <com.pgmacdesign.pgmactips.enhancedphotoclasses.GraphicOverlay
+                    android:id="@+id/graphic_face_overlay"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+
+            </com.pgmacdesign.pgmactips.enhancedphotoclasses.CameraSourcePreview>
+
+        </LinearLayout>
+
+        <!-- Overlay layout to use for any custom overlays on top of the camera preview -->
+        <LinearLayout
+            android:id="@+id/auto_photo_activity_overlay_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="100">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="15"
+                android:visibility="invisible" />
+
+            <!-- Overlay layout to use for any custom overlays on top of the camera preview -->
+            <!--
+         pgmactipsenhancedphotoclasses.FilterOverlay
+                android:id="@+id/filter_overlay"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0"
+                />
+            -->
+
+        </LinearLayout>
+
+        <!--
+
+        -->
+
+        <!-- Countdown timer for taking photos. If countdown timer is not used, this will never showup -->
+        <TextView
+            android:id="@+id/auto_photo_activity_center_countdown_textview"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:text=""
+            android:textColor="@color/white"
+            android:textSize="40sp" />
+
+        <!-- Shutter button. If hidden, the user will not be able to manually take the photo -->
+        <ImageView
+            android:id="@+id/auto_photo_shutter_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/shutter_blue" />
+
+    <!-- ListView for simple Text / checkmark oks -->
+    <android.support.v7.widget.ListViewCompat
+        android:id="@+id/auto_photo_listview"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/auto_photo_shutter_button"
+        android:background="@color/Semi_Transparent2"
+        android:visibility="invisible"
+        />
+
+    <FrameLayout
+        android:id="@+id/auto_photo_activity_frame_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+    </RelativeLayout>

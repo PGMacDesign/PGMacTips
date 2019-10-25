@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+    When changing the text color here, make sure to add both the text color and
+    background in the xml. IE:
+        android:background="@drawapgmac_multipurpose_buttontton"
+        android:textColor="@drawapgmac_multipurpose_buttontton"
+    This will adjust both the background dynamically and the text color as well
+    -->
+
+    <!-- Enabled, Not Clicked -->
+    <item
+        android:state_enabled="true"
+        android:state_pressed="false"
+        android:drawable="@drawable/custom_background_white_back_black_edges"
+        android:color="@color/Black"
+        />
+
+    <!-- Not Enabled, Not Clicked -->
+    <item
+        android:state_enabled="false"
+        android:state_pressed="false"
+        android:drawable="@drawable/custom_background_white_back_lightgrey_edges"
+        android:color="@color/LightGrey"
+        />
+
+    <!-- Not Enabled, Clicked -->
+    <item
+        android:state_enabled="false"
+        android:state_pressed="true"
+        android:drawable="@drawable/custom_background_white_back_lightgrey_edges"
+        android:color="@color/LightGrey"
+        />
+
+    <!-- Enabled, Clicked -->
+    <item
+        android:state_enabled="true"
+        android:state_pressed="true"
+        android:drawable="@drawable/custom_background_grey_back_black_edges"
+        android:color="@color/White"
+        />
+</selector>

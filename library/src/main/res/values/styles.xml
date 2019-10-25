@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="MyMainTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/Blue</item>
+        <item name="colorPrimaryDark">@color/Navy</item>
+        <item name="colorAccent">@color/Red</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+
+    <!-- For a transparent dialog. May be needed for {@link PGMacCustomProgressBar}  -->
+    <style name="CustomTransparentDialog" parent="MyMainTheme">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowBackground">@color/Transparent</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowTitleStyle">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:background">@color/Transparent</item>
+    </style>
+
+    <!-- Custom full screen dialog theme -->
+    <style name="FullScreenDialog" parent="MyMainTheme" >
+        <item name="android:windowBackground">@null</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
+</resources>

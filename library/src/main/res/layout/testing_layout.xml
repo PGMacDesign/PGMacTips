@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:htext="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+	android:id="@+id/testing_layout_rootview"
+	>
+
+    <!--
+    This is breaking on <API 21 devices
+    android.content.res.Resources$NotFoundException: File res/drawable-v21/abc_edit_text_material.xml from drawable resource ID
+ pgmactipscustomui.MultipurposeEditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button"
+        android:id="@+id/et"
+        android:visibility="visible"
+        />
+    -->
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="Ripple Button"
+        android:id="@+id/button"
+        android:theme="@style/ButtonTheme1"
+        android:layout_marginStart="@dimen/left_right_side_margins"
+        android:layout_marginEnd="@dimen/left_right_side_margins"
+        android:background="@drawable/pgmac_multipurpose_button2"
+        android:textColor="@drawable/pgmac_multipurpose_button2"
+        android:visibility="visible"
+        />
+
+    <com.pgmacdesign.pgmactips.customui.MultiColorLine
+        android:id="@+id/multi_color_line"
+        android:layout_width="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_height="50dp"
+	    android:visibility="gone"
+	    />
+
+	<androidx.recyclerview.widget.RecyclerView
+		android:layout_width="200dp"
+		android:layout_height="200dp"
+		android:id="@+id/testing_layout_recyclerview"
+		/>
+
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:fillViewport="true"
+		android:layout_below="@+id/button"
+		android:id="@+id/testing_layout_scrollview"
+		>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:id="@+id/testing_layout_scrollview_nested_layout"
+			>
+
+			<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_horizontal|center_vertical"
+				android:id="@+id/image1"
+				/>
+
+			<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_horizontal|center_vertical"
+				android:id="@+id/image2"
+				/>
+
+			<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_horizontal|center_vertical"
+				android:id="@+id/image3"
+				/>
+
+			<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_horizontal|center_vertical"
+				android:id="@+id/image4"
+				/>
+
+			<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_horizontal|center_vertical"
+				android:id="@+id/image5"
+				/>
+
+			<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_horizontal|center_vertical"
+				android:id="@+id/image6"
+				/>
+
+		</LinearLayout>
+
+
+	</ScrollView>
+
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="text top left"
+		android:layout_alignParentTop="true"
+		android:layout_alignParentStart="true"
+		android:layout_alignParentLeft="true"
+		/>
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="text top right"
+		android:layout_alignParentTop="true"
+		android:layout_alignParentEnd="true"
+		android:layout_alignParentRight="true"
+		/>
+
+    <com.pgmacdesign.pgmactips.customui.animatedsvg.PGAnimatedSvgView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/pganimated_svg_view"
+        android:visibility="gone"
+        android:layout_alignParentTop="true"
+        android:layout_margin="8dp"
+        />
+
+    <!--android:layout_centerVertical="true"-->
+    <!--android:layout_centerHorizontal="true"-->
+</RelativeLayout>

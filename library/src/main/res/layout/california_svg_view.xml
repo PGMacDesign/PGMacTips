@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:lib="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/Transparent"
+    >
+
+
+
+    <!--
+    WORKING VERSIONS BELOW
+
+LARGE
+   <com.jrummyapps.android.widget.AnimatedSvgView
+        android:background="@color/Transparent"
+        android:id="@+id/animated_svg_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:foregroundGravity="center|center_horizontal|center_vertical"
+        lib:animatedSvgFillStart="1000"
+        lib:animatedSvgFillTime="2000"
+        lib:animatedSvgTraceTime="2000"
+        lib:animatedSvgTraceTimePerGlyph="2000"
+        lib:animatedSvgImageSizeX="620"
+        lib:animatedSvgImageSizeY="733"
+        lib:animatedSvgGlyphStrings="@array/california_svg_array_large"
+        lib:animatedSvgTraceColors="@array/california_trace_color_array_large"
+        lib:animatedSvgFillColors="@array/california_fill_color_array_large"
+        />
+
+SMALL
+       <com.jrummyapps.android.widget.AnimatedSvgView
+        android:background="@color/Transparent"
+        android:id="@+id/animated_svg_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:foregroundGravity="center|center_horizontal|center_vertical"
+        lib:animatedSvgFillStart="1000"
+        lib:animatedSvgFillTime="2000"
+        lib:animatedSvgTraceTime="2000"
+        lib:animatedSvgTraceTimePerGlyph="2000"
+        lib:animatedSvgImageSizeX="890"
+        lib:animatedSvgImageSizeY="1024"
+        lib:animatedSvgGlyphStrings="@array/california_svg_array"
+        lib:animatedSvgTraceColors="@array/california_trace_color_array"
+        lib:animatedSvgFillColors="@array/california_fill_color_array"
+        />
+    -->
+    <!--
+        lib:animatedSvgImageSizeX="100"
+        lib:animatedSvgImageSizeY="100"
+        lib:animatedSvgGlyphStrings="@array/defaultLoader"
+        lib:animatedSvgTraceColors="@array/defaultTraceColors"
+        lib:animatedSvgFillColors="@array/defaultColors"
+    -->
+    <!--
+        lib:animatedSvgImageSizeX="270"
+        lib:animatedSvgImageSizeY="212"
+        lib:animatedSvgImageSizeX="258"
+        lib:animatedSvgImageSizeY="200"
+    -->
+
+    <!--
+        <com.jrummyapps.android.widget.AnimatedSvgView
+        android:background="@color/Transparent"
+        android:id="@+id/animated_svg_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:foregroundGravity="center|center_horizontal|center_vertical"
+        lib:animatedSvgFillStart="1000"
+        lib:animatedSvgFillTime="1800"
+        lib:animatedSvgTraceTime="1000"
+        lib:animatedSvgTraceTimePerGlyph="1000"
+        lib:animatedSvgImageSizeX="890"
+        lib:animatedSvgImageSizeY="1024"
+        lib:animatedSvgGlyphStrings="@array/california_svg_array"
+        lib:animatedSvgTraceColors="@array/california_trace_color_array"
+        lib:animatedSvgFillColors="@array/california_fill_color_array"
+        />
+    -->
+</RelativeLayout>

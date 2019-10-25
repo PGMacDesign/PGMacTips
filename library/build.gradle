@@ -1,0 +1,157 @@
+/*
+Really useful link for dependency conflict issues:
+https://www.devsbedevin.com/android-understanding-gradle-dependencies-and-resolving-conflicts/
+ */
+//apply plugin: 'com.android.application' //Add this when switching from lib to app
+apply plugin: 'com.android.library' //Remove this when switching from lib to app
+
+//apply plugin: 'kotlin-android' //Removing for now due to problems
+apply plugin: 'realm-android'
+apply plugin: 'com.github.dcendents.android-maven'
+group='com.github.PGMacDesign'
+allprojects {
+    repositories {
+        jcenter()
+        google()
+        maven { url "https://jitpack.io" }
+        maven { url "https://maven.google.com" }
+    }
+}
+buildscript{
+    repositories {
+        jcenter()
+        mavenCentral()
+        google()
+        maven { url "https://maven.google.com" }
+    }
+}
+android {
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
+    defaultConfig {
+        //applicationId "com.pgmacdesign.pgmactips" //Remove this when switching from lib to app
+        minSdkVersion 15
+        targetSdkVersion 28
+        //multiDexEnabled true
+//        versionCode 1
+        versionName "1.1.1"
+    }
+//    dexOptions {
+//        javaMaxHeapSize "4g"
+//    }
+    lintOptions {
+        abortOnError false
+    }
+    configurations.all {
+        //Use this if you want a different support library version than the one here
+//        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+//            def requested = details.requested
+//            if (requested.group == 'com.android.support') {
+//                if (!requested.name.startsWith("multidex")) {
+//                    details.useVersion '28.0.3'
+//                }
+//            }
+//        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    dependencies {
+
+        //Image Cropper. https://github.com/Yalantis/uCrop
+        api 'com.yalantis:ucrop:2.2.0'
+
+        //Progress bar animator. This one is better for longer processes, IE uploading photos.
+        //Link: https://github.com/Tibolte/ElasticDownload
+        api 'com.github.tibolte:elasticdownload:1.0.4'
+
+        //Animated SVG View (Custom, takes an SVG To work).
+        //Link: https://github.com/jaredrummler/AnimatedSvgView
+        api 'com.jaredrummler:animated-svg-view:1.0.5'
+
+        //Volley. Link: https://github.com/google/volley
+        api 'com.android.volley:volley:1.1.0'
+
+        //GSON. Link https://github.com/google/gson
+        api 'com.google.code.gson:gson:2.8.5'
+
+        //Picasso. Link: https://github.com/square/picasso
+        api 'com.squareup.picasso:picasso:2.71828'
+
+        //Retrofit, Retrofit Converters, and OKHTTP.
+        //Retrofit - https://github.com/square/retrofit
+        //OKHttp - https://github.com/square/okhttp
+        api 'com.squareup.retrofit2:retrofit:2.4.0'
+        api 'com.squareup.okhttp3:okhttp:3.11.0'
+        api 'com.squareup.okhttp3:logging-interceptor:3.11.0'
+        //Type-safe HTTP client for Android and Java: https://github.com/square/retrofit
+        api 'com.squareup.retrofit2:converter-gson:2.3.0'
+        //OKIO. Link: https://github.com/square/okio
+        api 'com.squareup.okio:okio:1.13.0'
+
+        //Animations Base. Link: https://github.com/JakeWharton/NineOldAndroids
+//        api 'com.nineoldandroids:library:2.4.0'
+        //Part of The Android Animations collection below. Link: https://github.com/daimajia/AnimationEasingFunctions
+        api 'com.daimajia.easing:library:2.0@aar'
+        //Android Animations. Link: https://github.com/daimajia/AndroidViewAnimations
+        api 'com.daimajia.androidanimations:library:2.2@aar'
+
+        //////////////////////////////////////
+        //Misc Dependencies (IE Google Libs)//
+        //////////////////////////////////////
+
+        //Multi-dex. For more info: https://developer.android.com/studio/build/multidex.html
+        //api 'com.android.support:multidex:1.0.1'
+
+        //Maps. Link: https://developers.google.com/android/guides/setup
+        api 'com.google.android.gms:play-services-maps:16.0.0'
+
+        //Android support libs. Link: https://developer.android.com/topic/libraries/support-library/packages
+        api 'com.android.support:design:28.0.0'
+        api 'com.android.support:support-annotations:28.0.0'
+    }
+}
+// Publish default flavour as main artifact, otherwise the maven pom is not generated
+if( android.productFlavors.size() > 0 ) {
+    android.libraryVariants.all { variant ->
+        if( android.publishNonDefault && variant.name == android.defaultPublishConfig ) {
+            def bundleTask = tasks["bundle${name.capitalize()}"]
+            artifacts {
+                archives(bundleTask.archivePath) {
+                    classifier null
+                    builtBy bundleTask
+                }
+            }
+        }
+    }
+}
+dependencies {
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    testImplementation 'junit:junit:4.12'
+    //compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+}
+repositories {
+    mavenCentral()
+}
+///**
+// * Build javadoc
+// */
+//task javadoc(type: Javadoc) {
+//    failOnError false
+//    source = android.sourceSets.main.java.sourceFiles
+//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//    classpath += configurations.compile
+//}
+///**
+// * build a jar with javadoc
+// */
+//task javadocJar(type: Jar, dependsOn: javadoc) {
+//    classifier = 'javadoc'
+//    from javadoc.destinationDir
+//}
+//artifacts {
+//    archives javadocJar
+//}

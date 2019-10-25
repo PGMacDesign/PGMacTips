@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/Transparent"
+              android:focusable="false"
+              android:clickable="false"
+	>
+	
+	<!--
+	for when they change their mind again
+
+
+	-->
+	<RelativeLayout
+		android:id="@+id/multipurpose_choice_dialog_top_layout"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_marginTop="16dp"
+		android:layout_marginBottom="16dp"
+		android:background="@color/white"
+		android:focusable="false"
+		android:clickable="false"
+		android:layout_marginStart="40dp"
+		android:layout_marginEnd="40dp"
+		>
+		
+		<!-- Section Title header -->
+		<TextView
+			android:id="@+id/multipurpose_choice_dialog_top_tv"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="@color/colorPrimaryDark"
+			android:layout_centerHorizontal="true"
+			android:gravity="center|center_horizontal"
+			android:paddingTop="6dp"
+			android:paddingBottom="6dp"
+			android:text=""
+			android:textColor="@color/white"
+			android:textSize="@dimen/text_size_large"
+			android:focusable="false"
+			android:clickable="false"
+            android:baselineAligned="false"
+			/>
+		
+		<androidx.recyclerview.widget.RecyclerView
+			android:id="@+id/multipurpose_choice_dialog_recyclerview"
+			android:layout_below="@+id/multipurpose_choice_dialog_top_tv"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center_horizontal"
+			android:layout_centerHorizontal="true"
+			android:focusable="false"
+			android:fadeScrollbars="true"
+			android:scrollbars="vertical"
+			android:scrollbarThumbVertical="@android:color/darker_gray"
+			android:scrollbarSize="2dp"
+			/>
+		
+		
+		
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center_horizontal"
+			android:layout_centerHorizontal="true"
+			android:layout_below="@+id/multipurpose_choice_dialog_recyclerview"
+			android:id="@+id/multipurpose_choice_dialog_bottom_layout"
+			android:orientation="horizontal"
+			android:weightSum="100"
+			android:focusable="false"
+			android:clickable="false"
+			>
+			
+			<Button
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:minHeight="48dp"
+				android:layout_weight="50"
+				android:text="Cancel"
+				android:background="@drawable/pgmac_multipurpose_button"
+				android:foreground="@drawable/selectable_item_foreground"
+				android:textColor="@color/white"
+				android:clickable="true"
+				android:focusable="false"
+				android:textSize="@dimen/text_size"
+				android:id="@+id/multipurpose_choice_dialog_cancel_button"
+				/>
+			
+			<View
+				android:layout_width="1dp"
+				android:layout_height="match_parent"
+				android:background="@color/LightGrey"
+				android:paddingTop="2dp"
+				android:paddingBottom="2dp"
+				android:id="@+id/separator2"
+				/>
+			
+			<Button
+				android:layout_width="0dp"
+				android:layout_height="match_parent"
+				android:minHeight="48dp"
+				android:layout_weight="50"
+				android:text="Submit"
+				android:background="@drawable/pgmac_multipurpose_button"
+				android:foreground="@drawable/selectable_item_foreground"
+				android:textColor="@color/white"
+				android:clickable="true"
+				android:focusable="false"
+				android:textSize="@dimen/text_size"
+				android:id="@+id/multipurpose_choice_dialog_confirm_button"
+				/>
+		
+		</LinearLayout>
+		
+		<View
+			android:id="@+id/separator"
+			android:layout_width="match_parent"
+			android:layout_height="1dp"
+			android:layout_below="@+id/multipurpose_choice_dialog_recyclerview"
+			android:background="@color/LightGrey"
+			/>
+	
+	
+	</RelativeLayout>
+
+</LinearLayout>

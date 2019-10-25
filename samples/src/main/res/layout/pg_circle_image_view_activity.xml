@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:PGCircleImageView="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sample Images Below"
+        android:gravity="center"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        />
+
+    <!--Top level Layout of 3x3 Grid-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="99"
+        >
+
+        <!--First row in 3x3 Grid-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="33"
+            android:weightSum="99"
+            android:orientation="horizontal"
+            >
+
+            <!--IV 1-->
+            <com.pgmacdesign.pgmactips.customui.PGCircleImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="33"
+                android:id="@+id/circle_iv_1"
+                PGCircleImageView:strokeColor="@color/blue"
+                PGCircleImageView:strokeWidth="1dp"
+                PGCircleImageView:highlightEnable="true"
+                PGCircleImageView:highlightColor="@color/Semi_Transparent1"
+                android:src="@mipmap/ic_launcher"
+                android:layout_gravity="center_vertical|center_horizontal"
+                />
+
+            <!--IV 2-->
+            <com.pgmacdesign.pgmactips.customui.PGCircleImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="33"
+                android:id="@+id/circle_iv_2"
+                PGCircleImageView:strokeColor="@color/green"
+                PGCircleImageView:strokeWidth="1dp"
+                PGCircleImageView:highlightEnable="true"
+                android:src="@mipmap/ic_launcher"
+                android:layout_gravity="center_vertical|center_horizontal"
+                />
+
+            <!--IV 3-->
+            <com.pgmacdesign.pgmactips.customui.PGCircleImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="33"
+                android:id="@+id/circle_iv_3"
+                PGCircleImageView:strokeColor="@color/red"
+                PGCircleImageView:strokeWidth="1dp"
+                PGCircleImageView:highlightEnable="true"
+                PGCircleImageView:highlightColor="@color/Semi_Transparent8"
+                android:src="@mipmap/ic_launcher"
+                android:layout_gravity="center_vertical|center_horizontal"
+                />
+
+
+        </LinearLayout>
+
+        <!--Second row in 3x3 Grid-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="33"
+            android:weightSum="99"
+            android:orientation="horizontal"
+            >
+
+            <!--IV 4-->
+            <com.pgmacdesign.pgmactips.customui.PGCircleImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="33"
+                android:id="@+id/circle_iv_4"
+                PGCircleImageView:strokeWidth="1dp"
+                PGCircleImageView:highlightEnable="true"
+                android:src="@mipmap/ic_launcher"
+                android:layout_gravity="center_vertical|center_horizontal"
+                />
+
+            <!--IV 5-->
+            <com.pgmacdesign.pgmactips.customui.PGCircleImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="33"
+                android:id="@+id/circle_iv_5"
+                PGCircleImageView:strokeColor="@color/Orange"
+                PGCircleImageView:strokeWidth="1dp"
+                PGCircleImageView:highlightEnable="false"
+                android:src="@mipmap/ic_launcher"
+                android:layout_gravity="center_vertical|center_horizontal"
+                />
+
+            <!--IV 6-->
+            <com.pgmacdesign.pgmactips.customui.PGCircleImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="33"
+                android:id="@+id/circle_iv_6"
+                PGCircleImageView:strokeColor="@color/red"
+                PGCircleImageView:strokeWidth="4dp"
+                PGCircleImageView:highlightEnable="false"
+                android:src="@mipmap/ic_launcher"
+                android:layout_gravity="center_vertical|center_horizontal"
+                />
+
+
+        </LinearLayout>
+
+        <!--Third row in 3x3 Grid-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="33"
+            android:weightSum="99"
+            android:orientation="horizontal"
+            >
+
+            <!--IV 7-->
+            <com.pgmacdesign.pgmactips.customui.PGCircleImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="33"
+                android:id="@+id/circle_iv_7"
+                PGCircleImageView:strokeColor="@color/lime"
+                PGCircleImageView:strokeWidth="3dp"
+                PGCircleImageView:highlightEnable="true"
+                PGCircleImageView:highlightColor="@color/Semi_Transparent4"
+                android:src="@mipmap/ic_launcher"
+                android:layout_gravity="center_vertical|center_horizontal"
+                />
+
+            <!--IV 8-->
+            <com.pgmacdesign.pgmactips.customui.PGCircleImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="33"
+                android:id="@+id/circle_iv_8"
+                PGCircleImageView:strokeColor="@color/Pink"
+                PGCircleImageView:strokeWidth="1dp"
+                PGCircleImageView:highlightEnable="true"
+                android:src="@mipmap/ic_launcher"
+                android:layout_gravity="center_vertical|center_horizontal"
+                />
+
+            <!--IV 9-->
+            <com.pgmacdesign.pgmactips.customui.PGCircleImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="33"
+                android:id="@+id/circle_iv_9"
+                PGCircleImageView:strokeColor="@color/yellow"
+                PGCircleImageView:strokeWidth="5dp"
+                PGCircleImageView:highlightEnable="true"
+                android:src="@mipmap/ic_launcher"
+                android:layout_gravity="center_vertical|center_horizontal"
+                />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

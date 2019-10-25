@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/simple_text_image_dialog_root"
+    android:background="@color/Semi_Transparent7"
+    >
+
+    <!-- Title TV -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/top_bottom_margins"
+        android:id="@+id/simple_text_image_dialog_title_tv"
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:text="TITLE"
+        android:padding="@dimen/left_right_side_margins_small"
+        android:background="@android:color/transparent"
+        />
+
+    <!-- Body TV -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/simple_text_image_dialog_title_tv"
+        android:layout_marginTop="@dimen/top_bottom_margins"
+        android:id="@+id/simple_text_image_dialog_message_tv"
+        android:text="BODY"
+        android:padding="@dimen/left_right_side_margins_small"
+        android:background="@android:color/transparent"
+        />
+
+    <ListView
+        android:background="@android:color/transparent"
+        android:cacheColorHint="@android:color/transparent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/simple_text_image_dialog_title_list_view"
+        android:layout_below="@+id/simple_text_image_dialog_message_tv"
+        android:padding="@dimen/left_right_side_margins_small"
+        android:layout_marginTop="@dimen/top_bottom_margins"
+        />
+</RelativeLayout>

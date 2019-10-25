@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:lib="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/Transparent"
+    >
+
+
+    <!--
+    WORKING VERSION BELOW
+
+    <com.jrummyapps.android.widget.AnimatedSvgView
+        android:background="#00000000"
+        android:id="@+id/animated_svg_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="32dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        lib:animatedSvgFillStart="1000"
+        lib:animatedSvgFillTime="2000"
+        lib:animatedSvgTraceTime="2000"
+        lib:animatedSvgTraceTimePerGlyph="2000"
+        lib:animatedSvgImageSizeX="70"
+        lib:animatedSvgImageSizeY="70"
+        lib:animatedSvgGlyphStrings="@array/cog_wheel_svg_array"
+        lib:animatedSvgTraceColors="@array/cog_wheel_trace_color_array"
+        lib:animatedSvgFillColors="@array/cog_wheel_fill_color_array"
+        />
+    -->
+    <!--
+        lib:animatedSvgImageSizeX="100"
+        lib:animatedSvgImageSizeY="100"
+        lib:animatedSvgGlyphStrings="@array/defaultLoader"
+        lib:animatedSvgTraceColors="@array/defaultTraceColors"
+        lib:animatedSvgFillColors="@array/defaultColors"
+    -->
+    <!--
+        lib:animatedSvgImageSizeX="270"
+        lib:animatedSvgImageSizeY="212"
+        lib:animatedSvgImageSizeX="258"
+        lib:animatedSvgImageSizeY="200"
+    -->
+
+    <!--
+
+    <com.jrummyapps.android.widget.AnimatedSvgView
+        android:background="@color/Transparent"
+        android:id="@+id/animated_svg_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:foregroundGravity="center|center_horizontal|center_vertical"
+        lib:animatedSvgFillStart="1000"
+        lib:animatedSvgFillTime="2000"
+        lib:animatedSvgTraceTime="2000"
+        lib:animatedSvgTraceTimePerGlyph="2000"
+        lib:animatedSvgImageSizeX="140"
+        lib:animatedSvgImageSizeY="172"
+        lib:animatedSvgGlyphStrings="@array/artboard_1_copy_2_svg_array"
+        lib:animatedSvgTraceColors="@array/artboard_1_copy_2_trace_color_array"
+        lib:animatedSvgFillColors="@array/artboard_1_copy_2_fill_color_array"
+        />
+    -->
+</RelativeLayout>
