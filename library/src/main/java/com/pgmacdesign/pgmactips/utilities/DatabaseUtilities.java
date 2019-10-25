@@ -390,7 +390,7 @@ public class DatabaseUtilities {
 		}
 		return false;
 	}
-
+	
 	/**
 	 * This method will put objects (converted to JSON Strings using Gson) into a custom table.
 	 * This works in that if you send an object, it WILL OVERRIDE the
