@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.GenericRecyclerviewAdapter;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.biometricutilities.BiometricVerification;
@@ -167,8 +170,9 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
 //	    this.writeEncryptedFileTest();
 //		this.readEncryptedFileTest();
 //		this.patTests();
-	    this.testHexColors();
-	    this.loadTestCall();
+//	    this.testHexColors();
+//	    this.loadTestCall();
+	    this.testDB2();
 	    
     }
 
@@ -1024,6 +1028,19 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
         if(dbUtilities == null) {
             dbUtilities = new DatabaseUtilities(this);
         }
+        dbUtilities.enableLogging();
+        L.m("Attempting delete @ 1030");
+	    dbUtilities.deleteEntireDB(true, false);
+	    final TypeToken TYPE_MAP_STRING_STRING = new TypeToken<Map<String, String>>() {};
+        final String MAP_STRING_CUSTOM_SUFFIX = "-custom1";
+        L.m("TEST DB2 HERE");
+        dbUtilities.printOutDatabase();
+        Map<String, String> itemOne = new HashMap<>();
+        itemOne.put("this is a diff object", "neato!");
+        itemOne.put("stuff", "can go here and whatnot");
+        itemOne.put("age", "11123123123123 (old)");
+        dbUtilities.persistObject(TYPE_MAP_STRING_STRING, itemOne);
+        dbUtilities.persistObjectCustom(TYPE_MAP_STRING_STRING, itemOne, MAP_STRING_CUSTOM_SUFFIX);
         SamplePojo samplePojo = new SamplePojo();
         samplePojo.setAge(2);
         samplePojo.setGender("panstuffffff");
@@ -1032,18 +1049,29 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
         samplePojo.setStrs(Arrays.asList("test1", "test2", "test3", "okiedokie"));
         samplePojo.setFauxEnums(Arrays.asList(SamplePojo.MyFauxTestEnum.One,
                 SamplePojo.MyFauxTestEnum.Two, SamplePojo.MyFauxTestEnum.Three));
-        boolean bool = dbUtilities.persistObject(SamplePojo.class, samplePojo);
-        L.m("save success? - " + bool);
-
-        SamplePojo ss = (SamplePojo) dbUtilities.getPersistedObject(SamplePojo.class);
-        if(ss == null){
-            L.m("could not retrieve object");
-        } else {
-            L.m("successfully retrieved object: " + GsonUtilities.convertObjectToJson(ss, SamplePojo.class));
-        }
-
+        dbUtilities.persistObject(SamplePojo.class, samplePojo);
+        dbUtilities.persistObjectCustom(SamplePojo.class, samplePojo, MAP_STRING_CUSTOM_SUFFIX);
+	
+        L.m("Finished all writes, printing out entire DB");
+		dbUtilities.printOutDatabase();
         boolean dePersisted = dbUtilities.dePersistObject(SamplePojo.class);
-        L.m("Successfully depersisted the object? == " + dePersisted);
+        L.m("Successfully de-persisted one object? (Non-Custom) == " + dePersisted);
+        boolean dePersisted2 = dbUtilities.dePersistObjectCustom(SamplePojo.class, MAP_STRING_CUSTOM_SUFFIX);
+        L.m("Successfully de-persisted one object? (Custom) == " + dePersisted2);
+	    L.m("Printing entire db after delete of 2 items: " );
+	    dbUtilities.printOutDatabase();
+	    dbUtilities.persistObject(SamplePojo.class, samplePojo);
+	    dbUtilities.persistObjectCustom(SamplePojo.class, samplePojo, MAP_STRING_CUSTOM_SUFFIX);
+	
+	    L.m("Calling delete all on entire DB");
+	    dbUtilities.deleteEntireDB(true, false);
+	    L.m("finished delete all, printing out DB");
+	    dbUtilities.printOutDatabase();
+
+//	    L.m("Adding one new item, then printing:");
+//	    dbUtilities.persistObject(SamplePojo.class, samplePojo);
+//	    dbUtilities.printOutDatabase();
+//	    dbUtilities.deleteEntireDB(true, false);
     }
 
     private void testWeb2(@Nullable String url){

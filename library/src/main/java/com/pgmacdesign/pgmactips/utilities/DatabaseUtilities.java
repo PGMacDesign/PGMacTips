@@ -47,7 +47,6 @@ import io.realm.annotations.RealmModule;
  */
 @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Realm,
 		CustomAnnotationsBase.Dependencies.GSON})
-// TODO: 2019-07-03 Add in function for deleteAllExcept() with overloaded for list and regular options for those who want to clear the DB, but not specific classes.
 public class DatabaseUtilities {
 	
 	//Misc Type and Typetoken samples
@@ -61,6 +60,30 @@ public class DatabaseUtilities {
 			"Could not initialize DatabaseUtilities. Either initialize PGMacTipsConfig or call the overloaded constructor to pass in context";
 	private static final String COULD_NOT_PERSIST_OBJECT_ILE =
 			"Could not persist object into database: ";
+	private static final String IF_YOU_WANT_TO_DELETE_ALL_CALL_THIS =
+			"If you want to clear all stored / persisted data, please call deleteAllPersistedObjects(true, false)";
+	private static final String ATTEMPTING_TO_DELETE =
+			"Attempting to delete ";
+	private static final String BUT_ITEM_NOT_FOUND =
+			", but item not found in DB; nothing to delete.";
+	private static final String DELETE_FROM_DB_SUCCEEDED =
+			"delete from DB succeeded";
+	private static final String DELETE_FAILED =
+			"delete failed";
+	private static final String DELETING_ENTIRE_DB =
+			"Deleting entire database!";
+	private static final String NO_PRIMARY_KEY_1 =
+			"A RealmObject with no PrimaryKey cannot be updated. Does ";
+	private static final String NO_PRIMARY_KEY_2 =
+			"have a @PrimaryKey designation over a variable?";
+	private static final String IO_EXCEPTION_STRING =
+			"IOException. Error reading IS";
+	private static final String QUERY_IS_NULL_CANNOT_DELETE =
+			"Query is null, returning false and unable to complete transaction";
+	private static final String CLASS_PASSED_WAS_NULL =
+			"Class used to write to the DB was null, please check passed params";
+	private static final String YOU_CANNOT_MODIFY_THIS_TABLE_FROM_THAT_METHOD =
+			"You cannot modify this table from that method. If you want to access the MasterDatabaseObject table, please use the persistObject / dePersistObject / getPersistedObject / getAllPersistedObjects method calls.";
 	
 	//Defaults. If no configuration is set, these will be used
 	private static final String DEFAULT_DB_NAME = PGMacTipsConstants.DB_NAME;
@@ -75,9 +98,11 @@ public class DatabaseUtilities {
 	private boolean loggingEnabled;
 	//endregion
 	
-	//////////////////////
-	//region Constructors - init //
-	////////////////////////
+	//region Static Vars
+	private static Realm queryRealm;
+	//endregion
+	
+	//region Constructors - init
 	
 	/**
 	 * Test constructor
@@ -162,9 +187,7 @@ public class DatabaseUtilities {
 	
 	//endregion
 	
-	//////////////////
-	//region Insert Methods//
-	//////////////////
+	//region Insert Methods
 	
 	/**
 	 * Standard Database Insertion method with an object.
@@ -202,21 +225,15 @@ public class DatabaseUtilities {
 					}
 				}
 			});
-			realm.close();
+			DatabaseUtilities.this.closeRealm(realm);
 			return true;
 		} catch (IllegalArgumentException e1) {
 			e1.printStackTrace();
-			L.m("A RealmObject with no PrimaryKey cannot be updated. Does " + myClass.getName() +
-					"have a @PrimaryKey designation over a variable?");
+			L.m(NO_PRIMARY_KEY_1 + myClass.getName() + NO_PRIMARY_KEY_2);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				if (!realm.isClosed()) {
-					realm.close();
-				}
-			} catch (Exception e) {
-			}
+			DatabaseUtilities.this.closeRealm(realm);
 		}
 		return false;
 	}
@@ -253,21 +270,15 @@ public class DatabaseUtilities {
 					}
 				}
 			});
-			realm.close();
+			DatabaseUtilities.this.closeRealm(realm);
 			return true;
 		} catch (IllegalArgumentException e1) {
 			e1.printStackTrace();
-			L.m("A RealmObject with no PrimaryKey cannot be updated. Does " + myClass.getName() +
-					"have a @PrimaryKey designation over something?");
+			L.m(NO_PRIMARY_KEY_1 + myClass.getName() + NO_PRIMARY_KEY_2);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				if (!realm.isClosed()) {
-					realm.close();
-				}
-			} catch (Exception e) {
-			}
+			DatabaseUtilities.this.closeRealm(realm);
 		}
 		return false;
 	}
@@ -303,7 +314,7 @@ public class DatabaseUtilities {
 							realm.createOrUpdateObjectFromJson(myClass, is);
 						} catch (Exception e) {
 							if(loggingEnabled){
-								L.m("IOException. Error reading IS");
+								L.m(IO_EXCEPTION_STRING);
 								e.printStackTrace();
 							}
 						}
@@ -312,29 +323,23 @@ public class DatabaseUtilities {
 							realm.createObjectFromJson(myClass, is);
 						} catch (IOException e) {
 							if(loggingEnabled){
-								L.m("IOException. Error reading IS");
+								L.m(IO_EXCEPTION_STRING);
 								e.printStackTrace();
 							}
 						}
 					}
 				}
 			});
-			realm.close();
+			DatabaseUtilities.this.closeRealm(realm);
 			return true;
 			
 		} catch (IllegalArgumentException e1) {
 			e1.printStackTrace();
-			L.m("A RealmObject with no PrimaryKey cannot be updated. Does " + myClass.getName() +
-					"have a @PrimaryKey designation over a variable??");
+			L.m(NO_PRIMARY_KEY_1 + myClass.getName() + NO_PRIMARY_KEY_2);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				if (!realm.isClosed()) {
-					realm.close();
-				}
-			} catch (Exception e) {
-			}
+			DatabaseUtilities.this.closeRealm(realm);
 		}
 		return false;
 	}
@@ -372,21 +377,16 @@ public class DatabaseUtilities {
 					}
 				}
 			});
-			realm.close();
+			DatabaseUtilities.this.closeRealm(realm);
 			return true;
 		} catch (IllegalArgumentException e1) {
 			e1.printStackTrace();
-			L.m("A RealmObject with no PrimaryKey cannot be updated. Does " + myClass.getName() +
-					"have a @PrimaryKey designation over a variable?");
+			L.m(NO_PRIMARY_KEY_1 + myClass.getName() +
+					NO_PRIMARY_KEY_2);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				if (!realm.isClosed()) {
-					realm.close();
-				}
-			} catch (Exception e) {
-			}
+			DatabaseUtilities.this.closeRealm(realm);
 		}
 		return false;
 	}
@@ -458,13 +458,7 @@ public class DatabaseUtilities {
 		}
 		
 		if (jsonString == null) {
-			try {
-				realm.close();
-			} catch (Exception e) {
-				if(this.loggingEnabled){
-					e.printStackTrace();
-				}
-			}
+			DatabaseUtilities.this.closeRealm(realm);
 			return false;
 		}
 		
@@ -481,7 +475,7 @@ public class DatabaseUtilities {
 					realm.copyToRealmOrUpdate(mdoFinal);
 				}
 			});
-			realm.close();
+			DatabaseUtilities.this.closeRealm(realm);
 			return true;
 		} catch (IllegalArgumentException e1) {
 			if(this.loggingEnabled){
@@ -492,15 +486,7 @@ public class DatabaseUtilities {
 				e.printStackTrace();
 			}
 		} finally {
-			try {
-				if (!realm.isClosed()) {
-					realm.close();
-				}
-			} catch (Exception e) {
-				if(this.loggingEnabled){
-					e.printStackTrace();
-				}
-			}
+			DatabaseUtilities.this.closeRealm(realm);
 		}
 		return false;
 		
@@ -536,13 +522,7 @@ public class DatabaseUtilities {
 		}
 		
 		if (jsonString == null) {
-			try {
-				realm.close();
-			} catch (Exception e) {
-				if(this.loggingEnabled){
-					e.printStackTrace();
-				}
-			}
+			DatabaseUtilities.this.closeRealm(realm);
 			return false;
 		}
 		
@@ -558,7 +538,7 @@ public class DatabaseUtilities {
 					realm.copyToRealmOrUpdate(mdoFinal);
 				}
 			});
-			realm.close();
+			DatabaseUtilities.this.closeRealm(realm);
 			return true;
 		} catch (IllegalArgumentException e1) {
 			if(this.loggingEnabled){
@@ -569,15 +549,7 @@ public class DatabaseUtilities {
 				e.printStackTrace();
 			}
 		} finally {
-			try {
-				if (!realm.isClosed()) {
-					realm.close();
-				}
-			} catch (Exception e) {
-				if(this.loggingEnabled){
-					e.printStackTrace();
-				}
-			}
+			DatabaseUtilities.this.closeRealm(realm);
 		}
 		return false;
 	}
@@ -628,13 +600,7 @@ public class DatabaseUtilities {
 		}
 		
 		if (jsonString == null) {
-			try {
-				realm.close();
-			} catch (Exception e) {
-				if(this.loggingEnabled){
-					e.printStackTrace();
-				}
-			}
+			DatabaseUtilities.this.closeRealm(realm);
 			return false;
 		}
 		
@@ -654,7 +620,7 @@ public class DatabaseUtilities {
 					realm.copyToRealmOrUpdate(mdoFinal);
 				}
 			});
-			realm.close();
+			DatabaseUtilities.this.closeRealm(realm);
 			return true;
 		} catch (IllegalArgumentException e1) {
 			if(this.loggingEnabled){
@@ -665,15 +631,7 @@ public class DatabaseUtilities {
 				e.printStackTrace();
 			}
 		} finally {
-			try {
-				if (!realm.isClosed()) {
-					realm.close();
-				}
-			} catch (Exception e) {
-				if(this.loggingEnabled){
-					e.printStackTrace();
-				}
-			}
+			DatabaseUtilities.this.closeRealm(realm);
 		}
 		return false;
 		
@@ -712,13 +670,7 @@ public class DatabaseUtilities {
 		}
 		
 		if (jsonString == null) {
-			try {
-				realm.close();
-			} catch (Exception e) {
-				if(this.loggingEnabled){
-					e.printStackTrace();
-				}
-			}
+			DatabaseUtilities.this.closeRealm(realm);
 			return false;
 		}
 		
@@ -738,7 +690,7 @@ public class DatabaseUtilities {
 					realm.copyToRealmOrUpdate(mdoFinal);
 				}
 			});
-			realm.close();
+			DatabaseUtilities.this.closeRealm(realm);
 			return true;
 		} catch (IllegalArgumentException e1) {
 			if(this.loggingEnabled){
@@ -749,24 +701,14 @@ public class DatabaseUtilities {
 				e.printStackTrace();
 			}
 		} finally {
-			try {
-				if (!realm.isClosed()) {
-					realm.close();
-				}
-			} catch (Exception e) {
-				if(this.loggingEnabled){
-					e.printStackTrace();
-				}
-			}
+			DatabaseUtilities.this.closeRealm(realm);
 		}
 		return false;
 		
 	}
 	//endregion
 	
-	//////////////////
-	//region Delete Methods//
-	//////////////////
+	//region Delete Methods
 	
 	/**
 	 * Delete an object from the Master Table. For deleting persisted objects
@@ -867,6 +809,7 @@ public class DatabaseUtilities {
 		return this.deleteFromMasterDB(myClass, null);
 	}
 	
+	
 	/**
 	 * Delete an object from the Master Table. For deleting persisted objects
 	 *
@@ -877,41 +820,65 @@ public class DatabaseUtilities {
 	 *                     of the same type in the master table. An example would be that you have
 	 *                     2 user objects and want to persist both for X long. To do that, just
 	 *                     add a custom suffix string (ie -user2) and it will be written into the
-	 *                     masterobject table with an id (primary key) that matches that custom
+	 *                     master object table with an id (primary key) that matches that custom
 	 *                     suffix. Use that same suffix again to delete it from the db.
 	 * @param <T>          T extends RealmObject
 	 * @return Boolean, true if it succeeded, false if it did not
 	 */
 	private <T extends RealmObject> boolean deleteFromMasterDB(@NonNull final Class myClass,
 	                                                           final String customSuffix) {
+		return this.deleteFromMasterDBOverride(myClass, customSuffix, false);
+	}
+	
+	/**
+	 * Delete an object from the Master Table. For deleting persisted objects
+	 *
+	 * @param myClass      Class will be converted to string and used to reference the id / primary
+	 *                     key to find the item / row.
+	 * @param customSuffix String of a custom suffix to be appended to the class name. This is
+	 *                     used in the event that you want to have a secondary persisted object
+	 *                     of the same type in the master table. An example would be that you have
+	 *                     2 user objects and want to persist both for X long. To do that, just
+	 *                     add a custom suffix string (ie -user2) and it will be written into the
+	 *                     master object table with an id (primary key) that matches that custom
+	 *                     suffix. Use that same suffix again to delete it from the db.
+	 * @param <T>          T extends RealmObject
+	 * @return Boolean, true if it succeeded, false if it did not
+	 */
+	private <T extends RealmObject> boolean deleteFromMasterDBOverride(@NonNull final Class myClass,
+	                                                           final String customSuffix,
+	                                                           boolean overrideCheck) {
 		if (myClass == null) {
 			return false;
 		}
-		if (!DatabaseUtilities.isValidWrite(myClass, customSuffix)) {
-			L.m("If you want to clear all stored / persisted data, please call " +
-					"deleteAllPersistedObjects(true, false)");
-			return false;
+		if(!overrideCheck) {
+			if (!DatabaseUtilities.isValidWrite(myClass, customSuffix)) {
+				L.m(IF_YOU_WANT_TO_DELETE_ALL_CALL_THIS);
+				return false;
+			}
 		}
 		//Class name String
 		final String myClassName = myClass.getName();
-		
 		//Returned object from the master search
-		Object obj = this.queryDatabaseMasterSingle(myClass);
-		if (obj == null) {
-			Object obj2 = this.getPersistedObjectCustom(myClass, customSuffix);
-			if (obj2 == null) {
-				//IF it is null, it has already been deleted, return true and move on
-				if(this.loggingEnabled){
-					L.m("Attempting to delete " + myClassName +
-							((StringUtilities.isNullOrEmpty(customSuffix) ? "" : customSuffix))
-							+ ", but item not found in DB; nothing to delete.");
+		try {
+			Object obj = this.queryDatabaseMasterSingle(myClass);
+			if (obj == null) {
+				Object obj2 = this.getPersistedObjectCustom(myClass, customSuffix);
+				if (obj2 == null) {
+					//IF it is null, it has already been deleted, return true and move on
+					if (this.loggingEnabled) {
+						L.m(ATTEMPTING_TO_DELETE + myClassName +
+								((StringUtilities.isNullOrEmpty(customSuffix) ? "" : customSuffix)) + BUT_ITEM_NOT_FOUND);
+					}
+					return true;
 				}
-				return true;
+			}
+		} catch (IllegalStateException ile){
+			if(this.loggingEnabled){
+				ile.printStackTrace();
 			}
 		}
-		
 		Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
-		//final RealmQuery query = RealmQuery.createQuery(realm, MasterDatabaseObject.class); //Old version, 3.0.0
 		final RealmQuery<MasterDatabaseObject> query;
 		try {
 			query = realm.where(MasterDatabaseObject.class);
@@ -919,12 +886,14 @@ public class DatabaseUtilities {
 			if(this.loggingEnabled){
 				il.printStackTrace();
 			}
+			DatabaseUtilities.this.closeRealm(realm);
 			return false;
 		}
 		if(query == null){
 			if(this.loggingEnabled){
-				L.m("Query is null, returning false and unable to complete transaction");
+				L.m(QUERY_IS_NULL_CANNOT_DELETE);
 			}
+			DatabaseUtilities.this.closeRealm(realm);
 			return false;
 		}
 		realm.executeTransaction(new Realm.Transaction() {
@@ -946,12 +915,12 @@ public class DatabaseUtilities {
 									try {
 										mdo.deleteFromRealm();
 										if(loggingEnabled){
-											L.m("delete from DB succeeded");
+											L.m(DELETE_FROM_DB_SUCCEEDED);
 										}
 										return;
 									} catch (Exception e) {
 										if(loggingEnabled){
-											L.m("delete failed");
+											L.m(DELETE_FAILED);
 											e.printStackTrace();
 										}
 									}
@@ -962,12 +931,12 @@ public class DatabaseUtilities {
 									try {
 										mdo.deleteFromRealm();
 										if(loggingEnabled){
-											L.m("delete from DB succeeded");
+											L.m(DELETE_FROM_DB_SUCCEEDED);
 										}
 										return;
 									} catch (Exception e) {
 										if(loggingEnabled){
-											L.m("delete failed");
+											L.m(DELETE_FAILED);
 											e.printStackTrace();
 										}
 									}
@@ -980,13 +949,7 @@ public class DatabaseUtilities {
 			}
 		});
 		
-		try {
-			realm.close();
-		} catch (Exception e) {
-			if(loggingEnabled){
-				e.printStackTrace();
-			}
-		}
+		DatabaseUtilities.this.closeRealm(realm);
 		return true;
 	}
 	
@@ -995,46 +958,60 @@ public class DatabaseUtilities {
 	 */
 	private <T extends RealmObject> boolean deleteFromMasterDB(@NonNull final TypeToken myClass,
 	                                                           final String customSuffix) {
+		return deleteFromMasterDBOverride(myClass, customSuffix, false);
+	}
+	
+	/**
+	 * Overloaded to allow for {@link TypeToken}
+	 */
+	private <T extends RealmObject> boolean deleteFromMasterDBOverride(@NonNull final TypeToken myClass,
+	                                                           final String customSuffix,
+	                                                           boolean overrideCheck) {
 		
 		if (myClass == null) {
 			return false;
 		}
-		if (!DatabaseUtilities.isValidWrite(myClass, customSuffix)) {
-			L.m("If you want to clear all stored / persisted data, please call " +
-					"deleteAllPersistedObjects(true, false)");
-			return false;
+		if(!overrideCheck) {
+			if (!DatabaseUtilities.isValidWrite(myClass, customSuffix)) {
+				L.m(IF_YOU_WANT_TO_DELETE_ALL_CALL_THIS);
+				return false;
+			}
 		}
 		//Class name String
 		final String myClassName = myClass.getType().toString();
 		
 		//Returned object from the master search
-		Object obj = this.queryDatabaseMasterSingle(myClass);
-		if (obj == null) {
-			Object obj2 = this.getPersistedObjectCustom(myClass, customSuffix);
-			if (obj2 == null) {
-				//IF it is null, it has already been deleted, return true and move on
-				if(this.loggingEnabled){
-					L.m("Attempting to delete " + myClassName +
-							((StringUtilities.isNullOrEmpty(customSuffix) ? "" : customSuffix))
-							+ ", but item not found in DB; nothing to delete.");
+		try {
+			Object obj = this.queryDatabaseMasterSingle(myClass);
+			if (obj == null) {
+				Object obj2 = this.getPersistedObjectCustom(myClass, customSuffix);
+				if (obj2 == null) {
+					//IF it is null, it has already been deleted, return true and move on
+					if (this.loggingEnabled) {
+						L.m(ATTEMPTING_TO_DELETE + myClassName +
+								((StringUtilities.isNullOrEmpty(customSuffix) ? "" : customSuffix)) + BUT_ITEM_NOT_FOUND);
+					}
+					return true;
 				}
-				return true;
+			}
+		} catch (IllegalStateException ile){
+			if(this.loggingEnabled){
+				ile.printStackTrace();
 			}
 		}
-		
 		Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
-		//final RealmQuery query = RealmQuery.createQuery(realm, MasterDatabaseObject.class); //Old version, 3.0.0
 		final RealmQuery<MasterDatabaseObject> query;
 		try {
-//            query = realm.where(myClass.getRawType());
 			query = realm.where(MasterDatabaseObject.class);
 		} catch (IllegalStateException il) {
 			if(loggingEnabled){
 				il.printStackTrace();
 			}
+			DatabaseUtilities.this.closeRealm(realm);
 			return false;
 		}
 		if(query == null){
+			DatabaseUtilities.this.closeRealm(realm);
 			return false;
 		}
 		realm.executeTransaction(new Realm.Transaction() {
@@ -1056,12 +1033,12 @@ public class DatabaseUtilities {
 									try {
 										mdo.deleteFromRealm();
 										if(loggingEnabled){
-											L.m("delete from DB succeeded");
+											L.m(DELETE_FROM_DB_SUCCEEDED);
 										}
 										return;
 									} catch (Exception e) {
 										if(loggingEnabled){
-											L.m("delete failed");
+											L.m(DELETE_FAILED);
 											e.printStackTrace();
 										}
 									}
@@ -1072,12 +1049,12 @@ public class DatabaseUtilities {
 									try {
 										mdo.deleteFromRealm();
 										if(loggingEnabled){
-											L.m("delete from DB succeeded");
+											L.m(DELETE_FROM_DB_SUCCEEDED);
 										}
 										return;
 									} catch (Exception e) {
 										if(loggingEnabled){
-											L.m("delete failed");
+											L.m(DELETE_FAILED);
 											e.printStackTrace();
 										}
 									}
@@ -1090,19 +1067,14 @@ public class DatabaseUtilities {
 			}
 		});
 		
-		try {
-			realm.close();
-		} catch (Exception e) {
-			if(loggingEnabled){
-				e.printStackTrace();
-			}
-		}
+		DatabaseUtilities.this.closeRealm(realm);
 		return true;
 		
 	}
 	
 	/**
-	 * DANGER ZONE! This will wipe the entire database (Of the configuration set. If you have
+	 * DANGER ZONE!
+	 * This will wipe the entire database (Of the configuration set. If you have
 	 * multiple RealmConfigurations, you will need to create a DatabaseUtilities Object for
 	 * each one and loop this method to delete them all).
 	 *
@@ -1110,33 +1082,33 @@ public class DatabaseUtilities {
 	 * @param areYouNotSure Pass false to confirm wipe
 	 * @return Boolean of success or not
 	 */
-	public boolean deleteEntireDB(boolean areYouSure, boolean areYouNotSure) {
+	public <T extends  RealmObject>  boolean deleteEntireDB(boolean areYouSure, boolean areYouNotSure) {
 		if (!areYouSure) {
 			return false;
 		}
 		if (areYouNotSure) {
 			return false;
 		}
+		Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
 		try {
 			if(loggingEnabled){
-				L.m("Deleting entire database!");
+				L.m(DELETING_ENTIRE_DB);
 			}
-			Set<Class<? extends RealmModel>> allClasses = getDBTableTypes();
-			if (allClasses != null) {
-				if (allClasses.size() >= 0) {
-					for (Class<? extends RealmModel> c : allClasses) {
-						try {
-							deleteFromMasterDB(c);
-						} catch (Exception e) {
-							if(loggingEnabled){
-								L.m("A class could not be deleted: " + ((c == null) ? "Unknown" : c.getCanonicalName()));
-								e.printStackTrace();
-							}
-						}
-					}
+			final RealmResults<MasterDatabaseObject> results = realm.where(MasterDatabaseObject.class).findAll();
+			realm.executeTransaction(new Realm.Transaction() {
+				@Override
+				public void execute(Realm realm) {
+					boolean b = results.deleteAllFromRealm();
 				}
+			});
+		} catch (Exception e){
+			if(loggingEnabled){
+				e.printStackTrace();
 			}
-			
+		}
+		try {
+			this.closeRealm(realm);
+			DatabaseUtilities.clearRealmQueryInstance();
 			return (deleteRealmFileInStorage(realmConfiguration));
 		} catch (Exception e) {
 			if(loggingEnabled){
@@ -1196,7 +1168,7 @@ public class DatabaseUtilities {
 							t.deleteFromRealm();
 						} catch (Exception e) {
 							if(loggingEnabled){
-								L.m("Delete Failed");
+								L.m(DELETE_FAILED);
 							}
 						}
 					}
@@ -1235,21 +1207,15 @@ public class DatabaseUtilities {
 					}
 				}
 			});
-			realm.close();
+			DatabaseUtilities.this.closeRealm(realm);
 			return true;
 		} catch (IllegalArgumentException e1) {
 			e1.printStackTrace();
-			L.m("A RealmObject with no PrimaryKey cannot be updated. Does " + myClass.getName() +
-					"have a @PrimaryKey designation over a variable?");
+			L.m(NO_PRIMARY_KEY_1 + myClass.getName() + NO_PRIMARY_KEY_2);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				if (!realm.isClosed()) {
-					realm.close();
-				}
-			} catch (Exception e) {
-			}
+			DatabaseUtilities.this.closeRealm(realm);
 		}
 		return false;
 	}
@@ -1279,30 +1245,22 @@ public class DatabaseUtilities {
 					}
 				}
 			});
-			realm.close();
 			return true;
 		} catch (IllegalArgumentException e1) {
 			e1.printStackTrace();
-			L.m("A RealmObject with no PrimaryKey cannot be updated. Does " + myClass.getType().toString() +
-					"have a @PrimaryKey designation over a variable?");
+			L.m(NO_PRIMARY_KEY_1 + myClass.getType().toString() +
+					NO_PRIMARY_KEY_2);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				if (!realm.isClosed()) {
-					realm.close();
-				}
-			} catch (Exception e) {
-			}
+			DatabaseUtilities.this.closeRealm(realm);
 		}
 		return false;
 	}
 	
 	//endregion
 	
-	/////////////////
-	//region Query Methods//
-	/////////////////
+	//region Query Methods
 	
 	/**
 	 * Query the master table in the database
@@ -1480,19 +1438,21 @@ public class DatabaseUtilities {
 	}
 	
 	/**
-	 * Query the master table in the database for all rows
+	 * Query the master table in the database for all rows.
+	 * Note! This was causing errors because the Realm object was being instantiated and
+	 * simultaneously closing when a full Master DB wipe happened within nanoseconds. As a result,
+	 * I switched the Realm object to a singleton for this method only and it is cleared whenever
+	 * the deleteDB is called; values in milliseconds was: 294863303301582 vs 294863303147936,
+	 * a difference of 0.153646 milliseconds
 	 *
 	 * @param <T> T extends RealmModel
 	 * @return returns a list of Objects that was pulled from the DB. If nothing found,
 	 * it will return an initialized, but empty, list.
 	 */
 	private <T extends RealmModel> List<MasterDatabaseObject> queryDatabaseMasterAll() {
-		
-		Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
-		//final RealmQuery query = RealmQuery.createQuery(realm, MasterDatabaseObject.class); //Old version, 3.0.0
 		final RealmQuery<MasterDatabaseObject> query;
 		try {
-			query = realm.where(MasterDatabaseObject.class);
+			query = DatabaseUtilities.buildRealmQueryOnly(this.realmConfiguration).where(MasterDatabaseObject.class);
 		} catch (IllegalStateException il) {
 			il.printStackTrace();
 			return new ArrayList<>();
@@ -1544,6 +1504,7 @@ public class DatabaseUtilities {
 		
 		if (results != null) {
 			Object object = results.get(0);
+			DatabaseUtilities.this.closeRealm(realm);
 			return object;
 		}
 		
@@ -1566,9 +1527,11 @@ public class DatabaseUtilities {
 		
 		if (results != null) {
 			Object object = results.get(0);
+			DatabaseUtilities.this.closeRealm(realm);
 			return object;
 		}
 		
+		DatabaseUtilities.this.closeRealm(realm);
 		return null;
 	}
 	
@@ -1600,6 +1563,7 @@ public class DatabaseUtilities {
 				}
 			}
 		}
+		DatabaseUtilities.this.closeRealm(realm);
 		return objects;
 	}
 	
@@ -1625,14 +1589,13 @@ public class DatabaseUtilities {
 				}
 			}
 		}
+		DatabaseUtilities.this.closeRealm(realm);
 		return objects;
 	}
 	
 	//endregion
 	
-	////////////////////////////////////////////////////
-	//region Realm Object, Configuration, and Query Utilities//
-	////////////////////////////////////////////////////
+	//region Realm Object, Configuration, and Query Utilities
 	
 	/**
 	 * This method will build the Realm object using pre-programmed hard-coded info for the
@@ -1663,6 +1626,36 @@ public class DatabaseUtilities {
 			realm = Realm.getInstance(realmConfiguration);
 		}
 		return realm;
+	}
+	
+	/**
+	 * Build a Realm object and return it
+	 * Not making a singleton version as per the docs:
+	 * "Realm instances cannot be used across different threads. This means that you have to open an instance on each thread
+	 * you want to use Realm" {@link Realm}
+	 *
+	 * @param realmConfiguration {@link RealmConfiguration}
+	 * @return Realm object {@link Realm}
+	 */
+	private static Realm buildRealmQueryOnly(@NonNull RealmConfiguration realmConfiguration) {
+		if(DatabaseUtilities.queryRealm == null) {
+			queryRealm = Realm.getInstance(realmConfiguration);
+		}
+		return DatabaseUtilities.queryRealm;
+	}
+	
+	/**
+	 * Clear the query realm active instance
+	 */
+	private static void clearRealmQueryInstance(){
+		try {
+			if (DatabaseUtilities.queryRealm != null) {
+				DatabaseUtilities.queryRealm.close();
+			}
+			DatabaseUtilities.queryRealm = null;
+		} catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -1828,7 +1821,7 @@ public class DatabaseUtilities {
 	 */
 	private static boolean isClassValid(@NonNull Class myClass) {
 		if (myClass == null) {
-			L.m("Class used to write to the DB was null, please check passed params");
+			L.m(CLASS_PASSED_WAS_NULL);
 			return false;
 		}
 		if (!isValidWrite(myClass)) {
@@ -1852,7 +1845,7 @@ public class DatabaseUtilities {
 	 */
 	private static boolean isValidWrite(@NonNull Class myClass) {
 		if (myClass == null) {
-			L.m("Class used to write to the DB was null, please check passed params");
+			L.m(CLASS_PASSED_WAS_NULL);
 			return false;
 		}
 		String className = myClass.getName();
@@ -1860,9 +1853,7 @@ public class DatabaseUtilities {
 		if (!StringUtilities.isNullOrEmpty(className) &&
 				!StringUtilities.isNullOrEmpty(masterDBObjectName)) {
 			if (masterDBObjectName.equalsIgnoreCase(className)) {
-				L.m("You cannot modify this table from that method. If you want to access the " +
-						"MasterDatabaseObject table, please use the persistObject / dePersistObject /" +
-						" getPersistedObject / getAllPersistedObjects method calls.");
+				L.m(YOU_CANNOT_MODIFY_THIS_TABLE_FROM_THAT_METHOD);
 				return false;
 			}
 		}
@@ -1874,7 +1865,7 @@ public class DatabaseUtilities {
 	 */
 	private static boolean isValidWrite(@NonNull TypeToken myClass) {
 		if (myClass == null) {
-			L.m("Class used to write to the DB was null, please check passed params");
+			L.m(CLASS_PASSED_WAS_NULL);
 			return false;
 		}
 		String className = myClass.toString();
@@ -1882,9 +1873,7 @@ public class DatabaseUtilities {
 		if (!StringUtilities.isNullOrEmpty(className) &&
 				!StringUtilities.isNullOrEmpty(masterDBObjectName)) {
 			if (masterDBObjectName.equalsIgnoreCase(className)) {
-				L.m("You cannot modify this table from that method. If you want to access the " +
-						"MasterDatabaseObject table, please use the persistObject / dePersistObject /" +
-						" getPersistedObject / getAllPersistedObjects method calls.");
+				L.m(YOU_CANNOT_MODIFY_THIS_TABLE_FROM_THAT_METHOD);
 				return false;
 			}
 		}
@@ -1899,7 +1888,7 @@ public class DatabaseUtilities {
 	 */
 	private static boolean isValidWrite(@NonNull Class myClass, String customSuffix) {
 		if (myClass == null) {
-			L.m("Class used to write to the DB was null, please check passed params");
+			L.m(CLASS_PASSED_WAS_NULL);
 			return false;
 		}
 		String className = myClass.getName();
@@ -1910,9 +1899,7 @@ public class DatabaseUtilities {
 		if (!StringUtilities.isNullOrEmpty(className) &&
 				!StringUtilities.isNullOrEmpty(masterDBObjectName)) {
 			if (masterDBObjectName.equalsIgnoreCase(className)) {
-				L.m("You cannot modify this table from that method. If you want to access the " +
-						"MasterDatabaseObject table, please use the persistObject / dePersistObject /" +
-						" getPersistedObject / getAllPersistedObjects method calls.");
+				L.m(YOU_CANNOT_MODIFY_THIS_TABLE_FROM_THAT_METHOD);
 				return false;
 			}
 		}
@@ -1924,7 +1911,7 @@ public class DatabaseUtilities {
 	 */
 	private static boolean isValidWrite(@NonNull TypeToken myClass, String customSuffix) {
 		if (myClass == null) {
-			L.m("Class used to write to the DB was null, please check passed params");
+			L.m(CLASS_PASSED_WAS_NULL);
 			return false;
 		}
 		String className = myClass.toString();
@@ -1935,9 +1922,7 @@ public class DatabaseUtilities {
 		if (!StringUtilities.isNullOrEmpty(className) &&
 				!StringUtilities.isNullOrEmpty(masterDBObjectName)) {
 			if (masterDBObjectName.equalsIgnoreCase(className)) {
-				L.m("You cannot modify this table from that method. If you want to access the " +
-						"MasterDatabaseObject table, please use the persistObject / dePersistObject /" +
-						" getPersistedObject / getAllPersistedObjects method calls.");
+				L.m(YOU_CANNOT_MODIFY_THIS_TABLE_FROM_THAT_METHOD);
 				return false;
 			}
 		}
@@ -1946,7 +1931,6 @@ public class DatabaseUtilities {
 	
 	//endregion
 	
-	///////////////////////
 	//region Public Misc Utilities
 	
 	/**
@@ -1964,9 +1948,7 @@ public class DatabaseUtilities {
 		if (!StringUtilities.isNullOrEmpty(str)) {
 			L.m("Database Name: " + str);
 		}
-		try {
-			realm.close();
-		} catch (Exception e){}
+		DatabaseUtilities.this.closeRealm(realm);
 	}
 	
 	/**
@@ -2065,15 +2047,11 @@ public class DatabaseUtilities {
 			query = realm.where(MasterDatabaseObject.class);
 		} catch (IllegalStateException il) {
 			il.printStackTrace();
-			try {
-				realm.close();
-			} catch (Exception e){}
+			DatabaseUtilities.this.closeRealm(realm);
 			return;
 		}
 		if(query == null){
-			try {
-				realm.close();
-			} catch (Exception e){}
+			DatabaseUtilities.this.closeRealm(realm);
 			return;
 		}
 		realm.executeTransaction(new Realm.Transaction() {
@@ -2093,10 +2071,7 @@ public class DatabaseUtilities {
 				}
 			}
 		});
-		try {
-			realm.close();
-		} catch (Exception e) {
-		}
+		DatabaseUtilities.this.closeRealm(realm);
 		L.m("\nEnd Printout of full Database");
 	}
 	
