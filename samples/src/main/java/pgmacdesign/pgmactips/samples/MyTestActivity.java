@@ -1029,7 +1029,6 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
             dbUtilities = new DatabaseUtilities(this);
         }
         dbUtilities.enableLogging();
-        L.m("Attempting delete @ 1030");
 	    dbUtilities.deleteEntireDB(true, false);
 	    final TypeToken TYPE_MAP_STRING_STRING = new TypeToken<Map<String, String>>() {};
         final String MAP_STRING_CUSTOM_SUFFIX = "-custom1";

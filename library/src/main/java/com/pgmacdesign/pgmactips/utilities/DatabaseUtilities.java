@@ -1,9 +1,11 @@
 package com.pgmacdesign.pgmactips.utilities;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Environment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -11,6 +13,7 @@ import com.pgmacdesign.pgmactips.datamodels.MasterDatabaseObject;
 import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConfig;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
+import com.pgmacdesign.pgmactips.misc.TempString;
 
 import org.json.JSONObject;
 
@@ -19,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -95,7 +99,9 @@ public class DatabaseUtilities {
 	//region Instance Variables
 	private RealmConfiguration realmConfiguration;
 	private Context context;
-	private boolean loggingEnabled;
+	private boolean loggingEnabled, isEncrypted;
+	private TempString password;
+	private String salt;
 	//endregion
 	
 	//region Static Vars
@@ -117,6 +123,9 @@ public class DatabaseUtilities {
 			L.m(CONTEXT_NULL);
 			return;
 		}
+		this.isEncrypted = false;
+		this.salt = null;
+		this.password = null;
 		this.init(context);
 		this.realmConfiguration = DatabaseUtilities.buildRealmConfig(context,
 				null, null, null);
@@ -135,6 +144,9 @@ public class DatabaseUtilities {
 			L.m(CONTEXT_NULL);
 			return;
 		}
+		this.isEncrypted = false;
+		this.salt = null;
+		this.password = null;
 		this.init(context);
 		this.realmConfiguration = DatabaseUtilities.buildRealmConfig(context,
 				null, null, null);
@@ -153,6 +165,9 @@ public class DatabaseUtilities {
 			L.m(CONTEXT_NULL);
 			return;
 		}
+		this.isEncrypted = false;
+		this.salt = null;
+		this.password = null;
 		this.init(context);
 		this.realmConfiguration = DatabaseUtilities.buildRealmConfig(context,
 				dbName, dbSchemaVersion, deleteDBIfNeeded);
@@ -174,6 +189,9 @@ public class DatabaseUtilities {
 			L.m(CONTEXT_NULL);
 			return;
 		}
+		this.isEncrypted = false;
+		this.salt = null;
+		this.password = null;
 		this.init(context);
 		this.realmConfiguration = realmConfiguration;
 		if (realmConfiguration == null) {
@@ -181,14 +199,105 @@ public class DatabaseUtilities {
 		}
 	}
 	
+	/**
+	 * Constructor
+	 *
+	 * @param context Context. Cannot be null
+	 */
+	@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Realm,
+			CustomAnnotationsBase.Dependencies.GSON})
+	public DatabaseUtilities(@NonNull Context context, @NonNull String password, @NonNull String salt) {
+		this.context = context;
+		if (this.context == null) {
+			L.m(CONTEXT_NULL);
+			return;
+		}
+		if(StringUtilities.isNullOrEmpty(password) || StringUtilities.isNullOrEmpty(salt)){
+			this.isEncrypted = false;
+			this.salt = null;
+			this.password = null;
+		} else {
+			this.isEncrypted = true;
+			this.salt = salt;
+			this.password = new TempString(password);
+		}
+		this.init(context);
+		this.realmConfiguration = DatabaseUtilities.buildRealmConfig(context,
+				null, null, null);
+	}
+	
+	/**
+	 * Constructor. For more explanation of the input params, see:
+	 * {@link DatabaseUtilities#buildRealmConfig(Context, String, Integer, Boolean)}
+	 */
+	@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Realm,
+			CustomAnnotationsBase.Dependencies.GSON})
+	public DatabaseUtilities(@NonNull Context context, @Nullable String dbName,
+	                         @Nullable Integer dbSchemaVersion, @Nullable Boolean deleteDBIfNeeded,
+	                         @NonNull String password, @NonNull String salt) {
+		this.context = context;
+		if (this.context == null) {
+			L.m(CONTEXT_NULL);
+			return;
+		}
+		if(StringUtilities.isNullOrEmpty(password) || StringUtilities.isNullOrEmpty(salt)){
+			this.isEncrypted = false;
+			this.salt = null;
+			this.password = null;
+		} else {
+			this.isEncrypted = true;
+			this.salt = salt;
+			this.password = new TempString(password);
+		}
+		this.init(context);
+		this.realmConfiguration = DatabaseUtilities.buildRealmConfig(context,
+				dbName, dbSchemaVersion, deleteDBIfNeeded);
+	}
+	
+	/**
+	 * Constructor using a realm configuration
+	 *
+	 * @param context            Context
+	 * @param realmConfiguration {@link RealmConfiguration} If this is left as null, it will
+	 *                           build the default version with hard coded info listed here in
+	 *                           this class.
+	 */
+	@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Realm,
+			CustomAnnotationsBase.Dependencies.GSON})
+	public DatabaseUtilities(@NonNull Context context, RealmConfiguration realmConfiguration, @NonNull String password, @NonNull String salt) {
+		this.context = context;
+		if (this.context == null) {
+			L.m(CONTEXT_NULL);
+			return;
+		}
+		if(StringUtilities.isNullOrEmpty(password) || StringUtilities.isNullOrEmpty(salt)){
+			this.isEncrypted = false;
+			this.salt = null;
+			this.password = null;
+		} else {
+			this.isEncrypted = true;
+			this.salt = salt;
+			this.password = new TempString(password);
+		}
+		this.init(context);
+		this.realmConfiguration = realmConfiguration;
+		if (realmConfiguration == null) {
+			this.realmConfiguration = DatabaseUtilities.buildRealmConfig(this.context);
+		}
+	}
+	
+	/**
+	 * Private initializer
+	 * For now, it only handles context
+	 * @param context
+	 */
 	private void init(Context context) {
 		Realm.init(context);
 	}
 	
 	//endregion
 	
-	//region Insert Methods
-	
+	//region Insert and Update Methods
 	/**
 	 * Standard Database Insertion method with an object.
 	 *
@@ -464,7 +573,22 @@ public class DatabaseUtilities {
 		
 		MasterDatabaseObject mdo = new MasterDatabaseObject();
 		mdo.setId(className);
-		mdo.setJsonString(jsonString);
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+			if(this.isEncryptionEnabled()) {
+				try {
+					String encryptedString = EncryptionUtilities.encryptString(jsonString, this.password, this.salt);
+					if(!StringUtilities.isNullOrEmpty(encryptedString)) {
+						mdo.setJsonString(encryptedString);
+					} else {
+						mdo.setJsonString(jsonString);
+					}
+				} catch (Exception e) {
+					mdo.setJsonString(jsonString);
+				}
+			}
+		} else {
+			mdo.setJsonString(jsonString);
+		}
 		
 		final MasterDatabaseObject mdoFinal = mdo;
 		
@@ -528,7 +652,22 @@ public class DatabaseUtilities {
 		
 		MasterDatabaseObject mdo = new MasterDatabaseObject();
 		mdo.setId(className);
-		mdo.setJsonString(jsonString);
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+			if(this.isEncryptionEnabled()) {
+				try {
+					String encryptedString = EncryptionUtilities.encryptString(jsonString, this.password, this.salt);
+					if(!StringUtilities.isNullOrEmpty(encryptedString)) {
+						mdo.setJsonString(encryptedString);
+					} else {
+						mdo.setJsonString(jsonString);
+					}
+				} catch (Exception e) {
+					mdo.setJsonString(jsonString);
+				}
+			}
+		} else {
+			mdo.setJsonString(jsonString);
+		}
 		final MasterDatabaseObject mdoFinal = mdo;
 		
 		try {
@@ -609,7 +748,22 @@ public class DatabaseUtilities {
 			className = className + customSuffix;
 		}
 		mdo.setId(className);
-		mdo.setJsonString(jsonString);
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+			if(this.isEncryptionEnabled()) {
+				try {
+					String encryptedString = EncryptionUtilities.encryptString(jsonString, this.password, this.salt);
+					if(!StringUtilities.isNullOrEmpty(encryptedString)) {
+						mdo.setJsonString(encryptedString);
+					} else {
+						mdo.setJsonString(jsonString);
+					}
+				} catch (Exception e) {
+					mdo.setJsonString(jsonString);
+				}
+			}
+		} else {
+			mdo.setJsonString(jsonString);
+		}
 		
 		final MasterDatabaseObject mdoFinal = mdo;
 		
@@ -679,7 +833,22 @@ public class DatabaseUtilities {
 			className = className + customSuffix;
 		}
 		mdo.setId(className);
-		mdo.setJsonString(jsonString);
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+			if(this.isEncryptionEnabled()) {
+				try {
+					String encryptedString = EncryptionUtilities.encryptString(jsonString, this.password, this.salt);
+					if(!StringUtilities.isNullOrEmpty(encryptedString)) {
+						mdo.setJsonString(encryptedString);
+					} else {
+						mdo.setJsonString(jsonString);
+					}
+				} catch (Exception e) {
+					mdo.setJsonString(jsonString);
+				}
+			}
+		} else {
+			mdo.setJsonString(jsonString);
+		}
 		
 		final MasterDatabaseObject mdoFinal = mdo;
 		
@@ -1261,6 +1430,7 @@ public class DatabaseUtilities {
 	//endregion
 	
 	//region Query Methods
+	// TODO: 2019-11-05 update query methods with encryption logic
 	
 	/**
 	 * Query the master table in the database
@@ -1302,6 +1472,7 @@ public class DatabaseUtilities {
 		Map<String, String> myMap = new HashMap<>();
 		for (MasterDatabaseObject mdo : masterDatabaseObjects) {
 			String id = mdo.getId();
+			// TODO: 2019-11-05 add cleanMDOString
 			String json = mdo.getJsonString();
 			if (id != null && json != null) {
 				myMap.put(id, json);
@@ -1469,6 +1640,7 @@ public class DatabaseUtilities {
 			List<MasterDatabaseObject> masterDatabaseObjectList = new ArrayList<MasterDatabaseObject>();
 			for (MasterDatabaseObject mdo : results) {
 				if (mdo != null) {
+					// TODO: 2019-11-05 add cleanMDOString
 					if (!StringUtilities.isNullOrEmpty(mdo.getId()) &&
 							!StringUtilities.isNullOrEmpty(mdo.getJsonString())) {
 						masterDatabaseObjectList.add(mdo);
@@ -1756,9 +1928,55 @@ public class DatabaseUtilities {
 	
 	//endregion
 	
-	//////////////////
-	//region Private Misc Utilities//
-	//////////////////
+	//region Private Misc Utilities
+	
+	/**
+	 * Quick checker for whether encryption is enabled.
+	 * @return True if it is, false if it is not
+	 */
+	private boolean isEncryptionEnabled(){
+		if(!this.isEncrypted){
+			return false;
+		}
+		if(StringUtilities.isNullOrEmpty(this.salt)){
+			return false;
+		}
+		if(this.password == null){
+			return false;
+		}
+		if(StringUtilities.isNullOrEmpty(this.password.getTempStringData())){
+			return false;
+		}
+		return true;
+	}
+	
+	
+	/**
+	 * Clean the String and return the decrypted String or the current one if it is already
+	 * decrypted or does not have it enabled.
+	 * @param jsonString String to decrypt or return
+	 * @return Clean String to use
+	 */
+	private String cleanMDOString(String jsonString){
+		if(StringUtilities.isNullOrEmpty(jsonString)){
+			return jsonString;
+		}
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+			if(this.isEncryptionEnabled()){
+				try {
+					String s = EncryptionUtilities.decryptString(jsonString, this.password, this.salt);
+					if(!StringUtilities.isNullOrEmpty(s)){
+						return s;
+					}
+				} catch (Exception e){}
+				return jsonString;
+			} else {
+				return jsonString;
+			}
+		} else {
+			return jsonString;
+		}
+	}
 	
 	/**
 	 * Simple method to close the realm instance
@@ -2065,6 +2283,7 @@ public class DatabaseUtilities {
 				}
 				for (MasterDatabaseObject mdo : results) {
 					if (mdo != null) {
+						// TODO: 2019-11-05 add cleanMDOString
 						L.m("Object: " + mdo.getId() + ", JSON == "
 								+ mdo.getJsonString() + "\n");
 					}
@@ -2076,8 +2295,8 @@ public class DatabaseUtilities {
 	}
 	
 	//endregion
+
 	
-	///////////////////////
 	//region Public Misc Methods
 	
 	/**
@@ -2104,9 +2323,7 @@ public class DatabaseUtilities {
 	
 	//endregion
 	
-	///////////
-	//region Modules//
-	///////////
+	//region Modules
 	
 	/*
 	From this issue:
