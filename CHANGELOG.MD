@@ -2,13 +2,19 @@ Change Log
 ==========
 
 
-Version 1.1.2 *(TBD)*
+Version 1.2.0 *(TBD)*
+----------------------------
+
+* 
+
+Version 1.1.2 *(2019-11-05)*
 ----------------------------
 
 * Delete: Removed MalwareUtilities in the event that the stored array of String values was triggering any alarm or alert on the app submission process by Google.
 * New: Added in a valid hex color checker in the [ColorUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ColorUtilities.java).
 * Update: Updated to the most current versions for Android Support, Maps, Recyclerview, and a few other Misc AndroidX & Google API dependencies. 
 * Bugfix: Updated the logic in the  [DatabaseUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/DatabaseUtilities.java) class that was causing an IllegalState exception when a race condition was triggered due to certain circumstances. Basically the Realm object was being instantiated and simultaneously closing when a full Master DB wipe happened within nanoseconds. As a result, I switched the Realm object to a singleton for this method only and it is cleared whenever the deleteDB is called; values were of a difference of 0.153646 milliseconds
+* `IMPORTANT NOTE!` The Realm dependency will be updated in the next release so anyone who needs to support an older version of Realm `4.2.0` should *NOT* move to a version after this. 
 
 Version 1.1.1 *(2019-10-25)*
 ----------------------------
