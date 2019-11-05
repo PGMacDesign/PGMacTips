@@ -1136,7 +1136,7 @@ public class DatabaseUtilities {
 					}
 				}
 			}
-			dd
+			
 			return (deleteRealmFileInStorage(realmConfiguration));
 		} catch (Exception e) {
 			if(loggingEnabled){
