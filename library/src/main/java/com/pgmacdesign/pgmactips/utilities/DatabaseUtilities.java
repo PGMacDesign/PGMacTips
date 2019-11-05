@@ -1136,6 +1136,7 @@ public class DatabaseUtilities {
 					}
 				}
 			}
+			dd
 			return (deleteRealmFileInStorage(realmConfiguration));
 		} catch (Exception e) {
 			if(loggingEnabled){
@@ -1765,6 +1766,23 @@ public class DatabaseUtilities {
 	//////////////////
 	//region Private Misc Utilities//
 	//////////////////
+	
+	/**
+	 * Simple method to close the realm instance
+	 * @param realm
+	 */
+	private void closeRealm(Realm realm){
+		if(realm == null){
+			return;
+		}
+		try {
+			realm.close();
+		} catch (Exception e) {
+			if(loggingEnabled){
+				e.printStackTrace();
+			}
+		}
+	}
 	
 	/**
 	 * If no query is set, this will build a query with the class sent in

@@ -61,6 +61,9 @@ android {
 	}
 	dependencies {
 		
+		def recyclerview_version = "1.0.0"
+		def annotation_version = "1.1.0"
+		
 		//Image Cropper. https://github.com/Yalantis/uCrop
 		api 'com.yalantis:ucrop:2.2.0'
 		
@@ -90,7 +93,7 @@ android {
 		//Type-safe HTTP client for Android and Java: https://github.com/square/retrofit
 		api 'com.squareup.retrofit2:converter-gson:2.3.0'
 		//OKIO. Link: https://github.com/square/okio
-		api 'com.squareup.okio:okio:1.13.0'
+		api 'com.squareup.okio:okio:1.14.0'
 		
 		//Animations Base. Link: https://github.com/JakeWharton/NineOldAndroids
 //        api 'com.nineoldandroids:library:2.4.0'
@@ -107,11 +110,15 @@ android {
 		//api 'com.android.support:multidex:1.0.1'
 		
 		//Maps. Link: https://developers.google.com/android/guides/setup
-		api 'com.google.android.gms:play-services-maps:16.0.0'
+		api 'com.google.android.gms:play-services-maps:17.0.0'
 		
 		//Android support libs. Link: https://developer.android.com/topic/libraries/support-library/packages
-		api 'com.android.support:design:28.0.0'
-		api 'com.android.support:support-annotations:28.0.0'
+		
+		
+		implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
+		implementation "androidx.annotation:annotation:$annotation_version"
+//		api 'com.android.support:design:28.0.0'
+//		api 'com.android.support:support-annotations:28.0.0'
 	}
 }
 // Publish default flavour as main artifact, otherwise the maven pom is not generated

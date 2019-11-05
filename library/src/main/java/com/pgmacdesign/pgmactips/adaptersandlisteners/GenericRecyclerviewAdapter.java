@@ -2,6 +2,8 @@ package com.pgmacdesign.pgmactips.adaptersandlisteners;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +14,6 @@ import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
 import java.lang.reflect.Constructor;
 import java.util.List;
 
-import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by Patrick-SSD2 on 11/9/2017.

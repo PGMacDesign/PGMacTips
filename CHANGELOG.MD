@@ -5,7 +5,10 @@ Change Log
 Version 1.1.2 *(TBD)*
 ----------------------------
 
-* 
+* Removed MalwareUtilities in the event that the stored array of String values was triggering any alarm or alert on the app submission process by Google.
+* Added in a valid hex color checker in the [ColorUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ColorUtilities.java).
+* Updated to the most current versions for Android Support, Maps, Recyclerview, and a few other Misc AndroidX & Google API dependencies. 
+ 
 
 Version 1.1.1 *(2019-10-25)*
 ----------------------------

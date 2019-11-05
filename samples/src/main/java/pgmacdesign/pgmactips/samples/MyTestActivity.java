@@ -36,6 +36,7 @@ import com.pgmacdesign.pgmactips.networkclasses.volleyutilities.VolleyUtilities;
 import com.pgmacdesign.pgmactips.stackmanagement.StackManager;
 import com.pgmacdesign.pgmactips.stackmanagement.StackManagerException;
 import com.pgmacdesign.pgmactips.utilities.CameraMediaUtilities;
+import com.pgmacdesign.pgmactips.utilities.ColorUtilities;
 import com.pgmacdesign.pgmactips.utilities.ContactUtilities;
 import com.pgmacdesign.pgmactips.utilities.DatabaseUtilities;
 import com.pgmacdesign.pgmactips.utilities.DateUtilities;
@@ -45,7 +46,6 @@ import com.pgmacdesign.pgmactips.utilities.FileUtilities;
 import com.pgmacdesign.pgmactips.utilities.GsonUtilities;
 import com.pgmacdesign.pgmactips.utilities.ImageUtilities;
 import com.pgmacdesign.pgmactips.utilities.L;
-import com.pgmacdesign.pgmactips.utilities.MalwareUtilities;
 import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
 import com.pgmacdesign.pgmactips.utilities.NumberUtilities;
 import com.pgmacdesign.pgmactips.utilities.PermissionUtilities;
@@ -164,11 +164,31 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
 		L.m("PAT TEST HERE");
 	    DisplayManagerUtilities dmu = new DisplayManagerUtilities(this);
 //	    dmu.printOutAllDisplayMetrics();
-	    this.writeEncryptedFileTest();
-		this.readEncryptedFileTest();
+//	    this.writeEncryptedFileTest();
+//		this.readEncryptedFileTest();
 //		this.patTests();
+	    this.testHexColors();
+	    this.loadTestCall();
+	    
     }
 
+    private void testHexColors(){
+	    String s1 = "#a1a1a1";
+	    String s2 = "#FRFRFR";
+	    String s3 = "a1a1a1";
+	    String s4 = "frfrfrf";
+	    String s5 = "2";
+	    String s6 = "2010";
+	    String s7 = "223112";
+	    L.m("is valid hex color? " + s1 + " == " + ColorUtilities.isValidHexColor(s1));
+	    L.m("is valid hex color? " + s2 + " == " + ColorUtilities.isValidHexColor(s2));
+	    L.m("is valid hex color? " + s3 + " == " + ColorUtilities.isValidHexColor(s3));
+	    L.m("is valid hex color? " + s4 + " == " + ColorUtilities.isValidHexColor(s4));
+	    L.m("is valid hex color? " + s5 + " == " + ColorUtilities.isValidHexColor(s5));
+	    L.m("is valid hex color? " + s6 + " == " + ColorUtilities.isValidHexColor(s6));
+	    L.m("is valid hex color? " + s7 + " == " + ColorUtilities.isValidHexColor(s7));
+    }
+  
     private void writeEncryptedFileTest(){
 	    if(PermissionUtilities.permissionsRequestShortcutReturn(this,
 			    new PermissionUtilities.permissionsEnum[]{
@@ -215,7 +235,6 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
 		    }
 	    }
     }
-    
     
 	private void startDisplayMetricTests(){
     
@@ -698,6 +717,7 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
         L.m(SystemUtilities.getPackageName());
 
     }
+    
     private void temp2(){
         L.m("further package testing");
         //4 - test
@@ -710,6 +730,7 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
         //PackageManager pm = getApplicationContext().getPackageManager();
         //List<PackageInfo> packs = pm.getInstalledPackages(0);
     }
+    
     public String getPackageName(Context context) {
         return context.getPackageName();
     }
@@ -842,13 +863,7 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
             cam.afterOnActivityResult(requestCode, resultCode, data);
         }
     }
-
-    private void checkMalware(){
-        List<String> mylist = MalwareUtilities.checkForMalware(this);
-        L.m("Number of infections: " + mylist.size());
-        L.Toast(this, "Number of infections: " + mylist.size());
-    }
-
+    
     @SuppressLint("MissingPermission")
     @Override
     public void onClick(View view) {
@@ -1084,12 +1099,14 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
     }
 
     private void loadTestCall(){
-        String BASE_URL = "http://www.purgomalum.com/";
+        String BASE_URL = "https://www.purgomalum.com/";
         ProfanityCheckerInterface serviceInterface = new RetrofitClient.Builder(
                 ProfanityCheckerInterface.class, BASE_URL)
                 .setTimeouts(60000,60000)
 //		        .setRetryCount(0)
 		        .callIsJSONFormat()
+		        .setConnectionSpec(ConnectionSpec.CLEARTEXT)
+		        .forceAcceptAllCertificates(true, false)
 		        .shouldSaveResponseCookies(new OnTaskCompleteListener() {
 			        @Override
 			        public void onTaskComplete(Object result, int customTag) {

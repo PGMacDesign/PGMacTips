@@ -325,62 +325,7 @@ public class PGMacTipsConstants {
 
     */
 
-    ////////////////////////////////
-    //region Known Malware Package Names //
-    ////////////////////////////////
-
-    public static final String[] MALWARE_PACKAGE_STRINGS = {
-            "cn.etouch.ecalendar.life",
-            "com.aimobo.weatherclear",
-            "com.ali.money.shield",
-            "com.anti.block.porn.safebrowser",
-            "com.app.fast.boost.cleaner",
-            "com.app.wifi.recovery.master",
-            "com.baiwang.facesnap",
-            "com.block.puzzle.game.king",
-            "com.booster.ram.app.master.clean",
-            "com.card.game.bl.plugintheme21",
-            "com.card.game.bl.plugintheme22",
-            "com.card.game.bl.plugintheme23",
-            "com.cardgame.solitaire.sfour",
-            "com.clean.phone.boost.android.junk.cleaner",
-            "com.cleaner.booster.speed.junk.memory",
-            "com.color.paper.style",
-            "com.corous360.zipay",
-            "com.desk.paper.watch",
-            "com.exact.digital.ledcompass",
-            "com.free.sudoku.puzzle",
-            "com.freegames.happy.popcandy",
-            "com.freegames.popstar",
-            "com.freegames.popstar.exterme",
-            "com.gmiles.alarmclock",
-            "com.gmiles.switcher",
-            "com.insta.browser",
-            "com.listen.music.pedometer",
-            "com.ljapps.wifix.recovery.password",
-            "com.mg.callrecord",
-            "com.mola.tools.mbattery",
-            "com.mola.tools.openweather",
-            "com.mx.cool.videoplayer",
-            "com.news.boost.clean",
-            "com.ojhero.nowcall",
-            "com.phonecooler.battery.cleaner.wifimaster",
-            "com.picture.photo.editor",
-            "com.powercleaner",
-            "com.red.music.audio.player",
-            "com.riti.elocation.driver",
-            "com.samll.game.puzzle.plus",
-            "com.smartx.flashlight",
-            "com.tool.powercleanlite",
-            "com.tool.videomanager",
-            "com.tools.freereminder",
-            "com.wise.trackme.activity",
-            "org.mbj.filemanager",
-            "org.mbj.sticker"
-    };
-
-    //endregion
-
+   
     //////////////////////
     //Misc Useful Values//
     //////////////////////

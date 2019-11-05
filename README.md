@@ -212,6 +212,10 @@ android.enableAapt2=false
 
 As of January 2019, the above command is now deprecated and will not work. One bit of info that might help solve the issue, AAPT issues are generally related to asset, xml, layout, or resource errors. Check your layouts for bad references, make sure your custom drawables do not have malformed xml; [Guidelines Here](https://developer.android.com/guide/practices/ui_guidelines/icon_design), and confirm that you don't have capital letters in your various resources [See this page](https://github.com/ribot/android-guidelines/blob/master/project_and_code_guidelines.md) for examples.
 
+### Network Issues Relating to Cleartext
+
+You may run into an issue that says: `Cleartext HTTP traffic not permitted`. It may look like this is an issue with the library, but it is actually a problem that is caused by the Android OS. To resolve it, check out the [Stackoverflow answer here](https://stackoverflow.com/a/50834600/2480714). 
+
 ### Issues Relating to Obfuscation And Minification
 
 Some issues will only sprout up when you enable minification / obfuscation. The reason for this is that the class names, variables, methods, etc are being renamed and `something` is no longer working properly because of it. In most cases, the solution is to simply mark that class as exempt from the minification process using something like proguard, but not always. Below are some of the more common samples and how to resolve them.

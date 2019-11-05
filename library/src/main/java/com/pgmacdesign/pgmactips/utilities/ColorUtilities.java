@@ -7,10 +7,42 @@ import androidx.annotation.FloatRange;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 
+import java.util.regex.Pattern;
+
 /**
  * Created by pmacdowell on 8/12/2016.
  */
 public class ColorUtilities {
+	
+	private static final String HEX_PATTERN = "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$";
+	
+	/**
+	 * Checks if the passed in String is a valid hex color String.
+	 * Do not pass a hex color with alpha, remove the alpha value first and then send!
+	 * @param hexColor Hex color, IE #FFFFFF or 000000 or #FAFAFA or A12222
+	 * @return true if it is a valid hex color, false if it is not
+	 */
+	public static boolean isValidHexColor(String hexColor){
+		if(StringUtilities.isNullOrEmpty(hexColor)){
+			return false;
+		}
+		if(hexColor.length() < 6 || hexColor.length() > 7){
+			return false;
+		}
+		if(!hexColor.startsWith("#")){
+			hexColor = "#" + hexColor;
+		}
+		if(hexColor.length() > 7){
+			return false;
+		}
+		Pattern pattern = Pattern.compile(HEX_PATTERN);
+		try {
+			return pattern.matcher(hexColor).matches();
+		} catch (Exception e){
+			e.printStackTrace();
+			return false;
+		}
+	}
 	
 	/**
 	 * Determine if color is light or dark. Values pulled from these links:
