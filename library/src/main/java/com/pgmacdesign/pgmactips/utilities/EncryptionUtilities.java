@@ -186,6 +186,58 @@ public class EncryptionUtilities {
 		return bypassLength16SaltHashing;
 	}
 	
+	/**
+	 * Helper to convert hex strings to bytes.
+	 * <p>
+	 * May be used to read bytes from constants.
+	 */
+	private static byte[] hexStringToByteArray(String s) {
+		
+		if (StringUtilities.isNullOrEmpty(s)) {
+			L.m("Provided 'null' or empty string.");
+			return null;
+		}
+		
+		int len = s.length();
+		if (len % 2 != 0) {
+			s = s.trim();
+			len = s.length();
+			if (len % 2 != 0) {
+				return null;
+			}
+		}
+		byte[] data = new byte[len / 2];
+		for (int i = 0; i < len - 1; i += 2) {
+			byte b = (byte) toHexDigit(s, i);
+			b <<= 4;
+			b |= toHexDigit(s, i + 1);
+			data[i / 2] = b;
+		}
+		return data;
+	}
+	
+	private static int toHexDigit(String s, int pos) {
+		if(StringUtilities.isNullOrEmpty(s)){
+			return -1;
+		}
+		int d = Character.digit(s.charAt(pos), 16);
+		if (d < 0) {
+			L.m("Cannot parse hex digit: " + s + " at " + pos);
+			return -1;
+		}
+		return d;
+	}
+	
+	private static String byteArrayToHexString(byte[] bytes) {
+		if(bytes == null){
+			return null;
+		}
+		StringBuilder sb = new StringBuilder();
+		for (byte b : bytes) {
+			sb.append(String.format("%02X", b));
+		}
+		return sb.toString();
+	}
 	
 	/**
 	 * We derive a fixed length AES key with uniform entropy from a provided
@@ -364,7 +416,6 @@ public class EncryptionUtilities {
 		return s;
 	}
 	
-	
 	/**
 	 * Simple utility to convert a byte array to a using the preferred charSetPreference.
 	 * {@link EncryptionUtilities#charSetPreference}
@@ -389,56 +440,19 @@ public class EncryptionUtilities {
 	}
 	
 	/**
-	 * Helper to convert hex strings to bytes.
-	 * <p>
-	 * May be used to read bytes from constants.
+	 * Determine if a String passed is in hex format.
+	 * @param strToCheck String value to check. IE, XTYSLG456789ABCDEF would return
+	 *                   false and 0123456789ABCDEF would return true.
+	 * @return true if it is a hex string, false if it is not.
 	 */
-	private static byte[] hexStringToByteArray(String s) {
-		
-		if (StringUtilities.isNullOrEmpty(s)) {
-			L.m("Provided 'null' or empty string.");
-			return null;
+	public static boolean isHexString(String strToCheck){
+		if(StringUtilities.isNullOrEmpty(strToCheck)){
+			return false;
 		}
-		
-		int len = s.length();
-		if (len % 2 != 0) {
-			s = s.trim();
-			len = s.length();
-			if (len % 2 != 0) {
-				return null;
-			}
-		}
-		byte[] data = new byte[len / 2];
-		for (int i = 0; i < len - 1; i += 2) {
-			byte b = (byte) toHexDigit(s, i);
-			b <<= 4;
-			b |= toHexDigit(s, i + 1);
-			data[i / 2] = b;
-		}
-		return data;
-	}
-	
-	private static int toHexDigit(String s, int pos) {
-		if(StringUtilities.isNullOrEmpty(s)){
-			return -1;
-		}
-		int d = Character.digit(s.charAt(pos), 16);
-		if (d < 0) {
-			L.m("Cannot parse hex digit: " + s + " at " + pos);
-			return -1;
-		}
-		return d;
-	}
-	
-	private static String byteArrayToHexString(byte[] bytes) {
-		if(bytes == null){
-			return null;
-		}
-		StringBuilder sb = new StringBuilder();
-		for (byte b : bytes) {
-			sb.append(String.format("%02X", b));
-		}
-		return sb.toString();
+		try {
+			return (strToCheck.matches("[0-9A-Fa-f]+"));
+		} catch (Exception e){}
+		return false;
 	}
 	
 	//endregion
@@ -603,14 +617,31 @@ public class EncryptionUtilities {
 		}
 		byte[] ct = hexStringToByteArray(ciphertext);
 		byte[] plaintext = null;
+		final String errorStr = "An error occurred when attempting to decrypt values";
 		try {
 			plaintext = decrypt(ct, password.getTempStringData().toCharArray(), salt);
 		} catch (AEADBadTagException e) {
-			e.printStackTrace();
+			if(e != null){
+				if(!StringUtilities.isNullOrEmpty(e.getMessage())){
+					L.m(e.getMessage());
+				} else {
+					L.m(errorStr);
+				}
+			} else {
+				L.m(errorStr);
+			}
 		} catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeySpecException //
 				| InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException //
 				| BadPaddingException e) {
-			e.printStackTrace();
+			if(e != null){
+				if(!StringUtilities.isNullOrEmpty(e.getMessage())){
+					L.m(e.getMessage());
+				} else {
+					L.m(errorStr);
+				}
+			} else {
+				L.m(errorStr);
+			}
 		}
 		return EncryptionUtilities.convertBytesToString(plaintext);
 	}
@@ -675,7 +706,7 @@ public class EncryptionUtilities {
 		try {
 			bb = cipher.doFinal(ciphertext, ciphertextOffset, ciphertext.length - ciphertextOffset);
 		} catch (Exception e){
-			throw new InvalidKeyException("Unable to decrypt. Please make sure you are passing the right salt and password. " + e.getMessage());
+			throw new InvalidKeyException("Unable to decrypt. Please make sure you are passing the right salt and password. ");
 		}
 		return bb;
 	}

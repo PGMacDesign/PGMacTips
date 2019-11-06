@@ -73,6 +73,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.ConnectionSpec;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
+import pgmacdesign.pgmactips.samples.activitysamples.SampleDBClass;
 import pgmacdesign.pgmactips.samples.activitysamples.SampleDBClassKotlin;
 import pgmacdesign.pgmactips.samples.misc.SampleMyApplication;
 import retrofit2.Call;
@@ -158,14 +159,12 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
 			    false, true);
 	    String str4 = DateUtilities.convertMillisecondsToTimeString(PGMacTipsConstants.ONE_SECOND * 2 + (PGMacTipsConstants.ONE_YEAR),
 			    false, false);
-	    L.m(str1);
-	    L.m(str2);
-	    L.m(str3);
-	    L.m(str4);
+//	    L.m(str1);
+//	    L.m(str2);
+//	    L.m(str3);
+//	    L.m(str4);
 	    
-	    this.sortAndPrintLists();
-		L.m("PAT TEST HERE");
-	    DisplayManagerUtilities dmu = new DisplayManagerUtilities(this);
+//	    this.sortAndPrintLists();
 //	    dmu.printOutAllDisplayMetrics();
 //	    this.writeEncryptedFileTest();
 //		this.readEncryptedFileTest();
@@ -245,7 +244,7 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
     }
 	
 	/**
-	 * Sample sort and print using the {@link MiscUtilities#sortGenericList(List, String)} method
+	 * Sample sort and print using the {@link MiscUtilities#sortGenericList(List)} method
 	 */
 	private void sortAndPrintLists(){
 	    List<SamplePojo> lst = new ArrayList<>();
@@ -1024,53 +1023,10 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
         }
     }
 
+    @SuppressLint("NewApi")
     private void testDB2(){
-        if(dbUtilities == null) {
-            dbUtilities = new DatabaseUtilities(this);
-        }
-        dbUtilities.enableLogging();
-	    dbUtilities.deleteEntireDB(true, false);
-	    final TypeToken TYPE_MAP_STRING_STRING = new TypeToken<Map<String, String>>() {};
-        final String MAP_STRING_CUSTOM_SUFFIX = "-custom1";
-        L.m("TEST DB2 HERE");
-        dbUtilities.printOutDatabase();
-        Map<String, String> itemOne = new HashMap<>();
-        itemOne.put("this is a diff object", "neato!");
-        itemOne.put("stuff", "can go here and whatnot");
-        itemOne.put("age", "11123123123123 (old)");
-        dbUtilities.persistObject(TYPE_MAP_STRING_STRING, itemOne);
-        dbUtilities.persistObjectCustom(TYPE_MAP_STRING_STRING, itemOne, MAP_STRING_CUSTOM_SUFFIX);
-        SamplePojo samplePojo = new SamplePojo();
-        samplePojo.setAge(2);
-        samplePojo.setGender("panstuffffff");
-        samplePojo.setId(123123);
-        samplePojo.setName("name");
-        samplePojo.setStrs(Arrays.asList("test1", "test2", "test3", "okiedokie"));
-        samplePojo.setFauxEnums(Arrays.asList(SamplePojo.MyFauxTestEnum.One,
-                SamplePojo.MyFauxTestEnum.Two, SamplePojo.MyFauxTestEnum.Three));
-        dbUtilities.persistObject(SamplePojo.class, samplePojo);
-        dbUtilities.persistObjectCustom(SamplePojo.class, samplePojo, MAP_STRING_CUSTOM_SUFFIX);
-	
-        L.m("Finished all writes, printing out entire DB");
-		dbUtilities.printOutDatabase();
-        boolean dePersisted = dbUtilities.dePersistObject(SamplePojo.class);
-        L.m("Successfully de-persisted one object? (Non-Custom) == " + dePersisted);
-        boolean dePersisted2 = dbUtilities.dePersistObjectCustom(SamplePojo.class, MAP_STRING_CUSTOM_SUFFIX);
-        L.m("Successfully de-persisted one object? (Custom) == " + dePersisted2);
-	    L.m("Printing entire db after delete of 2 items: " );
-	    dbUtilities.printOutDatabase();
-	    dbUtilities.persistObject(SamplePojo.class, samplePojo);
-	    dbUtilities.persistObjectCustom(SamplePojo.class, samplePojo, MAP_STRING_CUSTOM_SUFFIX);
-	
-	    L.m("Calling delete all on entire DB");
-	    dbUtilities.deleteEntireDB(true, false);
-	    L.m("finished delete all, printing out DB");
-	    dbUtilities.printOutDatabase();
-
-//	    L.m("Adding one new item, then printing:");
-//	    dbUtilities.persistObject(SamplePojo.class, samplePojo);
-//	    dbUtilities.printOutDatabase();
-//	    dbUtilities.deleteEntireDB(true, false);
+        Intent intent = new Intent(MyTestActivity.this, SampleDBClass.class);
+        startActivity(intent);
     }
 
     private void testWeb2(@Nullable String url){

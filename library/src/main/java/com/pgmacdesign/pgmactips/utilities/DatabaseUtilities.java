@@ -3,6 +3,8 @@ package com.pgmacdesign.pgmactips.utilities;
 import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
+import android.provider.ContactsContract;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -76,12 +78,20 @@ public class DatabaseUtilities {
 			"delete failed";
 	private static final String DELETING_ENTIRE_DB =
 			"Deleting entire database!";
+	private static final String DB_EMPTY_UNABLE_TO_MOVE =
+			"DB Empty, unable to transfer to encrypted.";
+	private static final String ALREADY_CONTAINS_ENCRYPTED_VALUES_BAIL =
+			"Database already contains 1 or more encrypted values, unable to bulk transfer.";
+	private static final String ENCRYPTION_NOT_ENABLED_UNABLE_TO_MOVE =
+			"Encryption is not enabled in the instance you passed. You must initialize a DatabaseUtilities object with a constructor that has a password and salt in order to perform this action.";
 	private static final String NO_PRIMARY_KEY_1 =
 			"A RealmObject with no PrimaryKey cannot be updated. Does ";
 	private static final String NO_PRIMARY_KEY_2 =
 			"have a @PrimaryKey designation over a variable?";
 	private static final String IO_EXCEPTION_STRING =
 			"IOException. Error reading IS";
+	private static final String COULD_NOT_ENCRYPT_STRING_OF_TYPE =
+			"Could not encrypt String of type: ";
 	private static final String QUERY_IS_NULL_CANNOT_DELETE =
 			"Query is null, returning false and unable to complete transaction";
 	private static final String CLASS_PASSED_WAS_NULL =
@@ -201,9 +211,12 @@ public class DatabaseUtilities {
 	
 	/**
 	 * Constructor
+	 * This constructor requires API level {@link Build.VERSION_CODES#KITKAT}
+	 * as it uses Encryption logic that is only available on 19 or higher
 	 *
 	 * @param context Context. Cannot be null
 	 */
+	@RequiresApi(value = Build.VERSION_CODES.KITKAT)
 	@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Realm,
 			CustomAnnotationsBase.Dependencies.GSON})
 	public DatabaseUtilities(@NonNull Context context, @NonNull String password, @NonNull String salt) {
@@ -229,7 +242,10 @@ public class DatabaseUtilities {
 	/**
 	 * Constructor. For more explanation of the input params, see:
 	 * {@link DatabaseUtilities#buildRealmConfig(Context, String, Integer, Boolean)}
+	 * This constructor requires API level {@link Build.VERSION_CODES#KITKAT}
+	 * as it uses Encryption logic that is only available on 19 or higher
 	 */
+	@RequiresApi(value = Build.VERSION_CODES.KITKAT)
 	@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Realm,
 			CustomAnnotationsBase.Dependencies.GSON})
 	public DatabaseUtilities(@NonNull Context context, @Nullable String dbName,
@@ -256,12 +272,15 @@ public class DatabaseUtilities {
 	
 	/**
 	 * Constructor using a realm configuration
+	 * This constructor requires API level {@link Build.VERSION_CODES#KITKAT}
+	 * as it uses Encryption logic that is only available on 19 or higher
 	 *
 	 * @param context            Context
 	 * @param realmConfiguration {@link RealmConfiguration} If this is left as null, it will
 	 *                           build the default version with hard coded info listed here in
 	 *                           this class.
 	 */
+	@RequiresApi(value = Build.VERSION_CODES.KITKAT)
 	@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Realm,
 			CustomAnnotationsBase.Dependencies.GSON})
 	public DatabaseUtilities(@NonNull Context context, RealmConfiguration realmConfiguration, @NonNull String password, @NonNull String salt) {
@@ -295,6 +314,14 @@ public class DatabaseUtilities {
 		Realm.init(context);
 	}
 	
+	/**
+	 * Quick method to release memory and close out any open realm instances
+	 */
+	public void clearInstance(){
+		this.closeRealm(DatabaseUtilities.queryRealm);
+		this.context = null;
+	}
+	
 	//endregion
 	
 	//region Insert and Update Methods
@@ -310,7 +337,7 @@ public class DatabaseUtilities {
 	 * @param <T>            T extends {@link RealmObject}
 	 * @return Boolean. True if the insert succeeded, false if it did not
 	 */
-	public <T extends RealmObject> boolean executeInsertIntoDB(final T objectToWrite,
+	public synchronized <T extends RealmObject> boolean executeInsertIntoDB(final T objectToWrite,
 	                                                           final Boolean appendToObject) {
 		if (objectToWrite == null) {
 			return false;
@@ -358,7 +385,7 @@ public class DatabaseUtilities {
 	 *                       to true, else, set it to false for an overwrite.
 	 * @return Boolean. True if the insert succeeded, false if it did not
 	 */
-	public boolean executeInsertIntoDB(@NonNull final Class myClass,
+	public synchronized boolean executeInsertIntoDB(@NonNull final Class myClass,
 	                                   final String jsonString,
 	                                   final Boolean appendToObject) {
 		if (jsonString == null || myClass == null) {
@@ -404,7 +431,7 @@ public class DatabaseUtilities {
 	 *                       to true, else, set it to false for an overwrite.
 	 * @return Boolean. True if the insert succeeded, false if it did not
 	 */
-	public boolean executeInsertIntoDB(@NonNull final Class myClass,
+	public synchronized boolean executeInsertIntoDB(@NonNull final Class myClass,
 	                                   final InputStream is,
 	                                   final Boolean appendToObject) {
 		if (is == null || myClass == null) {
@@ -465,7 +492,7 @@ public class DatabaseUtilities {
 	 *                       to true, else, set it to false for an overwrite.
 	 * @return Boolean. True if the insert succeeded, false if it did not
 	 */
-	public boolean executeInsertIntoDB(@NonNull final Class myClass,
+	public synchronized boolean executeInsertIntoDB(@NonNull final Class myClass,
 	                                   final JSONObject jsonObject,
 	                                   final Boolean appendToObject) {
 		if (jsonObject == null || myClass == null) {
@@ -520,14 +547,14 @@ public class DatabaseUtilities {
 	 *                that class name
 	 * @return Return a boolean, true if suceeded, false if not
 	 */
-	public boolean persistObject(@NonNull final Class myClass, final Object obj) {
+	public synchronized boolean persistObject(@NonNull final Class myClass, final Object obj) {
 		return (executeInsertIntoDBMaster(myClass, obj));
 	}
 	
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	public boolean persistObject(@NonNull final TypeToken myClass, final Object obj) {
+	public synchronized boolean persistObject(@NonNull final TypeToken myClass, final Object obj) {
 		return (executeInsertIntoDBMaster(myClass, obj));
 	}
 	
@@ -540,7 +567,7 @@ public class DatabaseUtilities {
 	 *                Note, passing null will delete it from the Table.
 	 * @return Boolean, true if it succeeded, false if it did not
 	 */
-	private boolean executeInsertIntoDBMaster(@NonNull final Class myClass,
+	private synchronized boolean executeInsertIntoDBMaster(@NonNull final Class myClass,
 	                                          final Object obj) {
 		
 		if (myClass == null) {
@@ -585,6 +612,8 @@ public class DatabaseUtilities {
 				} catch (Exception e) {
 					mdo.setJsonString(jsonString);
 				}
+			} else {
+				mdo.setJsonString(jsonString);
 			}
 		} else {
 			mdo.setJsonString(jsonString);
@@ -619,7 +648,7 @@ public class DatabaseUtilities {
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	private boolean executeInsertIntoDBMaster(@NonNull final TypeToken myClass,
+	private synchronized boolean executeInsertIntoDBMaster(@NonNull final TypeToken myClass,
 	                                          final Object obj) {
 		
 		if (myClass == null) {
@@ -664,6 +693,8 @@ public class DatabaseUtilities {
 				} catch (Exception e) {
 					mdo.setJsonString(jsonString);
 				}
+			} else {
+				mdo.setJsonString(jsonString);
 			}
 		} else {
 			mdo.setJsonString(jsonString);
@@ -709,7 +740,7 @@ public class DatabaseUtilities {
 	 *                     suffix. Use that same suffix again to delete it from the db.
 	 * @return Boolean, true if it succeeded, false if it did not
 	 */
-	public boolean persistObjectCustom(@NonNull final Class myClass,
+	public synchronized boolean persistObjectCustom(@NonNull final Class myClass,
 	                                   final Object obj,
 	                                   final String customSuffix) {
 		
@@ -760,6 +791,8 @@ public class DatabaseUtilities {
 				} catch (Exception e) {
 					mdo.setJsonString(jsonString);
 				}
+			} else {
+				mdo.setJsonString(jsonString);
 			}
 		} else {
 			mdo.setJsonString(jsonString);
@@ -794,7 +827,7 @@ public class DatabaseUtilities {
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	public boolean persistObjectCustom(@NonNull final TypeToken myClass,
+	public synchronized boolean persistObjectCustom(@NonNull final TypeToken myClass,
 	                                   final Object obj,
 	                                   final String customSuffix) {
 		if (myClass == null) {
@@ -845,6 +878,8 @@ public class DatabaseUtilities {
 				} catch (Exception e) {
 					mdo.setJsonString(jsonString);
 				}
+			} else {
+				mdo.setJsonString(jsonString);
 			}
 		} else {
 			mdo.setJsonString(jsonString);
@@ -886,26 +921,26 @@ public class DatabaseUtilities {
 	 *                key to find the item / row.
 	 * @return Boolean, true if it succeeded, false if it did not
 	 */
-	public boolean dePersistObject(@NonNull final Class myClass) {
+	public synchronized boolean dePersistObject(@NonNull final Class myClass) {
 		return this.deleteFromMasterDB(myClass);
 	}
 	
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	public boolean dePersistObject(@NonNull final TypeToken myClass) {
+	public synchronized boolean dePersistObject(@NonNull final TypeToken myClass) {
 		return this.deleteFromMasterDB(myClass);
 	}
 	
 	//Overloaded for naming simplicity since I forget what things are called all the time!
-	public boolean deletePersistedObject(@NonNull final Class myClass) {
+	public synchronized boolean deletePersistedObject(@NonNull final Class myClass) {
 		return this.deleteFromMasterDB(myClass);
 	}
 	
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	public boolean deletePersistedObject(@NonNull final TypeToken myClass) {
+	public synchronized boolean deletePersistedObject(@NonNull final TypeToken myClass) {
 		return this.deleteFromMasterDB(myClass);
 	}
 	
@@ -923,14 +958,14 @@ public class DatabaseUtilities {
 	 *                     suffix. Use that same suffix again to delete it from the db.
 	 * @return Boolean, true if it succeeded, false if it did not
 	 */
-	public boolean dePersistObjectCustom(@NonNull final Class myClass, final String customSuffix) {
+	public synchronized boolean dePersistObjectCustom(@NonNull final Class myClass, final String customSuffix) {
 		return this.deleteFromMasterDB(myClass, customSuffix);
 	}
 	
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	public boolean dePersistObjectCustom(@NonNull final TypeToken myClass, final String customSuffix) {
+	public synchronized boolean dePersistObjectCustom(@NonNull final TypeToken myClass, final String customSuffix) {
 		return this.deleteFromMasterDB(myClass, customSuffix);
 	}
 	
@@ -949,14 +984,14 @@ public class DatabaseUtilities {
 	 *                     suffix. Use that same suffix again to delete it from the db.
 	 * @return Boolean, true if it succeeded, false if it did not
 	 */
-	public boolean deletePersistedObjectCustom(@NonNull final Class myClass, final String customSuffix) {
+	public synchronized boolean deletePersistedObjectCustom(@NonNull final Class myClass, final String customSuffix) {
 		return this.deleteFromMasterDB(myClass, customSuffix);
 	}
 	
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	public boolean deletePersistedObjectCustom(@NonNull final TypeToken myClass, final String customSuffix) {
+	public synchronized boolean deletePersistedObjectCustom(@NonNull final TypeToken myClass, final String customSuffix) {
 		return this.deleteFromMasterDB(myClass, customSuffix);
 	}
 	
@@ -967,14 +1002,14 @@ public class DatabaseUtilities {
 	 *                key to find the item / row.
 	 * @return Boolean, true if it succeeded, false if it did not
 	 */
-	private boolean deleteFromMasterDB(@NonNull final Class myClass) {
+	private synchronized boolean deleteFromMasterDB(@NonNull final Class myClass) {
 		return this.deleteFromMasterDB(myClass, null);
 	}
 	
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	private boolean deleteFromMasterDB(@NonNull final TypeToken myClass) {
+	private synchronized boolean deleteFromMasterDB(@NonNull final TypeToken myClass) {
 		return this.deleteFromMasterDB(myClass, null);
 	}
 	
@@ -994,7 +1029,7 @@ public class DatabaseUtilities {
 	 * @param <T>          T extends RealmObject
 	 * @return Boolean, true if it succeeded, false if it did not
 	 */
-	private <T extends RealmObject> boolean deleteFromMasterDB(@NonNull final Class myClass,
+	private synchronized <T extends RealmObject> boolean deleteFromMasterDB(@NonNull final Class myClass,
 	                                                           final String customSuffix) {
 		return this.deleteFromMasterDBOverride(myClass, customSuffix, false);
 	}
@@ -1014,7 +1049,7 @@ public class DatabaseUtilities {
 	 * @param <T>          T extends RealmObject
 	 * @return Boolean, true if it succeeded, false if it did not
 	 */
-	private <T extends RealmObject> boolean deleteFromMasterDBOverride(@NonNull final Class myClass,
+	private synchronized <T extends RealmObject> boolean deleteFromMasterDBOverride(@NonNull final Class myClass,
 	                                                           final String customSuffix,
 	                                                           boolean overrideCheck) {
 		if (myClass == null) {
@@ -1125,7 +1160,7 @@ public class DatabaseUtilities {
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	private <T extends RealmObject> boolean deleteFromMasterDB(@NonNull final TypeToken myClass,
+	private synchronized <T extends RealmObject> boolean deleteFromMasterDB(@NonNull final TypeToken myClass,
 	                                                           final String customSuffix) {
 		return deleteFromMasterDBOverride(myClass, customSuffix, false);
 	}
@@ -1133,7 +1168,7 @@ public class DatabaseUtilities {
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	private <T extends RealmObject> boolean deleteFromMasterDBOverride(@NonNull final TypeToken myClass,
+	private synchronized <T extends RealmObject> boolean deleteFromMasterDBOverride(@NonNull final TypeToken myClass,
 	                                                           final String customSuffix,
 	                                                           boolean overrideCheck) {
 		
@@ -1251,7 +1286,7 @@ public class DatabaseUtilities {
 	 * @param areYouNotSure Pass false to confirm wipe
 	 * @return Boolean of success or not
 	 */
-	public <T extends  RealmObject>  boolean deleteEntireDB(boolean areYouSure, boolean areYouNotSure) {
+	public synchronized <T extends  RealmObject>  boolean deleteEntireDB(boolean areYouSure, boolean areYouNotSure) {
 		if (!areYouSure) {
 			return false;
 		}
@@ -1305,7 +1340,7 @@ public class DatabaseUtilities {
 	 * @param <T>           T extends RealmObject
 	 * @return Returns a boolean, true if deletes succeeded, false if they did not
 	 */
-	public <T extends RealmObject> boolean deleteAllPersistedObjects(boolean areYouSure,
+	public synchronized <T extends RealmObject> boolean deleteAllPersistedObjects(boolean areYouSure,
 	                                                                 boolean areYouNotSure) {
 		
 		if (!areYouSure) {
@@ -1354,7 +1389,7 @@ public class DatabaseUtilities {
 	 * @param <T>     T extends RealmObject
 	 * @return return a boolean, true if it succeeded, false if it did not
 	 */
-	public <T extends RealmObject> boolean executeDeleteFromDB(RealmQuery query,
+	public synchronized <T extends RealmObject> boolean executeDeleteFromDB(RealmQuery query,
 	                                                           @NonNull final Class myClass) {
 		if (myClass == null) {
 			return false;
@@ -1392,7 +1427,7 @@ public class DatabaseUtilities {
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	public <T extends RealmObject> boolean executeDeleteFromDB(RealmQuery query,
+	public synchronized <T extends RealmObject> boolean executeDeleteFromDB(RealmQuery query,
 	                                                           @NonNull final TypeToken myClass) {
 		if (myClass == null) {
 			return false;
@@ -1430,7 +1465,6 @@ public class DatabaseUtilities {
 	//endregion
 	
 	//region Query Methods
-	// TODO: 2019-11-05 update query methods with encryption logic
 	
 	/**
 	 * Query the master table in the database
@@ -1438,14 +1472,14 @@ public class DatabaseUtilities {
 	 * @param myClass Class (row / id) to query
 	 * @return returns an Object that was pulled from the DB. If nothing found, it will return null.
 	 */
-	public Object getPersistedObject(@NonNull Class myClass) {
+	public synchronized Object getPersistedObject(@NonNull Class myClass) {
 		return this.queryDatabaseMasterSingle(myClass);
 	}
 	
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	public Object getPersistedObject(@NonNull TypeToken myClass) {
+	public synchronized Object getPersistedObject(@NonNull TypeToken myClass) {
 		return this.queryDatabaseMasterSingle(myClass);
 	}
 	
@@ -1464,7 +1498,7 @@ public class DatabaseUtilities {
 	 * model as per matching the class passed in. An example would be:
 	 * {"age":30,"gender":"M","id":0,"name":"Patrick"}
 	 **/
-	public Map<String, String> getAllPersistedObjects() {
+	public synchronized Map<String, String> getAllPersistedObjects() {
 		List<MasterDatabaseObject> masterDatabaseObjects = this.queryDatabaseMasterAll();
 		if (MiscUtilities.isListNullOrEmpty(masterDatabaseObjects)) {
 			return new HashMap<>();
@@ -1472,8 +1506,7 @@ public class DatabaseUtilities {
 		Map<String, String> myMap = new HashMap<>();
 		for (MasterDatabaseObject mdo : masterDatabaseObjects) {
 			String id = mdo.getId();
-			// TODO: 2019-11-05 add cleanMDOString
-			String json = mdo.getJsonString();
+			String json = DatabaseUtilities.this.cleanMDOString(mdo.getJsonString());
 			if (id != null && json != null) {
 				myMap.put(id, json);
 			}
@@ -1489,7 +1522,7 @@ public class DatabaseUtilities {
 	 *                     space (more rows) for persisted objects.
 	 * @return returns an Object that was pulled from the DB. If nothing found, it will return null.
 	 */
-	public Object getPersistedObjectCustom(@NonNull final Class myClass,
+	public synchronized Object getPersistedObjectCustom(@NonNull final Class myClass,
 	                                       final String customSuffix) {
 		return this.queryDatabaseMasterSingle(myClass, customSuffix);
 	}
@@ -1497,7 +1530,7 @@ public class DatabaseUtilities {
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	public Object getPersistedObjectCustom(@NonNull final TypeToken myClass,
+	public synchronized Object getPersistedObjectCustom(@NonNull final TypeToken myClass,
 	                                       final String customSuffix) {
 		return this.queryDatabaseMasterSingle(myClass, customSuffix);
 	}
@@ -1508,7 +1541,7 @@ public class DatabaseUtilities {
 	 * @param myClass Class (row / id) to query
 	 * @return returns an Object that was pulled from the DB. If nothing found, it will return null.
 	 */
-	private Object queryDatabaseMasterSingle(@NonNull final Class myClass) {
+	private synchronized Object queryDatabaseMasterSingle(@NonNull final Class myClass) {
 		
 		return this.queryDatabaseMasterSingle(myClass, null);
 	}
@@ -1516,7 +1549,7 @@ public class DatabaseUtilities {
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	private Object queryDatabaseMasterSingle(@NonNull final TypeToken myClass) {
+	private synchronized Object queryDatabaseMasterSingle(@NonNull final TypeToken myClass) {
 		return this.queryDatabaseMasterSingle(myClass, null);
 	}
 	
@@ -1528,7 +1561,7 @@ public class DatabaseUtilities {
 	 *                     space (more rows) for persisted objects.
 	 * @return returns an Object that was pulled from the DB. If nothing found, it will return null.
 	 */
-	private Object queryDatabaseMasterSingle(@NonNull final Class myClass,
+	private synchronized Object queryDatabaseMasterSingle(@NonNull final Class myClass,
 	                                         final String customSuffix) {
 		
 		String className = myClass.getName();
@@ -1557,7 +1590,8 @@ public class DatabaseUtilities {
 		} else {
 			try {
 				String jsonString = pulledObject.getJsonString();
-				Object obj = new Gson().fromJson(jsonString, myClass);
+				String str = DatabaseUtilities.this.cleanMDOString(jsonString);
+				Object obj = new Gson().fromJson(str, myClass);
 				return obj;
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1570,7 +1604,7 @@ public class DatabaseUtilities {
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	private Object queryDatabaseMasterSingle(@NonNull final TypeToken myClass,
+	private synchronized Object queryDatabaseMasterSingle(@NonNull final TypeToken myClass,
 	                                         final String customSuffix) {
 		String className = myClass.getType().toString();
 		if (customSuffix != null) {
@@ -1598,7 +1632,8 @@ public class DatabaseUtilities {
 		} else {
 			try {
 				String jsonString = pulledObject.getJsonString();
-				Object obj = new Gson().fromJson(jsonString, myClass.getType());
+				String str = DatabaseUtilities.this.cleanMDOString(jsonString);
+				Object obj = new Gson().fromJson(str, myClass.getType());
 				return obj;
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1620,7 +1655,7 @@ public class DatabaseUtilities {
 	 * @return returns a list of Objects that was pulled from the DB. If nothing found,
 	 * it will return an initialized, but empty, list.
 	 */
-	private <T extends RealmModel> List<MasterDatabaseObject> queryDatabaseMasterAll() {
+	private synchronized <T extends RealmModel> List<MasterDatabaseObject> queryDatabaseMasterAll() {
 		final RealmQuery<MasterDatabaseObject> query;
 		try {
 			query = DatabaseUtilities.buildRealmQueryOnly(this.realmConfiguration).where(MasterDatabaseObject.class);
@@ -1663,7 +1698,7 @@ public class DatabaseUtilities {
 	 * @param <T>         T extends RealmModel (RealmResults)
 	 * @return An object from the database (one from that table)
 	 */
-	public <T extends RealmModel> Object queryDatabaseSingle(RealmQuery<T> passedQuery,
+	public synchronized <T extends RealmModel> Object queryDatabaseSingle(RealmQuery<T> passedQuery,
 	                                                         @NonNull Class myClass) {
 		
 		Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
@@ -1686,7 +1721,7 @@ public class DatabaseUtilities {
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	public <T extends RealmModel> Object queryDatabaseSingle(RealmQuery<T> passedQuery,
+	public synchronized <T extends RealmModel> Object queryDatabaseSingle(RealmQuery<T> passedQuery,
 	                                                         @NonNull TypeToken myClass) {
 		
 		Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
@@ -1716,7 +1751,7 @@ public class DatabaseUtilities {
 	 * @param <T>         T extends RealmModel (RealmResults)
 	 * @return An list of objects from the database (all in that table)
 	 */
-	public <T extends RealmModel> List<Object> queryDatabaseList(RealmQuery<T> passedQuery,
+	public synchronized <T extends RealmModel> List<Object> queryDatabaseList(RealmQuery<T> passedQuery,
 	                                                             @NonNull Class myClass) {
 		Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
 		if (passedQuery == null) {
@@ -1742,7 +1777,7 @@ public class DatabaseUtilities {
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	public <T extends RealmModel> List<Object> queryDatabaseList(RealmQuery<T> passedQuery,
+	public synchronized <T extends RealmModel> List<Object> queryDatabaseList(RealmQuery<T> passedQuery,
 	                                                             @NonNull TypeToken myClass) {
 		Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
 		if (passedQuery == null) {
@@ -1777,7 +1812,7 @@ public class DatabaseUtilities {
 	 * @param context Context
 	 * @return Realm object
 	 */
-	public static Realm buildRealm(Context context) {
+	public static synchronized Realm buildRealm(Context context) {
 		RealmConfiguration config = DatabaseUtilities.buildRealmConfig(context);
 		Realm realm = Realm.getInstance(config);
 		return realm;
@@ -1792,7 +1827,7 @@ public class DatabaseUtilities {
 	 * @param realmConfiguration {@link RealmConfiguration}
 	 * @return Realm object {@link Realm}
 	 */
-	public static Realm buildRealm(@NonNull RealmConfiguration realmConfiguration) {
+	public static synchronized Realm buildRealm(@NonNull RealmConfiguration realmConfiguration) {
 		Realm realm = null;
 		if (realmConfiguration != null) {
 			realm = Realm.getInstance(realmConfiguration);
@@ -1809,9 +1844,14 @@ public class DatabaseUtilities {
 	 * @param realmConfiguration {@link RealmConfiguration}
 	 * @return Realm object {@link Realm}
 	 */
-	private static Realm buildRealmQueryOnly(@NonNull RealmConfiguration realmConfiguration) {
+	private static synchronized Realm buildRealmQueryOnly(@NonNull RealmConfiguration realmConfiguration) {
 		if(DatabaseUtilities.queryRealm == null) {
 			queryRealm = Realm.getInstance(realmConfiguration);
+		}
+		if(DatabaseUtilities.queryRealm != null){
+			if(DatabaseUtilities.queryRealm.isClosed()){
+				DatabaseUtilities.queryRealm = Realm.getInstance(realmConfiguration);
+			}
 		}
 		return DatabaseUtilities.queryRealm;
 	}
@@ -1819,7 +1859,7 @@ public class DatabaseUtilities {
 	/**
 	 * Clear the query realm active instance
 	 */
-	private static void clearRealmQueryInstance(){
+	private static synchronized void clearRealmQueryInstance(){
 		try {
 			if (DatabaseUtilities.queryRealm != null) {
 				DatabaseUtilities.queryRealm.close();
@@ -1838,7 +1878,7 @@ public class DatabaseUtilities {
 	 * @param context Context
 	 * @return RealmConfiguration object
 	 */
-	public static RealmConfiguration buildRealmConfig(Context context) {
+	public static synchronized RealmConfiguration buildRealmConfig(Context context) {
 		return (DatabaseUtilities.buildRealmConfig(context, null, null, null));
 	}
 	
@@ -1854,7 +1894,7 @@ public class DatabaseUtilities {
 	 *                       to manually take care of db updates/ concurrency issues.
 	 * @return
 	 */
-	public static RealmConfiguration buildRealmConfig(@NonNull Context context,
+	public static synchronized RealmConfiguration buildRealmConfig(@NonNull Context context,
 	                                                  @Nullable String dbName,
 	                                                  @Nullable Integer schemaVersion,
 	                                                  @Nullable Boolean deleteIfNeeded) {
@@ -1913,7 +1953,7 @@ public class DatabaseUtilities {
 	 *
 	 * @return
 	 */
-	public RealmConfiguration getRealmConfiguration() {
+	public synchronized RealmConfiguration getRealmConfiguration() {
 		try {
 			if (this.realmConfiguration == null) {
 				this.realmConfiguration = DatabaseUtilities.buildRealmConfig(
@@ -1934,7 +1974,7 @@ public class DatabaseUtilities {
 	 * Quick checker for whether encryption is enabled.
 	 * @return True if it is, false if it is not
 	 */
-	private boolean isEncryptionEnabled(){
+	private synchronized boolean isEncryptionEnabled(){
 		if(!this.isEncrypted){
 			return false;
 		}
@@ -1950,14 +1990,13 @@ public class DatabaseUtilities {
 		return true;
 	}
 	
-	
 	/**
 	 * Clean the String and return the decrypted String or the current one if it is already
 	 * decrypted or does not have it enabled.
 	 * @param jsonString String to decrypt or return
 	 * @return Clean String to use
 	 */
-	private String cleanMDOString(String jsonString){
+	private synchronized String cleanMDOString(String jsonString){
 		if(StringUtilities.isNullOrEmpty(jsonString)){
 			return jsonString;
 		}
@@ -1982,7 +2021,7 @@ public class DatabaseUtilities {
 	 * Simple method to close the realm instance
 	 * @param realm
 	 */
-	private void closeRealm(Realm realm){
+	private synchronized void closeRealm(Realm realm){
 		if(realm == null){
 			return;
 		}
@@ -2002,7 +2041,7 @@ public class DatabaseUtilities {
 	 * @param myClass
 	 * @return
 	 */
-	private RealmQuery buildRealmQuery(Realm realm, @NonNull Class myClass) {
+	private synchronized RealmQuery buildRealmQuery(Realm realm, @NonNull Class myClass) {
 		if (realm == null) {
 			return null;
 		}
@@ -2018,7 +2057,7 @@ public class DatabaseUtilities {
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	private RealmQuery buildRealmQuery(Realm realm, @NonNull TypeToken myClass) {
+	private synchronized RealmQuery buildRealmQuery(Realm realm, @NonNull TypeToken myClass) {
 		if (realm == null) {
 			return null;
 		}
@@ -2037,7 +2076,7 @@ public class DatabaseUtilities {
 	 * @param myClass
 	 * @return
 	 */
-	private static boolean isClassValid(@NonNull Class myClass) {
+	private static synchronized boolean isClassValid(@NonNull Class myClass) {
 		if (myClass == null) {
 			L.m(CLASS_PASSED_WAS_NULL);
 			return false;
@@ -2061,7 +2100,7 @@ public class DatabaseUtilities {
 	 * @param myClass Class Class object being used
 	 * @return boolean. False if it invalid and should be aborted, true if it is ok to write
 	 */
-	private static boolean isValidWrite(@NonNull Class myClass) {
+	private static synchronized boolean isValidWrite(@NonNull Class myClass) {
 		if (myClass == null) {
 			L.m(CLASS_PASSED_WAS_NULL);
 			return false;
@@ -2081,7 +2120,7 @@ public class DatabaseUtilities {
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	private static boolean isValidWrite(@NonNull TypeToken myClass) {
+	private static synchronized boolean isValidWrite(@NonNull TypeToken myClass) {
 		if (myClass == null) {
 			L.m(CLASS_PASSED_WAS_NULL);
 			return false;
@@ -2104,7 +2143,7 @@ public class DatabaseUtilities {
 	 * @param myClass Class Class object being used
 	 * @return boolean. False if it invalid and should be aborted, true if it is ok to write
 	 */
-	private static boolean isValidWrite(@NonNull Class myClass, String customSuffix) {
+	private static synchronized boolean isValidWrite(@NonNull Class myClass, String customSuffix) {
 		if (myClass == null) {
 			L.m(CLASS_PASSED_WAS_NULL);
 			return false;
@@ -2127,7 +2166,7 @@ public class DatabaseUtilities {
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	private static boolean isValidWrite(@NonNull TypeToken myClass, String customSuffix) {
+	private static synchronized boolean isValidWrite(@NonNull TypeToken myClass, String customSuffix) {
 		if (myClass == null) {
 			L.m(CLASS_PASSED_WAS_NULL);
 			return false;
@@ -2152,10 +2191,36 @@ public class DatabaseUtilities {
 	//region Public Misc Utilities
 	
 	/**
+	 * Checks if the values in the DB are already encrypted
+	 * @return
+	 */
+	public synchronized boolean areDBValuesEncrypted(){
+		List<MasterDatabaseObject> masterDatabaseObjects = this.queryDatabaseMasterAll();
+		if(MiscUtilities.isListNullOrEmpty(masterDatabaseObjects)){
+			return false;
+		}
+		boolean isAlreadyEncrypted = false;
+		for(MasterDatabaseObject mdo : masterDatabaseObjects){
+			if(mdo == null){
+				continue;
+			}
+			if(StringUtilities.isNullOrEmpty(mdo.getJsonString())){
+				continue;
+			}
+			String str = mdo.getJsonString();
+			if(EncryptionUtilities.isHexString(str)){
+				isAlreadyEncrypted = true;
+				break;
+			}
+		}
+		return isAlreadyEncrypted;
+	}
+	
+	/**
 	 * In case you want to know the name of your db file, this will print the
 	 * file name in the logcat
 	 */
-	public void printDatabaseName() {
+	public synchronized void printDatabaseName() {
 		Realm realm;
 		if (realmConfiguration != null) {
 			realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
@@ -2175,7 +2240,7 @@ public class DatabaseUtilities {
 	 *
 	 * @return
 	 */
-	public Set<Class<? extends RealmModel>> getDBTableTypes() {
+	public synchronized Set<Class<? extends RealmModel>> getDBTableTypes() {
 		try {
 			if (this.realmConfiguration == null) {
 				this.realmConfiguration = DatabaseUtilities
@@ -2197,7 +2262,7 @@ public class DatabaseUtilities {
 	 * @param dbName The name of the database. NOTE! MUST INCLUDE THE EXTENSION! (IE 'myDB.db')
 	 * @return boolean, true if it succeeded, false if it did not
 	 */
-	public static boolean copyDBToDownloadDirectory(Context context, String dbName) {
+	public static synchronized boolean copyDBToDownloadDirectory(Context context, String dbName) {
 		File file = null;
 		String packageName = SystemUtilities.getPackageName();
 		try {
@@ -2251,13 +2316,135 @@ public class DatabaseUtilities {
 	}
 	
 	/**
+	 * Move the database from a non-encrypted version to an encrypted version.
+	 * Some important notes: If any or all of the values are already
+	 * encrypted, it will not complete the transfer so as to prevent values from
+	 * being encrypted twice and therefore become unreadable.
+	 *
+	 * @param dbUtils
+	 * @return
+	 */
+	@RequiresApi(value = Build.VERSION_CODES.KITKAT)
+	public static synchronized boolean moveDBToEncryptedVersion(@NonNull DatabaseUtilities dbUtils){
+		if(dbUtils == null){
+			return false;
+		}
+		if(!dbUtils.isEncryptionEnabled()){
+			L.m(ENCRYPTION_NOT_ENABLED_UNABLE_TO_MOVE);
+			return false;
+		}
+		List<MasterDatabaseObject> masterDatabaseObjects = dbUtils.queryDatabaseMasterAll();
+		if(MiscUtilities.isListNullOrEmpty(masterDatabaseObjects)){
+			L.m(DB_EMPTY_UNABLE_TO_MOVE);
+			return false;
+		}
+		boolean isAlreadyEncrypted = false;
+		for(MasterDatabaseObject mdo : masterDatabaseObjects){
+			if(mdo == null){
+				continue;
+			}
+			if(StringUtilities.isNullOrEmpty(mdo.getJsonString())){
+				continue;
+			}
+			String str = mdo.getJsonString();
+			if(EncryptionUtilities.isHexString(str)){
+				isAlreadyEncrypted = true;
+				break;
+			}
+		}
+		if(isAlreadyEncrypted){
+			L.m(ALREADY_CONTAINS_ENCRYPTED_VALUES_BAIL);
+			return false;
+		}
+		List<MasterDatabaseObject> toWrite = new ArrayList<>();
+		for(MasterDatabaseObject mdo : masterDatabaseObjects){
+			if(mdo == null){
+				continue;
+			}
+			if(StringUtilities.isNullOrEmpty(mdo.getId())){
+				continue;
+			}
+			String str = mdo.getJsonString();
+			if(StringUtilities.isNullOrEmpty(str)){
+				continue;
+			}
+			MasterDatabaseObject mdo1 = new MasterDatabaseObject();
+			mdo1.setId(mdo.getId());
+			String sstr = null;
+			try {
+				sstr = EncryptionUtilities.encryptString(str, dbUtils.password, dbUtils.salt);
+			} catch (Exception e){}
+			if(StringUtilities.isNullOrEmpty(sstr)){
+				L.m(COULD_NOT_ENCRYPT_STRING_OF_TYPE + mdo.getId());
+				continue;
+			}
+			mdo1.setJsonString(sstr);
+			toWrite.add(mdo1);
+		}
+		if(MiscUtilities.isListNullOrEmpty(toWrite)){
+			return false;
+		}
+		Realm realm = DatabaseUtilities.buildRealm(dbUtils.realmConfiguration);
+		try {
+			realm.executeTransaction(new Realm.Transaction() {
+				@Override
+				public void execute(Realm realm) {
+					realm.delete(MasterDatabaseObject.class);
+				}
+			});
+		} catch (IllegalArgumentException e1) {
+			if(dbUtils.loggingEnabled){
+				e1.printStackTrace();
+			}
+		} catch (Exception e) {
+			if(dbUtils.loggingEnabled){
+				e.printStackTrace();
+			}
+		}
+		for(final MasterDatabaseObject mdoFinal : toWrite){
+			try {
+				realm.executeTransaction(new Realm.Transaction() {
+					@Override
+					public void execute(Realm realm) {
+						realm.copyToRealmOrUpdate(mdoFinal);
+					}
+				});
+			} catch (IllegalArgumentException e1) {
+				if(dbUtils.loggingEnabled){
+					e1.printStackTrace();
+				}
+			} catch (Exception e) {
+				if(dbUtils.loggingEnabled){
+					e.printStackTrace();
+				}
+			}
+		}
+		dbUtils.closeRealm(realm);
+		return true;
+	}
+	
+	/**
 	 * Prints out the database in the logcat. Useful for checking what is happening
 	 * if you are receiving weird results.
 	 *
-	 * @param <T>
 	 */
-	public <T extends RealmObject> void printOutDatabase() {
+	public synchronized void printOutDatabase() {
+		printOutDatabase(false);
+	}
+	
+	/**
+	 * Prints out the database in the logcat. Useful for checking what is happening
+	 * if you are receiving weird results.
+	 *
+	 * @param decryptEncryptedValuesForPrint If true, will decrypt and print the encrypted
+	 *                                       values in the DB, else, will not decrypt them
+	 *                                       and will instead print the encrypted string.
+	 */
+	public synchronized void printOutDatabase(final boolean decryptEncryptedValuesForPrint) {
 		L.m("Begin Printout of full Database\n");
+		if(decryptEncryptedValuesForPrint){
+			L.m("Note! Decrypting and printing encrypted values");
+		}
 		Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
 		//final RealmQuery query = RealmQuery.createQuery(realm, MasterDatabaseObject.class); //Old version, 3.0.0
 		final RealmQuery<MasterDatabaseObject> query;
@@ -2283,9 +2470,14 @@ public class DatabaseUtilities {
 				}
 				for (MasterDatabaseObject mdo : results) {
 					if (mdo != null) {
-						// TODO: 2019-11-05 add cleanMDOString
+						String str;
+						if(decryptEncryptedValuesForPrint){
+							str = DatabaseUtilities.this.cleanMDOString(mdo.getJsonString());
+						} else {
+							str = mdo.getJsonString();
+						}
 						L.m("Object: " + mdo.getId() + ", JSON == "
-								+ mdo.getJsonString() + "\n");
+								+ str + "\n");
 					}
 				}
 			}
@@ -2295,7 +2487,6 @@ public class DatabaseUtilities {
 	}
 	
 	//endregion
-
 	
 	//region Public Misc Methods
 	
