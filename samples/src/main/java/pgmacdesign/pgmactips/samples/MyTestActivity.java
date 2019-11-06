@@ -248,7 +248,6 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
 	 */
 	private void sortAndPrintLists(){
 	    List<SamplePojo> lst = new ArrayList<>();
-	
 	    SamplePojo s1 = new SamplePojo();
 	    s1.setAge(4);
 	    s1.setGender("MALE");
