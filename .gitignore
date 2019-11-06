@@ -55,3 +55,6 @@ Thumbs.db
 .idea/tasks.xml
 .idea/datasources.xml
 .idea/dataSources.ids
+
+# Misc
+java_pid12300.hprof
