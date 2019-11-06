@@ -13,7 +13,7 @@ Version 1.2.0 *(2019-11-06)*
 * New: Brand New functionality added to the [DatabaseUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/DatabaseUtilities.java) class; added in support for encrypted values.
 * Update: More updates in the [DatabaseUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/DatabaseUtilities.java) to allow a transfer of the data to encrypted as well as printing both encrypted and decrypted values.
 * Update: Updated the Realm dependency from `4.2.0` to the most current (as of now) version, `6.0.0`. 
-* Update: Update the sample classes ([Java](https://github.com/PGMacDesign/PGMacTips/blob/master/samples/src/main/java/pgmacdesign/pgmactips/samples/activitysamples/SampleDBClass.java) / [Kotlin](https://github.com/PGMacDesign/PGMacTips/blob/master/samples/src/main/java/pgmacdesign/pgmactips/samples/activitysamples/SampleDBClassKotlin.kt)) to demonstrate how to use the new encryption logic for the DB as well as migrate unencrypted to encrypted.
+* Update: Update the sample classes ([Java](https://github.com/PGMacDesign/PGMacTips/blob/master/samples/src/main/java/pgmacdesign/pgmactips/samples/activitysamples/SampleDBClass.java) / [Kotlin](https://github.com/PGMacDesign/PGMacTips/blob/master/samples/src/main/java/pgmacdesign/pgmactips/samples/activitysamples/SampleDBClassKotlin.kt)) to demonstrate how to use the new encryption logic for the DB as well as migrate unencrypted to encrypted. (Remember that different Salt + Password combos will change encryption / decryption logic)
 
 Version 1.1.2 *(2019-11-05)*
 ----------------------------
