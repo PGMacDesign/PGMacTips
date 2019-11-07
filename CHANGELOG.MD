@@ -5,7 +5,7 @@ Change Log
 Version 1.2.1 *(TBD)*
 ----------------------------
 
-* Update: Added in new code to the [TempString](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/misc/TempString.java) class to allow for overloaded constructors. 
+* 
 
 Version 1.2.0 *(2019-11-06)*
 ----------------------------

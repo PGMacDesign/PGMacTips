@@ -22,11 +22,11 @@ public final class ExpirationDateObject implements TempStringInterface{
     private transient TempString expirationYearMonth;
 
     public ExpirationDateObject() {
-        this.expirationYearMonth = new TempString(null);
+        this.expirationYearMonth = new TempString("");
     }
 
     public ExpirationDateObject(final Date date) {
-        this.expirationYearMonth = new TempString(null);
+        this.expirationYearMonth = new TempString("");
         if (date != null) {
             Calendar cal = Calendar.getInstance();
             cal.setTime(date);

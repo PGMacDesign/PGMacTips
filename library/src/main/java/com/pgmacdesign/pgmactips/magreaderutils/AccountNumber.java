@@ -29,8 +29,8 @@ public class AccountNumber extends BaseTempData implements TempStringInterface {
 
     public AccountNumber(String rawAccountNumber) {
         super(rawAccountNumber);
-        accountNumber = new TempString(null);
-        lastFourDigits = new TempString(null);
+        accountNumber = new TempString("");
+        lastFourDigits = new TempString("");
         accountInfo = null;
         if(isNullOrEmpty(rawAccountNumber)){
             return;
