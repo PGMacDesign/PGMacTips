@@ -1,7 +1,9 @@
 package com.pgmacdesign.pgmactips.misc;
 
+import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 import static com.pgmacdesign.pgmactips.utilities.StringUtilities.isNullOrEmpty;
@@ -12,15 +14,75 @@ import static com.pgmacdesign.pgmactips.utilities.StringUtilities.isNullOrEmpty;
  * Created by pmacdowell on 2017-08-03.
  */
 public class TempString implements CharSequence{
-
+	
+	/**
+	 * The Temp String core component
+	 */
     private transient final char[] tempStringData;
-
-    public TempString(String tempStringData) {
+	
+	/**
+	 * Constructor with a String
+	 * @param tempStringData
+	 */
+	public TempString(String tempStringData) {
         if (tempStringData != null) {
             this.tempStringData = tempStringData.toCharArray();
         } else {
             this.tempStringData = new char[0];
         }
+    }
+	
+	/**
+	 * Overloaded constructor for a character array
+	 * @param tempStringData
+	 */
+	public TempString(char[] tempStringData) {
+        if (tempStringData != null) {
+            this.tempStringData = tempStringData;
+        } else {
+            this.tempStringData = new char[0];
+        }
+    }
+	
+	/**
+	 * Overloaded Constructor to allow for a byte array
+	 * @param tempStringData
+	 */
+	public TempString(byte[] tempStringData) {
+    	if(tempStringData == null){
+		    this.tempStringData = new char[0];
+    		return;
+	    }
+    	String str = null;
+    	try {
+		    str = new String(tempStringData, MiscUtilities.getUTF8());
+	    } catch (UnsupportedEncodingException uee){}
+    	if(StringUtilities.isNullOrEmpty(str)) {
+		    try {
+			    str = new String(tempStringData, MiscUtilities.getUTF16());
+		    } catch (UnsupportedEncodingException uee) {
+		    }
+	    }
+    	if(StringUtilities.isNullOrEmpty(str)) {
+		    try {
+			    str = new String(tempStringData, MiscUtilities.getASCII());
+		    } catch (UnsupportedEncodingException uee) {
+		    }
+	    }
+    	if(StringUtilities.isNullOrEmpty(str)){
+		    this.tempStringData = new char[0];
+	    } else {
+		    char[] charArray = str.toCharArray();
+		    if(charArray != null){
+		    	if(charArray.length <= 0){
+				    this.tempStringData = new char[0];
+			    } else {
+				    this.tempStringData = charArray;
+			    }
+		    } else {
+			    this.tempStringData = new char[0];
+		    }
+	    }
     }
 
     /**
@@ -61,8 +123,12 @@ public class TempString implements CharSequence{
                 (char) 0
         );
     }
-
-    public String getTempStringData() {
+	
+	/**
+	 * Get the actual data
+	 * @return
+	 */
+	public String getTempStringData() {
         if (thereIsData()) {
             return new String(tempStringData);
         } else {
