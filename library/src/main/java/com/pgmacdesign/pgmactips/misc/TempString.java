@@ -20,6 +20,50 @@ public class TempString implements CharSequence{
 	 */
     private transient final char[] tempStringData;
 	
+    
+    //region Static Methods for Overloaded use
+	
+	/**
+	 * Overloaded instance / constructor to allow for a byte array.
+	 * Intentionally wrote this as a separate method rather than another constructor so as
+	 * to prevent ambiguous constructor types.
+	 * @param tempStringData byte array
+	 */
+	public static TempString getInstance(byte[] tempStringData){
+		String str = null;
+		try {
+			str = new String(tempStringData, MiscUtilities.getUTF8());
+		} catch (UnsupportedEncodingException uee){}
+		if(StringUtilities.isNullOrEmpty(str)) {
+			try {
+				str = new String(tempStringData, MiscUtilities.getUTF16());
+			} catch (UnsupportedEncodingException uee) {
+			}
+		}
+		if(StringUtilities.isNullOrEmpty(str)) {
+			try {
+				str = new String(tempStringData, MiscUtilities.getASCII());
+			} catch (UnsupportedEncodingException uee) {
+			}
+		}
+		if(StringUtilities.isNullOrEmpty(str)){
+			return new TempString("");
+		} else {
+			char[] charArray = str.toCharArray();
+			if(charArray != null){
+				if(charArray.length <= 0){
+					return new TempString("");
+				} else {
+					return new TempString(str);
+				}
+			} else {
+				return new TempString("");
+			}
+		}
+	}
+	
+	//endregion
+	
 	/**
 	 * Constructor with a String
 	 * @param tempStringData
@@ -43,47 +87,7 @@ public class TempString implements CharSequence{
 //            this.tempStringData = new char[0];
 //        }
 //    }
-//
-//	/**
-//	 * Overloaded Constructor to allow for a byte array
-//	 * @param tempStringData
-//	 */
-//	public TempString(byte[] tempStringData) {
-//    	if(tempStringData == null){
-//		    this.tempStringData = new char[0];
-//    		return;
-//	    }
-//    	String str = null;
-//    	try {
-//		    str = new String(tempStringData, MiscUtilities.getUTF8());
-//	    } catch (UnsupportedEncodingException uee){}
-//    	if(StringUtilities.isNullOrEmpty(str)) {
-//		    try {
-//			    str = new String(tempStringData, MiscUtilities.getUTF16());
-//		    } catch (UnsupportedEncodingException uee) {
-//		    }
-//	    }
-//    	if(StringUtilities.isNullOrEmpty(str)) {
-//		    try {
-//			    str = new String(tempStringData, MiscUtilities.getASCII());
-//		    } catch (UnsupportedEncodingException uee) {
-//		    }
-//	    }
-//    	if(StringUtilities.isNullOrEmpty(str)){
-//		    this.tempStringData = new char[0];
-//	    } else {
-//		    char[] charArray = str.toCharArray();
-//		    if(charArray != null){
-//		    	if(charArray.length <= 0){
-//				    this.tempStringData = new char[0];
-//			    } else {
-//				    this.tempStringData = charArray;
-//			    }
-//		    } else {
-//			    this.tempStringData = new char[0];
-//		    }
-//	    }
-//    }
+	
 
     /**
      * Used to wipe tempStringData (following Java recommendations)
