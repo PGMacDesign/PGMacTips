@@ -73,6 +73,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.ConnectionSpec;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
+import pgmacdesign.pgmactips.samples.activitysamples.SampleColorClass;
 import pgmacdesign.pgmactips.samples.activitysamples.SampleDBClass;
 import pgmacdesign.pgmactips.samples.activitysamples.SampleDBClassKotlin;
 import pgmacdesign.pgmactips.samples.misc.SampleMyApplication;
@@ -171,8 +172,9 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
 //		this.patTests();
 //	    this.testHexColors();
 //	    this.loadTestCall();
-	    this.testDB2();
-	    
+//	    this.testDB2();
+	    Intent intent = new Intent(this, SampleColorClass.class);
+	    this.startActivity(intent);
     }
 
     private void testHexColors(){

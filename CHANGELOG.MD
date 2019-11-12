@@ -5,8 +5,8 @@ Change Log
 Version 1.2.1 *(TBD)*
 ----------------------------
 
-* Minor update to the [TempString](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/misc/TempString.java) class to allow for static instance getter for the purpose of passing in a byte array. 
-*
+* Update: Minor update to the [TempString](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/misc/TempString.java) class to allow for static instance getter for the purpose of passing in a byte array. 
+* Update: Overhaul of the [ColorUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ColorUtilities.java) class to add in multuple new features as well as material design color palette support. 
 
 Version 1.2.0 *(2019-11-06)*
 ----------------------------
