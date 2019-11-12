@@ -173,8 +173,8 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
 //	    this.testHexColors();
 //	    this.loadTestCall();
 //	    this.testDB2();
-	    Intent intent = new Intent(this, SampleColorClass.class);
-	    this.startActivity(intent);
+//	    Intent intent = new Intent(this, SampleColorClass.class);
+//	    this.startActivity(intent);
     }
 
     private void testHexColors(){
