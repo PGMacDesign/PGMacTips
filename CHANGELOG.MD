@@ -2,7 +2,12 @@ Change Log
 ==========
 
 
-Version 1.2.1 *(TBD)*
+Version 1.2.2 *(TBD)*
+----------------------------
+
+* 
+
+Version 1.2.1 *(2019-11-12)*
 ----------------------------
 
 * Update: Minor update to the [TempString](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/misc/TempString.java) class to allow for static instance getter for the purpose of passing in a byte array. 

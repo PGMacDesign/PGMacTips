@@ -60,12 +60,6 @@ public class SampleColorClass extends AppCompatActivity {
 	
 	private void initUI(){
 		ButterKnife.bind(this);
-		ColorEnvelopeListener cc = new ColorEnvelopeListener() {
-			@Override
-			public void onColorSelected(ColorEnvelope envelope, boolean fromUser) {
-				//dostuff
-			}
-		};
 		this.colorPickerView.setColorListener((ColorEnvelopeListener) (envelope, fromUser) -> {
 			userPickedColor(envelope);
 		});
