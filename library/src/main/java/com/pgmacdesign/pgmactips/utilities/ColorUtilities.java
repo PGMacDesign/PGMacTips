@@ -518,7 +518,7 @@ public class ColorUtilities {
 	 */
 	public static String convertColorToHexWithAlpha(int color){
 		try {
-			return Integer.toHexString(color);
+			return ("#" + Integer.toHexString(color).toUpperCase());
 		} catch (Exception e){
 			return null;
 		}
