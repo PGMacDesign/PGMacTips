@@ -408,6 +408,7 @@ public class ColorUtilities {
 	 * @return darken color
 	 */
 	public static int darkenColor(int color, int amount) {
+		// TODO: 2019-11-14 need to adjust code here as it is shading down colors like white (000000) to red (FF000000). May need range checking
 		float[] hsv = new float[3];
 		Color.colorToHSV(color, hsv);
 		float[] hsl = hsv2hsl(hsv);

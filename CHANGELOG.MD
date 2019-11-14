@@ -2,10 +2,15 @@ Change Log
 ==========
 
 
-Version 1.2.2 *(TBD)*
+Version 1.2.3 *(TBD)*
 ----------------------------
 
-* 
+* Add
+
+Version 1.2.2 *(2019-11-14)*
+----------------------------
+
+* Added in bugfix / catch logic for the [SharedPrefs](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/SharedPrefs.java) class to save and retrieve values if the Android device being used does not support the encryption logic due to API errors. 
 
 Version 1.2.1 *(2019-11-12)*
 ----------------------------

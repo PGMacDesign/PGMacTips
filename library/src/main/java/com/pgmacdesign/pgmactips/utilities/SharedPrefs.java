@@ -23,6 +23,8 @@ import androidx.annotation.RequiresApi;
 import android.os.Build;
 import android.util.Base64;
 
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConfig;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.misc.TempString;
 
 import java.io.UnsupportedEncodingException;
@@ -380,8 +382,11 @@ public class SharedPrefs {
 			if (value == null) {
 				return defaultValue;
 			} else {
-				String decryptedString = decrypt(value);
-				return decryptedString;
+				if(EncryptionUtilities.isHexString(value.trim())) {
+					return decrypt(value.trim());
+				} else {
+					return value;
+				}
 			}
 		} else {
 			return this.prefs1.getString(valueKey, defaultValue);
@@ -395,9 +400,13 @@ public class SharedPrefs {
 			if (value == null) {
 				return defaultValue;
 			} else {
-				String decryptedString = decrypt(value);
 				try {
-					return Integer.parseInt(decryptedString);
+					if(EncryptionUtilities.isHexString(value.trim())) {
+						String decryptedString = decrypt(value);
+						return Integer.parseInt(decryptedString);
+					} else {
+						return Integer.parseInt(value);
+					}
 				} catch (Exception e) {
 					e.printStackTrace(); //To prevent parsing or casting issues
 					return defaultValue;
@@ -415,9 +424,13 @@ public class SharedPrefs {
 			if (value == null) {
 				return defaultValue;
 			} else {
-				String decryptedString = decrypt(value);
 				try {
-					return Boolean.parseBoolean(decryptedString);
+					if(EncryptionUtilities.isHexString(value.trim())) {
+						String decryptedString = decrypt(value);
+						return Boolean.parseBoolean(decryptedString);
+					} else {
+						return Boolean.parseBoolean(value);
+					}
 				} catch (Exception e) {
 					e.printStackTrace(); //To prevent parsing or casting issues
 					return defaultValue;
@@ -435,9 +448,13 @@ public class SharedPrefs {
 			if (value == null) {
 				return defaultValue;
 			} else {
-				String decryptedString = decrypt(value);
 				try {
-					return Long.parseLong(decryptedString);
+					if(EncryptionUtilities.isHexString(value.trim())) {
+						String decryptedString = decrypt(value);
+						return Long.parseLong(decryptedString);
+					} else {
+						return Long.parseLong(value);
+					}
 				} catch (Exception e) {
 					e.printStackTrace(); //To prevent parsing or casting issues
 					return defaultValue;
@@ -455,15 +472,18 @@ public class SharedPrefs {
 			if (value == null) {
 				return defaultValue;
 			} else {
-				String decryptedString = decrypt(value);
 				try {
 					//Would use this if we knew the return type in all situations, but not in getAllPrefs
 //                    long rawBitsLong = Long.parseLong(decryptedString);
 //                    double dbl = Double.longBitsToDouble(rawBitsLong);
 //                    return Double.longBitsToDouble(rawBitsLong);
 					//Instead use this since it is just a String
-					Double dbl = Double.parseDouble(decryptedString);
-					return dbl;
+					if(EncryptionUtilities.isHexString(value.trim())) {
+						String decryptedString = decrypt(value);
+						return Double.parseDouble(decryptedString.trim());
+					} else {
+						return Double.parseDouble(value);
+					}
 				} catch (Exception e) {
 					e.printStackTrace(); //To prevent parsing or casting issues
 					return defaultValue;
@@ -487,7 +507,15 @@ public class SharedPrefs {
 				final Set<String> decryptedSet = new HashSet<String>(
 						encryptedSet.size());
 				for (String encryptedValue : encryptedSet) {
-					decryptedSet.add(decrypt(encryptedValue));
+					if(StringUtilities.isNullOrEmpty(encryptedValue)){
+						continue;
+					}
+					if(EncryptionUtilities.isHexString(encryptedValue.trim())) {
+						decryptedSet.add(decrypt(encryptedValue.trim()));
+					} else {
+						decryptedSet.add(encryptedValue);
+					}
+					
 				}
 				return decryptedSet;
 			}
@@ -512,8 +540,12 @@ public class SharedPrefs {
 				try {
 					String key = m.getKey();
 					String value = m.getValue().toString();
-					String newValue = decrypt(value);
-					map.put(key, (StringUtilities.isNullOrEmpty(newValue) ? value : newValue));
+					if(EncryptionUtilities.isHexString(value.trim())) {
+						String newValue = decrypt(value.trim());
+						map.put(key, (StringUtilities.isNullOrEmpty(newValue) ? value : newValue));
+					} else {
+						map.put(key, (StringUtilities.isNullOrEmpty(value) ? value : value));
+					}
 				} catch (NullPointerException e) {
 				} //To catch null errors
 			}
@@ -834,10 +866,14 @@ public class SharedPrefs {
 		}
 		try {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-				return new String(EncryptionUtilities.encryptString(cleartext, this.password, this.salt));
+				return (EncryptionUtilities.encryptString(cleartext, this.password, this.salt));
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			try {
+				if (!PGMacTipsConfig.getInstance().getIsLiveBuild()) {
+					L.m("Could not encrypt passed value: " + e.getMessage());
+				}
+			} catch (Exception ee){}
 			return cleartext;
 		}
 		return cleartext;
