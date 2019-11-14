@@ -170,6 +170,7 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
 //	    this.writeEncryptedFileTest();
 //		this.readEncryptedFileTest();
 //		this.patTests();
+	    this.init5();
 //	    this.testHexColors();
 //	    this.loadTestCall();
 //	    this.testDB2();
