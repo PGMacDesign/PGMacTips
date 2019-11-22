@@ -1403,7 +1403,7 @@ public class FileUtilities {
 	 * @param file
 	 * @return
 	 */
-	private String getFileExtension(@NonNull File file) {
+	public static  String getFileExtension(@NonNull File file) {
 		return getFileExtension(file.getName());
 	}
 	
@@ -1412,7 +1412,7 @@ public class FileUtilities {
 	 * @param fileName The filename with the extension at the end
 	 * @return Return the file extension with a period in the front
 	 */
-	private String getFileExtension(String fileName) {
+	public static String getFileExtension(String fileName) {
 		int lastIndexOf = fileName.lastIndexOf(".");
 		if (lastIndexOf == -1) {
 			return ""; // empty extension

@@ -3,6 +3,8 @@ package com.pgmacdesign.pgmactips.utilities;
 import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.provider.ContactsContract;
 
 import androidx.annotation.NonNull;
@@ -1845,13 +1847,18 @@ public class DatabaseUtilities {
 	 * @return Realm object {@link Realm}
 	 */
 	private static synchronized Realm buildRealmQueryOnly(@NonNull RealmConfiguration realmConfiguration) {
-		if(DatabaseUtilities.queryRealm == null) {
-			queryRealm = Realm.getInstance(realmConfiguration);
-		}
-		if(DatabaseUtilities.queryRealm != null){
-			if(DatabaseUtilities.queryRealm.isClosed()){
-				DatabaseUtilities.queryRealm = Realm.getInstance(realmConfiguration);
+		try {
+			if (DatabaseUtilities.queryRealm == null) {
+				queryRealm = Realm.getInstance(realmConfiguration);
 			}
+			if (DatabaseUtilities.queryRealm != null) {
+				if (DatabaseUtilities.queryRealm.isClosed()) {
+					DatabaseUtilities.queryRealm = Realm.getInstance(realmConfiguration);
+				}
+			}
+		} catch (IllegalStateException ile){
+			//https://github.com/realm/realm-java/issues/3806 && https://github.com/realm/realm-java/issues/4409
+			return DatabaseUtilities.buildRealm(realmConfiguration);
 		}
 		return DatabaseUtilities.queryRealm;
 	}

@@ -1,10 +1,15 @@
 Change Log
 ==========
 
-Version 1.2.4 *(TBD)*
+Version 1.2.5 *(TBD)*
 ----------------------------
 
-* 
+*
+Version 1.2.4 *(2019-11-22)*
+----------------------------
+
+* Update: Adding in a few new methods to the [FileUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/FileUtilities.java) class.
+* Bugfix: Fixed an issue in the [DatabaseUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/DatabaseUtilities.java) that was causing Reads from a background service to not function properly.
 
 Version 1.2.3 *(2019-11-21)*
 ----------------------------
