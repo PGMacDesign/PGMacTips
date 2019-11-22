@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.FloatRange;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
@@ -120,7 +121,7 @@ public class ColorUtilities {
 	 * @param color color to parse
 	 * @return boolean, if true, color is dark, if false, it's a light color
 	 */
-	public static boolean isColorDark(int color) {
+	public static boolean isColorDark(@ColorInt int color) {
 		double darkness = 1 - (0.299 * Color.red(color)
 				+ 0.587 * Color.green(color)
 				+ 0.114 * Color.blue(color)) / 255;
@@ -279,7 +280,7 @@ public class ColorUtilities {
 	 * @param color Color to darken
 	 * @return darkened color, but will return -100 if parsing fails on Hex String
 	 */
-	public static int createStatusBarColor(int color){
+	public static int createStatusBarColor(@ColorInt int color){
 		try {
 			return darkenColor(color, 12);
 		} catch (Exception e){
@@ -334,7 +335,7 @@ public class ColorUtilities {
 	 * @return A Map of String Integer values that matches a full Material Design color palette.
 	 *         Will always return a Hashmap, though it may be empty if values cannot be parsed.
 	 */
-	public static Map<String, Integer> createFullColorPalette(int color){
+	public static Map<String, Integer> createFullColorPalette(@ColorInt int color){
 		Map<String, Integer> toReturn = new HashMap<>();
 		try {
 			toReturn.put(ColorUtilities.MATERIAL_PALETTE_LIGHT_50, ColorUtilities.lightenColor(
@@ -407,7 +408,7 @@ public class ColorUtilities {
 	 * @param amount amount between 0 and 100
 	 * @return darken color
 	 */
-	public static int darkenColor(int color, int amount) {
+	public static int darkenColor(@ColorInt int color, int amount) {
 		// TODO: 2019-11-14 need to adjust code here as it is shading down colors like white (000000) to red (FF000000). May need range checking
 		float[] hsv = new float[3];
 		Color.colorToHSV(color, hsv);
@@ -426,7 +427,7 @@ public class ColorUtilities {
 	 * @param amount amount between 0 and 100
 	 * @return lightened
 	 */
-	public static int lightenColor(int color, int amount) {
+	public static int lightenColor(@ColorInt int color, int amount) {
 		float[] hsv = new float[3];
 		Color.colorToHSV(color, hsv);
 		float[] hsl = hsv2hsl(hsv);
@@ -504,7 +505,7 @@ public class ColorUtilities {
 	 * @param color Color to convert
 	 * @return The hex value of the color, can return null
 	 */
-	public static String convertColorToHex(int color){
+	public static String convertColorToHex(@ColorInt int color){
 		try {
 			return String.format("#%06X", (0xFFFFFF & color));
 		} catch (Exception e){
@@ -517,7 +518,7 @@ public class ColorUtilities {
 	 * @param color Color to convert
 	 * @return The hex value of the color, can return null
 	 */
-	public static String convertColorToHexWithAlpha(int color){
+	public static String convertColorToHexWithAlpha(@ColorInt int color){
 		try {
 			return ("#" + Integer.toHexString(color).toUpperCase());
 		} catch (Exception e){

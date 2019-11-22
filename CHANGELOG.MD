@@ -1,11 +1,16 @@
 Change Log
 ==========
 
-
-Version 1.2.3 *(TBD)*
+Version 1.2.4 *(TBD)*
 ----------------------------
 
-* 
+* Ad
+
+Version 1.2.3 *(2019-11-21)*
+----------------------------
+
+* Update: Updates to the [FileUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/FileUtilities.java) class to include updated find the real Absolute URI when using Oreo or higher devices. 
+* Update: Moved the absolute Uri methods from the  [ImageUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ImageUtilities.java) class to the [FileUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/FileUtilities.java) class and updated many of them.
 
 Version 1.2.2 *(2019-11-14)*
 ----------------------------

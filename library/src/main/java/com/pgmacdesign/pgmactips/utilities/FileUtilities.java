@@ -2,8 +2,10 @@ package com.pgmacdesign.pgmactips.utilities;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -17,8 +19,12 @@ import android.provider.MediaStore;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.loader.content.CursorLoader;
 
+import android.provider.OpenableColumns;
 import android.util.Base64;
+import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
@@ -601,109 +607,6 @@ public class FileUtilities {
 		}
 	}
 	
-	
-	//All below is to be implemented later. From: https://stackoverflow.com/questions/42264204/bitmapfactory-cant-decode-a-bitmap-from-uri-after-photos-taken-on-android-nouga
-	
-	
-	/**
-	 * @param uri The Uri to check.
-	 * @return Whether the Uri authority is ExternalStorageProvider.
-	 */
-	public static boolean isExternalStorageDocument(Uri uri) {
-		return "com.android.externalstorage.documents".equals(uri.getAuthority());
-	}
-	
-	/**
-	 * @param uri The Uri to check.
-	 * @return Whether the Uri authority is DownloadsProvider.
-	 */
-	public static boolean isDownloadsDocument(Uri uri) {
-		return "com.android.providers.downloads.documents".equals(uri.getAuthority());
-	}
-	
-	/**
-	 * @param uri The Uri to check.
-	 * @return Whether the Uri authority is MediaProvider.
-	 */
-	public static boolean isMediaDocument(Uri uri) {
-		return "com.android.providers.media.documents".equals(uri.getAuthority());
-	}
-	
-	
-	/**
-	 * @param uri The Uri to check.
-	 * @return Whether the Uri authority is Google Photos.
-	 */
-	public static boolean isGooglePhotosUri(Uri uri) {
-		return "com.google.android.apps.photos.content".equals(uri
-				.getAuthority());
-	}
-	
-	@TargetApi(Build.VERSION_CODES.KITKAT)
-	public static String getRealPathFromURI_API19(Context context, Uri uri) {
-		
-		if (isExternalStorageDocument(uri)) {
-			
-			// ExternalStorageProvider
-			final String docId = DocumentsContract.getDocumentId(uri);
-			final String[] split = docId.split(":");
-			final String type = split[0];
-			
-			if ("primary".equalsIgnoreCase(type)) {
-				return Environment.getExternalStorageDirectory() + "/"
-						+ split[1];
-			}
-		} else if (isDownloadsDocument(uri)) {
-			
-			// DownloadsProvider
-			
-			final String id = DocumentsContract.getDocumentId(uri);
-			final Uri contentUri = ContentUris.withAppendedId(
-					Uri.parse("content://downloads/public_downloads"),
-					Long.valueOf(id));
-			
-			return getDataColumn(context, contentUri, null, null);
-			
-		} else if (isMediaDocument(uri)) {
-			
-			
-			final String docId = DocumentsContract.getDocumentId(uri);
-			final String[] split = docId.split(":");
-			final String type = split[0];
-			
-			Uri contentUri = null;
-			if ("image".equals(type)) {
-				contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-			} else if ("video".equals(type)) {
-				contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-			} else if ("audio".equals(type)) {
-				contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-			}
-			
-			final String selection = "_id=?";
-			final String[] selectionArgs = new String[]{split[1]};
-			
-			return getDataColumn(context, contentUri, selection,
-					selectionArgs);
-			
-			
-		} else if ("content".equalsIgnoreCase(uri.getScheme())) {
-			
-			// Return the remote address
-			if (isGooglePhotosUri(uri))
-				return uri.getLastPathSegment();
-			
-			return getDataColumn(context, uri, null, null);
-		}
-		// File
-		else if ("file".equalsIgnoreCase(uri.getScheme())) {
-			return uri.getPath();
-		}
-		
-		return null;
-		
-	}
-	
 	/**
 	 * Encode a Bitmap to a base 64 String
 	 *
@@ -1084,6 +987,739 @@ public class FileUtilities {
 	                                      @NonNull StringBuilder dataToWrite) {
 		return writeEncryptedFile(filePathAndNameWithExtension, password, salt, dataToWrite.toString());
 	}
+	
+	//endregion
+	
+	//region File and Path Management
+	
+	//region Static Int Tags
+	/**
+	 * Callback for processing percent. Will be a float within the range of >=0 && <= 1
+	 */
+	public static final int TAG_GET_REAL_FILE_PATH_PROCESSING_PROGRESS_VALUE = 44112;
+	/**
+	 * Callback for dismissing progress bars. Will only fire on UI-appropriate threads.
+	 * Value sent will be null
+	 */
+	public static final int TAG_GET_REAL_FILE_PATH_DISMISS_PROGRESS_BARS = 44113;
+	/**
+	 * Callback for a completed process where the operation failed. will be null
+	 */
+	public static final int TAG_GET_REAL_FILE_PATH_FAILED = 44114;
+	/**
+	 * Callback for a completed process where the operation succeeded, but result may still
+	 * be null depending on the file system logic in place.
+	 */
+	public static final int TAG_GET_REAL_FILE_PATH_SUCCESS = 44115;
+	//endregion
+	
+	//region Public Methods
+	
+	/**
+	 * Overloaded for naming simplicity so as to have another way to find.
+	 * Sends directly to: {@link FileUtilities#getRealPath(Context, Uri)}
+	 */
+	public static String getFilePath(Context context, Uri fileUri){
+		return FileUtilities.getRealPath(context, fileUri);
+	}
+	
+	/**
+	 * Overloaded for naming simplicity so as to have another way to find.
+	 * Sends directly to: {@link FileUtilities#getRealPath(Context, Uri, OnTaskCompleteListener)}
+	 */
+	public static void getFilePath(Context context, Uri fileUri,
+	                               @NonNull OnTaskCompleteListener callbackListener){
+		FileUtilities.getRealPath(context, fileUri, callbackListener);
+	}
+	
+	/**
+	 * Get the real file path Asynchronously. This will determine the API level and process
+	 * it accordingly. The file path will be passed back upon the callback listener
+	 * This runs on a background thread and utilizes the callback listener.
+	 * @param context Context to use. As this is running using Async, use Application
+	 *                Context here instead of Activity Context
+	 * @param fileUri File Uri to convert
+	 * @param callbackListener Callback listener to send back results asynchronously
+	 */
+	public static void getRealPath(Context context, Uri fileUri,
+	                               @NonNull OnTaskCompleteListener callbackListener) {
+		String realPath;
+		// SDK < API11
+		if (Build.VERSION.SDK_INT < 11) {
+			realPath = getRealPathFromURI_BelowAPI11(context, fileUri);
+		}
+		// SDK >= 11 && SDK < 19
+		else if (Build.VERSION.SDK_INT < 19) {
+			realPath = getRealPathFromURI_API11to18(context, fileUri);
+		}
+		// SDK > 19 (Android 4.4) and up
+		else {
+			getRealPathFromURI_API19(context, fileUri, callbackListener);
+			return;
+		}
+		if(!StringUtilities.isNullOrEmpty(realPath)){
+			callbackListener.onTaskComplete(realPath, TAG_GET_REAL_FILE_PATH_SUCCESS);
+		} else {
+			callbackListener.onTaskComplete(null, TAG_GET_REAL_FILE_PATH_FAILED);
+		}
+	}
+	
+	/**
+	 * Get the real file path. This will determine the API level and process it accordingly.
+	 * Note that this runs on the main UI thread and if any results from a web-based docs
+	 * location (IE Google Docs) are expected or possible, it is recommended to use the overloaded
+	 * method with the callback listener so as to not block the main thread. Link:
+	 * {@link #getRealPath(Context, Uri, OnTaskCompleteListener)}
+	 * This runs on the thread it is called from.
+	 * @param context Context to use
+	 * @param fileUri File Uri to convert
+	 */
+	public static String getRealPath(Context context, Uri fileUri) {
+		String realPath;
+		// SDK < API11
+		if (Build.VERSION.SDK_INT < 11) {
+			realPath = getRealPathFromURI_BelowAPI11(context, fileUri);
+		}
+		// SDK >= 11 && SDK < 19
+		else if (Build.VERSION.SDK_INT < 19) {
+			realPath = getRealPathFromURI_API11to18(context, fileUri);
+		}
+		// SDK > 19 (Android 4.4) and up
+		else {
+			realPath = getRealPathFromURI_API19(context, fileUri);
+		}
+		return realPath;
+	}
+	
+	/**
+	 * Get the real path from API levels < 11. No need for a callback listener here as no web-based
+	 * downloads can trigger in this API range
+	 * @param context
+	 * @param contentUri
+	 * @return
+	 */
+	private static String getRealPathFromURI_BelowAPI11(Context context, Uri contentUri) {
+		String[] proj = {MediaStore.Images.Media.DATA};
+		Cursor cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
+		int column_index = 0;
+		String result = "";
+		if (cursor != null) {
+			column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+			cursor.moveToFirst();
+			result = cursor.getString(column_index);
+			cursor.close();
+			return result;
+		}
+		return result;
+	}
+	
+	/**
+	 * Get the real path from API levels 11-18. No need for a callback listener here as no web-based
+	 * downloads can trigger in this API range
+	 * @param context
+	 * @param contentUri
+	 * @return
+	 */
+	@SuppressLint("NewApi")
+	private static String getRealPathFromURI_API11to18(Context context, Uri contentUri) {
+		String[] proj = {MediaStore.Images.Media.DATA};
+		String result = null;
+		
+		CursorLoader cursorLoader = new CursorLoader(context, contentUri, proj, null, null, null);
+		Cursor cursor = cursorLoader.loadInBackground();
+		
+		if (cursor != null) {
+			int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+			cursor.moveToFirst();
+			result = cursor.getString(column_index);
+			cursor.close();
+		}
+		return result;
+	}
+	
+	/**
+	 * Get the path from on API levels >= 19. This changed where the values were stored so
+	 * additional checks are required to obtain the absolute path.
+	 * @param context Context to check.  As this is running using Async, use Application
+	 *                Context here instead of Activity Context
+	 * @param uri Uri pulled from the callback intent in the onActivityResult
+	 * @param callbackListener Callback to send the response Async in the event of a required
+	 *                         download or some other trigger event that may take >= 1 second
+	 *                         and should be run on a background thread
+	 */
+	@SuppressLint("NewApi")
+	private static void getRealPathFromURI_API19(final Context context, final Uri uri,
+	                                            @NonNull OnTaskCompleteListener callbackListener) {
+		
+		final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+		String toReturn;
+		// DocumentProvider
+		if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+			// ExternalStorageProvider
+			if (isExternalStorageDocument(uri)) {
+				final String docId = DocumentsContract.getDocumentId(uri);
+				final String[] split = docId.split(":");
+				final String type = split[0];
+				
+				// This is for checking Main Memory
+				if ("primary".equalsIgnoreCase(type)) {
+					if (split.length > 1) {
+						toReturn = Environment.getExternalStorageDirectory() + "/" + split[1];
+						callbackListener.onTaskComplete(toReturn, TAG_GET_REAL_FILE_PATH_SUCCESS);
+						return;
+					} else {
+						toReturn = Environment.getExternalStorageDirectory() + "/";
+						callbackListener.onTaskComplete(toReturn, TAG_GET_REAL_FILE_PATH_SUCCESS);
+						return;
+					}
+					// This is for checking SD Card
+				} else {
+					toReturn =  "storage" + "/" + docId.replace(":", "/");
+					callbackListener.onTaskComplete(toReturn, TAG_GET_REAL_FILE_PATH_SUCCESS);
+					return;
+				}
+				
+			}
+			// DownloadsProvider
+			else if (isDownloadsDocument(uri)) {
+				String fileName = getFilePathNew(context, uri);
+				if (fileName != null) {
+					toReturn = Environment.getExternalStorageDirectory().toString() + "/Download/" + fileName;
+					callbackListener.onTaskComplete(toReturn, TAG_GET_REAL_FILE_PATH_SUCCESS);
+					return;
+				}
+				
+				String id = DocumentsContract.getDocumentId(uri);
+				if (id.startsWith("raw:")) {
+					id = id.replaceFirst("raw:", "");
+					File file = new File(id);
+					if (file.exists()) {
+						toReturn = id;
+						callbackListener.onTaskComplete(toReturn, TAG_GET_REAL_FILE_PATH_SUCCESS);
+						return;
+					}
+				}
+				final Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+				toReturn = getDataColumn(context, contentUri, null, null);
+				callbackListener.onTaskComplete(toReturn, TAG_GET_REAL_FILE_PATH_SUCCESS);
+				return;
+			}
+			// MediaProvider
+			else if (isMediaDocument(uri)) {
+				final String docId = DocumentsContract.getDocumentId(uri);
+				final String[] split = docId.split(":");
+				final String type = split[0];
+				
+				Uri contentUri = null;
+				if ("image".equals(type)) {
+					contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+				} else if ("video".equals(type)) {
+					contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+				} else if ("audio".equals(type)) {
+					contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+				}
+				
+				final String selection = "_id=?";
+				final String[] selectionArgs = new String[]{
+						split[1]
+				};
+				
+				toReturn = getDataColumn(context, contentUri, selection, selectionArgs);
+				callbackListener.onTaskComplete(toReturn, TAG_GET_REAL_FILE_PATH_SUCCESS);
+				return;
+			}
+			//Google Photos
+			else if (isGooglePhotosUri(uri)) {
+				callbackListener.onTaskComplete(uri.getLastPathSegment(), TAG_GET_REAL_FILE_PATH_SUCCESS);
+				return;
+			}
+			//Google Drive
+			else if(isGoogleDriveUri(uri)){
+				getDriveFilePath(uri, context, callbackListener);
+				return;
+			}
+		}
+		// MediaStore (and general)
+		if ("content".equalsIgnoreCase(uri.getScheme())) {
+			// Return the remote address
+			if (isGooglePhotosUri(uri)) {
+				toReturn = uri.getLastPathSegment();
+				callbackListener.onTaskComplete(toReturn, TAG_GET_REAL_FILE_PATH_SUCCESS);
+				return;
+			}
+			if(isGoogleDriveUri(uri)){
+				getDriveFilePath(uri, context, callbackListener);
+				return;
+			}
+			toReturn = getDataColumn(context, uri, null, null);
+			callbackListener.onTaskComplete(toReturn, TAG_GET_REAL_FILE_PATH_SUCCESS);
+			return;
+		}
+		// File
+		else if ("file".equalsIgnoreCase(uri.getScheme())) {
+			toReturn = uri.getPath();
+			callbackListener.onTaskComplete(toReturn, TAG_GET_REAL_FILE_PATH_SUCCESS);
+			return;
+		}
+		//If this is reached, likely in a spot in the file system that won't read properly (IE Downloads)
+		toReturn = uri.getPath();
+		callbackListener.onTaskComplete(toReturn, TAG_GET_REAL_FILE_PATH_SUCCESS);
+		return;
+	}
+	
+	/**
+	 * Get the path from on API levels >= 19. This changed where the values were stored so
+	 * additional checks are required to obtain the absolute path.
+	 * Note that this runs on the main UI thread and if any results from a web-based docs
+	 * location (IE Google Docs) are expected or possible, it is recommended to use the overloaded
+	 * method with the callback listener so as to not block the main thread. Link for call:
+	 * {@link #getRealPathFromURI_API19(Context, Uri, OnTaskCompleteListener)}
+	 * @param context Context to check
+	 * @param uri Uri pulled from the callback intent in the onActivityResult
+	 */
+	@SuppressLint("NewApi")
+	private static String getRealPathFromURI_API19(final Context context, final Uri uri) {
+		if(uri == null){
+			return null;
+		}
+		final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+		
+		// DocumentProvider
+		if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+			// ExternalStorageProvider
+			if (isExternalStorageDocument(uri)) {
+				final String docId = DocumentsContract.getDocumentId(uri);
+				final String[] split = docId.split(":");
+				final String type = split[0];
+				
+				// This is for checking Main Memory
+				if ("primary".equalsIgnoreCase(type)) {
+					if (split.length > 1) {
+						return Environment.getExternalStorageDirectory() + "/" + split[1];
+					} else {
+						return Environment.getExternalStorageDirectory() + "/";
+					}
+					// This is for checking SD Card
+				} else {
+					return "storage" + "/" + docId.replace(":", "/");
+				}
+				
+			}
+			// DownloadsProvider
+			else if (isDownloadsDocument(uri)) {
+				String fileName = getFilePathNew(context, uri);
+				if (fileName != null) {
+					return Environment.getExternalStorageDirectory().toString() + "/Download/" + fileName;
+				}
+				
+				String id = DocumentsContract.getDocumentId(uri);
+				if (id.startsWith("raw:")) {
+					id = id.replaceFirst("raw:", "");
+					File file = new File(id);
+					if (file.exists()) {
+						return id;
+					}
+				}
+				
+				final Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+				return getDataColumn(context, contentUri, null, null);
+			}
+			// MediaProvider
+			else if (isMediaDocument(uri)) {
+				final String docId = DocumentsContract.getDocumentId(uri);
+				final String[] split = docId.split(":");
+				final String type = split[0];
+				
+				Uri contentUri = null;
+				if ("image".equals(type)) {
+					contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+				} else if ("video".equals(type)) {
+					contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+				} else if ("audio".equals(type)) {
+					contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+				}
+				
+				final String selection = "_id=?";
+				final String[] selectionArgs = new String[]{
+						split[1]
+				};
+				
+				return getDataColumn(context, contentUri, selection, selectionArgs);
+			}
+			//Google Photos
+			else if (isGooglePhotosUri(uri)) {
+				return uri.getLastPathSegment();
+			}
+			//Google Drive
+			else if(isGoogleDriveUri(uri)){
+				String str = getDriveFilePath(uri, context);
+				Uri uri1 = Uri.parse(str);
+				return uri1.getPath();
+			}
+		}
+		// MediaStore (and general)
+		else if ("content".equalsIgnoreCase(uri.getScheme())) {
+			// Return the remote address
+			if (isGooglePhotosUri(uri)) {
+				return uri.getLastPathSegment();
+			}
+			
+			if(isGoogleDriveUri(uri)){
+				String str = getDriveFilePath(uri, context);
+				Uri uri1 = Uri.parse(str);
+				return uri1.getPath();
+			}
+			
+			return getDataColumn(context, uri, null, null);
+		}
+		// File
+		else if ("file".equalsIgnoreCase(uri.getScheme())) {
+			return uri.getPath();
+		}
+		return uri.getPath();
+	}
+	
+	/**
+	 * Get the file path when an Oreo or higher device is being used
+	 * @param context
+	 * @param uri
+	 * @return
+	 */
+	private static String getFilePathNew(Context context, Uri uri) {
+		
+		Cursor cursor = null;
+		final String[] projection = {
+				MediaStore.MediaColumns.DISPLAY_NAME
+		};
+		
+		try {
+			cursor = context.getContentResolver().query(uri, projection, null, null,
+					null);
+			if (cursor != null && cursor.moveToFirst()) {
+				final int index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME);
+				return cursor.getString(index);
+			}
+		} finally {
+			if (cursor != null)
+				cursor.close();
+		}
+		return null;
+	}
+	
+	/**
+	 * Get the drive file path from a valid Google Drive path
+	 * @param uri
+	 * @param context
+	 * @return
+	 */
+	public static String getDriveFilePath(Uri uri, @NonNull Context context) {
+		if(uri == null){
+			return null;
+		}
+		Uri returnUri = uri;
+		Cursor returnCursor = context.getContentResolver().query(returnUri, null, null, null, null);
+		int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+		int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+		returnCursor.moveToFirst();
+		String name = (returnCursor.getString(nameIndex));
+		String size = (Long.toString(returnCursor.getLong(sizeIndex)));
+		long sizeLong = NumberUtilities.parseLongSafe(size, 1);
+		File file = new File(context.getCacheDir(), name);
+		try {
+			InputStream inputStream = context.getContentResolver().openInputStream(uri);
+			FileOutputStream outputStream = new FileOutputStream(file);
+			int read = 0;
+			int maxBufferSize = 1 * 1024 * 1024;
+			int bytesAvailable = inputStream.available();
+			
+			//int bufferSize = 1024;
+			int bufferSize = Math.min(bytesAvailable, maxBufferSize);
+			final byte[] buffers = new byte[bufferSize];
+			
+			long trackerValue = 0;
+			
+			while ((read = inputStream.read(buffers)) != -1) {
+				trackerValue += buffers.length;
+				outputStream.write(buffers, 0, read);
+			}
+			inputStream.close();
+			outputStream.close();
+		} catch (Exception e) {
+			Log.e("Exception", e.getMessage());
+		}
+		return file.getPath();
+	}
+	
+	/**
+	 * Get the drive file path from a valid Google Drive path
+	 * Overloaded to allow for Async callback to unblock main thread
+	 * @param uri
+	 * @param context As this is running using Async, use Application Context here instead of Activity Context
+	 * @param callbackListener
+	 * @return
+	 */
+	public static void getDriveFilePath(Uri uri, @NonNull Context context, @NonNull OnTaskCompleteListener callbackListener) {
+		GetDriveFilePathAsync g = new GetDriveFilePathAsync(uri, context, callbackListener);
+		g.execute();
+	}
+	
+	/**
+	 * Asynctask to get file on background thread and update listener for foreground updates
+	 * using passed callback listener.
+	 */
+	public static class GetDriveFilePathAsync extends AsyncTask<Void, Float, Void> {
+		
+		private Uri uri;
+		private Context context;
+		private OnTaskCompleteListener callbackListener;
+		private float lastValueSet;
+		
+		/**
+		 *
+		 * @param uri
+		 * @param context Make sure to pass Application Context, not Activity Context here to
+		 *                prevent Memory leaks
+		 * @param callbackListener
+		 */
+		GetDriveFilePathAsync(Uri uri, @NonNull Context context,
+		                      @NonNull OnTaskCompleteListener callbackListener){
+			this.uri = uri;
+			this.context = context;
+			this.callbackListener = callbackListener;
+			this.lastValueSet = 0F;
+		}
+		
+		@Override
+		protected void onCancelled(Void aVoid) {
+			super.onCancelled(aVoid);
+			try {
+				this.callbackListener.onTaskComplete(null, TAG_GET_REAL_FILE_PATH_FAILED);
+				this.context = null;
+			} catch (Exception e){}
+		}
+		
+		@Override
+		protected void onCancelled() {
+			super.onCancelled();
+			try {
+				this.callbackListener.onTaskComplete(null, TAG_GET_REAL_FILE_PATH_FAILED);
+				this.context = null;
+			} catch (Exception e){}
+		}
+		
+		@Override
+		protected void onProgressUpdate(Float... values) {
+			super.onProgressUpdate(values);
+			try {
+				float flt = values[0];
+				if(flt < this.lastValueSet){
+					//Not setting value here in the event that it goes >1 and resets back to 0
+				} else {
+					this.callbackListener.onTaskComplete(flt, TAG_GET_REAL_FILE_PATH_PROCESSING_PROGRESS_VALUE);
+				}
+				this.lastValueSet = flt;
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+		}
+		
+		@Override
+		protected Void doInBackground(Void... voids) {
+			if(this.uri == null){
+				this.callbackListener.onTaskComplete(null, TAG_GET_REAL_FILE_PATH_FAILED);
+				return null;
+			}
+			Uri returnUri = this.uri;
+			Cursor returnCursor = this.context.getContentResolver().query(returnUri, null,
+					null, null, null);
+			if(returnCursor == null){
+				this.callbackListener.onTaskComplete(null, TAG_GET_REAL_FILE_PATH_FAILED);
+				return null;
+			}
+			int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+			int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+			returnCursor.moveToFirst();
+			String name = (returnCursor.getString(nameIndex));
+			String size = (Long.toString(returnCursor.getLong(sizeIndex)));
+			long sizeLong = NumberUtilities.parseLongSafe(size, 1);
+			File file = new File(this.context.getCacheDir(), name);
+			try {
+				InputStream inputStream = this.context.getContentResolver().openInputStream(uri);
+				FileOutputStream outputStream = new FileOutputStream(file);
+				int read = 0;
+				int maxBufferSize = 1 * 1024 * 1024;
+				if(inputStream == null){
+					this.callbackListener.onTaskComplete(null, TAG_GET_REAL_FILE_PATH_FAILED);
+					return null;
+				}
+				int bytesAvailable = inputStream.available();
+				
+				//int bufferSize = 1024;
+				int bufferSize = Math.min(bytesAvailable, maxBufferSize);
+				final byte[] buffers = new byte[bufferSize];
+				
+				long trackerValue = 0;
+				
+				while ((read = inputStream.read(buffers)) != -1) {
+					trackerValue += buffers.length;
+					Float xy = ((float)trackerValue) / ((float)sizeLong);
+					if(xy < 0){
+						//Value is < 0, meaning it is probably being improperly calculated. Passing zero as a result.
+						this.publishProgress(0F);
+					} else if (xy > 1){
+						//Value is > 0, meaning it is probably being improperly calculated. Passing zero as a result.
+						this.publishProgress(0F);
+					} else {
+						//Value is between 0 and 1, meaning it is correctly calculated. Passing float value.
+						this.publishProgress((float)xy);
+					}
+					outputStream.write(buffers, 0, read);
+				}
+				inputStream.close();
+				outputStream.close();
+			} catch (Exception e) {
+				Log.e("Exception", e.getMessage());
+				this.callbackListener.onTaskComplete(null, TAG_GET_REAL_FILE_PATH_FAILED);
+				returnCursor.close();
+				return null;
+			}
+			if(!file.exists()){
+				this.callbackListener.onTaskComplete(null, TAG_GET_REAL_FILE_PATH_FAILED);
+				returnCursor.close();
+				return null;
+			}
+			this.callbackListener.onTaskComplete(file.getPath(), TAG_GET_REAL_FILE_PATH_SUCCESS);
+			returnCursor.close();
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Void aVoid) {
+			super.onPostExecute(aVoid);
+			try {
+				this.callbackListener.onTaskComplete(null, TAG_GET_REAL_FILE_PATH_DISMISS_PROGRESS_BARS);
+				this.context = null;
+			} catch (Exception e){}
+		}
+		
+	}
+	
+	private static String getDataColumn(Context context, Uri uri, String selection,
+	                                   String[] selectionArgs) {
+		
+		Cursor cursor = null;
+		final String column = "_data";
+		final String[] projection = {
+				column
+		};
+		
+		try {
+			cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
+					null);
+			if (cursor != null && cursor.moveToFirst()) {
+				final int index = cursor.getColumnIndexOrThrow(column);
+				return cursor.getString(index);
+			}
+		} finally {
+			if (cursor != null)
+				cursor.close();
+		}
+		return null;
+	}
+	
+	/**
+	 * @param uri The Uri to check.
+	 * @return Whether the Uri authority is ExternalStorageProvider.
+	 */
+	public static boolean isExternalStorageDocument(Uri uri) {
+		return "com.android.externalstorage.documents".equals(uri.getAuthority());
+	}
+	
+	/**
+	 * @param uri The Uri to check.
+	 * @return Whether the Uri authority is DownloadsProvider.
+	 */
+	public static boolean isDownloadsDocument(Uri uri) {
+		return "com.android.providers.downloads.documents".equals(uri.getAuthority());
+	}
+	
+	/**
+	 * @param uri The Uri to check.
+	 * @return Whether the Uri authority is MediaProvider.
+	 */
+	public static boolean isMediaDocument(Uri uri) {
+		return "com.android.providers.media.documents".equals(uri.getAuthority());
+	}
+	
+	/**
+	 * @param uri The Uri to check.
+	 * @return Whether the Uri authority is Google Photos.
+	 */
+	public static boolean isGooglePhotosUri(Uri uri) {
+		return "com.google.android.apps.photos.content".equals(uri.getAuthority());
+	}
+	
+	/**
+	 * @param uri The Uri to check.
+	 * @return Whether the Uri authority is Google Drive.
+	 */
+	public static boolean isGoogleDriveUri(Uri uri) {
+		return "com.google.android.apps.docs.storage".equals(uri.getAuthority()) || "com.google.android.apps.docs.storage.legacy".equals(uri.getAuthority());
+	}
+	
+	/**
+	 * Get the Mimetype from the Uri passed
+	 * @param context
+	 * @param uri
+	 * @return
+	 */
+	public static String getMimetypeFromUri(@NonNull Context context, Uri uri){
+		if(uri == null){
+			return null;
+		}
+		try {
+			if(uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)){
+				final MimeTypeMap mime = MimeTypeMap.getSingleton();
+				return mime.getExtensionFromMimeType(context.getContentResolver().getType(uri));
+			} else {
+				return MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(new File(uri.getPath())).toString());
+			}
+		} catch (Exception e){
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
+	 * Convert a file path to an InputStream
+	 * @param context
+	 * @param uri
+	 * @param mimeTypeFilter
+	 * @return
+	 */
+	public static InputStream convertFilePathToInputStream(@NonNull Context context, Uri uri, @Nullable String mimeTypeFilter){
+		if(uri == null){
+			return null;
+		}
+		ContentResolver resolver = context.getContentResolver();
+		if(StringUtilities.isNullOrEmpty(mimeTypeFilter)){
+			mimeTypeFilter = getMimetypeFromUri(context, uri);
+		}
+		String[] openableMimeTypes = resolver.getStreamTypes(uri, mimeTypeFilter);
+		
+		if (openableMimeTypes == null ||
+				openableMimeTypes.length < 1) {
+			return null;
+		}
+		try {
+			return resolver.openTypedAssetFileDescriptor(uri, openableMimeTypes[0], null).createInputStream();
+		} catch (IOException|NullPointerException ioe){
+			ioe.printStackTrace();
+			return null;
+		}
+	}
+	
+	//endregion
 	
 	//endregion
 }
