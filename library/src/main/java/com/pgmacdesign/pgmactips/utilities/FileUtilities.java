@@ -1398,6 +1398,28 @@ public class FileUtilities {
 		}
 	}
 	
+	/**
+	 * Get the file extension (IE .txt)
+	 * @param file
+	 * @return
+	 */
+	private String getFileExtension(@NonNull File file) {
+		return getFileExtension(file.getName());
+	}
+	
+	/**
+	 * Get the file extension (IE .txt)
+	 * @param fileName The filename with the extension at the end
+	 * @return Return the file extension with a period in the front
+	 */
+	private String getFileExtension(String fileName) {
+		int lastIndexOf = fileName.lastIndexOf(".");
+		if (lastIndexOf == -1) {
+			return ""; // empty extension
+		}
+		return ("." + fileName.substring(lastIndexOf));
+	}
+	
 	//endregion
 	
 	//region Private Methods
