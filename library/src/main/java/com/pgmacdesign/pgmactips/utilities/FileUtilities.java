@@ -1417,7 +1417,15 @@ public class FileUtilities {
 		if (lastIndexOf == -1) {
 			return ""; // empty extension
 		}
-		return ("." + fileName.substring(lastIndexOf));
+		String toReturn = fileName.substring(lastIndexOf);
+		if (!StringUtilities.isNullOrEmpty(toReturn)) {
+			if(toReturn.startsWith(".")){
+				return toReturn;
+			} else {
+				return ("." + toReturn);
+			}
+		}
+		return toReturn;
 	}
 	
 	//endregion

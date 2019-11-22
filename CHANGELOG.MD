@@ -4,7 +4,9 @@ Change Log
 Version 1.2.5 *(TBD)*
 ----------------------------
 
+* Bugfix: Fixed a bug in the [FileUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/FileUtilities.java) class that was returning file extensions with 2 periods in front.
 *
+
 Version 1.2.4 *(2019-11-22)*
 ----------------------------
 
