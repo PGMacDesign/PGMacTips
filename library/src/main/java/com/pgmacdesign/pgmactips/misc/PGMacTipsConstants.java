@@ -32,6 +32,7 @@ public class PGMacTipsConstants {
     public static final String PHONE_URI_TO_WRITE_TO = "/storage/emulated/0/Download/";
     public static final String FILE_NAME = "debugLoggingData.txt";
     public static final String URL_GOOGLE = "https://www.google.com";
+	public static final String FILE_PREFIX = "file://";
     public static final String NO_INTERNET_STRING = "It looks like you do not have a stable internet connection. Please check for connectivity and try again";
     public static final String ARRAY_PAGER_ADAPTER_ERROR_1 = "Error: Null fragment in passed map.";
     public static final String HEX = "0123456789ABCDEF";
