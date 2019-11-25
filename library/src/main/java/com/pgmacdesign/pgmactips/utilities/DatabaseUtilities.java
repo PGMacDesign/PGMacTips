@@ -1858,6 +1858,7 @@ public class DatabaseUtilities {
 			}
 		} catch (IllegalStateException ile){
 			//https://github.com/realm/realm-java/issues/3806 && https://github.com/realm/realm-java/issues/4409
+			//todo fix this as it may be causing a memory leak: "Remember to call close() on all Realm instances. Realm myDB.db is being finalized without being closed, this can lead to running out of native memory."
 			return DatabaseUtilities.buildRealm(realmConfiguration);
 		}
 		return DatabaseUtilities.queryRealm;
