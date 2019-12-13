@@ -1,11 +1,16 @@
 Change Log
 ==========
 
-Version 1.2.5 *(TBD)*
+Version 1.2.6 *(TBD)*
+----------------------------
+
+*
+
+Version 1.2.5 *(2019-12-13)*
 ----------------------------
 
 * Bugfix: Fixed a bug in the [FileUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/FileUtilities.java) class that was returning file extensions with 2 periods in front.
-*
+* Update: Updates in the [FileUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/FileUtilities.java) class to have better handling of Google Drive file management as well as access to check virtual file status.
 
 Version 1.2.4 *(2019-11-22)*
 ----------------------------

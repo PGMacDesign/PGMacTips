@@ -1118,17 +1118,42 @@ public class FileUtilities {
 		if(uri == null){
 			return null;
 		}
+		//Check if it is a virtual file:
 		Uri returnUri = uri;
-		Cursor returnCursor = context.getContentResolver().query(returnUri, null, null, null, null);
+		boolean isVirtualFile = isVirtualFile(uri, context);
+		
+		Cursor returnCursor = context.getContentResolver().query(
+				returnUri, null, null, null, null);
+		if(returnCursor == null){
+			return null;
+		}
 		int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-		int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
 		returnCursor.moveToFirst();
 		String name = (returnCursor.getString(nameIndex));
-		String size = (Long.toString(returnCursor.getLong(sizeIndex)));
-		long sizeLong = NumberUtilities.parseLongSafe(size, 1);
 		File file = new File(context.getCacheDir(), name);
+		InputStream inputStream = null;
+		/*
+			//For obtaining size data. Unused, but leaving in for future reference
+			int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+			String size = (Long.toString(returnCursor.getLong(sizeIndex)));
+			long sizeLong = NumberUtilities.parseLongSafe(size, 1);
+		 */
 		try {
-			InputStream inputStream = context.getContentResolver().openInputStream(uri);
+			returnCursor.close();
+		} catch (Exception e){
+			//Not bothering with printing or utilizing exception here because if triggered, will lead to return null
+		}
+		try {
+			if (!isVirtualFile) {
+				inputStream = context.getContentResolver().openInputStream(uri);
+			} else {
+				inputStream = getInputStreamForVirtualFile(context, uri, null, name);
+			}
+		} catch (Exception e){
+			Log.e("Exception", "" + e.getMessage());
+			e.printStackTrace();
+		}
+		try {
 			FileOutputStream outputStream = new FileOutputStream(file);
 			int read = 0;
 			int maxBufferSize = 1 * 1024 * 1024;
@@ -1146,8 +1171,10 @@ public class FileUtilities {
 			}
 			inputStream.close();
 			outputStream.close();
-		} catch (Exception e) {
-			Log.e("Exception", e.getMessage());
+		} catch (NullPointerException npe){
+			return null;
+		} catch (Exception e){
+			e.printStackTrace();
 		}
 		return file.getPath();
 	}
@@ -1231,29 +1258,44 @@ public class FileUtilities {
 				this.callbackListener.onTaskComplete(null, TAG_GET_REAL_FILE_PATH_FAILED);
 				return null;
 			}
-			Uri returnUri = this.uri;
-			Cursor returnCursor = this.context.getContentResolver().query(returnUri, null,
-					null, null, null);
+			
+			//Check if it is a virtual file:
+			Uri returnUri = uri;
+			boolean isVirtualFile = isVirtualFile(uri, context);
+			
+			Cursor returnCursor = context.getContentResolver().query(
+					returnUri, null, null, null, null);
 			if(returnCursor == null){
 				this.callbackListener.onTaskComplete(null, TAG_GET_REAL_FILE_PATH_FAILED);
 				return null;
 			}
 			int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-			int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
 			returnCursor.moveToFirst();
 			String name = (returnCursor.getString(nameIndex));
+			File file = new File(context.getCacheDir(), name);
+			InputStream inputStream = null;
+			int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
 			String size = (Long.toString(returnCursor.getLong(sizeIndex)));
 			long sizeLong = NumberUtilities.parseLongSafe(size, 1);
-			File file = new File(this.context.getCacheDir(), name);
 			try {
-				InputStream inputStream = this.context.getContentResolver().openInputStream(uri);
+				returnCursor.close();
+			} catch (Exception e){
+				//Not bothering with printing or utilizing exception here because if triggered, will lead to return null
+			}
+			try {
+				if (!isVirtualFile) {
+					inputStream = context.getContentResolver().openInputStream(uri);
+				} else {
+					inputStream = getInputStreamForVirtualFile(context, uri, null);
+				}
+			} catch (Exception e){
+				Log.e("Exception", "" + e.getMessage());
+				e.printStackTrace();
+			}
+			try {
 				FileOutputStream outputStream = new FileOutputStream(file);
 				int read = 0;
 				int maxBufferSize = 1 * 1024 * 1024;
-				if(inputStream == null){
-					this.callbackListener.onTaskComplete(null, TAG_GET_REAL_FILE_PATH_FAILED);
-					return null;
-				}
 				int bytesAvailable = inputStream.available();
 				
 				//int bufferSize = 1024;
@@ -1279,11 +1321,11 @@ public class FileUtilities {
 				}
 				inputStream.close();
 				outputStream.close();
-			} catch (Exception e) {
-				Log.e("Exception", e.getMessage());
+			} catch (NullPointerException npe){
 				this.callbackListener.onTaskComplete(null, TAG_GET_REAL_FILE_PATH_FAILED);
-				returnCursor.close();
 				return null;
+			} catch (Exception e){
+				e.printStackTrace();
 			}
 			if(!file.exists()){
 				this.callbackListener.onTaskComplete(null, TAG_GET_REAL_FILE_PATH_FAILED);
@@ -1291,7 +1333,9 @@ public class FileUtilities {
 				return null;
 			}
 			this.callbackListener.onTaskComplete(file.getPath(), TAG_GET_REAL_FILE_PATH_SUCCESS);
-			returnCursor.close();
+			try {
+				returnCursor.close();
+			} catch (Exception e){}
 			return null;
 		}
 		
@@ -1353,6 +1397,17 @@ public class FileUtilities {
 	 * @return
 	 */
 	public static String getMimetypeFromUri(@NonNull Context context, Uri uri){
+		return getMimetypeFromUri(context, uri, null);
+	}
+	
+	/**
+	 * Get the Mimetype from the Uri passed
+	 * @param context
+	 * @param uri
+	 * @param fileName Required for Google Drive docs so it can pull the mimetype
+	 * @return
+	 */
+	public static String getMimetypeFromUri(@NonNull Context context, Uri uri, @Nullable String fileName){
 		if(uri == null){
 			return null;
 		}
@@ -1365,6 +1420,80 @@ public class FileUtilities {
 			}
 		} catch (Exception e){
 			e.printStackTrace();
+			if (StringUtilities.isNullOrEmpty(fileName)) {
+				return null;
+			}
+			try {
+				String type = null;
+				String extension = MimeTypeMap.getFileExtensionFromUrl(fileName);
+				if (extension != null) {
+					type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+				}
+				return type;
+			} catch (Exception ee){
+				ee.printStackTrace();
+				return null;
+			}
+		}
+	}
+	
+	/**
+	 * Overloaded naming scheme to match different use as described here:
+	 * https://stackoverflow.com/a/47521357/2480714
+	 * @param context
+	 * @param uri
+	 * @param mimeTypeFilter
+	 * @return
+	 */
+	public static InputStream getInputStreamForVirtualFile(@NonNull Context context, Uri uri,
+	                                                       @Nullable String mimeTypeFilter){
+		return convertFilePathToInputStream(context, uri, mimeTypeFilter, null);
+	}
+	
+	/**
+	 * Overloaded naming scheme to match different use as described here:
+	 * https://stackoverflow.com/a/47521357/2480714
+	 * @param context
+	 * @param uri
+	 * @param mimeTypeFilter
+	 * @return
+	 */
+	public static InputStream getInputStreamForVirtualFile(@NonNull Context context, Uri uri,
+	                                                       @Nullable String mimeTypeFilter,
+	                                                       @Nullable String fileName){
+		return convertFilePathToInputStream(context, uri, mimeTypeFilter, fileName);
+	}
+	
+	
+	/**
+	 * Convert a file path to an InputStream
+	 * @param context
+	 * @param uri
+	 * @param mimeTypeFilter
+	 * @return
+	 */
+	public static InputStream convertFilePathToInputStream(@NonNull Context context, Uri uri,
+	                                                       @Nullable String mimeTypeFilter,
+	                                                       @Nullable String fileName){
+		if(uri == null){
+			return null;
+		}
+		ContentResolver resolver = context.getContentResolver();
+		if(StringUtilities.isNullOrEmpty(mimeTypeFilter)){
+			mimeTypeFilter = getMimetypeFromUri(context, uri, fileName);
+		}
+		if(mimeTypeFilter == null){
+			return null;
+		}
+		String[] openableMimeTypes = resolver.getStreamTypes(uri, mimeTypeFilter);
+		
+		if (MiscUtilities.isArrayNullOrEmpty(openableMimeTypes)) {
+			return null;
+		}
+		try {
+			return resolver.openTypedAssetFileDescriptor(uri, openableMimeTypes[0], null).createInputStream();
+		} catch (IOException |NullPointerException ioe){
+			ioe.printStackTrace();
 			return null;
 		}
 	}
@@ -1376,26 +1505,9 @@ public class FileUtilities {
 	 * @param mimeTypeFilter
 	 * @return
 	 */
-	public static InputStream convertFilePathToInputStream(@NonNull Context context, Uri uri, @Nullable String mimeTypeFilter){
-		if(uri == null){
-			return null;
-		}
-		ContentResolver resolver = context.getContentResolver();
-		if(StringUtilities.isNullOrEmpty(mimeTypeFilter)){
-			mimeTypeFilter = getMimetypeFromUri(context, uri);
-		}
-		String[] openableMimeTypes = resolver.getStreamTypes(uri, mimeTypeFilter);
-		
-		if (openableMimeTypes == null ||
-				openableMimeTypes.length < 1) {
-			return null;
-		}
-		try {
-			return resolver.openTypedAssetFileDescriptor(uri, openableMimeTypes[0], null).createInputStream();
-		} catch (IOException|NullPointerException ioe){
-			ioe.printStackTrace();
-			return null;
-		}
+	public static InputStream convertFilePathToInputStream(@NonNull Context context, Uri uri,
+	                                                       @Nullable String mimeTypeFilter){
+		return convertFilePathToInputStream(context, uri, mimeTypeFilter, null);
 	}
 	
 	/**
@@ -1417,17 +1529,45 @@ public class FileUtilities {
 		if (lastIndexOf == -1) {
 			return ""; // empty extension
 		}
-		String toReturn = fileName.substring(lastIndexOf);
-		if (!StringUtilities.isNullOrEmpty(toReturn)) {
-			if(toReturn.startsWith(".")){
-				return toReturn;
-			} else {
-				return ("." + toReturn);
-			}
-		}
-		return toReturn;
+		return ("." + fileName.substring(lastIndexOf));
 	}
 	
+	/**
+	 * Check if it is a virtual file.
+	 * Reference: https://stackoverflow.com/a/47521357/2480714
+	 * Requires API level 24 (Nougat) or higher to run, else, will always return false
+	 * @param uri Uri to check
+	 * @param context Context for opening a {@link ContentResolver}
+	 * @return
+	 */
+	public static boolean isVirtualFile(@NonNull Uri uri, @NonNull Context context){
+		if(uri == null || context == null){
+			return false;
+		}
+//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+			//Upped to 24 as per reference here - https://medium.com/androiddevelopers/building-a-documentsprovider-f7f2fb38e86a
+			if (!DocumentsContract.isDocumentUri(context, uri)) {
+				return false;
+			}
+			
+			Cursor cursor = context.getContentResolver().query(
+					uri,
+					new String[]{DocumentsContract.Document.COLUMN_FLAGS},
+					null, null, null);
+			int flags = 0;
+			if(cursor == null){
+				return false;
+			}
+			if (cursor.moveToFirst()) {
+				flags = cursor.getInt(0);
+			}
+			cursor.close();
+			return (flags & DocumentsContract.Document.FLAG_VIRTUAL_DOCUMENT) != 0;
+		} else {
+			return false;
+		}
+	}
 	//endregion
 	
 	//region Private Methods
