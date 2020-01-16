@@ -4,7 +4,7 @@ Change Log
 Version 1.2.6 *(TBD)*
 ----------------------------
 
-*
+* Updated the Build.gradle to support Obfuscation via parent declarations as per [this](https://stackoverflow.com/a/31031491/2480714) recommendation.
 
 Version 1.2.5 *(2019-12-13)*
 ----------------------------
