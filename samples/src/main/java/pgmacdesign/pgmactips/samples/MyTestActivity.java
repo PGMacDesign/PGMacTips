@@ -873,6 +873,13 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 	
+	
+//	    this.startActivity(new Intent(MyTestActivity.this, SampleDBClassKotlin.class));
+//
+//	    if(true){
+//		    return;
+//	    }
+//
     	if(this.svgIsRunning){
     		this.svgIsRunning = false;
     		this.pganimated_svg_view.reset();

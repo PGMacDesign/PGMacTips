@@ -1,10 +1,11 @@
 Change Log
 ==========
 
-Version 1.2.6 *(TBD)*
+Version 1.3.0 *(TBD)*
 ----------------------------
 
-* Updated the Build.gradle to support Obfuscation via parent declarations as per [this](https://stackoverflow.com/a/31031491/2480714) recommendation.
+* Update: Updated the Build.gradle to support Obfuscation via parent declarations as per [this](https://stackoverflow.com/a/31031491/2480714) recommendation.
+* Update: Updated the [DatabaseUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/DatabaseUtilities.java) class to utilize generics more efficiently so that all non Collection-based return types will no longer require casting. `(Note that returning collections of items like Map<String, Object> from the getPersistedObject() methods will still require casting and will still give a lint warning of an unchecked cast)`
 
 Version 1.2.5 *(2019-12-13)*
 ----------------------------

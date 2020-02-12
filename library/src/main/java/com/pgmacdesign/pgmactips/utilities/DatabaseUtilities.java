@@ -56,7 +56,6 @@ import io.realm.annotations.RealmModule;
 @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Realm,
 		CustomAnnotationsBase.Dependencies.GSON})
 public class DatabaseUtilities {
-	
 	//Misc Type and Typetoken samples
 	//final TypeToken MASTER_DB_OBJECT_TYPETOKEN = new TypeToken<List<MasterDatabaseObject>>(){};
 	//final Type MASTER_DB_OBJECT_TYPE = MASTER_DB_OBJECT_TYPETOKEN.getType();
@@ -227,7 +226,7 @@ public class DatabaseUtilities {
 			L.m(CONTEXT_NULL);
 			return;
 		}
-		if(StringUtilities.isNullOrEmpty(password) || StringUtilities.isNullOrEmpty(salt)){
+		if (StringUtilities.isNullOrEmpty(password) || StringUtilities.isNullOrEmpty(salt)) {
 			this.isEncrypted = false;
 			this.salt = null;
 			this.password = null;
@@ -258,7 +257,7 @@ public class DatabaseUtilities {
 			L.m(CONTEXT_NULL);
 			return;
 		}
-		if(StringUtilities.isNullOrEmpty(password) || StringUtilities.isNullOrEmpty(salt)){
+		if (StringUtilities.isNullOrEmpty(password) || StringUtilities.isNullOrEmpty(salt)) {
 			this.isEncrypted = false;
 			this.salt = null;
 			this.password = null;
@@ -291,7 +290,7 @@ public class DatabaseUtilities {
 			L.m(CONTEXT_NULL);
 			return;
 		}
-		if(StringUtilities.isNullOrEmpty(password) || StringUtilities.isNullOrEmpty(salt)){
+		if (StringUtilities.isNullOrEmpty(password) || StringUtilities.isNullOrEmpty(salt)) {
 			this.isEncrypted = false;
 			this.salt = null;
 			this.password = null;
@@ -310,6 +309,7 @@ public class DatabaseUtilities {
 	/**
 	 * Private initializer
 	 * For now, it only handles context
+	 *
 	 * @param context
 	 */
 	private void init(Context context) {
@@ -319,7 +319,7 @@ public class DatabaseUtilities {
 	/**
 	 * Quick method to release memory and close out any open realm instances
 	 */
-	public void clearInstance(){
+	public void clearInstance() {
 		this.closeRealm(DatabaseUtilities.queryRealm);
 		this.context = null;
 	}
@@ -327,6 +327,7 @@ public class DatabaseUtilities {
 	//endregion
 	
 	//region Insert and Update Methods
+	
 	/**
 	 * Standard Database Insertion method with an object.
 	 *
@@ -336,11 +337,11 @@ public class DatabaseUtilities {
 	 *                       it will call 'write'. The idea being that if you want the object
 	 *                       already existing in the db to be update, set this
 	 *                       to true, else, set it to false for an overwrite.
-	 * @param <T>            T extends {@link RealmObject}
+	 * @param <G>            G extends {@link RealmObject}
 	 * @return Boolean. True if the insert succeeded, false if it did not
 	 */
-	public synchronized <T extends RealmObject> boolean executeInsertIntoDB(final T objectToWrite,
-	                                                           final Boolean appendToObject) {
+	public synchronized <G extends RealmObject> boolean executeInsertIntoDB(final G objectToWrite,
+	                                                                        final Boolean appendToObject) {
 		if (objectToWrite == null) {
 			return false;
 		}
@@ -387,9 +388,9 @@ public class DatabaseUtilities {
 	 *                       to true, else, set it to false for an overwrite.
 	 * @return Boolean. True if the insert succeeded, false if it did not
 	 */
-	public synchronized boolean executeInsertIntoDB(@NonNull final Class myClass,
-	                                   final String jsonString,
-	                                   final Boolean appendToObject) {
+	public synchronized <G extends RealmModel> boolean executeInsertIntoDB(@NonNull final Class<G> myClass,
+	                                                                       final String jsonString,
+	                                                                       final Boolean appendToObject) {
 		if (jsonString == null || myClass == null) {
 			return false;
 		}
@@ -433,9 +434,9 @@ public class DatabaseUtilities {
 	 *                       to true, else, set it to false for an overwrite.
 	 * @return Boolean. True if the insert succeeded, false if it did not
 	 */
-	public synchronized boolean executeInsertIntoDB(@NonNull final Class myClass,
-	                                   final InputStream is,
-	                                   final Boolean appendToObject) {
+	public synchronized <G extends RealmModel> boolean executeInsertIntoDB(@NonNull final Class<G> myClass,
+	                                                                       final InputStream is,
+	                                                                       final Boolean appendToObject) {
 		if (is == null || myClass == null) {
 			return false;
 		}
@@ -451,7 +452,7 @@ public class DatabaseUtilities {
 						try {
 							realm.createOrUpdateObjectFromJson(myClass, is);
 						} catch (Exception e) {
-							if(loggingEnabled){
+							if (loggingEnabled) {
 								L.m(IO_EXCEPTION_STRING);
 								e.printStackTrace();
 							}
@@ -460,7 +461,7 @@ public class DatabaseUtilities {
 						try {
 							realm.createObjectFromJson(myClass, is);
 						} catch (IOException e) {
-							if(loggingEnabled){
+							if (loggingEnabled) {
 								L.m(IO_EXCEPTION_STRING);
 								e.printStackTrace();
 							}
@@ -494,9 +495,9 @@ public class DatabaseUtilities {
 	 *                       to true, else, set it to false for an overwrite.
 	 * @return Boolean. True if the insert succeeded, false if it did not
 	 */
-	public synchronized boolean executeInsertIntoDB(@NonNull final Class myClass,
-	                                   final JSONObject jsonObject,
-	                                   final Boolean appendToObject) {
+	public synchronized <G extends RealmModel> boolean executeInsertIntoDB(@NonNull final Class<G> myClass,
+	                                                                       final JSONObject jsonObject,
+	                                                                       final Boolean appendToObject) {
 		if (jsonObject == null || myClass == null) {
 			return false;
 		}
@@ -549,7 +550,7 @@ public class DatabaseUtilities {
 	 *                that class name
 	 * @return Return a boolean, true if suceeded, false if not
 	 */
-	public synchronized boolean persistObject(@NonNull final Class myClass, final Object obj) {
+	public synchronized <G> boolean persistObject(@NonNull final Class<G> myClass, final Object obj) {
 		return (executeInsertIntoDBMaster(myClass, obj));
 	}
 	
@@ -569,8 +570,8 @@ public class DatabaseUtilities {
 	 *                Note, passing null will delete it from the Table.
 	 * @return Boolean, true if it succeeded, false if it did not
 	 */
-	private synchronized boolean executeInsertIntoDBMaster(@NonNull final Class myClass,
-	                                          final Object obj) {
+	private synchronized <G> boolean executeInsertIntoDBMaster(@NonNull final Class<G> myClass,
+	                                                           final Object obj) {
 		
 		if (myClass == null) {
 			return false;
@@ -586,11 +587,11 @@ public class DatabaseUtilities {
 		try {
 			jsonString = new Gson().toJson(obj, myClass);
 		} catch (IllegalArgumentException ile) {
-			if(this.loggingEnabled) {
+			if (this.loggingEnabled) {
 				L.m(COULD_NOT_PERSIST_OBJECT_ILE + ile.getMessage());
 			}
 		} catch (Exception e) {
-			if(this.loggingEnabled){
+			if (this.loggingEnabled) {
 				e.printStackTrace();
 			}
 		}
@@ -602,11 +603,11 @@ public class DatabaseUtilities {
 		
 		MasterDatabaseObject mdo = new MasterDatabaseObject();
 		mdo.setId(className);
-		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-			if(this.isEncryptionEnabled()) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+			if (this.isEncryptionEnabled()) {
 				try {
 					String encryptedString = EncryptionUtilities.encryptString(jsonString, this.password, this.salt);
-					if(!StringUtilities.isNullOrEmpty(encryptedString)) {
+					if (!StringUtilities.isNullOrEmpty(encryptedString)) {
 						mdo.setJsonString(encryptedString);
 					} else {
 						mdo.setJsonString(jsonString);
@@ -633,11 +634,11 @@ public class DatabaseUtilities {
 			DatabaseUtilities.this.closeRealm(realm);
 			return true;
 		} catch (IllegalArgumentException e1) {
-			if(this.loggingEnabled){
+			if (this.loggingEnabled) {
 				e1.printStackTrace();
 			}
 		} catch (Exception e) {
-			if(this.loggingEnabled){
+			if (this.loggingEnabled) {
 				e.printStackTrace();
 			}
 		} finally {
@@ -651,7 +652,7 @@ public class DatabaseUtilities {
 	 * Overloaded to allow for {@link TypeToken}
 	 */
 	private synchronized boolean executeInsertIntoDBMaster(@NonNull final TypeToken myClass,
-	                                          final Object obj) {
+	                                                       final Object obj) {
 		
 		if (myClass == null) {
 			return false;
@@ -667,11 +668,11 @@ public class DatabaseUtilities {
 		try {
 			jsonString = new Gson().toJson(obj, myClass.getType());
 		} catch (IllegalArgumentException ile) {
-			if(this.loggingEnabled){
+			if (this.loggingEnabled) {
 				L.m(COULD_NOT_PERSIST_OBJECT_ILE + ile.getMessage());
 			}
 		} catch (Exception e) {
-			if(this.loggingEnabled){
+			if (this.loggingEnabled) {
 				e.printStackTrace();
 			}
 		}
@@ -683,11 +684,11 @@ public class DatabaseUtilities {
 		
 		MasterDatabaseObject mdo = new MasterDatabaseObject();
 		mdo.setId(className);
-		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-			if(this.isEncryptionEnabled()) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+			if (this.isEncryptionEnabled()) {
 				try {
 					String encryptedString = EncryptionUtilities.encryptString(jsonString, this.password, this.salt);
-					if(!StringUtilities.isNullOrEmpty(encryptedString)) {
+					if (!StringUtilities.isNullOrEmpty(encryptedString)) {
 						mdo.setJsonString(encryptedString);
 					} else {
 						mdo.setJsonString(jsonString);
@@ -713,11 +714,11 @@ public class DatabaseUtilities {
 			DatabaseUtilities.this.closeRealm(realm);
 			return true;
 		} catch (IllegalArgumentException e1) {
-			if(this.loggingEnabled){
+			if (this.loggingEnabled) {
 				e1.printStackTrace();
 			}
 		} catch (Exception e) {
-			if(this.loggingEnabled){
+			if (this.loggingEnabled) {
 				e.printStackTrace();
 			}
 		} finally {
@@ -742,9 +743,9 @@ public class DatabaseUtilities {
 	 *                     suffix. Use that same suffix again to delete it from the db.
 	 * @return Boolean, true if it succeeded, false if it did not
 	 */
-	public synchronized boolean persistObjectCustom(@NonNull final Class myClass,
-	                                   final Object obj,
-	                                   final String customSuffix) {
+	public synchronized <G> boolean persistObjectCustom(@NonNull final Class<G> myClass,
+	                                                    final Object obj,
+	                                                    final String customSuffix) {
 		
 		if (myClass == null) {
 			return false;
@@ -762,11 +763,11 @@ public class DatabaseUtilities {
 		try {
 			jsonString = new Gson().toJson(obj, myClass);
 		} catch (IllegalArgumentException ile) {
-			if(this.loggingEnabled){
+			if (this.loggingEnabled) {
 				L.m(COULD_NOT_PERSIST_OBJECT_ILE + ile.getMessage());
 			}
 		} catch (Exception e) {
-			if(this.loggingEnabled){
+			if (this.loggingEnabled) {
 				e.printStackTrace();
 			}
 		}
@@ -781,11 +782,11 @@ public class DatabaseUtilities {
 			className = className + customSuffix;
 		}
 		mdo.setId(className);
-		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-			if(this.isEncryptionEnabled()) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+			if (this.isEncryptionEnabled()) {
 				try {
 					String encryptedString = EncryptionUtilities.encryptString(jsonString, this.password, this.salt);
-					if(!StringUtilities.isNullOrEmpty(encryptedString)) {
+					if (!StringUtilities.isNullOrEmpty(encryptedString)) {
 						mdo.setJsonString(encryptedString);
 					} else {
 						mdo.setJsonString(jsonString);
@@ -812,11 +813,11 @@ public class DatabaseUtilities {
 			DatabaseUtilities.this.closeRealm(realm);
 			return true;
 		} catch (IllegalArgumentException e1) {
-			if(this.loggingEnabled){
+			if (this.loggingEnabled) {
 				e1.printStackTrace();
 			}
 		} catch (Exception e) {
-			if(this.loggingEnabled){
+			if (this.loggingEnabled) {
 				e.printStackTrace();
 			}
 		} finally {
@@ -830,8 +831,8 @@ public class DatabaseUtilities {
 	 * Overloaded to allow for {@link TypeToken}
 	 */
 	public synchronized boolean persistObjectCustom(@NonNull final TypeToken myClass,
-	                                   final Object obj,
-	                                   final String customSuffix) {
+	                                                final Object obj,
+	                                                final String customSuffix) {
 		if (myClass == null) {
 			return false;
 		}
@@ -849,11 +850,11 @@ public class DatabaseUtilities {
 		try {
 			jsonString = new Gson().toJson(obj, myClass.getType());
 		} catch (IllegalArgumentException ile) {
-			if(this.loggingEnabled){
+			if (this.loggingEnabled) {
 				L.m(COULD_NOT_PERSIST_OBJECT_ILE + ile.getMessage());
 			}
 		} catch (Exception e) {
-			if(this.loggingEnabled){
+			if (this.loggingEnabled) {
 				e.printStackTrace();
 			}
 		}
@@ -868,11 +869,11 @@ public class DatabaseUtilities {
 			className = className + customSuffix;
 		}
 		mdo.setId(className);
-		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-			if(this.isEncryptionEnabled()) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+			if (this.isEncryptionEnabled()) {
 				try {
 					String encryptedString = EncryptionUtilities.encryptString(jsonString, this.password, this.salt);
-					if(!StringUtilities.isNullOrEmpty(encryptedString)) {
+					if (!StringUtilities.isNullOrEmpty(encryptedString)) {
 						mdo.setJsonString(encryptedString);
 					} else {
 						mdo.setJsonString(jsonString);
@@ -899,11 +900,11 @@ public class DatabaseUtilities {
 			DatabaseUtilities.this.closeRealm(realm);
 			return true;
 		} catch (IllegalArgumentException e1) {
-			if(this.loggingEnabled){
+			if (this.loggingEnabled) {
 				e1.printStackTrace();
 			}
 		} catch (Exception e) {
-			if(this.loggingEnabled){
+			if (this.loggingEnabled) {
 				e.printStackTrace();
 			}
 		} finally {
@@ -923,7 +924,7 @@ public class DatabaseUtilities {
 	 *                key to find the item / row.
 	 * @return Boolean, true if it succeeded, false if it did not
 	 */
-	public synchronized boolean dePersistObject(@NonNull final Class myClass) {
+	public synchronized <G> boolean dePersistObject(@NonNull final Class<G> myClass) {
 		return this.deleteFromMasterDB(myClass);
 	}
 	
@@ -935,7 +936,7 @@ public class DatabaseUtilities {
 	}
 	
 	//Overloaded for naming simplicity since I forget what things are called all the time!
-	public synchronized boolean deletePersistedObject(@NonNull final Class myClass) {
+	public synchronized <G> boolean deletePersistedObject(@NonNull final Class<G> myClass) {
 		return this.deleteFromMasterDB(myClass);
 	}
 	
@@ -960,7 +961,7 @@ public class DatabaseUtilities {
 	 *                     suffix. Use that same suffix again to delete it from the db.
 	 * @return Boolean, true if it succeeded, false if it did not
 	 */
-	public synchronized boolean dePersistObjectCustom(@NonNull final Class myClass, final String customSuffix) {
+	public synchronized <G> boolean dePersistObjectCustom(@NonNull final Class<G> myClass, final String customSuffix) {
 		return this.deleteFromMasterDB(myClass, customSuffix);
 	}
 	
@@ -986,7 +987,7 @@ public class DatabaseUtilities {
 	 *                     suffix. Use that same suffix again to delete it from the db.
 	 * @return Boolean, true if it succeeded, false if it did not
 	 */
-	public synchronized boolean deletePersistedObjectCustom(@NonNull final Class myClass, final String customSuffix) {
+	public synchronized <G> boolean deletePersistedObjectCustom(@NonNull final Class<G> myClass, final String customSuffix) {
 		return this.deleteFromMasterDB(myClass, customSuffix);
 	}
 	
@@ -1004,7 +1005,7 @@ public class DatabaseUtilities {
 	 *                key to find the item / row.
 	 * @return Boolean, true if it succeeded, false if it did not
 	 */
-	private synchronized boolean deleteFromMasterDB(@NonNull final Class myClass) {
+	private synchronized <G> boolean deleteFromMasterDB(@NonNull final Class<G> myClass) {
 		return this.deleteFromMasterDB(myClass, null);
 	}
 	
@@ -1028,11 +1029,10 @@ public class DatabaseUtilities {
 	 *                     add a custom suffix string (ie -user2) and it will be written into the
 	 *                     master object table with an id (primary key) that matches that custom
 	 *                     suffix. Use that same suffix again to delete it from the db.
-	 * @param <T>          T extends RealmObject
 	 * @return Boolean, true if it succeeded, false if it did not
 	 */
-	private synchronized <T extends RealmObject> boolean deleteFromMasterDB(@NonNull final Class myClass,
-	                                                           final String customSuffix) {
+	private synchronized <G> boolean deleteFromMasterDB(@NonNull final Class<G> myClass,
+	                                                    final String customSuffix) {
 		return this.deleteFromMasterDBOverride(myClass, customSuffix, false);
 	}
 	
@@ -1048,16 +1048,15 @@ public class DatabaseUtilities {
 	 *                     add a custom suffix string (ie -user2) and it will be written into the
 	 *                     master object table with an id (primary key) that matches that custom
 	 *                     suffix. Use that same suffix again to delete it from the db.
-	 * @param <T>          T extends RealmObject
 	 * @return Boolean, true if it succeeded, false if it did not
 	 */
-	private synchronized <T extends RealmObject> boolean deleteFromMasterDBOverride(@NonNull final Class myClass,
-	                                                           final String customSuffix,
-	                                                           boolean overrideCheck) {
+	private synchronized <G> boolean deleteFromMasterDBOverride(@NonNull final Class<G> myClass,
+	                                                            final String customSuffix,
+	                                                            boolean overrideCheck) {
 		if (myClass == null) {
 			return false;
 		}
-		if(!overrideCheck) {
+		if (!overrideCheck) {
 			if (!DatabaseUtilities.isValidWrite(myClass, customSuffix)) {
 				L.m(IF_YOU_WANT_TO_DELETE_ALL_CALL_THIS);
 				return false;
@@ -1067,9 +1066,9 @@ public class DatabaseUtilities {
 		final String myClassName = myClass.getName();
 		//Returned object from the master search
 		try {
-			Object obj = this.queryDatabaseMasterSingle(myClass);
+			G obj = this.queryDatabaseMasterSingle(myClass);
 			if (obj == null) {
-				Object obj2 = this.getPersistedObjectCustom(myClass, customSuffix);
+				G obj2 = this.getPersistedObjectCustom(myClass, customSuffix);
 				if (obj2 == null) {
 					//IF it is null, it has already been deleted, return true and move on
 					if (this.loggingEnabled) {
@@ -1079,8 +1078,8 @@ public class DatabaseUtilities {
 					return true;
 				}
 			}
-		} catch (IllegalStateException ile){
-			if(this.loggingEnabled){
+		} catch (IllegalStateException ile) {
+			if (this.loggingEnabled) {
 				ile.printStackTrace();
 			}
 		}
@@ -1089,14 +1088,14 @@ public class DatabaseUtilities {
 		try {
 			query = realm.where(MasterDatabaseObject.class);
 		} catch (IllegalStateException il) {
-			if(this.loggingEnabled){
+			if (this.loggingEnabled) {
 				il.printStackTrace();
 			}
 			DatabaseUtilities.this.closeRealm(realm);
 			return false;
 		}
-		if(query == null){
-			if(this.loggingEnabled){
+		if (query == null) {
+			if (this.loggingEnabled) {
 				L.m(QUERY_IS_NULL_CANNOT_DELETE);
 			}
 			DatabaseUtilities.this.closeRealm(realm);
@@ -1120,12 +1119,12 @@ public class DatabaseUtilities {
 								if (customId.equals(id)) {
 									try {
 										mdo.deleteFromRealm();
-										if(loggingEnabled){
+										if (loggingEnabled) {
 											L.m(DELETE_FROM_DB_SUCCEEDED);
 										}
 										return;
 									} catch (Exception e) {
-										if(loggingEnabled){
+										if (loggingEnabled) {
 											L.m(DELETE_FAILED);
 											e.printStackTrace();
 										}
@@ -1136,12 +1135,12 @@ public class DatabaseUtilities {
 								if (myClassName.equals(id)) {
 									try {
 										mdo.deleteFromRealm();
-										if(loggingEnabled){
+										if (loggingEnabled) {
 											L.m(DELETE_FROM_DB_SUCCEEDED);
 										}
 										return;
 									} catch (Exception e) {
-										if(loggingEnabled){
+										if (loggingEnabled) {
 											L.m(DELETE_FAILED);
 											e.printStackTrace();
 										}
@@ -1162,22 +1161,22 @@ public class DatabaseUtilities {
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	private synchronized <T extends RealmObject> boolean deleteFromMasterDB(@NonNull final TypeToken myClass,
-	                                                           final String customSuffix) {
+	private synchronized boolean deleteFromMasterDB(@NonNull final TypeToken myClass,
+	                                                final String customSuffix) {
 		return deleteFromMasterDBOverride(myClass, customSuffix, false);
 	}
 	
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	private synchronized <T extends RealmObject> boolean deleteFromMasterDBOverride(@NonNull final TypeToken myClass,
-	                                                           final String customSuffix,
-	                                                           boolean overrideCheck) {
+	private synchronized <G> boolean deleteFromMasterDBOverride(@NonNull final TypeToken<G> myClass,
+	                                                            final String customSuffix,
+	                                                            boolean overrideCheck) {
 		
 		if (myClass == null) {
 			return false;
 		}
-		if(!overrideCheck) {
+		if (!overrideCheck) {
 			if (!DatabaseUtilities.isValidWrite(myClass, customSuffix)) {
 				L.m(IF_YOU_WANT_TO_DELETE_ALL_CALL_THIS);
 				return false;
@@ -1188,9 +1187,9 @@ public class DatabaseUtilities {
 		
 		//Returned object from the master search
 		try {
-			Object obj = this.queryDatabaseMasterSingle(myClass);
+			G obj = this.queryDatabaseMasterSingle(myClass);
 			if (obj == null) {
-				Object obj2 = this.getPersistedObjectCustom(myClass, customSuffix);
+				G obj2 = this.getPersistedObjectCustom(myClass, customSuffix);
 				if (obj2 == null) {
 					//IF it is null, it has already been deleted, return true and move on
 					if (this.loggingEnabled) {
@@ -1200,8 +1199,8 @@ public class DatabaseUtilities {
 					return true;
 				}
 			}
-		} catch (IllegalStateException ile){
-			if(this.loggingEnabled){
+		} catch (IllegalStateException ile) {
+			if (this.loggingEnabled) {
 				ile.printStackTrace();
 			}
 		}
@@ -1210,13 +1209,13 @@ public class DatabaseUtilities {
 		try {
 			query = realm.where(MasterDatabaseObject.class);
 		} catch (IllegalStateException il) {
-			if(loggingEnabled){
+			if (loggingEnabled) {
 				il.printStackTrace();
 			}
 			DatabaseUtilities.this.closeRealm(realm);
 			return false;
 		}
-		if(query == null){
+		if (query == null) {
 			DatabaseUtilities.this.closeRealm(realm);
 			return false;
 		}
@@ -1238,12 +1237,12 @@ public class DatabaseUtilities {
 								if (customId.equals(id)) {
 									try {
 										mdo.deleteFromRealm();
-										if(loggingEnabled){
+										if (loggingEnabled) {
 											L.m(DELETE_FROM_DB_SUCCEEDED);
 										}
 										return;
 									} catch (Exception e) {
-										if(loggingEnabled){
+										if (loggingEnabled) {
 											L.m(DELETE_FAILED);
 											e.printStackTrace();
 										}
@@ -1254,12 +1253,12 @@ public class DatabaseUtilities {
 								if (myClassName.equals(id)) {
 									try {
 										mdo.deleteFromRealm();
-										if(loggingEnabled){
+										if (loggingEnabled) {
 											L.m(DELETE_FROM_DB_SUCCEEDED);
 										}
 										return;
 									} catch (Exception e) {
-										if(loggingEnabled){
+										if (loggingEnabled) {
 											L.m(DELETE_FAILED);
 											e.printStackTrace();
 										}
@@ -1288,7 +1287,7 @@ public class DatabaseUtilities {
 	 * @param areYouNotSure Pass false to confirm wipe
 	 * @return Boolean of success or not
 	 */
-	public synchronized <T extends  RealmObject>  boolean deleteEntireDB(boolean areYouSure, boolean areYouNotSure) {
+	public synchronized boolean deleteEntireDB(boolean areYouSure, boolean areYouNotSure) {
 		if (!areYouSure) {
 			return false;
 		}
@@ -1297,7 +1296,7 @@ public class DatabaseUtilities {
 		}
 		Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
 		try {
-			if(loggingEnabled){
+			if (loggingEnabled) {
 				L.m(DELETING_ENTIRE_DB);
 			}
 			final RealmResults<MasterDatabaseObject> results = realm.where(MasterDatabaseObject.class).findAll();
@@ -1307,8 +1306,8 @@ public class DatabaseUtilities {
 					boolean b = results.deleteAllFromRealm();
 				}
 			});
-		} catch (Exception e){
-			if(loggingEnabled){
+		} catch (Exception e) {
+			if (loggingEnabled) {
 				e.printStackTrace();
 			}
 		}
@@ -1317,7 +1316,7 @@ public class DatabaseUtilities {
 			DatabaseUtilities.clearRealmQueryInstance();
 			return (deleteRealmFileInStorage(realmConfiguration));
 		} catch (Exception e) {
-			if(loggingEnabled){
+			if (loggingEnabled) {
 				e.printStackTrace();
 			}
 			return false;
@@ -1339,11 +1338,10 @@ public class DatabaseUtilities {
 	 * @param areYouSure    If you want to delete everything, send true here
 	 * @param areYouNotSure If you want to delete everything, send false here
 	 *                      (Adding in '2 factor authentication' to prevent disasters)
-	 * @param <T>           T extends RealmObject
 	 * @return Returns a boolean, true if deletes succeeded, false if they did not
 	 */
-	public synchronized <T extends RealmObject> boolean deleteAllPersistedObjects(boolean areYouSure,
-	                                                                 boolean areYouNotSure) {
+	public synchronized boolean deleteAllPersistedObjects(boolean areYouSure,
+	                                                      boolean areYouNotSure) {
 		
 		if (!areYouSure) {
 			return false;
@@ -1360,7 +1358,7 @@ public class DatabaseUtilities {
 			il.printStackTrace();
 			return false;
 		}
-		if(query == null){
+		if (query == null) {
 			return false;
 		}
 		realm.executeTransaction(new Realm.Transaction() {
@@ -1373,7 +1371,7 @@ public class DatabaseUtilities {
 						try {
 							t.deleteFromRealm();
 						} catch (Exception e) {
-							if(loggingEnabled){
+							if (loggingEnabled) {
 								L.m(DELETE_FAILED);
 							}
 						}
@@ -1388,11 +1386,11 @@ public class DatabaseUtilities {
 	 * @param query   Query to delete. Keep in mind here, if you send no query, it will delete
 	 *                everything in that table.
 	 * @param myClass Class to reference (Table pulling from)
-	 * @param <T>     T extends RealmObject
+	 * @param <G>     G extends RealmObject
 	 * @return return a boolean, true if it succeeded, false if it did not
 	 */
-	public synchronized <T extends RealmObject> boolean executeDeleteFromDB(RealmQuery query,
-	                                                           @NonNull final Class myClass) {
+	public synchronized <G extends RealmObject> boolean executeDeleteFromDB(RealmQuery query,
+	                                                                        @NonNull final Class myClass) {
 		if (myClass == null) {
 			return false;
 		}
@@ -1403,12 +1401,12 @@ public class DatabaseUtilities {
 		if (query == null) {
 			query = this.buildRealmQuery(realm, myClass);
 		}
-		final RealmResults<T> results = query.findAll();
+		final RealmResults<G> results = query.findAll();
 		try {
 			realm.executeTransaction(new Realm.Transaction() {
 				@Override
 				public void execute(Realm realm) {
-					for (T t : results) {
+					for (G t : results) {
 						t.deleteFromRealm();
 					}
 				}
@@ -1429,8 +1427,8 @@ public class DatabaseUtilities {
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	public synchronized <T extends RealmObject> boolean executeDeleteFromDB(RealmQuery query,
-	                                                           @NonNull final TypeToken myClass) {
+	public synchronized <G extends RealmObject> boolean executeDeleteFromDB(RealmQuery query,
+	                                                                        @NonNull final TypeToken myClass) {
 		if (myClass == null) {
 			return false;
 		}
@@ -1441,12 +1439,12 @@ public class DatabaseUtilities {
 		if (query == null) {
 			query = this.buildRealmQuery(realm, myClass);
 		}
-		final RealmResults<T> results = query.findAll();
+		final RealmResults<G> results = query.findAll();
 		try {
 			realm.executeTransaction(new Realm.Transaction() {
 				@Override
 				public void execute(Realm realm) {
-					for (T t : results) {
+					for (G t : results) {
 						t.deleteFromRealm();
 					}
 				}
@@ -1474,19 +1472,24 @@ public class DatabaseUtilities {
 	 * @param myClass Class (row / id) to query
 	 * @return returns an Object that was pulled from the DB. If nothing found, it will return null.
 	 */
-	public synchronized Object getPersistedObject(@NonNull Class myClass) {
+	public synchronized <G> G getPersistedObject(@NonNull Class<G> myClass) {
 		return this.queryDatabaseMasterSingle(myClass);
 	}
 	
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	public synchronized Object getPersistedObject(@NonNull TypeToken myClass) {
+	public synchronized <G> G getPersistedObject(@NonNull TypeToken<G> myClass) {
 		return this.queryDatabaseMasterSingle(myClass);
 	}
 	
 	/**
 	 * Query the MasterDatabaseObject table (persisted objects) in the database for all rows
+	 * That were inserted using the Persist and PersistCustom methods. Note, will not show
+	 * objects stored by the developer using the following methods:
+	 * {@link #executeInsertIntoDB(Class, InputStream, Boolean)}
+	 * {@link #executeInsertIntoDB(Class, String, Boolean)}
+	 * {@link #executeInsertIntoDB(Class, JSONObject, Boolean)}
 	 *
 	 * @return returns a Map of type <String, String>. The first String represents the
 	 * key used in the MasterDatabaseObject table and the second String is the
@@ -1524,16 +1527,16 @@ public class DatabaseUtilities {
 	 *                     space (more rows) for persisted objects.
 	 * @return returns an Object that was pulled from the DB. If nothing found, it will return null.
 	 */
-	public synchronized Object getPersistedObjectCustom(@NonNull final Class myClass,
-	                                       final String customSuffix) {
+	public synchronized <G> G getPersistedObjectCustom(@NonNull final Class<G> myClass,
+	                                                   final String customSuffix) {
 		return this.queryDatabaseMasterSingle(myClass, customSuffix);
 	}
 	
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	public synchronized Object getPersistedObjectCustom(@NonNull final TypeToken myClass,
-	                                       final String customSuffix) {
+	public synchronized <G> G getPersistedObjectCustom(@NonNull final TypeToken<G> myClass,
+	                                                   final String customSuffix) {
 		return this.queryDatabaseMasterSingle(myClass, customSuffix);
 	}
 	
@@ -1543,7 +1546,7 @@ public class DatabaseUtilities {
 	 * @param myClass Class (row / id) to query
 	 * @return returns an Object that was pulled from the DB. If nothing found, it will return null.
 	 */
-	private synchronized Object queryDatabaseMasterSingle(@NonNull final Class myClass) {
+	private synchronized <G> G queryDatabaseMasterSingle(@NonNull final Class<G> myClass) {
 		
 		return this.queryDatabaseMasterSingle(myClass, null);
 	}
@@ -1551,7 +1554,7 @@ public class DatabaseUtilities {
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	private synchronized Object queryDatabaseMasterSingle(@NonNull final TypeToken myClass) {
+	private synchronized <G> G queryDatabaseMasterSingle(@NonNull final TypeToken<G> myClass) {
 		return this.queryDatabaseMasterSingle(myClass, null);
 	}
 	
@@ -1563,8 +1566,8 @@ public class DatabaseUtilities {
 	 *                     space (more rows) for persisted objects.
 	 * @return returns an Object that was pulled from the DB. If nothing found, it will return null.
 	 */
-	private synchronized Object queryDatabaseMasterSingle(@NonNull final Class myClass,
-	                                         final String customSuffix) {
+	private synchronized <G> G queryDatabaseMasterSingle(@NonNull final Class<G> myClass,
+	                                                     final String customSuffix) {
 		
 		String className = myClass.getName();
 		if (customSuffix != null) {
@@ -1593,7 +1596,7 @@ public class DatabaseUtilities {
 			try {
 				String jsonString = pulledObject.getJsonString();
 				String str = DatabaseUtilities.this.cleanMDOString(jsonString);
-				Object obj = new Gson().fromJson(str, myClass);
+				G obj = new Gson().fromJson(str, myClass);
 				return obj;
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1606,8 +1609,8 @@ public class DatabaseUtilities {
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	private synchronized Object queryDatabaseMasterSingle(@NonNull final TypeToken myClass,
-	                                         final String customSuffix) {
+	private synchronized <G> G queryDatabaseMasterSingle(@NonNull final TypeToken<G> myClass,
+	                                                     final String customSuffix) {
 		String className = myClass.getType().toString();
 		if (customSuffix != null) {
 			className = className + customSuffix;
@@ -1635,7 +1638,7 @@ public class DatabaseUtilities {
 			try {
 				String jsonString = pulledObject.getJsonString();
 				String str = DatabaseUtilities.this.cleanMDOString(jsonString);
-				Object obj = new Gson().fromJson(str, myClass.getType());
+				G obj = new Gson().fromJson(str, myClass.getType());
 				return obj;
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1653,11 +1656,10 @@ public class DatabaseUtilities {
 	 * the deleteDB is called; values in milliseconds was: 294863303301582 vs 294863303147936,
 	 * a difference of 0.153646 milliseconds
 	 *
-	 * @param <T> T extends RealmModel
 	 * @return returns a list of Objects that was pulled from the DB. If nothing found,
 	 * it will return an initialized, but empty, list.
 	 */
-	private synchronized <T extends RealmModel> List<MasterDatabaseObject> queryDatabaseMasterAll() {
+	private synchronized List<MasterDatabaseObject> queryDatabaseMasterAll() {
 		final RealmQuery<MasterDatabaseObject> query;
 		try {
 			query = DatabaseUtilities.buildRealmQueryOnly(this.realmConfiguration).where(MasterDatabaseObject.class);
@@ -1665,7 +1667,7 @@ public class DatabaseUtilities {
 			il.printStackTrace();
 			return new ArrayList<>();
 		}
-		if(query == null){
+		if (query == null) {
 			return new ArrayList<>();
 		}
 		//Start transaction
@@ -1697,11 +1699,11 @@ public class DatabaseUtilities {
 	 * @param passedQuery The query to search with. If null is passed here, it will build a default
 	 *                    query in which it searches everything.
 	 * @param myClass     Class (table) that is being searched
-	 * @param <T>         T extends RealmModel (RealmResults)
+	 * @param <G>         G extends RealmModel (RealmResults)
 	 * @return An object from the database (one from that table)
 	 */
-	public synchronized <T extends RealmModel> Object queryDatabaseSingle(RealmQuery<T> passedQuery,
-	                                                         @NonNull Class myClass) {
+	public synchronized <G extends RealmModel> G queryDatabaseSingle(RealmQuery<G> passedQuery,
+	                                                                 @NonNull Class myClass) {
 		
 		Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
 		if (passedQuery == null) {
@@ -1709,10 +1711,10 @@ public class DatabaseUtilities {
 		}
 		
 		//Start transaction
-		RealmResults<T> results = passedQuery.findAll();
+		RealmResults<G> results = passedQuery.findAll();
 		
 		if (results != null) {
-			Object object = results.get(0);
+			G object = results.get(0);
 			DatabaseUtilities.this.closeRealm(realm);
 			return object;
 		}
@@ -1723,8 +1725,8 @@ public class DatabaseUtilities {
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	public synchronized <T extends RealmModel> Object queryDatabaseSingle(RealmQuery<T> passedQuery,
-	                                                         @NonNull TypeToken myClass) {
+	public synchronized <G extends RealmModel> G queryDatabaseSingle(RealmQuery<G> passedQuery,
+	                                                                 @NonNull TypeToken myClass) {
 		
 		Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
 		if (passedQuery == null) {
@@ -1732,10 +1734,10 @@ public class DatabaseUtilities {
 		}
 		
 		//Start transaction
-		RealmResults<T> results = passedQuery.findAll();
+		RealmResults<G> results = passedQuery.findAll();
 		
 		if (results != null) {
-			Object object = results.get(0);
+			G object = results.get(0);
 			DatabaseUtilities.this.closeRealm(realm);
 			return object;
 		}
@@ -1750,25 +1752,23 @@ public class DatabaseUtilities {
 	 * @param passedQuery The query to search with. If null is passed here, it will build a default
 	 *                    query in which it searches everything.
 	 * @param myClass     Class (table) that is being searched
-	 * @param <T>         T extends RealmModel (RealmResults)
+	 * @param <G>         G extends RealmModel (RealmResults)
 	 * @return An list of objects from the database (all in that table)
 	 */
-	public synchronized <T extends RealmModel> List<Object> queryDatabaseList(RealmQuery<T> passedQuery,
-	                                                             @NonNull Class myClass) {
+	public synchronized <G extends RealmModel> List<G> queryDatabaseList(RealmQuery<G> passedQuery,
+	                                                                     @NonNull Class myClass) {
 		Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
 		if (passedQuery == null) {
 			passedQuery = this.buildRealmQuery(realm, myClass);
 		}
 		
 		//Start transaction
-		RealmResults<T> results = passedQuery.findAll();
-		List<Object> objects = new ArrayList<>();
-		//<T extends RealmModel>
+		RealmResults<G> results = passedQuery.findAll();
+		List<G> objects = new ArrayList<>();
 		if (results != null) {
-			for (T t : results) {
-				Object object = (Object) t;
-				if (object != null) {
-					objects.add(object);
+			for (G t : results) {
+				if (t != null) {
+					objects.add(t);
 				}
 			}
 		}
@@ -1779,22 +1779,20 @@ public class DatabaseUtilities {
 	/**
 	 * Overloaded to allow for {@link TypeToken}
 	 */
-	public synchronized <T extends RealmModel> List<Object> queryDatabaseList(RealmQuery<T> passedQuery,
-	                                                             @NonNull TypeToken myClass) {
+	public synchronized <G extends RealmModel> List<G> queryDatabaseList(RealmQuery<G> passedQuery,
+	                                                                     @NonNull TypeToken myClass) {
 		Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
 		if (passedQuery == null) {
 			passedQuery = this.buildRealmQuery(realm, myClass);
 		}
 		
 		//Start transaction
-		RealmResults<T> results = passedQuery.findAll();
-		List<Object> objects = new ArrayList<>();
-		//<T extends RealmModel>
+		RealmResults<G> results = passedQuery.findAll();
+		List<G> objects = new ArrayList<>();
 		if (results != null) {
-			for (T t : results) {
-				Object object = (Object) t;
-				if (object != null) {
-					objects.add(object);
+			for (G t : results) {
+				if (t != null) {
+					objects.add(t);
 				}
 			}
 		}
@@ -1856,7 +1854,7 @@ public class DatabaseUtilities {
 					DatabaseUtilities.queryRealm = Realm.getInstance(realmConfiguration);
 				}
 			}
-		} catch (IllegalStateException ile){
+		} catch (IllegalStateException ile) {
 			//https://github.com/realm/realm-java/issues/3806 && https://github.com/realm/realm-java/issues/4409
 			//todo fix this as it may be causing a memory leak: "Remember to call close() on all Realm instances. Realm myDB.db is being finalized without being closed, this can lead to running out of native memory."
 			return DatabaseUtilities.buildRealm(realmConfiguration);
@@ -1867,13 +1865,13 @@ public class DatabaseUtilities {
 	/**
 	 * Clear the query realm active instance
 	 */
-	private static synchronized void clearRealmQueryInstance(){
+	private static synchronized void clearRealmQueryInstance() {
 		try {
 			if (DatabaseUtilities.queryRealm != null) {
 				DatabaseUtilities.queryRealm.close();
 			}
 			DatabaseUtilities.queryRealm = null;
-		} catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -1903,9 +1901,9 @@ public class DatabaseUtilities {
 	 * @return
 	 */
 	public static synchronized RealmConfiguration buildRealmConfig(@NonNull Context context,
-	                                                  @Nullable String dbName,
-	                                                  @Nullable Integer schemaVersion,
-	                                                  @Nullable Boolean deleteIfNeeded) {
+	                                                               @Nullable String dbName,
+	                                                               @Nullable Integer schemaVersion,
+	                                                               @Nullable Boolean deleteIfNeeded) {
 		if (context == null) {
 			L.m(CONTEXT_NULL);
 			return null;
@@ -1980,19 +1978,20 @@ public class DatabaseUtilities {
 	
 	/**
 	 * Quick checker for whether encryption is enabled.
+	 *
 	 * @return True if it is, false if it is not
 	 */
-	private synchronized boolean isEncryptionEnabled(){
-		if(!this.isEncrypted){
+	private synchronized boolean isEncryptionEnabled() {
+		if (!this.isEncrypted) {
 			return false;
 		}
-		if(StringUtilities.isNullOrEmpty(this.salt)){
+		if (StringUtilities.isNullOrEmpty(this.salt)) {
 			return false;
 		}
-		if(this.password == null){
+		if (this.password == null) {
 			return false;
 		}
-		if(StringUtilities.isNullOrEmpty(this.password.getTempStringData())){
+		if (StringUtilities.isNullOrEmpty(this.password.getTempStringData())) {
 			return false;
 		}
 		return true;
@@ -2001,21 +2000,23 @@ public class DatabaseUtilities {
 	/**
 	 * Clean the String and return the decrypted String or the current one if it is already
 	 * decrypted or does not have it enabled.
+	 *
 	 * @param jsonString String to decrypt or return
 	 * @return Clean String to use
 	 */
-	private synchronized String cleanMDOString(String jsonString){
-		if(StringUtilities.isNullOrEmpty(jsonString)){
+	private synchronized String cleanMDOString(String jsonString) {
+		if (StringUtilities.isNullOrEmpty(jsonString)) {
 			return jsonString;
 		}
-		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-			if(this.isEncryptionEnabled()){
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+			if (this.isEncryptionEnabled()) {
 				try {
 					String s = EncryptionUtilities.decryptString(jsonString, this.password, this.salt);
-					if(!StringUtilities.isNullOrEmpty(s)){
+					if (!StringUtilities.isNullOrEmpty(s)) {
 						return s;
 					}
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 				return jsonString;
 			} else {
 				return jsonString;
@@ -2027,16 +2028,17 @@ public class DatabaseUtilities {
 	
 	/**
 	 * Simple method to close the realm instance
+	 *
 	 * @param realm
 	 */
-	private synchronized void closeRealm(Realm realm){
-		if(realm == null){
+	private synchronized void closeRealm(Realm realm) {
+		if (realm == null) {
 			return;
 		}
 		try {
 			realm.close();
 		} catch (Exception e) {
-			if(loggingEnabled){
+			if (loggingEnabled) {
 				e.printStackTrace();
 			}
 		}
@@ -2200,23 +2202,24 @@ public class DatabaseUtilities {
 	
 	/**
 	 * Checks if the values in the DB are already encrypted
+	 *
 	 * @return
 	 */
-	public synchronized boolean areDBValuesEncrypted(){
+	public synchronized boolean areDBValuesEncrypted() {
 		List<MasterDatabaseObject> masterDatabaseObjects = this.queryDatabaseMasterAll();
-		if(MiscUtilities.isListNullOrEmpty(masterDatabaseObjects)){
+		if (MiscUtilities.isListNullOrEmpty(masterDatabaseObjects)) {
 			return false;
 		}
 		boolean isAlreadyEncrypted = false;
-		for(MasterDatabaseObject mdo : masterDatabaseObjects){
-			if(mdo == null){
+		for (MasterDatabaseObject mdo : masterDatabaseObjects) {
+			if (mdo == null) {
 				continue;
 			}
-			if(StringUtilities.isNullOrEmpty(mdo.getJsonString())){
+			if (StringUtilities.isNullOrEmpty(mdo.getJsonString())) {
 				continue;
 			}
 			String str = mdo.getJsonString();
-			if(EncryptionUtilities.isHexString(str)){
+			if (EncryptionUtilities.isHexString(str)) {
 				isAlreadyEncrypted = true;
 				break;
 			}
@@ -2262,6 +2265,68 @@ public class DatabaseUtilities {
 			return null;
 		}
 		return realmConfiguration.getRealmObjectClasses();
+	}
+	
+	/**
+	 * Make a copy of the database and move it to the provided path directory
+	 *
+	 * @param dbName The name of the database. NOTE! MUST INCLUDE THE EXTENSION! (IE 'myDB.db')
+	 * @return boolean, true if it succeeded, false if it did not
+	 */
+	public static synchronized boolean copyDBToDirectory(Context context, String dbName, String writeToPath) {
+		if (StringUtilities.isNullOrEmpty(writeToPath)) {
+			L.m("'writeToPath' was null or empty, please pass a valid write directory");
+			return false;
+		}
+		File file = null;
+		String packageName = SystemUtilities.getPackageName();
+		try {
+			file = new File(context.getFilesDir().getPath() + "/" + packageName + "/files/" + dbName);
+		} catch (Exception e) {
+			e.printStackTrace();
+			try {
+				file = new File(Environment.getExternalStorageDirectory() + "/" + packageName + "/" + dbName);
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		FileInputStream fis = null;
+		FileOutputStream fos = null;
+		boolean success = false;
+		try {
+			if (file == null) {
+				return false;
+			}
+			fis = new FileInputStream(file);
+			long currTime = DateUtilities.getCurrentDateLong();
+			fos = new FileOutputStream(writeToPath + dbName + "_copy_" + currTime + ".db");
+			while (true) {
+				int i = fis.read();
+				if (i != -1) {
+					fos.write(i);
+				} else {
+					break;
+				}
+			}
+			fos.flush();
+			success = true;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			success = false;
+			
+		} finally {
+			try {
+				fos.close();
+				fis.close();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			} catch (NullPointerException e1) {
+				//Null
+				success = false;
+			}
+		}
+		return success;
 	}
 	
 	/**
@@ -2333,47 +2398,47 @@ public class DatabaseUtilities {
 	 * @return
 	 */
 	@RequiresApi(value = Build.VERSION_CODES.KITKAT)
-	public static synchronized boolean moveDBToEncryptedVersion(@NonNull DatabaseUtilities dbUtils){
-		if(dbUtils == null){
+	public static synchronized boolean moveDBToEncryptedVersion(@NonNull DatabaseUtilities dbUtils) {
+		if (dbUtils == null) {
 			return false;
 		}
-		if(!dbUtils.isEncryptionEnabled()){
+		if (!dbUtils.isEncryptionEnabled()) {
 			L.m(ENCRYPTION_NOT_ENABLED_UNABLE_TO_MOVE);
 			return false;
 		}
 		List<MasterDatabaseObject> masterDatabaseObjects = dbUtils.queryDatabaseMasterAll();
-		if(MiscUtilities.isListNullOrEmpty(masterDatabaseObjects)){
+		if (MiscUtilities.isListNullOrEmpty(masterDatabaseObjects)) {
 			L.m(DB_EMPTY_UNABLE_TO_MOVE);
 			return false;
 		}
 		boolean isAlreadyEncrypted = false;
-		for(MasterDatabaseObject mdo : masterDatabaseObjects){
-			if(mdo == null){
+		for (MasterDatabaseObject mdo : masterDatabaseObjects) {
+			if (mdo == null) {
 				continue;
 			}
-			if(StringUtilities.isNullOrEmpty(mdo.getJsonString())){
+			if (StringUtilities.isNullOrEmpty(mdo.getJsonString())) {
 				continue;
 			}
 			String str = mdo.getJsonString();
-			if(EncryptionUtilities.isHexString(str)){
+			if (EncryptionUtilities.isHexString(str)) {
 				isAlreadyEncrypted = true;
 				break;
 			}
 		}
-		if(isAlreadyEncrypted){
+		if (isAlreadyEncrypted) {
 			L.m(ALREADY_CONTAINS_ENCRYPTED_VALUES_BAIL);
 			return false;
 		}
 		List<MasterDatabaseObject> toWrite = new ArrayList<>();
-		for(MasterDatabaseObject mdo : masterDatabaseObjects){
-			if(mdo == null){
+		for (MasterDatabaseObject mdo : masterDatabaseObjects) {
+			if (mdo == null) {
 				continue;
 			}
-			if(StringUtilities.isNullOrEmpty(mdo.getId())){
+			if (StringUtilities.isNullOrEmpty(mdo.getId())) {
 				continue;
 			}
 			String str = mdo.getJsonString();
-			if(StringUtilities.isNullOrEmpty(str)){
+			if (StringUtilities.isNullOrEmpty(str)) {
 				continue;
 			}
 			MasterDatabaseObject mdo1 = new MasterDatabaseObject();
@@ -2381,15 +2446,16 @@ public class DatabaseUtilities {
 			String sstr = null;
 			try {
 				sstr = EncryptionUtilities.encryptString(str, dbUtils.password, dbUtils.salt);
-			} catch (Exception e){}
-			if(StringUtilities.isNullOrEmpty(sstr)){
+			} catch (Exception e) {
+			}
+			if (StringUtilities.isNullOrEmpty(sstr)) {
 				L.m(COULD_NOT_ENCRYPT_STRING_OF_TYPE + mdo.getId());
 				continue;
 			}
 			mdo1.setJsonString(sstr);
 			toWrite.add(mdo1);
 		}
-		if(MiscUtilities.isListNullOrEmpty(toWrite)){
+		if (MiscUtilities.isListNullOrEmpty(toWrite)) {
 			return false;
 		}
 		Realm realm = DatabaseUtilities.buildRealm(dbUtils.realmConfiguration);
@@ -2401,15 +2467,15 @@ public class DatabaseUtilities {
 				}
 			});
 		} catch (IllegalArgumentException e1) {
-			if(dbUtils.loggingEnabled){
+			if (dbUtils.loggingEnabled) {
 				e1.printStackTrace();
 			}
 		} catch (Exception e) {
-			if(dbUtils.loggingEnabled){
+			if (dbUtils.loggingEnabled) {
 				e.printStackTrace();
 			}
 		}
-		for(final MasterDatabaseObject mdoFinal : toWrite){
+		for (final MasterDatabaseObject mdoFinal : toWrite) {
 			try {
 				realm.executeTransaction(new Realm.Transaction() {
 					@Override
@@ -2418,11 +2484,11 @@ public class DatabaseUtilities {
 					}
 				});
 			} catch (IllegalArgumentException e1) {
-				if(dbUtils.loggingEnabled){
+				if (dbUtils.loggingEnabled) {
 					e1.printStackTrace();
 				}
 			} catch (Exception e) {
-				if(dbUtils.loggingEnabled){
+				if (dbUtils.loggingEnabled) {
 					e.printStackTrace();
 				}
 			}
@@ -2434,7 +2500,6 @@ public class DatabaseUtilities {
 	/**
 	 * Prints out the database in the logcat. Useful for checking what is happening
 	 * if you are receiving weird results.
-	 *
 	 */
 	public synchronized void printOutDatabase() {
 		printOutDatabase(false);
@@ -2450,7 +2515,7 @@ public class DatabaseUtilities {
 	 */
 	public synchronized void printOutDatabase(final boolean decryptEncryptedValuesForPrint) {
 		L.m("Begin Printout of full Database\n");
-		if(decryptEncryptedValuesForPrint){
+		if (decryptEncryptedValuesForPrint) {
 			L.m("Note! Decrypting and printing encrypted values");
 		}
 		Realm realm = DatabaseUtilities.buildRealm(this.realmConfiguration);
@@ -2463,7 +2528,7 @@ public class DatabaseUtilities {
 			DatabaseUtilities.this.closeRealm(realm);
 			return;
 		}
-		if(query == null){
+		if (query == null) {
 			DatabaseUtilities.this.closeRealm(realm);
 			return;
 		}
@@ -2479,7 +2544,7 @@ public class DatabaseUtilities {
 				for (MasterDatabaseObject mdo : results) {
 					if (mdo != null) {
 						String str;
-						if(decryptEncryptedValuesForPrint){
+						if (decryptEncryptedValuesForPrint) {
 							str = DatabaseUtilities.this.cleanMDOString(mdo.getJsonString());
 						} else {
 							str = mdo.getJsonString();
@@ -2501,26 +2566,28 @@ public class DatabaseUtilities {
 	/**
 	 * Enable logging (Defaults to disabled)
 	 */
-	public void enableLogging(){
+	public void enableLogging() {
 		this.setLogging(true);
 	}
 	
 	/**
 	 * Disable logging (Defaults to disabled)
 	 */
-	public void disableLogging(){
+	public void disableLogging() {
 		this.setLogging(false);
 	}
 	
 	/**
 	 * Set the logging functionality
+	 *
 	 * @param bool
 	 */
-	private void setLogging(boolean bool){
+	private void setLogging(boolean bool) {
 		this.loggingEnabled = bool;
 	}
 	
 	//endregion
+	
 	
 	//region Modules
 	
@@ -2532,7 +2599,8 @@ public class DatabaseUtilities {
 	https://realm.io/docs/java/latest/#schemas
 	 */
 	@RealmModule(library = true, allClasses = true)
-	public static class PGMacTipsModule {}
+	public static class PGMacTipsModule {
+	}
 	
 	//endregion
 }

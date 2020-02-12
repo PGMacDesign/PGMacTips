@@ -7,6 +7,7 @@ import com.google.gson.reflect.TypeToken;
 import com.pgmacdesign.pgmactips.datamodels.SamplePojo;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.utilities.DatabaseUtilities;
+import com.pgmacdesign.pgmactips.utilities.DatabaseUtilities;
 import com.pgmacdesign.pgmactips.utilities.GsonUtilities;
 import com.pgmacdesign.pgmactips.utilities.L;
 import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
@@ -41,6 +42,7 @@ public class SampleDBClass extends AppCompatActivity {
 				//Replace me with your DB boolean flag
 				PGMacTipsConstants.DELETE_DB_IF_NEEDED
 		);
+//		this.dbUtilities = new DatabaseUtilities(getApplicationContext(), config);
 		this.dbUtilities = new DatabaseUtilities(getApplicationContext(), config);
 		
 		//CRUD Operations on Simple object
@@ -212,7 +214,7 @@ public class SampleDBClass extends AppCompatActivity {
 	 * Print the obtained Simple object
 	 */
 	private void printSimpleObjectCustom(){
-		SimpleObject s = (SimpleObject) this.dbUtilities.getPersistedObjectCustom(SimpleObject.class, CUSTOM_OBJECT_SAMPLE_STRING);
+		SimpleObject s = this.dbUtilities.getPersistedObjectCustom(SimpleObject.class, CUSTOM_OBJECT_SAMPLE_STRING);
 		if(s == null){
 			L.m("Error! Could not retrieve object");
 			return;
