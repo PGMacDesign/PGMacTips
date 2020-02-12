@@ -42,7 +42,7 @@ import io.realm.RealmResults;
 import io.realm.annotations.RealmModule;
 
 /**
- * This class serves as a conduit for database functionality. It is utilizing Realm for the
+ * This class serves as a conduit / wrapper for database functionality. It is utilizing Realm for the
  * database. See the link below for Realm and their Wiki.
  * https://realm.io/docs/java/latest/
  * Created by pmacdowell on 8/18/2016.
@@ -51,7 +51,9 @@ import io.realm.annotations.RealmModule;
  * can be cast without throwing an error. I caution you against casting them to something
  * else without knowing the response class though. For more info --
  * http://stackoverflow.com/questions/18723596/no-exception-while-type-casting-with-a-null-in-java
- * 2)
+ * 2) As of 2020-02-11 Items that are not collections (Map, List, etc) will no longer require
+ * casting to be set. You should be able to return the item as it matches the Generic type argument
+ * that is passed into the method.
  */
 @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Realm,
 		CustomAnnotationsBase.Dependencies.GSON})

@@ -59,7 +59,7 @@ class SampleDBClassKotlin : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             this.performAdvancedOperations()
         }
-        val bool = this.dbUtilities!!.deleteEntireDB<RealmObject>(true, false)
+        val bool = this.dbUtilities!!.deleteEntireDB(true, false)
         L.m("Successfully cleared entire db? $bool")
     }
 
@@ -258,7 +258,7 @@ class SampleDBClassKotlin : AppCompatActivity() {
         dbUtilities!!.printOutDatabase()
         L.m("are db values encrypted? " + dbUtilities!!.areDBValuesEncrypted())
         L.m("This should fail and return false. Value: " + DatabaseUtilities.moveDBToEncryptedVersion(dbUtilities!!))
-        dbUtilities!!.deleteEntireDB<RealmObject>(true, false)
+        dbUtilities!!.deleteEntireDB(true, false)
         L.m("This should fail and return false. Value: " + DatabaseUtilities.moveDBToEncryptedVersion(dbUtilities!!))
 
         dbUtilities!!.clearInstance()
