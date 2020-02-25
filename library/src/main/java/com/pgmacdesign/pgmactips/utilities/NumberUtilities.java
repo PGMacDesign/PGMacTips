@@ -460,7 +460,7 @@ public class NumberUtilities {
      * @param fallbackNumber Fallback number to return if it failed parsing
      * @return Parsed long or fallback number if it failed conversion
      */
-    public static long parseIntegerSafe(String intx, long fallbackNumber){
+    public static int parseIntegerSafe(String intx, int fallbackNumber){
         try {
             return Integer.parseInt(intx);
         } catch (NumberFormatException e){
