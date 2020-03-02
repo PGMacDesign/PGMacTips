@@ -128,21 +128,21 @@ public class FileUtilities {
 			case Bytes:
 				return bytesSize;
 			case Kilobytes:
-				return (bytesSize / 1024);
+				return (bytesSize / 1024D);
 			case Megabytes:
-				return (bytesSize / 1024 / 1024);
+				return ((bytesSize / 1024D) / 1024D);
 			case Gigabytes:
-				return (bytesSize / 1024 / 1024 / 1024);
+				return (((bytesSize / 1024D) / 1024D) / 1024D);
 			case Terabytes:
-				return (bytesSize / 1024 / 1024 / 1024 / 1024);
+				return ((((bytesSize / 1024D) / 1024D) / 1024D) / 1024D);
 			case PetaBytes:
-				return (bytesSize / 1024 / 1024 / 1024 / 1024 / 1024);
+				return (((((bytesSize / 1024D) / 1024D) / 1024D) / 1024D) / 1024D);
 			case Exabytes:
-				return (bytesSize / 1024 / 1024 / 1024 / 1024 / 1024 / 1024);
+				return ((((((bytesSize / 1024D) / 1024D) / 1024D) / 1024D) / 1024D) / 1024D);
 			case ZettaBytes:
-				return (bytesSize / 1024 / 1024 / 1024 / 1024 / 1024 / 1024 / 1024);
+				return (((((((bytesSize / 1024D) / 1024D) / 1024D) / 1024D) / 1024D) / 1024D) / 1024D);
 			case Yottabytes:
-				return (bytesSize / 1024 / 1024 / 1024 / 1024 / 1024 / 1024 / 1024 / 1024);
+				return ((((((((bytesSize / 1024D) / 1024D) / 1024D) / 1024D) / 1024D) / 1024D) / 1024D) / 1024D);
 			default:
 				return bytesSize;
 		}
