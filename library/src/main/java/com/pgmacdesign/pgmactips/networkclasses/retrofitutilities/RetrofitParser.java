@@ -36,6 +36,7 @@ import retrofit2.Response;
  *      2) Your failCallbackIntTag
  *      3) TAG_RETROFIT_PARSE_ERROR (4411)
  *      4) TAG_RETROFIT_CALL_ERROR (4412)
+ *      5) TAG_RETROFIT_CALL_ERROR_OLD (4417)
  * <p>
  * Note: If you want to send in a Type {@link Type} for these overloaded methods, use one of
  * the examples shown in {@link CustomConverterFactory} at the top of the class
@@ -75,6 +76,16 @@ public class RetrofitParser {
      * be a String of the throwable message.
      */
     public static final int TAG_RETROFIT_CALL_ERROR = PGMacTipsConstants.TAG_RETROFIT_CALL_ERROR;
+    /**
+     * This parse error tag triggers if the call fails or something gets caught in
+     * the {@link retrofit2.Callback#onFailure} method. The response will always
+     * be a String of the throwable message.
+     * Note, this is the older method that used to return a String instead of a Throwable object.
+     * If you want to use this instead, just append "_OLD" to your tag parsing. Please note that
+     * this will be deprecated completely in a future release.
+     */
+    @Deprecated
+    public static final int TAG_RETROFIT_CALL_ERROR_OLD = PGMacTipsConstants.TAG_RETROFIT_CALL_ERROR_OLD;
     public static final String EMPTY_JSON_RESPONSE = "{}";
 
     //endregion
@@ -250,13 +261,13 @@ public class RetrofitParser {
 
                 @Override
                 public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable throwable) {
-                    throwable.printStackTrace();
-                    listener.onTaskComplete(throwable.getMessage(), TAG_RETROFIT_CALL_ERROR);
+                    listener.onTaskComplete(throwable, TAG_RETROFIT_CALL_ERROR);
+                    listener.onTaskComplete(throwable.getMessage(), TAG_RETROFIT_CALL_ERROR_OLD);
                 }
             });
         } catch (Exception e) {
-            e.printStackTrace();
-            listener.onTaskComplete(e.getMessage(), TAG_RETROFIT_CALL_ERROR);
+	        listener.onTaskComplete(e, TAG_RETROFIT_CALL_ERROR);
+	        listener.onTaskComplete(e.getMessage(), TAG_RETROFIT_CALL_ERROR_OLD);
         }
     }
 
@@ -402,13 +413,13 @@ public class RetrofitParser {
 
                 @Override
                 public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable throwable) {
-                    throwable.printStackTrace();
-                    listener.onTaskComplete(throwable.getMessage(), TAG_RETROFIT_CALL_ERROR);
+	                listener.onTaskComplete(throwable, TAG_RETROFIT_CALL_ERROR);
+	                listener.onTaskComplete(throwable.getMessage(), TAG_RETROFIT_CALL_ERROR_OLD);
                 }
             });
         } catch (Exception e) {
-            e.printStackTrace();
-            listener.onTaskComplete(e.getMessage(), TAG_RETROFIT_CALL_ERROR);
+	        listener.onTaskComplete(e, TAG_RETROFIT_CALL_ERROR);
+	        listener.onTaskComplete(e.getMessage(), TAG_RETROFIT_CALL_ERROR_OLD);
         }
     }
 

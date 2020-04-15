@@ -82,7 +82,7 @@ android {
 		api 'com.android.volley:volley:1.1.0'
 		
 		//GSON. Link https://github.com/google/gson
-		api 'com.google.code.gson:gson:2.8.5'
+		api 'com.google.code.gson:gson:2.8.6'
 		
 		//Picasso. Link: https://github.com/square/picasso
 		api 'com.squareup.picasso:picasso:2.71828'
@@ -90,13 +90,13 @@ android {
 		//Retrofit, Retrofit Converters, and OKHTTP.
 		//Retrofit - https://github.com/square/retrofit
 		//OKHttp - https://github.com/square/okhttp
-		api 'com.squareup.retrofit2:retrofit:2.4.0'
-		api 'com.squareup.okhttp3:okhttp:3.11.0'
-		api 'com.squareup.okhttp3:logging-interceptor:3.11.0'
+		api 'com.squareup.retrofit2:retrofit:2.8.1'
+		api 'com.squareup.okhttp3:okhttp:4.5.0'
+		api 'com.squareup.okhttp3:logging-interceptor:4.5.0'
 		//Type-safe HTTP client for Android and Java: https://github.com/square/retrofit
-		api 'com.squareup.retrofit2:converter-gson:2.3.0'
+		api 'com.squareup.retrofit2:converter-gson:2.8.1'
 		//OKIO. Link: https://github.com/square/okio
-		api 'com.squareup.okio:okio:1.14.0'
+		api 'com.squareup.okio:okio:2.5.0'
 		
 		//Animations Base. Link: https://github.com/JakeWharton/NineOldAndroids
 //        api 'com.nineoldandroids:library:2.4.0'

@@ -256,52 +256,55 @@ public class RetrofitClient {
                         cookieResponseListener.onTaskComplete(cookies, RetrofitClient.TAG_COOKIES_HASHSET_RESPONSE);
                     }
                     
-                    if(retryCount > 0){
-                        if(!originalResponse.isSuccessful()) {
-                            boolean shouldRetry;
-                            int localRetryCount = retryCount;
-                            int retryNumber = 0;
-                            int responseCode = originalResponse.code();
-                            if (retryOnStatusCodes == null) {
-                                shouldRetry = (responseCode != 200);
-                            } else {
-                                shouldRetry = (NumberUtilities.doesArrayContain(retryOnStatusCodes, responseCode));
-                            }
-                            if(shouldRetry) {
-                                Response myNewResponse = null;
-                                while (localRetryCount > 0) {
-                                    //I am aware keeping 2 is wasteful, but I have an idea for future reference, so keeping both for now
-                                    localRetryCount--;
-                                    retryNumber++;
-                                    try {
-                                        if (!PGMacTipsConfig.getInstance().getIsLiveBuild()){
-                                            L.m("Call Failed, retry number " + retryNumber);
-                                        }
-                                    } catch (Exception e){
-                                        //Catching in case user manually blocks PGMacTipsConfig on setup
-                                    }
-                                    myNewResponse = chain.proceed(chain.request());
-                                    if (myNewResponse != null) {
-                                        if (!myNewResponse.isSuccessful()){
-                                            int responseCodeX = myNewResponse.code();
-                                            if (retryOnStatusCodes == null) {
-                                                shouldRetry = (responseCodeX != 200);
-                                            } else {
-                                                shouldRetry = (NumberUtilities.doesArrayContain(retryOnStatusCodes, responseCodeX));
-                                            }
-                                            if (!shouldRetry) {
-                                                //Return the response if this one was successful
-                                                return myNewResponse;
-                                            }
-                                        }
-                                    }
-                                }
-                                if(myNewResponse != null){
-                                    //Return the last response if multiple failed
-                                    return myNewResponse;
-                                }
-                            }
-                        }
+                    if(false){
+	                    // TODO: 4/14/20 Removing for now to experiment with RetryCallAdapterFactory
+	                    if(retryCount > 0){
+		                    if(!originalResponse.isSuccessful()) {
+			                    boolean shouldRetry;
+			                    int localRetryCount = retryCount;
+			                    int retryNumber = 0;
+			                    int responseCode = originalResponse.code();
+			                    if (retryOnStatusCodes == null) {
+				                    shouldRetry = (responseCode != 200);
+			                    } else {
+				                    shouldRetry = (NumberUtilities.doesArrayContain(retryOnStatusCodes, responseCode));
+			                    }
+			                    if(shouldRetry) {
+				                    Response myNewResponse = null;
+				                    while (localRetryCount > 0) {
+					                    //I am aware keeping 2 is wasteful, but I have an idea for future reference, so keeping both for now
+					                    localRetryCount--;
+					                    retryNumber++;
+					                    try {
+						                    if (!PGMacTipsConfig.getInstance().getIsLiveBuild()){
+							                    L.m("Call Failed, retry number " + retryNumber);
+						                    }
+					                    } catch (Exception e){
+						                    //Catching in case user manually blocks PGMacTipsConfig on setup
+					                    }
+					                    myNewResponse = chain.proceed(chain.request());
+					                    if (myNewResponse != null) {
+						                    if (!myNewResponse.isSuccessful()){
+							                    int responseCodeX = myNewResponse.code();
+							                    if (retryOnStatusCodes == null) {
+								                    shouldRetry = (responseCodeX != 200);
+							                    } else {
+								                    shouldRetry = (NumberUtilities.doesArrayContain(retryOnStatusCodes, responseCodeX));
+							                    }
+							                    if (!shouldRetry) {
+								                    //Return the response if this one was successful
+								                    return myNewResponse;
+							                    }
+						                    }
+					                    }
+				                    }
+				                    if(myNewResponse != null){
+					                    //Return the last response if multiple failed
+					                    return myNewResponse;
+				                    }
+			                    }
+		                    }
+	                    }
                     }
                 }
                 return originalResponse;
@@ -324,24 +327,24 @@ public class RetrofitClient {
 
         //Next, we set the logging level
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        if(logLevel == null){
-            logLevel = HttpLoggingInterceptor.Level.NONE;
+        if(this.logLevel == null){
+	        this.logLevel = HttpLoggingInterceptor.Level.NONE;
         }
-        logging.setLevel(logLevel);
+        logging.setLevel(this.logLevel);
 
         //Next, create the OkHttpClient
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        if(readTimeout < 0){
-            readTimeout = Builder.SIXTY_SECONDS;
+        if(this.readTimeout < 0){
+	        this.readTimeout = Builder.SIXTY_SECONDS;
         }
-        if(writeTimeout < 0){
-            writeTimeout = Builder.SIXTY_SECONDS;
+        if(this.writeTimeout < 0){
+	        this.writeTimeout = Builder.SIXTY_SECONDS;
         }
-        if(readTimeout > 0){
-            builder.readTimeout(readTimeout, TimeUnit.MILLISECONDS);
+        if(this.readTimeout > 0){
+            builder.readTimeout(this.readTimeout, TimeUnit.MILLISECONDS);
         }
-        if(writeTimeout > 0){
-            builder.writeTimeout(writeTimeout, TimeUnit.MILLISECONDS);
+        if(this.writeTimeout > 0){
+            builder.writeTimeout(this.writeTimeout, TimeUnit.MILLISECONDS);
         }
 
         //Add logging and interceptor
@@ -356,23 +359,28 @@ public class RetrofitClient {
 
         //Create the retrofit object, which will use the variables/ objects we have created above
         Retrofit.Builder myBuilder = new Retrofit.Builder();
-        myBuilder.baseUrl(urlBase);
+        myBuilder.baseUrl(this.urlBase);
 
-        if(customConverterFactory != null){
-            myBuilder.addConverterFactory(customConverterFactory);
+        //Converter Factory
+        if(this.customConverterFactory != null){
+            myBuilder.addConverterFactory(this.customConverterFactory);
         } else {
             myBuilder.addConverterFactory(new CustomConverterFactory());
         }
-        if(customCallAdapterFactory != null) {
-            myBuilder.addCallAdapterFactory(customCallAdapterFactory);
-            //IE: RxJava2CallAdapterFactory.create()
+	    //Call Adapter Factory
+        if(this.customCallAdapterFactory == null) {
+        	//Will set either 0 or the user-set retry count, whichever is higher
+        	myBuilder.addCallAdapterFactory(RetryCallAdapterFactory.create(Math.max(this.retryCount, 0)));
+        } else {
+	        //IE: RxJava2CallAdapterFactory.create()
+	        myBuilder.addCallAdapterFactory(this.customCallAdapterFactory);
         }
 
         myBuilder.client(client);
         Retrofit retrofit = myBuilder.build();
 
         //Now that it is built, create the service client, which references the interface we made
-        Object obj = retrofit.create(serviceInterface);
+        Object obj = retrofit.create(this.serviceInterface);
         T serviceClient = null;
         try {
             serviceClient = (T) obj;
@@ -674,8 +682,8 @@ public class RetrofitClient {
         }
 
         /**
-         * Set a custom Adapter factory. If this is ignored or not set, this will NOT
-         * be included in the final output
+         * Set a custom Adapter factory. If this is ignored or not set, it will default to
+         * the {@link RetryCallAdapterFactory}
          * @param factory An example of this would be an RX Java call adapter
          * @return this
          */

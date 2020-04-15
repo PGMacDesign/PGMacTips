@@ -874,6 +874,13 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
     public void onClick(View view) {
 	
 	
+	    loadTestCall();
+	    
+	    if(true){
+		    return;
+	    }
+	
+	    
 //	    this.startActivity(new Intent(MyTestActivity.this, SampleDBClassKotlin.class));
 //
 //	    if(true){
@@ -1091,7 +1098,8 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
     }
 
     private void loadTestCall(){
-        String BASE_URL = "https://www.purgomalum.com/";
+//        String BASE_URL = "https://www.purgomalum.com/";
+        String BASE_URL = "https://www.purgomalumthisisatotallyfakeurlforsure.com/";
         ProfanityCheckerInterface serviceInterface = new RetrofitClient.Builder(
                 ProfanityCheckerInterface.class, BASE_URL)
                 .setTimeouts(60000,60000)
@@ -1123,6 +1131,15 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
             public void onTaskComplete(Object result, int customTag) {
                 L.m("CALLBACK TAG == " + customTag);
                 L.m("CALLBACK RESULT == " + result);
+                boolean isThrowable = (result instanceof Throwable);
+                boolean isString = (result instanceof String);
+                L.m("IS RESULT INSTANCEOF STRING? " + isString);
+                L.m("IS RESULT INSTANCEOF THROWABLE? " + isThrowable);
+                if(isThrowable){
+                	Throwable tt = (Throwable) result;
+                	L.m("Printing Throwable Stacktrace: ");
+	                tt.printStackTrace();
+                }
             }
         }, call, RetrofitParser.TYPE_BOOLEAN, RetrofitParser.TYPE_INTEGER,
 		        1, 0, true);
