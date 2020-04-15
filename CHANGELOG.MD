@@ -1,7 +1,12 @@
 Change Log
 ==========
 
-Version 1.3.0 *(TBD)*
+Version 1.3.1 *(TBD)*
+----------------------------
+
+* TBD
+
+Version 1.3.0 *(2020-04-15)*
 ----------------------------
 
 * Update: Updated the Build.gradle to support Obfuscation via parent declarations as per [this](https://stackoverflow.com/a/31031491/2480714) recommendation.
@@ -12,7 +17,7 @@ Version 1.3.0 *(TBD)*
 * Update: Update to the response Objects / Tags in the [RetrofitParser](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/networkclasses/retrofitutilities/RetrofitParser.java) class that changes return types. _NOTE! This is a breaking change!_ Added in a new return integer tag, `TAG_RETROFIT_CALL_ERROR_OLD` which returns the older String type from before where the new return object is of type `Throwable` and uses the tag `TAG_RETROFIT_CALL_ERROR`. TLDR, either cast return objects with a tag of `TAG_RETROFIT_CALL_ERROR` into Throwable objects or switch and use the `TAG_RETROFIT_CALL_ERROR_OLD` tag to maintain working String return types. As a result of this change, I have also removed the 4 `.printStackTrace()` calls that were originally in the class so that you can throw / read them yourself and not have them auto print to the logcat.
 * New: Added a new class, [RetryCallAdapterFactory](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/networkclasses/retrofitutilities/RetryCallAdapterFactory.java) that is used in conjunction with Retrofit, Specifically the [RetrofitClient](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/networkclasses/retrofitutilities/RetrofitClient.java) class to have better retry logic.
 * New: Added a new class, [NetworkingUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/networkclasses/NetworkingUtilities.java) That will be used for misc networking methods and boilerplate code. As of now, currently has code to check DNS status.
-* Update: Updated the Following Dependencies: `Retrofit`, `Retrofit-Converter-Gson`, ``OkHttp`, `OkHttp-Logging-Interceptor`, `Okio`, and `Gson`. Also updated the [CustomAnnotationsBase](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/misc/CustomAnnotationsBase.java) with said dependency links.
+* Update: Updated the Following Dependencies: `Retrofit`, `Retrofit-Converter-Gson`, `OkHttp`, `OkHttp-Logging-Interceptor`, `Okio`, and `Gson`. Also updated the [CustomAnnotationsBase](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/misc/CustomAnnotationsBase.java) with said dependency links.
 
 Version 1.2.5 *(2019-12-13)*
 ----------------------------
