@@ -87,6 +87,8 @@ android {
 		
 		//GSON. Link https://github.com/google/gson
 		api 'com.google.code.gson:gson:2.8.6'
+		//Being used in Turbolinks, may be required here
+		api 'org.apache.commons:commons-lang3:3.4'
 		
 		//Picasso. Link: https://github.com/square/picasso
 		api 'com.squareup.picasso:picasso:2.71828'
