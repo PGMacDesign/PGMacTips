@@ -1,4 +1,6 @@
 [![Platform](https://img.shields.io/badge/platform-android-green.svg)](http://developer.android.com/index.html)
+
+
 <img src="https://img.shields.io/badge/license-Apache 2.0-green.svg?style=flat">
 [![API](https://img.shields.io/badge/API-15%2B-green.svg?style=flat)](https://android-arsenal.com/api?level=15)
 [![JitPack](https://jitpack.io/v/pgmacdesign/PGMacTips.svg)](https://jitpack.io/#pgmacdesign/PGMacTips)
@@ -29,7 +31,7 @@ allprojects {
 And include this in your dependencies section of your module .gradle file:
 
 ```java
-implementation ('com.github.PGMacDesign:PGMacTips:1.3.0')
+implementation ('com.github.PGMacDesign:PGMacTips:1.3.1')
 ```
 
 Having trouble with Jitpack? [This link](https://jitpack.io/#pgmacdesign/PGMacTips) here will show what is going on with the current build as well as give you instructions on integrating Jitpack into your project.

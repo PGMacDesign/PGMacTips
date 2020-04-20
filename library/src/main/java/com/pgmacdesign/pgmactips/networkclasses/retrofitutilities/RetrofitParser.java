@@ -262,12 +262,12 @@ public class RetrofitParser {
                 @Override
                 public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable throwable) {
                     listener.onTaskComplete(throwable, TAG_RETROFIT_CALL_ERROR);
-                    listener.onTaskComplete(throwable.getMessage(), TAG_RETROFIT_CALL_ERROR_OLD);
+//                    listener.onTaskComplete(throwable.getMessage(), TAG_RETROFIT_CALL_ERROR_OLD);
                 }
             });
         } catch (Exception e) {
 	        listener.onTaskComplete(e, TAG_RETROFIT_CALL_ERROR);
-	        listener.onTaskComplete(e.getMessage(), TAG_RETROFIT_CALL_ERROR_OLD);
+//	        listener.onTaskComplete(e.getMessage(), TAG_RETROFIT_CALL_ERROR_OLD);
         }
     }
 
@@ -414,12 +414,12 @@ public class RetrofitParser {
                 @Override
                 public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable throwable) {
 	                listener.onTaskComplete(throwable, TAG_RETROFIT_CALL_ERROR);
-	                listener.onTaskComplete(throwable.getMessage(), TAG_RETROFIT_CALL_ERROR_OLD);
+//	                listener.onTaskComplete(throwable.getMessage(), TAG_RETROFIT_CALL_ERROR_OLD);
                 }
             });
         } catch (Exception e) {
 	        listener.onTaskComplete(e, TAG_RETROFIT_CALL_ERROR);
-	        listener.onTaskComplete(e.getMessage(), TAG_RETROFIT_CALL_ERROR_OLD);
+//	        listener.onTaskComplete(e.getMessage(), TAG_RETROFIT_CALL_ERROR_OLD);
         }
     }
 

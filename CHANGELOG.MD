@@ -1,10 +1,15 @@
 Change Log
 ==========
 
-Version 1.3.1 *(TBD)*
-----------------------------
+Version 1.3.2 *(TBD)*
+---------------------
 
 * TBD
+
+Version 1.3.1 *(2020-04-20)*
+----------------------------
+
+* Bugfix: Fixed an issue where the [RetrofitParser](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/networkclasses/retrofitutilities/RetrofitParser.java) was sending back double returns which was causing issues.
 
 Version 1.3.0 *(2020-04-15)*
 ----------------------------
