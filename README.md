@@ -269,6 +269,7 @@ The difference between the first and second one here is just whether your want t
 Note that if you have properly called `@Serialized` over all of the variable names, then you shouldn't need the `keepnames class` line, but I wrote it in just in case and having it alongside the serialized variables does not hurt a thing.
 
 More info can be found [here](https://stackoverflow.com/questions/33958972/how-to-obfuscate-everything-but-public-method-names-and-attributes-with-proguard) if you want to read up on it.
+
 ### Realm Exceptions
 
 #### IllegalArgumentException With the `PGMacTipsModule`
@@ -342,7 +343,6 @@ If you happen to be in this situation, either [make a new issue](https://github.
 
 Update: the [issue](https://github.com/PGMacDesign/PGMacTips/issues/3) has been resolved since 2018-08-16 in version [0.0.66](https://github.com/PGMacDesign/PGMacTips/releases/tag/0.0.66). and the solution to fix it was declared within the issue description and comments.
 
-
 #### AbstractMethodError
 
 If you upgrade from an old version of the library to a new one (or vice-versa) and see this error when running your code:
@@ -369,6 +369,26 @@ You may be using conflicting versions of Realm. As mentioned in the Realm sectio
 
 Double check your versions for both Realm and this library if you spot this error.
 
+#### RuntimeException From RealmModule
+
+If you are using minification and happen to spot this particular error:
+
+```
+   java.lang.RuntimeException: Unable to create application com.yourapp.misc.MyApplication: 
+      java.lang.IllegalArgumentException: com.pgmacdesign.pgmactips.utilities.DatabaseUtilities.PGMacTipsModule 
+      is not a RealmModule. Add @RealmModule to the class definition.
+	   ...
+```
+
+You just need to include these in your proguard file:
+
+```
+    -keep @interface io.realm.annotations.RealmModule { *; }
+    -keep class io.realm.annotations.RealmModule { *; }
+```
+
+And it should resolve the issue. (Make sure to clean / rebuild your project!)
+
 ### Google Play Services Issues
 
 #### Play-Services-Basement Issue
@@ -380,7 +400,6 @@ Failed to resolve: com.google.android.gms:play-services-basement:x.y.z
 ```
 
 This issue can be caused by a few things, but the most common solutions are these three: [One](https://stackoverflow.com/a/50814456/2480714), [Two](https://stackoverflow.com/a/50795440/2480714), and [Three](https://stackoverflow.com/a/36463346/2480714).  If they don't work for you, try looking at how my [top-level build.gradle](https://github.com/PGMacDesign/PGMacTips/blob/master/build.gradle) and [project-level build.gradle](https://github.com/PGMacDesign/PGMacTips/blob/master/library/build.gradle) files are structured
-
 
 ## New Issues
 
