@@ -10,6 +10,7 @@ Version 1.3.2 *(2020-08-14)*
 ---------------------
 
 * Bugfix: Fixed an issue where the [RetryCallAdapterFactory](https://github.com/PGMacDesign/PGMacTips/blob/343cc8d690db35205e394595d4fd745f6b27c41c/library/src/main/java/com/pgmacdesign/pgmactips/networkclasses/retrofitutilities/RetryCallAdapterFactory.java) was causing failed calls to run an infinite loop if an invalid number is passed in.  
+* New: Added a new method in the [MiscUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/MiscUtilities.java) to allow a simple check for whether or not airplane mode is on.  
 
 Version 1.3.1 *(2020-04-20)*
 ----------------------------
