@@ -1,10 +1,15 @@
 Change Log
 ==========
 
-Version 1.3.2 *(TBD)*
+Version 1.3.3 *(TBD)*
 ---------------------
 
-* TBD
+* 
+
+Version 1.3.2 *(2020-08-14)*
+---------------------
+
+* Bugfix: Fixed an issue where the [RetryCallAdapterFactory](https://github.com/PGMacDesign/PGMacTips/blob/343cc8d690db35205e394595d4fd745f6b27c41c/library/src/main/java/com/pgmacdesign/pgmactips/networkclasses/retrofitutilities/RetryCallAdapterFactory.java) was causing failed calls to run an infinite loop if an invalid number is passed in.  
 
 Version 1.3.1 *(2020-04-20)*
 ----------------------------

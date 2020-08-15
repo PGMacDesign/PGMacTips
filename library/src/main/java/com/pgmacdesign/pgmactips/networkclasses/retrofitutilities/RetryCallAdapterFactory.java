@@ -103,8 +103,7 @@ public class RetryCallAdapterFactory extends CallAdapter.Factory {
 			itShouldRetry = this.retryAttempts;
 		}
 		return new RetryCallAdapter<>(
-				retrofit.nextCallAdapter(this, returnType, annotations),
-				itShouldRetry
+				retrofit.nextCallAdapter(this, returnType, annotations), itShouldRetry
 		);
 	}
 	
@@ -210,6 +209,10 @@ public class RetryCallAdapterFactory extends CallAdapter.Factory {
 		
 		@Override
 		public void onResponse(@NonNull Call<T> call, @NonNull Response<T> response) {
+			if(this.maxRetries <= 0){
+				this.callback.onResponse(call, response);
+				return;
+			}
 			if (!response.isSuccessful() && (this.retryCount.incrementAndGet() <= this.maxRetries)) {
 				retryCall();
 			} else {
@@ -219,6 +222,10 @@ public class RetryCallAdapterFactory extends CallAdapter.Factory {
 		@Override
 		public void onFailure(@NonNull Call<T> call, @NonNull Throwable t) {
 			int x = this.retryCount.incrementAndGet();
+			if(this.maxRetries <= 0){
+				this.callback.onFailure(call, t);
+				return;
+			}
 			if (x <= this.maxRetries) {
 				retryCall();
 			} else if (this.maxRetries > 0) {
