@@ -13,17 +13,20 @@ import com.pgmacdesign.pgmactips.misc.PGMacTipsConfig;
  * Created by pmacdowell on 8/12/2016.
  */
 public class L {
-
-
+	
     private static final String TAG = "PGMacTips";
-
-
+    
     /**
      * Quick println
-     * @param myObject The string to print (or double, int, whatever)
-     * @param <E> Extends object
+     * @param myObject The string to print (or double, int, whatever). Note, if passed object
+     *                 is an instance of a {@link Throwable} it will print the stacktrace instead.
+     * @param <E> Extends object.
      */
     public static <E> void m (E myObject){
+    	if(myObject instanceof  Throwable){
+    		L.e((Throwable)myObject);
+    		return;
+	    }
         L.m(myObject, false);
     }
 
@@ -91,13 +94,29 @@ public class L {
         }
         Log.d(getTag(), "Activity: " + activityName + ", " + "Line Number " + x + " hit");
     }
-
+	
+	/**
+	 * Print an Exception via the stacktrace
+	 * @param t
+	 */
+	public static void e(Throwable t){
+		if (isLiveBuild()) {
+			return;
+		}
+    	if(t != null){
+    		t.printStackTrace();
+	    }
+    }
 
     /**
      * Short toast. {@link Toast}
      * Deprecated on 2019-05-01 to use Activity to force a run on the main UI thread
      * @param context context
      * @param myObject String to print (If OTHER things are passed in, it converts it to a String first)
+     * @deprecated This won't be removed from the code at all, it is merely referencing the fact that the
+     * newer version {@link L#toast(Activity, Object)} will run the toast on the UI thread automatically
+     * so as to prevent any Runtime exceptions with this message:
+     * "java.lang.RuntimeException: Can't toast on a thread that has not called Looper.prepare()"
      */
     @Deprecated
     public static <E> void toast(@NonNull Context context, E myObject){
@@ -136,6 +155,10 @@ public class L {
      * Deprecated on 2019-05-01 to use Activity to force a run on the main UI thread
      * @param context context
      * @param myObject String to print (If OTHER things are passed in, it converts it to a String first)
+     * @deprecated This won't be removed from the code at all, it is merely referencing the fact that the
+     * newer version {@link L#Toast(Activity, Object)} will run the toast on the UI thread automatically
+     * so as to prevent any Runtime exceptions with this message:
+     * "java.lang.RuntimeException: Can't toast on a thread that has not called Looper.prepare()"
      */
     @Deprecated
     public static <E> void Toast(@NonNull Context context, E myObject){

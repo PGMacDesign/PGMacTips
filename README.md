@@ -53,7 +53,6 @@ https://jitpack.io/com/github/pgmacdesign/PGMacTips/[VERSION-GOES-HERE]/javadoc/
 
 -->
 
-
 ## Nested Libraries & Dependencies
 
 This library utilizes many others within it; the full list of dependencies, links to their reposotiry pages, and the version used can be found under the [*CustomAnnotationsBase*](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/misc/CustomAnnotationsBase.java) class.
@@ -378,6 +377,48 @@ You just need to include these in your proguard file:
 ```
 
 And it should resolve the issue. (Make sure to clean / rebuild your project!)
+
+### GSON Exceptions
+
+#### ddddd
+
+If you update to a recent version of PGMacTips and spot this exception:
+
+```java
+java.lang.IllegalAccessError: Method 'com.google.gson.stream.JsonWriter com.google.gson.Gson.newJsonWriter(java.io.Writer)' is inaccessible to class 'retrofit2.converter.gson.GsonRequestBodyConverter' (declaration of 'retrofit2.converter.gson.GsonRequestBodyConverter' appears in /data/app/yourpackage.goeshere-iLN0r7WNM7b7sl4TeXJkNQ==/base.apk!classes5.dex)
+        at retrofit2.converter.gson.GsonRequestBodyConverter.convert(GsonRequestBodyConverter.java:45)
+        at retrofit2.converter.gson.GsonRequestBodyConverter.convert(GsonRequestBodyConverter.java:30)
+        at retrofit2.ParameterHandler$Body.apply(ParameterHandler.java:355)
+        at retrofit2.RequestFactory.create(RequestFactory.java:108)
+        at retrofit2.OkHttpCall.createRawCall(OkHttpCall.java:190)
+        at retrofit2.OkHttpCall.enqueue(OkHttpCall.java:100)
+        at retrofit2.ExecutorCallAdapterFactory$ExecutorCallbackCall.enqueue(ExecutorCallAdapterFactory.java:63)
+        at com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitParser.parse(RetrofitParser.java:139)
+        at com.pgmacdesign.pgmactips.networkclasses.retrofitutilities.RetrofitParser.parse(RetrofitParser.java:444)
+        at yourpackage.goeshere.nativelayer.services.apicalls.makeCall1(ApiCalls.java:113)
+        at yourpackage.goeshere.nativelayer.activities.YourActivity.makeAPICall(YourActivity.java:237)
+        at yourpackage.goeshere.nativelayer.activities.YourActivity.lambda$initUI$0$YourActivity(YourActivity.java:221)
+        at yourpackage.goeshere.nativelayer.activities.-$$Lambda$YourActivity$cIV-FclvT-rSRXQwknkMtj6JfGs.onClick(Unknown Source:2)
+        at android.view.View.performClick(View.java:7125)
+        at android.view.View.performClickInternal(View.java:7102)
+        at android.view.View.access$3500(View.java:801)
+        at android.view.View$PerformClick.run(View.java:27336)
+        at android.os.Handler.handleCallback(Handler.java:883)
+        at android.os.Handler.dispatchMessage(Handler.java:100)
+        at android.os.Looper.loop(Looper.java:214)
+        at android.app.ActivityThread.main(ActivityThread.java:7356)
+        at java.lang.reflect.Method.invoke(Native Method)
+        at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:492)
+        at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:930)
+```
+
+It is caused by [GSON](https://github.com/google/gson) Being out of sync with The [Retrofit GSON Converter](https://github.com/square/retrofit/tree/master/retrofit-converters/gson) as the converter is [requiring a minimum version](https://github.com/plaid/plaid-java/issues/103#issuecomment-364392922) to access previously hidden messages.
+
+To resolve it, make sure you have the most current version of GSON, but also confirm that none of your nested dependencies contain a reference to it. The easiest way to do this is within Android Studio itself. Follow these steps: 
+
+1) Click on `gradle` on the right side of the screen (with the elephant logo)
+2) Navigate down in your main app module to Tasks --> android --> `androidDependencies`. Double click to run it.
+3) It will show all of your nested dependencies. cmd / ctrl + F to find 'gson' and see where the culprit is.   
 
 ### Google Play Services Issues
 

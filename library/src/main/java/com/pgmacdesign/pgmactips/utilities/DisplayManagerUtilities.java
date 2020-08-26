@@ -503,44 +503,93 @@ public class DisplayManagerUtilities {
     //region Misc Utils
     
     /**
-     * Print out all of the display metrics available in the logcat
+     * Print out all of the display metrics available in the logcat.
+     * Will return the String version of all that was printed out
      */
-    public void printOutAllDisplayMetrics(){
+    public String printOutAllDisplayMetrics(){
+    	StringBuilder sb = new StringBuilder();
         if(this.windowManager == null){
-            return;
+            return sb.toString();
         }
+	    sb.append("\n");
+        sb.append("\nPrinting All Display Metrics: \n");
         L.m("\nPrinting All Display Metrics: \n");
+        sb.append("Screen width in pixels == " + getPixelsWidth());
+	    sb.append("\n");
         L.m("Screen width in pixels == " + getPixelsWidth());
+        sb.append("Screen height in pixels == " + getPixelsHeight());
+	    sb.append("\n");
         L.m("Screen height in pixels == " + getPixelsHeight());
         if(getFullScreenSize() != null){
+            sb.append("Full Screen Width in pixels == " + getFullScreenSize().x);
+	        sb.append("\n");
             L.m("Full Screen Width in pixels == " + getFullScreenSize().x);
+            sb.append("Full Screen Height in pixels == " + getFullScreenSize().y);
+	        sb.append("\n");
             L.m("Full Screen Height in pixels == " + getFullScreenSize().y);
         }
         if(getAppUsableScreenSize() != null){
+            sb.append("Usable Screen Width in pixels == " + getAppUsableScreenSize().x);
+	        sb.append("\n");
             L.m("Usable Screen Width in pixels == " + getAppUsableScreenSize().x);
+            sb.append("Usable Screen Height in pixels == " + getAppUsableScreenSize().y);
+	        sb.append("\n");
             L.m("Usable Screen Height in pixels == " + getAppUsableScreenSize().y);
         }
         Rect screenRect = getUsableScreenRect();
+        sb.append("Usable Screen Rectangle (Area below the status bar, above the navigation bar, " +
+                "and between the left and right edges):\n" + "("
+                + (screenRect.left) + "," + (screenRect.top) + ","
+                + (screenRect.right) + "," + (screenRect.bottom) + ")");
+	    sb.append("\n");
         L.m("Usable Screen Rectangle (Area below the status bar, above the navigation bar, " +
                 "and between the left and right edges):\n" + "("
                 + (screenRect.left) + "," + (screenRect.top) + ","
                 + (screenRect.right) + "," + (screenRect.bottom) + ")");
         if(getCenterXYCoordinates() != null) {
+            sb.append("Center X,Y Coordinates == " + getCenterXYCoordinates().x
+                    + "," + getCenterXYCoordinates().y);
+	        sb.append("\n");
             L.m("Center X,Y Coordinates == " + getCenterXYCoordinates().x
                     + "," + getCenterXYCoordinates().y);
         }
+        sb.append("getScreenSize == " + getScreenSize());
+	    sb.append("\n");
         L.m("getScreenSize == " + getScreenSize());
+        sb.append("getNavigationBarPoint == " + getNavigationBarPoint());
+	    sb.append("\n");
         L.m("getNavigationBarPoint == " + getNavigationBarPoint());
+        sb.append("getWidthRadius == " + getWidthRadius());
+	    sb.append("\n");
         L.m("getWidthRadius == " + getWidthRadius());
+        sb.append("Density Ratio == " + getDensityRatio());
+	    sb.append("\n");
         L.m("Density Ratio == " + getDensityRatio());
+        sb.append("Scaled Density == " +  getScaledDensity());
+	    sb.append("\n");
         L.m("Scaled Density == " +  getScaledDensity());
+        sb.append("Screen width in DP == " + getScreenWidthDP());
+	    sb.append("\n");
         L.m("Screen width in DP == " + getScreenWidthDP());
+        sb.append("Screen height in DP == " + getScreenHeightDP());
+	    sb.append("\n");
         L.m("Screen height in DP == " + getScreenHeightDP());
+        sb.append("Navigation Bar (Bottom) Size in pixels == " + getNavigationBarSize());
+	    sb.append("\n");
         L.m("Navigation Bar (Bottom) Size in pixels == " + getNavigationBarSize());
+        sb.append("Status Bar (Top) Size in pixels == " + getStatusBarHeight());
+	    sb.append("\n");
         L.m("Status Bar (Top) Size in pixels == " + getStatusBarHeight());
+        sb.append("xdpi == " + getXdpi());
+	    sb.append("\n");
         L.m("xdpi == " + getXdpi());
+        sb.append("ydpi == " + getYdpi());
+	    sb.append("\n");
         L.m("ydpi == " + getYdpi());
+        sb.append("\nFinished Printing All Display Metrics: \n");
         L.m("\nFinished Printing All Display Metrics: \n");
+        
+        return sb.toString();
     }
     
     //endregion

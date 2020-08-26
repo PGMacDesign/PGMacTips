@@ -16,8 +16,9 @@ public class IntentUtilities {
 	 * current one being left will be removed as well)
 	 * @param intent
 	 */
-	public static void setFlagsToClearAllOthersAndOpenNew(@NonNull Intent intent){
+	public static Intent setFlagsToClearAllOthersAndOpenNew(@NonNull Intent intent){
 		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+		return intent;
 	}
 	
 	/**

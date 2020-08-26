@@ -1,7 +1,5 @@
 package com.pgmacdesign.pgmactips.networkclasses.retrofitutilities;
 
-import android.util.Log;
-
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

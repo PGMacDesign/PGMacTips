@@ -369,9 +369,11 @@ public class RetrofitClient {
         }
 	    //Call Adapter Factory
         if(this.customCallAdapterFactory == null) {
+        	L.m("(this.customCallAdapterFactory == null) Setting Custom Call Adapter Factory @ 372");
         	//Will set either 0 or the user-set retry count, whichever is higher
         	myBuilder.addCallAdapterFactory(RetryCallAdapterFactory.create(Math.max(this.retryCount, 0)));
         } else {
+	        L.m("(this.customCallAdapterFactory != null) Setting Setting the passed one @ 376");
 	        //IE: RxJava2CallAdapterFactory.create()
 	        myBuilder.addCallAdapterFactory(this.customCallAdapterFactory);
         }
