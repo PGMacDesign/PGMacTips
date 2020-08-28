@@ -1,5 +1,6 @@
 package com.pgmacdesign.pgmactips.utilities;
 
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
@@ -64,9 +65,10 @@ public class ColorUtilities {
 	 * 1) http://mcg.mbitson.com/#!?mcgpalette0=%233f51b5#%2F
 	 * 2) https://material.io/design/color/#tools-for-picking-colors
 	 * 3) https://www.materialui.co/colors
+	 *
 	 * @return
 	 */
-	public static final Map<String, Integer> getColorPaletteStaticValues(){
+	public static final Map<String, Integer> getColorPaletteStaticValues() {
 		Map<String, Integer> map = new HashMap<>();
 		map.put(MATERIAL_PALETTE_LIGHT_50, MATERIAL_PALETTE_LIGHT_50_VALUE);
 		map.put(MATERIAL_PALETTE_LIGHT_100, MATERIAL_PALETTE_LIGHT_100_VALUE);
@@ -88,26 +90,27 @@ public class ColorUtilities {
 	/**
 	 * Checks if the passed in String is a valid hex color String.
 	 * Do not pass a hex color with alpha, remove the alpha value first and then send!
+	 *
 	 * @param hexColor Hex color, IE #FFFFFF or 000000 or #FAFAFA or A12222
 	 * @return true if it is a valid hex color, false if it is not
 	 */
-	public static boolean isValidHexColor(String hexColor){
-		if(StringUtilities.isNullOrEmpty(hexColor)){
+	public static boolean isValidHexColor(String hexColor) {
+		if (StringUtilities.isNullOrEmpty(hexColor)) {
 			return false;
 		}
-		if(hexColor.length() < 6 || hexColor.length() > 7){
+		if (hexColor.length() < 6 || hexColor.length() > 7) {
 			return false;
 		}
-		if(!hexColor.startsWith("#")){
+		if (!hexColor.startsWith("#")) {
 			hexColor = "#" + hexColor;
 		}
-		if(hexColor.length() > 7){
+		if (hexColor.length() > 7) {
 			return false;
 		}
 		Pattern pattern = Pattern.compile(HEX_PATTERN);
 		try {
 			return pattern.matcher(hexColor).matches();
-		} catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -137,9 +140,9 @@ public class ColorUtilities {
 	 * 1) https://en.wikipedia.org/wiki/Luma_%28video%29
 	 * 2) https://stackoverflow.com/a/24261119/2480714
 	 *
-	 * @param red Red component of the color
+	 * @param red   Red component of the color
 	 * @param green Green component of the color
-	 * @param blue Blue component of the color
+	 * @param blue  Blue component of the color
 	 * @return boolean, if true, color is dark, if false, it's a light color
 	 */
 	public static boolean isColorDark(int red, int green, int blue) {
@@ -179,7 +182,7 @@ public class ColorUtilities {
 	 * @return boolean, if true, color is dark, if false, it's a light color
 	 */
 	public static boolean isColorDark(@NonNull String hexColor) {
-		if(StringUtilities.isNullOrEmpty(hexColor)){
+		if (StringUtilities.isNullOrEmpty(hexColor)) {
 			return false;
 		} else {
 			return isColorDark(Color.parseColor(hexColor));
@@ -195,7 +198,7 @@ public class ColorUtilities {
 	public static int parseMyColor(String color) {
 		try {
 			return Color.parseColor(color);
-		} catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			return -100;
 		}
@@ -275,15 +278,16 @@ public class ColorUtilities {
 	
 	/**
 	 * Create the status bar color as per the material guidelines
-	 * 	 * {@link #MATERIAL_DESIGN_GUIDELINES_DARKEN_AMOUNT}
+	 * * {@link #MATERIAL_DESIGN_GUIDELINES_DARKEN_AMOUNT}
 	 * If it cannot create it, it will return the original color
+	 *
 	 * @param color Color to darken
 	 * @return darkened color, but will return -100 if parsing fails on Hex String
 	 */
-	public static int createStatusBarColor(@ColorInt int color){
+	public static int createStatusBarColor(@ColorInt int color) {
 		try {
 			return darkenColor(color, 12);
-		} catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			return color;
 		}
@@ -293,17 +297,18 @@ public class ColorUtilities {
 	 * Create the status bar color as per the material guidelines
 	 * {@link #MATERIAL_DESIGN_GUIDELINES_DARKEN_AMOUNT}
 	 * If it cannot create it, it will return the original color
+	 *
 	 * @param hexColor
 	 * @return darkened color, but will return -100 if parsing fails on Hex String
 	 */
-	public static int createStatusBarColor(@NonNull String hexColor){
+	public static int createStatusBarColor(@NonNull String hexColor) {
 		try {
 			return darkenColor(Color.parseColor(hexColor), MATERIAL_DESIGN_GUIDELINES_DARKEN_AMOUNT);
-		} catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			try {
 				return Color.parseColor(hexColor);
-			} catch (Exception ee){
+			} catch (Exception ee) {
 				return -100;
 			}
 		}
@@ -313,29 +318,31 @@ public class ColorUtilities {
 	 * Create the status bar color as per the material guidelines
 	 * {@link #MATERIAL_DESIGN_GUIDELINES_DARKEN_AMOUNT}
 	 * If it cannot create it, it will return the original color
-	 * @param red R value
+	 *
+	 * @param red   R value
 	 * @param green G Values
-	 * @param blue B Value
+	 * @param blue  B Value
 	 * @return darkened color, but will return -100 if parsing fails
 	 */
-	public static int createStatusBarColor(int red, int green, int blue){
+	public static int createStatusBarColor(int red, int green, int blue) {
 		try {
 			int color = convertRGBToColor(red, green, blue);
 			return darkenColor(color, MATERIAL_DESIGN_GUIDELINES_DARKEN_AMOUNT);
-		} catch (Exception e){
+		} catch (Exception e) {
 			return -100;
 		}
 	}
-
+	
 	//region Full Color Palette Utilities
 	
 	/**
 	 * Creates a full Material Design color palette for the color value passed.
+	 *
 	 * @param color color value to adjust
 	 * @return A Map of String Integer values that matches a full Material Design color palette.
-	 *         Will always return a Hashmap, though it may be empty if values cannot be parsed.
+	 * Will always return a Hashmap, though it may be empty if values cannot be parsed.
 	 */
-	public static Map<String, Integer> createFullColorPalette(@ColorInt int color){
+	public static Map<String, Integer> createFullColorPalette(@ColorInt int color) {
 		Map<String, Integer> toReturn = new HashMap<>();
 		try {
 			toReturn.put(ColorUtilities.MATERIAL_PALETTE_LIGHT_50, ColorUtilities.lightenColor(
@@ -357,7 +364,7 @@ public class ColorUtilities {
 					color, ColorUtilities.MATERIAL_PALETTE_DARK_800_VALUE));
 			toReturn.put(ColorUtilities.MATERIAL_PALETTE_DARK_900, ColorUtilities.darkenColor(
 					color, ColorUtilities.MATERIAL_PALETTE_DARK_900_VALUE));
-		} catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return toReturn;
@@ -365,32 +372,34 @@ public class ColorUtilities {
 	
 	/**
 	 * Creates a full Material Design color palette for the color value passed.
+	 *
 	 * @param hexColor Hex Color String to adjust
 	 * @return A Map of String Integer values that matches a full Material Design color palette.
-	 *         Will always return a Hashmap, though it may be empty if values cannot be parsed.
+	 * Will always return a Hashmap, though it may be empty if values cannot be parsed.
 	 */
-	public static Map<String, Integer> createFullColorPalette(String hexColor){
+	public static Map<String, Integer> createFullColorPalette(String hexColor) {
 		Map<String, Integer> toReturn = new HashMap<>();
 		try {
 			return createFullColorPalette(Color.parseColor(hexColor));
-		} catch (Exception e){
+		} catch (Exception e) {
 			return toReturn;
 		}
 	}
 	
 	/**
 	 * Creates a full Material Design color palette for the color value passed.
-	 * @param red Red Value
+	 *
+	 * @param red   Red Value
 	 * @param green Green Value
-	 * @param blue Blue value
- 	 * @return A Map of String Integer values that matches a full Material Design color palette.
-	 *         Will always return a Hashmap, though it may be empty if values cannot be parsed.
+	 * @param blue  Blue value
+	 * @return A Map of String Integer values that matches a full Material Design color palette.
+	 * Will always return a Hashmap, though it may be empty if values cannot be parsed.
 	 */
-	public static Map<String, Integer> createFullColorPalette(int red, int green, int blue){
+	public static Map<String, Integer> createFullColorPalette(int red, int green, int blue) {
 		Map<String, Integer> toReturn = new HashMap<>();
 		try {
 			return createFullColorPalette(convertRGBToColor(red, green, blue));
-		} catch (Exception e){
+		} catch (Exception e) {
 			return toReturn;
 		}
 	}
@@ -404,7 +413,8 @@ public class ColorUtilities {
 	/**
 	 * Darkens a given color.
 	 * Credit goes to: https://stackoverflow.com/a/40964456/2480714
-	 * @param color base color
+	 *
+	 * @param color  base color
 	 * @param amount amount between 0 and 100
 	 * @return darken color
 	 */
@@ -423,7 +433,8 @@ public class ColorUtilities {
 	/**
 	 * lightens a given color
 	 * Credit goes to: https://stackoverflow.com/a/40964456/2480714
-	 * @param color base color
+	 *
+	 * @param color  base color
 	 * @param amount amount between 0 and 100
 	 * @return lightened
 	 */
@@ -442,6 +453,7 @@ public class ColorUtilities {
 	 * Converts HSV (Hue, Saturation, Value) color to HSL (Hue, Saturation, Lightness)
 	 * Credit goes to xpansive
 	 * https://gist.github.com/xpansive/1337890
+	 *
 	 * @param hsv HSV color array
 	 * @return hsl
 	 */
@@ -477,6 +489,7 @@ public class ColorUtilities {
 	 * Reverses hsv2hsl
 	 * Credit goes to xpansive
 	 * https://gist.github.com/xpansive/1337890
+	 *
 	 * @param hsl HSL color array
 	 * @return hsv color array
 	 */
@@ -502,26 +515,28 @@ public class ColorUtilities {
 	
 	/**
 	 * Convert a color to a hex value
+	 *
 	 * @param color Color to convert
 	 * @return The hex value of the color, can return null
 	 */
-	public static String convertColorToHex(@ColorInt int color){
+	public static String convertColorToHex(@ColorInt int color) {
 		try {
 			return String.format("#%06X", (0xFFFFFF & color));
-		} catch (Exception e){
+		} catch (Exception e) {
 			return null;
 		}
 	}
 	
 	/**
 	 * Convert a color to a hex value while retaining the alpha values
+	 *
 	 * @param color Color to convert
 	 * @return The hex value of the color, can return null
 	 */
-	public static String convertColorToHexWithAlpha(@ColorInt int color){
+	public static String convertColorToHexWithAlpha(@ColorInt int color) {
 		try {
 			return ("#" + Integer.toHexString(color).toUpperCase());
-		} catch (Exception e){
+		} catch (Exception e) {
 			return null;
 		}
 	}
@@ -537,8 +552,8 @@ public class ColorUtilities {
 	 * @return int color value. Will return -100 if parsing values fail
 	 */
 	public static int convertRGBToColor(@IntRange(from = 0, to = 255) int r,
-	                                     @IntRange(from = 0, to = 255) int g,
-	                                     @IntRange(from = 0, to = 255) int b) {
+	                                    @IntRange(from = 0, to = 255) int g,
+	                                    @IntRange(from = 0, to = 255) int b) {
 		if ((r < 0 || r > 255) || (g < 0 || g > 255) || (b < 0 || b > 255)) {
 			return -100;
 		}
@@ -546,14 +561,14 @@ public class ColorUtilities {
 		try {
 			hex = convertRGBToHex(r, g, b);
 			return Color.parseColor(hex);
-		} catch (Exception e){
+		} catch (Exception e) {
 			try {
 				String r1 = Integer.toHexString(r);
 				String g1 = Integer.toHexString(g);
 				String b1 = Integer.toHexString(b);
 				hex = ("#" + r1 + g1 + b1);
 				return Color.parseColor(hex);
-			} catch (Exception e1){
+			} catch (Exception e1) {
 				e1.printStackTrace();
 				return -100;
 			}
@@ -578,13 +593,13 @@ public class ColorUtilities {
 		}
 		try {
 			return String.format("#%02X%02X%02X", r, g, b);
-		} catch (Exception e){
+		} catch (Exception e) {
 			try {
 				String r1 = Integer.toHexString(r);
 				String g1 = Integer.toHexString(g);
 				String b1 = Integer.toHexString(b);
 				return ("#" + r1 + g1 + b1);
-			} catch (Exception e1){
+			} catch (Exception e1) {
 				e1.printStackTrace();
 				return null;
 			}
@@ -644,10 +659,11 @@ public class ColorUtilities {
 			toReturn[0] = r;
 			toReturn[1] = g;
 			toReturn[2] = b;
-		} catch (Exception e) {}
+		} catch (Exception e) {
+		}
 		return toReturn;
 	}
- 
+	
 	/**
 	 * Overloaded for simpler naming
 	 * Will return -100 if the value fails to parse
@@ -655,15 +671,75 @@ public class ColorUtilities {
 	public static int convertHexToColor(@NonNull String hexColor) {
 		try {
 			return Color.parseColor(hexColor);
-		} catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			return -100;
 		}
 	}
- 
+	
 	//endregion
 	
-    //region Color List
+	//region ColorStateList
+	
+	/**
+	 * Pulled From: https://stackoverflow.com/questions/15543186/how-do-i-create-colorstatelist-programmatically
+	 *
+	 * @param color
+	 * @return
+	 */
+	public static ColorStateList createColorStateListSimple(@ColorInt int color) {
+		return new ColorStateList(
+				new int[][]{
+						new int[]{android.R.attr.state_pressed},
+						new int[]{android.R.attr.state_enabled},
+						new int[]{android.R.attr.state_focused, android.R.attr.state_pressed},
+						new int[]{-android.R.attr.state_enabled},
+						new int[]{} // this should be empty to make default color as we want
+				},
+				new int[]{
+						color,
+						color,
+						color,
+						color,
+						color
+				}
+		);
+	}
+	
+	/**
+	 * Pulled From: https://stackoverflow.com/questions/15543186/how-do-i-create-colorstatelist-programmatically
+	 *
+	 * @param pressedColor          The color it shows when pressed
+	 * @param defaultEnabledColor   The color it shows when enabled
+	 * @param focusedOrPressedColor The color it shows when focused or pressed
+	 * @param disabledColor         The disabled color
+	 * @return
+	 */
+	public static ColorStateList createColorStateList(@ColorInt int pressedColor,
+	                                                  @ColorInt int defaultEnabledColor,
+	                                                  @ColorInt int focusedOrPressedColor,
+	                                                  @ColorInt int disabledColor) {
+		return new ColorStateList(
+				new int[][]{
+						new int[]{android.R.attr.state_pressed},
+						new int[]{android.R.attr.state_enabled},
+						new int[]{android.R.attr.state_focused, android.R.attr.state_pressed},
+						new int[]{-android.R.attr.state_enabled},
+						new int[]{} // this should be empty to make default color as we want
+				},
+				new int[]{
+						pressedColor,
+						defaultEnabledColor,
+						focusedOrPressedColor,
+						disabledColor,
+						defaultEnabledColor
+				}
+		);
+	}
+	
+	//endregion
+	
+	//region Color List
     /*
     Color lists below:
 
@@ -839,8 +915,8 @@ public class ColorUtilities {
     <color name="blue">#0000FF</color>
     <color name="navy">#000080</color>
      */
-    
-    //endregion
+	
+	//endregion
 	
 	//region Color Transparency
     /*
@@ -947,6 +1023,6 @@ public class ColorUtilities {
 		1% — 03
 		0% — 00
      */
-    
-    //endregion
+	
+	//endregion
 }
