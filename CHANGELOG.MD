@@ -1,12 +1,12 @@
 Change Log
 ==========
 
-Version 1.3.4 *(TBD)*
+Version 1.3.5 *(TBD)*
 ---------------------
 
 *
 
-Version 1.3.3 *(2020-09-04)*
+Version 1.3.4 *(2020-09-04)*
 ---------------------
 
 * New: The [L](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/L.java) class will now allow Exceptions / Throwables to be passed in via the `L.e()` method. This will print the stacktrace instead of casting into a String and printing. The `L.m()` method has also been altered to check the type of this object and if it is an instance of a `Throwable` it will pass it to this new method. 

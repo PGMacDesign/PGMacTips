@@ -96,6 +96,7 @@ public class ImageUtilities {
 						.into(viewToSet);
 				
 			} catch (Exception e) {
+				L.e(e);
 			}
 		} else {
 			
@@ -141,6 +142,7 @@ public class ImageUtilities {
 											
 											@Override
 											public void onError(Exception e) {
+												L.e(e);
 												Picasso.get().load(backupImageResourceId)
 														.transform(ImageUtilities.buildCircularImageTransformation(circularFrameColor, circularFrameWidth))
 														.into(viewToSet);
@@ -151,6 +153,7 @@ public class ImageUtilities {
 							
 						});
 			} catch (Exception e) {
+				L.e(e);
 				try {
 					Picasso.get().load(backupImageResourceId)
 							.transform(ImageUtilities.buildCircularImageTransformation(circularFrameColor, circularFrameWidth))
@@ -214,6 +217,7 @@ public class ImageUtilities {
 						.transform(ImageUtilities.buildCircularImageTransformation(circularFrameColor, circularFrameWidth))
 						.into(viewToSet);
 			} catch (Exception e) {
+				L.e(e);
 				try {
 					Picasso.get().load(backupImageResourceId).
 							transform(new CircleTransform()).into(viewToSet);
@@ -266,11 +270,19 @@ public class ImageUtilities {
 	                                                                        final boolean isCenterCrop) {
 		if (StringUtilities.isNullOrEmpty(urlThumbnail)) {
 			try {
-				if(isCenterCrop){
-					Picasso.get().load(backupImageResourceId)
-							.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-							.centerCrop()
-							.into(viewToSet);
+				if (isCenterCrop) {
+					try {
+						Picasso.get().load(backupImageResourceId)
+								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
+								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
+								.centerCrop()
+								.into(viewToSet);
+					} catch (IllegalArgumentException ile){
+						Picasso.get().load(backupImageResourceId)
+								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
+								.fit().centerCrop()
+								.into(viewToSet);
+					}
 				} else {
 					Picasso.get().load(backupImageResourceId)
 							.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
@@ -279,11 +291,31 @@ public class ImageUtilities {
 			} catch (Exception e) {
 			}
 		} else {
-			
 			final String innerUrlThumbnail = urlThumbnail;
-			
 			try {
-				Callback c = new Callback() {
+				final Callback cBackup = new Callback() {
+					@Override
+					public void onSuccess() {
+						//Load the image into cache for next time
+						try {
+							List<String> toCache = new ArrayList<String>();
+							toCache.add(innerUrlThumbnail);
+							ImageUtilities.LoadImagesIntoPicassoCache async = new
+									ImageUtilities.LoadImagesIntoPicassoCache(toCache);
+							async.execute();
+						} catch (Exception e2) {
+						}
+					}
+					
+					@Override
+					public void onError(Exception e) {
+						L.e(e);
+						Picasso.get().load(backupImageResourceId)
+								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
+								.into(viewToSet);
+					}
+				};
+				final Callback c = new Callback() {
 					@Override
 					public void onSuccess() {
 						//Load the image into cache for next time
@@ -301,64 +333,40 @@ public class ImageUtilities {
 					public void onError(Exception e) {
 						//Can trigger if image not in cache
 						if(isCenterCrop){
-							Picasso.get().load(innerUrlThumbnail)
-									.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-									.centerCrop()
-									.into(viewToSet, new Callback() {
-										@Override
-										public void onSuccess() {
-											//Load the image into cache for next time
-											try {
-												List<String> toCache = new ArrayList<String>();
-												toCache.add(innerUrlThumbnail);
-												ImageUtilities.LoadImagesIntoPicassoCache async = new
-														ImageUtilities.LoadImagesIntoPicassoCache(toCache);
-												async.execute();
-											} catch (Exception e2) {
-											}
-										}
-										
-										@Override
-										public void onError(Exception e) {
-											Picasso.get().load(backupImageResourceId)
-													.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-													.into(viewToSet);
-										}
-									});
+							try {
+								Picasso.get().load(innerUrlThumbnail)
+										.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
+										.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
+										.centerCrop()
+										.into(viewToSet, cBackup);
+							} catch (IllegalArgumentException ile){
+								Picasso.get().load(backupImageResourceId)
+										.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
+										.fit().centerCrop().into(viewToSet, cBackup);
+							}
 						} else {
 							Picasso.get().load(innerUrlThumbnail)
 									.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-									.into(viewToSet, new Callback() {
-										@Override
-										public void onSuccess() {
-											//Load the image into cache for next time
-											try {
-												List<String> toCache = new ArrayList<String>();
-												toCache.add(innerUrlThumbnail);
-												ImageUtilities.LoadImagesIntoPicassoCache async = new
-														ImageUtilities.LoadImagesIntoPicassoCache(toCache);
-												async.execute();
-											} catch (Exception e2) {
-											}
-										}
-										
-										@Override
-										public void onError(Exception e) {
-											Picasso.get().load(backupImageResourceId)
-													.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-													.into(viewToSet);
-										}
-									});
+									.into(viewToSet, cBackup);
 						}
 					}
 					
 				};
 				if(isCenterCrop){
-					Picasso.get().load(innerUrlThumbnail)
-							.networkPolicy(NetworkPolicy.OFFLINE)
-							.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-							.centerCrop()
-							.into(viewToSet, c);
+					try {
+						Picasso.get().load(innerUrlThumbnail)
+								.networkPolicy(NetworkPolicy.OFFLINE)
+								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
+								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
+								.centerCrop()
+								.into(viewToSet, c);
+					} catch (IllegalArgumentException ile){
+						Picasso.get().load(innerUrlThumbnail)
+								.networkPolicy(NetworkPolicy.OFFLINE)
+								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
+								.fit().centerCrop()
+								.into(viewToSet, c);
+					}
 				} else {
 					Picasso.get().load(innerUrlThumbnail)
 							.networkPolicy(NetworkPolicy.OFFLINE)
@@ -366,6 +374,7 @@ public class ImageUtilities {
 							.into(viewToSet, c);
 				}
 			} catch (Exception e) {
+				L.e(e);
 				try {
 					Picasso.get().load(backupImageResourceId)
 							.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
@@ -422,11 +431,20 @@ public class ImageUtilities {
 		if (StringUtilities.isNullOrEmpty(urlThumbnail)) {
 			try {
 				if(isCenterCrop){
-					Picasso.get()
-							.load(backupImageResourceId)
-							.centerCrop()
-							.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-							.into(viewToSet);
+					try {
+						Picasso.get()
+								.load(backupImageResourceId)
+								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
+								.centerCrop()
+								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
+								.into(viewToSet);
+					} catch (IllegalArgumentException ile){
+						Picasso.get()
+								.load(backupImageResourceId)
+								.fit().centerCrop()
+								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
+								.into(viewToSet);
+					}
 				} else {
 					Picasso.get()
 							.load(backupImageResourceId)
@@ -438,11 +456,20 @@ public class ImageUtilities {
 		} else {
 			try {
 				if(isCenterCrop){
-					Picasso.get()
-							.load(urlThumbnail)
-							.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-							.centerCrop()
-							.into(viewToSet);
+					try {
+						Picasso.get()
+								.load(urlThumbnail)
+								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
+								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
+								.centerCrop()
+								.into(viewToSet);
+					} catch (IllegalArgumentException ile){
+						Picasso.get()
+								.load(urlThumbnail)
+								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
+								.fit().centerCrop()
+								.into(viewToSet);
+					}
 				} else {
 					Picasso.get()
 							.load(urlThumbnail)
@@ -450,6 +477,7 @@ public class ImageUtilities {
 							.into(viewToSet);
 				}
 			} catch (Exception e) {
+				L.e(e);
 				try {
 					Picasso.get().load(backupImageResourceId).
 							transform(new CircleTransform()).into(viewToSet);
@@ -543,7 +571,7 @@ public class ImageUtilities {
 							}
 						});
 			} catch (Exception e) {
-				//L.m("catch caught in picasso setImageWithPicasso call");
+				L.e(e);
 				viewToSet.setImageResource(backupImageResourceId);
 			}
 			
@@ -579,7 +607,7 @@ public class ImageUtilities {
 						.load(urlThumbnail)
 						.into(viewToSet);
 			} catch (Exception e) {
-				//L.m("catch caught in picasso setImageWithPicasso call");
+				L.e(e);
 				viewToSet.setImageResource(backupImageResourceId);
 			}
 			
