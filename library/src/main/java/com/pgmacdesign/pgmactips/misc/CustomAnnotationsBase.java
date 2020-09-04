@@ -31,6 +31,9 @@ public class CustomAnnotationsBase {
         Picasso("https://github.com/square/picasso",
                 "com.squareup.picasso:picasso:2.71828", "2.71828",
                 "Picasso is an image setting lib that is used in the ImageUtilities to set images from local resources and web urls"),
+        PicassoTransformations("https://github.com/wasabeef/picasso-transformations",
+                "jp.wasabeef:picasso-transformations:2.2.1", "2.2.1",
+                "The Transformations addition to Picasso will allow for more custom transformations"),
         //Removed on 2018-07-01; not needed anymore with AndroidAnimations
 //        NineOldAndroids("https://github.com/JakeWharton/NineOldAndroids",
 //                "com.nineoldandroids:library:2.4.0", "2.4.0",

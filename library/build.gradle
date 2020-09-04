@@ -34,7 +34,7 @@ android {
 		targetSdkVersion 29
 		//multiDexEnabled true
 //        versionCode 1
-		versionName "1.3.1"
+		versionName "1.3.3"
 	}
 //    dexOptions {
 //        javaMaxHeapSize "4g"
@@ -92,6 +92,8 @@ android {
 		
 		//Picasso. Link: https://github.com/square/picasso
 		api 'com.squareup.picasso:picasso:2.71828'
+		//Picasso Transformations: https://github.com/wasabeef/picasso-transformations
+		api 'jp.wasabeef:picasso-transformations:2.2.1'
 		
 		//Retrofit, Retrofit Converters, and OKHTTP.
 		//Retrofit - https://github.com/square/retrofit

@@ -1,12 +1,18 @@
 Change Log
 ==========
 
-Version 1.3.3 *(TBD)*
+Version 1.3.4 *(TBD)*
+---------------------
+
+*
+
+Version 1.3.3 *(2020-09-04)*
 ---------------------
 
 * New: The [L](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/L.java) class will now allow Exceptions / Throwables to be passed in via the `L.e()` method. This will print the stacktrace instead of casting into a String and printing. The `L.m()` method has also been altered to check the type of this object and if it is an instance of a `Throwable` it will pass it to this new method. 
 * Update: Updated the [DisplayManagerUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/DisplayManagerUtilities.java) print out method to also return the String being printed out for use in debugging / debug emails. 
 * New: New methods in the [ColorUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ColorUtilities.java) class that allows for a quick building of ColorStateList(s). 
+* New: Adding in new methods to the [ImageUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ImageUtilities.java) class for setting different image transformations. Also added in a new custom dependency for the Picasso Image Transformations.
 
 Version 1.3.2 *(2020-08-14)*
 ---------------------
