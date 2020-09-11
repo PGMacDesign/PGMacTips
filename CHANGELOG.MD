@@ -4,7 +4,10 @@ Change Log
 Version 1.3.5 *(TBD)*
 ---------------------
 
-*
+* New: New methods in the [MiscUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/MiscUtilities.java) class to get the size of lists / maps via a safe null check. 
+* New: New methods in the [ImageUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ImageUtilities.java) and [FileUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/FileUtilities.java) classes to be used in conjunction with downloading images from the internet and converting them to a byte array.
+* New: New methods in the [NetworkingUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/networkclasses/NetworkingUtilities.java) class that allows a really simple builder of an OkHttp3 Client for use in various web-related calls or in the above Image Downloading logic.  
+* New: New method in the [TextField Utilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/TextFieldUtilities.java)  class to allow for setting a TextView to have copy / paste functionality (IE, to be able to select and copy from it)
 
 Version 1.3.4 *(2020-09-04)*
 ---------------------

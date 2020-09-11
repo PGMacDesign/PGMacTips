@@ -38,6 +38,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -142,6 +143,21 @@ public class MiscUtilities {
 	//endregion
 	
 	//region List Utilities
+	
+	/**
+	 * Checks a collection for either being empty or containing objects within it
+	 * @param myList List to check
+	 * @return Boolean, true if it is null or empty, false it if is not
+	 */
+	public static boolean isCollectionNullOrEmpty(Collection<?> myList){
+		if(myList == null){
+			return true;
+		}
+		if(myList.size() <= 0){
+			return true;
+		}
+		return false;
+	}
 	
 	/**
 	 * Checks a list for either being empty or containing objects within it
@@ -835,6 +851,46 @@ public class MiscUtilities {
     }
 
     //endregion
+	
+	//region Size Checking on Collections / Maps
+	
+	/**
+	 * Null type safe check to retrieve the size of the Map passed
+	 * @param c
+	 * @return
+	 */
+	public static int getSizeOfCollection(Map c){
+        return (c == null) ? 0 : c.size();
+	}
+	
+	/**
+	 * Null type safe check to retrieve the size of the collection passed
+	 * @param c
+	 * @return
+	 */
+	public static int getSizeOfCollection(Collection c){
+        return (c == null) ? 0 : c.size();
+	}
+	
+	/**
+	 * Overloaded method so I can remember the naming scheme
+	 * @param c
+	 * @return
+	 */
+	public static int getSizeOfList(Collection c){
+        return getSizeOfCollection(c);
+	}
+	
+	/**
+	 * Overloaded method so I can remember the naming scheme
+	 * @param c
+	 * @return
+	 */
+	public static int getSizeOfSet(Collection c){
+        return getSizeOfCollection(c);
+	}
+	
+	//endregion
 	
     //region Simple Utilities for Removing Nulls from Lists
 	

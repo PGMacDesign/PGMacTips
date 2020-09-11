@@ -1,5 +1,6 @@
 package com.pgmacdesign.pgmactips.utilities;
 
+import android.Manifest;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -7,9 +8,32 @@ import android.os.Build;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 
+import androidx.annotation.RequiresPermission;
+
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConfig;
+import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
+import com.pgmacdesign.pgmactips.networkclasses.sslsocketsandprotocols.SSLProtocolOptions;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.Permission;
+import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
+
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * Class Uses Permission android.permission.ACCESS_NETWORK_STATE.
@@ -26,6 +50,7 @@ public class NetworkUtilities {
      * @param context The context of the activity doing the checking
      * @return A Boolean. True if they have connection, false if they do not
      */
+    @RequiresPermission(value = Manifest.permission.ACCESS_NETWORK_STATE)
     public static boolean haveNetworkConnection(Context context) {
         boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;
@@ -34,14 +59,16 @@ public class NetworkUtilities {
         }
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(
                 Context.CONNECTIVITY_SERVICE);
-        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
-        for (NetworkInfo ni : netInfo) {
-            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
-                if (ni.isConnected())
-                    haveConnectedWifi = true;
-            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
-                if (ni.isConnected())
-                    haveConnectedMobile = true;
+        if(cm != null) {
+	        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+	        for (NetworkInfo ni : netInfo) {
+		        if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+			        if (ni.isConnected())
+				        haveConnectedWifi = true;
+		        if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+			        if (ni.isConnected())
+				        haveConnectedMobile = true;
+	        }
         }
         return haveConnectedWifi || haveConnectedMobile;
     }
@@ -109,4 +136,80 @@ public class NetworkUtilities {
             } catch (Exception e){}
         }
     }
+	
+	/**
+	 * Build an {@link OkHttpClient} client
+	 * @return {@link OkHttpClient}
+	 */
+	@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.OkHttp3)
+	public static OkHttpClient buildOkHttpClient(){
+		boolean isLiveBuild = true;
+		if(PGMacTipsConfig.getInstance() != null){
+			isLiveBuild = PGMacTipsConfig.getInstance().getIsLiveBuild();
+		}
+		return NetworkUtilities.buildOkHttpClient(
+				0, 0, isLiveBuild);
+	}
+	
+	
+	/**
+	 * Build an {@link OkHttpClient} client
+	 * @param readTimeoutInMilliseconds The read Timeout in milliseconds
+	 *                                  If <= 0, defaults to 2 seconds (2,000 milliseconds)
+	 * @param writeTimeoutInMilliseconds The Write Timeout in milliseconds.
+	 *                                   If <= 0, defaults to 2 seconds (2,000 milliseconds)
+	 * @param isLiveBuild boolean that determines the {@link HttpLoggingInterceptor} value. If
+	 *                    this is true, it will have no logging. If it is false, logging will be
+	 *                    set to {@link HttpLoggingInterceptor.Level#BODY}
+	 * @return {@link OkHttpClient}
+	 */
+	@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.OkHttp3)
+	public static OkHttpClient buildOkHttpClient(long readTimeoutInMilliseconds,
+	                                             long writeTimeoutInMilliseconds,
+	                                             boolean isLiveBuild){
+		//Timeouts and logging (10 seconds)
+		OkHttpClient.Builder builder = new OkHttpClient.Builder();
+		builder.readTimeout((readTimeoutInMilliseconds <= 0) ? PGMacTipsConstants.ONE_SECOND * 2
+				: readTimeoutInMilliseconds, TimeUnit.MILLISECONDS);
+		builder.writeTimeout((writeTimeoutInMilliseconds <= 0) ? PGMacTipsConstants.ONE_SECOND * 2
+				: writeTimeoutInMilliseconds, TimeUnit.MILLISECONDS);
+		try {
+			//Note, this is wrapped in a Try Catch in case the Logging interceptor dependency is excluded
+			HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+			logging.setLevel(isLiveBuild ? HttpLoggingInterceptor.Level.NONE : HttpLoggingInterceptor.Level.BODY);
+			builder.addInterceptor(logging);
+		} catch (Exception e){
+			L.e(e);
+		}
+		//Configure SSL
+		try {
+			TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
+					TrustManagerFactory.getDefaultAlgorithm());
+			trustManagerFactory.init((KeyStore) null);
+			TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+			if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
+				throw new IllegalStateException("Unexpected default trust managers:"
+						+ Arrays.toString(trustManagers));
+			}
+			X509TrustManager trustManager = (X509TrustManager) trustManagers[0];
+			SSLContext sslContext;
+			SSLSocketFactory sslSocketFactory;
+			//Can adjust TLS or other types here
+			sslContext = SSLContext.getInstance(SSLProtocolOptions.TLS.name);
+			sslContext.init(null, new TrustManager[]{trustManager}, null);
+			sslSocketFactory = sslContext.getSocketFactory();
+			builder.sslSocketFactory(sslSocketFactory, trustManager);
+		} catch (KeyManagementException kme){
+			kme.printStackTrace();
+		} catch (NoSuchAlgorithmException nsa){
+			nsa.printStackTrace();
+		} catch (KeyStoreException kse){
+			kse.printStackTrace();
+		} catch (IllegalStateException ise){
+			ise.printStackTrace();
+		}
+		//Build the client
+		return builder.build();
+	}
+	
 }

@@ -360,5 +360,19 @@ public class TextFieldUtilities {
         }
          */
     }
-
+	
+	/**
+	 * Simple tool for setting the textview as able to be used for copy / paste.
+	 * Code from: https://stackoverflow.com/a/22191329/2480714
+	 * @param tv
+	 * @param <T>
+	 * @return
+	 */
+	public static <T extends TextView> T enableCopyPasteFromTextview(T tv){
+    	if(tv == null){
+    		return tv;
+	    }
+    	tv.setTextIsSelectable(true);
+    	return tv;
+    }
 }

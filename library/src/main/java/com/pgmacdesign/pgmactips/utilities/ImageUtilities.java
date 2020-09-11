@@ -18,6 +18,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
+import android.net.Network;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -61,6 +62,10 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Created by pmacdowell on 8/15/2016.
@@ -2156,6 +2161,65 @@ public class ImageUtilities {
 		return new RoundedCornersTransformation(NumberUtilities.getInt(radius), NumberUtilities.getInt(margin));
 	}
 	
+	
+	//endregion
+	
+	//region Download Images
+	
+	public static final int TAG_FAILURE = -1;
+	public static final int TAG_SUCCESS = 1;
+	/**
+	 * Download an image from a URL and convert it into a byteArray (byte[])
+	 * @param listener Listener to send data back on. If it fails, the object will always be null
+	 *                 and the tag will be {@link #TAG_FAILURE}. If it is successful, the object
+	 *                 will always be a byte array and the tag will be {@link #TAG_SUCCESS}
+	 * @param client The web client being used. If null is passed, will create one using
+	 *               {@link NetworkUtilities#buildOkHttpClient()}
+	 * @param imageUrl
+	 */
+	@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.OkHttp3)
+	public static void downloadImage(@NonNull OnTaskCompleteListener listener,
+	                                 @Nullable OkHttpClient client,
+	                                 String imageUrl){
+		if(StringUtilities.isNullOrEmpty(imageUrl)){
+			listener.onTaskComplete(null, TAG_FAILURE);
+			return;
+		}
+		if(client == null){
+			client = NetworkUtilities.buildOkHttpClient();
+		}
+		final Request request = new Request.Builder().url(imageUrl).build();
+		client.newCall(request).enqueue(new okhttp3.Callback() {
+			@Override
+			public void onFailure(Call call, IOException e) {
+				listener.onTaskComplete((e == null) ? null : e.getMessage(), TAG_FAILURE);
+			}
+			
+			@Override
+			public void onResponse(Call call, Response response) throws IOException {
+				if (response.isSuccessful()){
+					byte[] toReturn = null;
+					try {
+						toReturn = response.body().bytes();
+					} catch (Exception e){
+						e.printStackTrace();
+						try {
+							toReturn = FileUtilities.readAllBytes(response.body().byteStream());
+						} catch (Exception e1){
+							e1.printStackTrace();
+						}
+					}
+					if(toReturn == null){
+						listener.onTaskComplete(null, TAG_FAILURE);
+					} else {
+						listener.onTaskComplete(toReturn, TAG_SUCCESS);
+					}
+				} else {
+					listener.onTaskComplete(null, TAG_FAILURE);
+				}
+			}
+		});
+	}
 	
 	//endregion
 }
