@@ -2096,6 +2096,147 @@ public class ImageUtilities {
 	
 	//endregion
 	
+	//region Image Rotation
+	
+	/**
+	 * Animate and rotate an image.
+	 *
+	 * @param t The Imageview to rotate
+	 * @param degreesToRotate The degrees to rotate. Positive degrees will rotate clockwise and negative
+	 *                        degrees will rotate counter-clockwise. This var is capped between -360
+	 *                        and 360 to allow for a single rotation.
+	 * @param animationTimeInMilliseconds The animation time in milliseconds. If it is < 0 milliseconds,
+	 *                                    it will default to 0 milliseconds as it assumes it was an error.
+	 * @param <T> T extends {@link ImageView}
+	 */
+	public static <T extends ImageView> void rotateImage(T t,
+	                                                     @IntRange(from = -360, to = 360) int degreesToRotate,
+	                                                     long animationTimeInMilliseconds){
+		if(t == null){
+			return;
+		}
+		if(animationTimeInMilliseconds < 0){
+			animationTimeInMilliseconds = 0;
+		}
+		try {
+			t.animate().setDuration(animationTimeInMilliseconds).rotationBy((float)degreesToRotate).start();
+		} catch (Exception e){
+			L.e(e);
+		}
+	}
+	
+	/**
+	 * Animate and rotate an image 45 degrees (1/8 of a full turn, clockwise)
+	 *
+	 * @param t The Imageview to rotate
+	 * @param animationTimeInMilliseconds The animation time in milliseconds. If it is < 0 milliseconds,
+	 *                                    it will default to 0 milliseconds as it assumes it was an error.
+	 * @param <T> T extends {@link ImageView}
+	 */
+	public static <T extends ImageView> void rotateImage45(T t, long animationTimeInMilliseconds){
+		if(t == null){
+			return;
+		}
+		if(animationTimeInMilliseconds < 0){
+			animationTimeInMilliseconds = 0;
+		}
+		try {
+			t.animate().setDuration(animationTimeInMilliseconds).rotationBy(45F).start();
+		} catch (Exception e){
+			L.e(e);
+		}
+	}
+	
+	/**
+	 * Animate and rotate an image 90 degrees (1/4 of a full turn, clockwise)
+	 *
+	 * @param t The Imageview to rotate
+	 * @param animationTimeInMilliseconds The animation time in milliseconds. If it is < 0 milliseconds,
+	 *                                    it will default to 0 milliseconds as it assumes it was an error.
+	 * @param <T> T extends {@link ImageView}
+	 */
+	public static <T extends ImageView> void rotateImage90(T t, long animationTimeInMilliseconds){
+		if(t == null){
+			return;
+		}
+		if(animationTimeInMilliseconds < 0){
+			animationTimeInMilliseconds = 0;
+		}
+		try {
+			t.animate().setDuration(animationTimeInMilliseconds).rotationBy(90F).start();
+		} catch (Exception e){
+			L.e(e);
+		}
+	}
+	
+	/**
+	 * Animate and rotate an image 180 degrees (1/2 turn, clockwise)
+	 *
+	 * @param t The Imageview to rotate
+	 * @param animationTimeInMilliseconds The animation time in milliseconds. If it is < 0 milliseconds,
+	 *                                    it will default to 0 milliseconds as it assumes it was an error.
+	 * @param <T> T extends {@link ImageView}
+	 */
+	public static <T extends ImageView> void rotateImage180(T t, long animationTimeInMilliseconds){
+		if(t == null){
+			return;
+		}
+		if(animationTimeInMilliseconds < 0){
+			animationTimeInMilliseconds = 0;
+		}
+		try {
+			t.animate().setDuration(animationTimeInMilliseconds).rotationBy(180F).start();
+		} catch (Exception e){
+			L.e(e);
+		}
+	}
+	
+	/**
+	 * Animate and rotate an image 270 degrees (3/4 of a full turn, clockwise)
+	 *
+	 * @param t The Imageview to rotate
+	 * @param animationTimeInMilliseconds The animation time in milliseconds. If it is < 0 milliseconds,
+	 *                                    it will default to 0 milliseconds as it assumes it was an error.
+	 * @param <T> T extends {@link ImageView}
+	 */
+	public static <T extends ImageView> void rotateImage270(T t, long animationTimeInMilliseconds){
+		if(t == null){
+			return;
+		}
+		if(animationTimeInMilliseconds < 0){
+			animationTimeInMilliseconds = 0;
+		}
+		try {
+			t.animate().setDuration(animationTimeInMilliseconds).rotationBy(270F).start();
+		} catch (Exception e){
+			L.e(e);
+		}
+	}
+	
+	/**
+	 * Animate and rotate an image 360 degrees (1 full turn, clockwise)
+	 *
+	 * @param t The Imageview to rotate
+	 * @param animationTimeInMilliseconds The animation time in milliseconds. If it is < 0 milliseconds,
+	 *                                    it will default to 0 milliseconds as it assumes it was an error.
+	 * @param <T> T extends {@link ImageView}
+	 */
+	public static <T extends ImageView> void rotateImage360(T t, long animationTimeInMilliseconds){
+		if(t == null){
+			return;
+		}
+		if(animationTimeInMilliseconds < 0){
+			animationTimeInMilliseconds = 0;
+		}
+		try {
+			t.animate().setDuration(animationTimeInMilliseconds).rotationBy(360F).start();
+		} catch (Exception e){
+			L.e(e);
+		}
+	}
+	
+	//endregion
+	
 	//region Image Absolute URI Utilities
 	
 	/**
