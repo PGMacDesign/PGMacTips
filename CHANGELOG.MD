@@ -1,7 +1,12 @@
 Change Log
 ==========
 
-Version 1.4.0 *(TBD)*
+Version 1.4.1 *(TBD)*
+---------------------
+
+*
+
+Version 1.4.0 *(2020-09-16)*
 ---------------------
 
 * New: New methods in the [MiscUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/MiscUtilities.java) class to get the size of lists / maps via a safe null check. 
