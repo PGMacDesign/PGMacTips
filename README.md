@@ -10,7 +10,7 @@ For a list of changes and the differences in versions, please see the [Changelog
 
 To install, insert this into your projects root build.gradle file
 
-```java
+```groovy
 allprojects {
     repositories {
         jcenter()
@@ -23,8 +23,8 @@ allprojects {
 
 And include this in your dependencies section of your module .gradle file:
 
-```java
-implementation ('com.github.PGMacDesign:PGMacTips:1.4.0')
+```groovy
+implementation ('com.github.PGMacDesign:PGMacTips:1.4.1')
 ```
 
 Having trouble with Jitpack? [This link](https://jitpack.io/#pgmacdesign/PGMacTips) here will show what is going on with the current build as well as give you instructions on integrating Jitpack into your project.
