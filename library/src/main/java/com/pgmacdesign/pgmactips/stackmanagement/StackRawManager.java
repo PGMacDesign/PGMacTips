@@ -17,8 +17,14 @@ import androidx.annotation.NonNull;
  * stacks of fragments for various 'paths' in an app and need to persist a managed list of
  * each of them.
  *
+ * This variation is designed to use raw types; specifically: String, Integer, Long, Double
+ *
  */
-public class StackStringsManager {
+public class StackRawManager {
+	
+	private static enum StackType {
+		TypeString, TypeInteger, TypeLong, TypeDouble, TypeGenericObject;
+	}
 	
 	//region Static Vars
 	private static final String BAD_STRING = "The string you passed was null or empty, please check your params and try again";
@@ -32,6 +38,7 @@ public class StackStringsManager {
 	//endregion
 	
 	//region Instance Vars
+	private StackType stackType;
 	private Map<Integer, CustomStackManagerPOJO> managedStacks;
 	private boolean maintainMinimumOneItemInStack, logChangesInStacks,
 			allowStackDuplicates, shouldIgnoreStringCase;
@@ -44,11 +51,16 @@ public class StackStringsManager {
 	 */
 	public static final class Builder {
 		
-		Map<Integer, String> initialStacks;
+		Map<Integer, String> initialStacksString;
+		Map<Integer, Integer> initialStacksInteger;
+		Map<Integer, Long> initialStacksLong;
+		Map<Integer, Double> initialStacksDouble;
+		Map<Integer, Object> initialStacksGenericObject;
 		boolean maintainMinimumOneItemInStack;
 		boolean logChangesInStacks;
 		boolean allowStackDuplicates;
 		boolean shouldIgnoreStringCase;
+		StackType localStackType;
 		
 		/**
 		 * Shortcut version to create a stack manager with 1 managed stack where the
@@ -72,11 +84,102 @@ public class StackStringsManager {
 					throw new IllegalArgumentException(INITIAL_MAP_VALUES_EMPTY);
 				}
 			}
-			this.initialStacks = firstValues;
+			this.initialStacksString = firstValues;
 			this.logChangesInStacks = false;
 			this.shouldIgnoreStringCase = false;
 			this.allowStackDuplicates = false;
 			this.maintainMinimumOneItemInStack = true;
+			this.localStackType = StackType.TypeString;
+		}
+		
+		/**
+		 * Shortcut version to create a stack manager with 1 managed stack where the
+		 * tag to reference it is always 0 (zero).
+		 * @param firstOneInStack First item to put into stack zero
+		 */
+		public Builder(@NonNull Integer firstOneInStack) throws IllegalArgumentException {
+			if(StringUtilities.isNullOrEmpty(firstOneInStack)){
+				throw new IllegalArgumentException(INITIAL_VALUE_EMPTY);
+			}
+			Map<Integer, Integer> firstValues = new HashMap<>();
+			firstValues.put(0, firstOneInStack);
+			if(MiscUtilities.isMapNullOrEmpty(firstValues)){
+				throw new IllegalArgumentException(INITIAL_MAP_EMPTY);
+			}
+			for(Map.Entry<Integer, Integer> map : firstValues.entrySet()){
+				if(map.getKey() == null){
+					throw new IllegalArgumentException(INITIAL_MAP_KEYS_EMPTY);
+				}
+				if(map.getValue() == null){
+					throw new IllegalArgumentException(INITIAL_MAP_VALUES_EMPTY);
+				}
+			}
+			this.initialStacksInteger = firstValues;
+			this.logChangesInStacks = false;
+			this.shouldIgnoreStringCase = false;
+			this.allowStackDuplicates = false;
+			this.maintainMinimumOneItemInStack = true;
+			this.localStackType = StackType.TypeInteger;
+		}
+		
+		/**
+		 * Shortcut version to create a stack manager with 1 managed stack where the
+		 * tag to reference it is always 0 (zero).
+		 * @param firstOneInStack First item to put into stack zero
+		 */
+		public Builder(@NonNull Long firstOneInStack) throws IllegalArgumentException {
+			if(StringUtilities.isNullOrEmpty(firstOneInStack)){
+				throw new IllegalArgumentException(INITIAL_VALUE_EMPTY);
+			}
+			Map<Integer, Long> firstValues = new HashMap<>();
+			firstValues.put(0, firstOneInStack);
+			if(MiscUtilities.isMapNullOrEmpty(firstValues)){
+				throw new IllegalArgumentException(INITIAL_MAP_EMPTY);
+			}
+			for(Map.Entry<Integer, Long> map : firstValues.entrySet()){
+				if(map.getKey() == null){
+					throw new IllegalArgumentException(INITIAL_MAP_KEYS_EMPTY);
+				}
+				if(map.getValue() == null){
+					throw new IllegalArgumentException(INITIAL_MAP_VALUES_EMPTY);
+				}
+			}
+			this.initialStacksLong = firstValues;
+			this.logChangesInStacks = false;
+			this.shouldIgnoreStringCase = false;
+			this.allowStackDuplicates = false;
+			this.maintainMinimumOneItemInStack = true;
+			this.localStackType = StackType.TypeLong;
+		}
+		
+		/**
+		 * Shortcut version to create a stack manager with 1 managed stack where the
+		 * tag to reference it is always 0 (zero).
+		 * @param firstOneInStack First item to put into stack zero
+		 */
+		public Builder(@NonNull Double firstOneInStack) throws IllegalArgumentException {
+			if(StringUtilities.isNullOrEmpty(firstOneInStack)){
+				throw new IllegalArgumentException(INITIAL_VALUE_EMPTY);
+			}
+			Map<Integer, Double> firstValues = new HashMap<>();
+			firstValues.put(0, firstOneInStack);
+			if(MiscUtilities.isMapNullOrEmpty(firstValues)){
+				throw new IllegalArgumentException(INITIAL_MAP_EMPTY);
+			}
+			for(Map.Entry<Integer, Double> map : firstValues.entrySet()){
+				if(map.getKey() == null){
+					throw new IllegalArgumentException(INITIAL_MAP_KEYS_EMPTY);
+				}
+				if(map.getValue() == null){
+					throw new IllegalArgumentException(INITIAL_MAP_VALUES_EMPTY);
+				}
+			}
+			this.initialStacksDouble = firstValues;
+			this.logChangesInStacks = false;
+			this.shouldIgnoreStringCase = false;
+			this.allowStackDuplicates = false;
+			this.maintainMinimumOneItemInStack = true;
+			this.localStackType = StackType.TypeDouble;
 		}
 		
 		/**
@@ -87,28 +190,29 @@ public class StackStringsManager {
 		 * corresponding tags will match those passed in here
 		 * @param firstItemInStacks A Map of int keys and String values
 		 */
-		public Builder(@NonNull Map<Integer, String> firstItemInStacks) throws IllegalArgumentException{
+		public Builder(@NonNull Map<Integer, Object> firstItemInStacks) throws IllegalArgumentException{
 			if(MiscUtilities.isMapNullOrEmpty(firstItemInStacks)){
 				throw new IllegalArgumentException(INITIAL_MAP_EMPTY);
 			}
-			for(Map.Entry<Integer, String> map : firstItemInStacks.entrySet()){
+			for(Map.Entry<Integer, Object> map : firstItemInStacks.entrySet()){
 				if(map.getKey() == null){
 					throw new IllegalArgumentException(INITIAL_MAP_KEYS_EMPTY);
 				}
-				if(StringUtilities.isNullOrEmpty(map.getValue())){
+				if(map.getValue() == null){
 					throw new IllegalArgumentException(INITIAL_MAP_VALUES_EMPTY);
 				}
 			}
-			this.initialStacks = firstItemInStacks;
+			this.initialStacksGenericObject = firstItemInStacks;
 			this.logChangesInStacks = false;
 			this.shouldIgnoreStringCase = false;
 			this.allowStackDuplicates = false;
 			this.maintainMinimumOneItemInStack = true;
+			this.localStackType = StackType.TypeGenericObject;
 		}
 		
 		/**
 		 * Should ignore the case of the Strings. Really only utilized when the
-		 * {@link StackStringsManager.Builder#allowStackDuplicates} is false;
+		 * {@link StackRawManager.Builder#allowStackDuplicates} is false;
 		 * Note, Defaults to false.
 		 * @param shouldIgnore If true, will ignore case when setting and if the stack
 		 *                     duplicates is false, will act accordingly.
@@ -163,10 +267,10 @@ public class StackStringsManager {
 		
 		/**
 		 * Build
-		 * @return {@link StackStringsManager}
+		 * @return {@link StackRawManager}
 		 */
-		public StackStringsManager build(){
-			return new StackStringsManager(this);
+		public StackRawManager build(){
+			return new StackRawManager(this);
 		}
 	}
 	
@@ -178,7 +282,7 @@ public class StackStringsManager {
 	 * Constructor, requires Builder Class.
 	 * @param builder {@link Builder}
 	 */
-	private StackStringsManager(StackStringsManager.Builder builder){
+	private StackRawManager(StackRawManager.Builder builder){
 		if(builder == null){
 			return;
 		}
@@ -186,7 +290,9 @@ public class StackStringsManager {
 		this.allowStackDuplicates = builder.allowStackDuplicates;
 		this.shouldIgnoreStringCase = builder.shouldIgnoreStringCase;
 		this.logChangesInStacks = builder.logChangesInStacks;
-		this.init(builder.initialStacks);
+		this.stackType = builder.localStackType;
+		this.init(builder.initialStacksString, builder.initialStacksInteger,
+				builder.initialStacksLong, builder.initialStacksDouble, builder.initialStacksGenericObject);
 	}
 	//endregion
 	
@@ -195,25 +301,99 @@ public class StackStringsManager {
 	/**
 	 * Init method
 	 */
-	private void init(@NonNull Map<Integer, String> firstItemsInStack) throws StackStringsManagerException {
+	private void init(Map<Integer, String> firstItemsInStackString,
+	                  Map<Integer, Integer> firstItemsInStackInteger,
+	                  Map<Integer, Long> firstItemsInStackLong,
+	                  Map<Integer, Double> firstItemsInStackDouble,
+	                  Map<Integer, Object> firstItemsInStackGenericObject) throws StackRawManagerException {
 		this.managedStacks = new HashMap<>();
-		for (Map.Entry<Integer, String> map : firstItemsInStack.entrySet()) {
-			if (map == null) {
-				continue;
+		if(this.stackType == StackType.TypeString){
+			for (Map.Entry<Integer, String> map : firstItemsInStackString.entrySet()) {
+				if (map == null) {
+					continue;
+				}
+				Integer key = map.getKey();
+				String value = map.getValue();
+				if (key == null || StringUtilities.isNullOrEmpty(value)) {
+					continue;
+				}
+				Stack<String> stackToManage = new Stack<>();
+				stackToManage.push(value);
+				CustomStackManagerPOJO pojo = new CustomStackManagerPOJO();
+				pojo.setKey(key);
+				pojo.setManagedStack(stackToManage);
+				this.managedStacks.put(key, pojo);
 			}
-			Integer key = map.getKey();
-			String value = map.getValue();
-			if (key == null || StringUtilities.isNullOrEmpty(value)) {
-				continue;
+		} else if (this.stackType == StackType.TypeInteger){
+			for (Map.Entry<Integer, Integer> map : firstItemsInStackInteger.entrySet()) {
+				if (map == null) {
+					continue;
+				}
+				Integer key = map.getKey();
+				Integer value = map.getValue();
+				if (key == null || value == null) {
+					continue;
+				}
+				Stack<Integer> stackToManage = new Stack<>();
+				stackToManage.push(value);
+				CustomStackManagerPOJO pojo = new CustomStackManagerPOJO();
+				pojo.setKey(key);
+				pojo.setManagedStack(stackToManage);
+				this.managedStacks.put(key, pojo);
 			}
-			Stack<String> stackToManage = new Stack<>();
-			stackToManage.push(value);
-			CustomStackManagerPOJO pojo = new CustomStackManagerPOJO();
-			pojo.setKey(key);
-			pojo.setManagedStack(stackToManage);
-			managedStacks.put(key, pojo);
+		} else if (this.stackType == StackType.TypeLong){
+			for (Map.Entry<Integer, Long> map : firstItemsInStackLong.entrySet()) {
+				if (map == null) {
+					continue;
+				}
+				Integer key = map.getKey();
+				Long value = map.getValue();
+				if (key == null || value == null) {
+					continue;
+				}
+				Stack<Long> stackToManage = new Stack<>();
+				stackToManage.push(value);
+				CustomStackManagerPOJO pojo = new CustomStackManagerPOJO();
+				pojo.setKey(key);
+				pojo.setManagedStack(stackToManage);
+				this.managedStacks.put(key, pojo);
+			}
+		} else if (this.stackType == StackType.TypeDouble){
+			for (Map.Entry<Integer, Double> map : firstItemsInStackDouble.entrySet()) {
+				if (map == null) {
+					continue;
+				}
+				Integer key = map.getKey();
+				Double value = map.getValue();
+				if (key == null || value == null) {
+					continue;
+				}
+				Stack<Double> stackToManage = new Stack<>();
+				stackToManage.push(value);
+				CustomStackManagerPOJO pojo = new CustomStackManagerPOJO();
+				pojo.setKey(key);
+				pojo.setManagedStack(stackToManage);
+				this.managedStacks.put(key, pojo);
+			}
+		} else if (this.stackType == StackType.TypeGenericObject){
+			for (Map.Entry<Integer, Object> map : firstItemsInStackGenericObject.entrySet()) {
+				if (map == null) {
+					continue;
+				}
+				Integer key = map.getKey();
+				Object value = map.getValue();
+				if (key == null || value == null) {
+					continue;
+				}
+				Stack<Object> stackToManage = new Stack<>();
+				stackToManage.push(value);
+				CustomStackManagerPOJO pojo = new CustomStackManagerPOJO();
+				pojo.setKey(key);
+				pojo.setManagedStack(stackToManage);
+				this.managedStacks.put(key, pojo);
+			}
 		}
-		if (MiscUtilities.isMapNullOrEmpty(managedStacks)) {
+		if (MiscUtilities.isMapNullOrEmpty(this.managedStacks)) {
 			throw buildException(INSTANTIATION_ERROR, null, null);
 		}
 	}
@@ -225,10 +405,10 @@ public class StackStringsManager {
 	//region Clearing Stacks
 	/**
 	 * Clear one stack via the tag sent. Follows the boolean rule set via constructor about maintaining
-	 * 1 left in the stack if the boolean {@link com.pgmacdesign.pgmactips.stackmanagement.StackManager#maintainMinimumOneItemInStack}
+	 * 1 left in the stack if the boolean {@link com.pgmacdesign.pgmactips.stackmanagement.StackRawManager#maintainMinimumOneItemInStack}
 	 * is set to true
 	 *
-	 * @ {@link StackStringsManagerException}
+	 * @ {@link StackRawManagerException}
 	 */
 	public void clearOneStack() {
 		clearOneStack(0);
@@ -236,10 +416,10 @@ public class StackStringsManager {
 	
 	/**
 	 * Clear one stack via the tag sent. Follows the boolean rule set via constructor about maintaining
-	 * 1 left in the stack if the boolean {@link com.pgmacdesign.pgmactips.stackmanagement.StackManager#maintainMinimumOneItemInStack}
+	 * 1 left in the stack if the boolean {@link com.pgmacdesign.pgmactips.stackmanagement.StackRawManager#maintainMinimumOneItemInStack}
 	 * is set to true
 	 *
-	 * @ {@link StackStringsManagerException}
+	 * @ {@link StackRawManagerException}
 	 */
 	public void clearOneStack(int tag) {
 		try {
@@ -250,17 +430,17 @@ public class StackStringsManager {
 					popTheStack(tag, myStack.size());
 				}
 			}
-		} catch (StackStringsManagerException sme) {
+		} catch (StackRawManagerException sme) {
 			L.m(sme.toString());
 		}
 	}
 	
 	/**
 	 * Clear all stacks. Follows the boolean rule set via constructor about maintaining
-	 * 1 left in the stack if the boolean {@link com.pgmacdesign.pgmactips.stackmanagement.StackManager#maintainMinimumOneItemInStack}
+	 * 1 left in the stack if the boolean {@link com.pgmacdesign.pgmactips.stackmanagement.StackRawManager#maintainMinimumOneItemInStack}
 	 * is set to true
 	 *
-	 * @ {@link StackStringsManagerException}
+	 * @ {@link StackRawManagerException}
 	 */
 	public void clearAllStacks() {
 		for (Map.Entry<Integer, CustomStackManagerPOJO> map : managedStacks.entrySet()) {
@@ -286,9 +466,42 @@ public class StackStringsManager {
 	 *
 	 * @param strToAdd String to add to the stack
 	 * @return String of the one at the top of the stack
-	 * @ {@link StackStringsManagerException}
+	 * @ {@link StackRawManagerException}
 	 */
 	public String appendToTheStack(String strToAdd) {
+		return appendToTheStack(0, strToAdd);
+	}
+	
+	/**
+	 * Append Integers to the stack (overloaded to allow for position 0 to be used)
+	 *
+	 * @param strToAdd String to add to the stack
+	 * @return String of the one at the top of the stack
+	 * @ {@link StackRawManagerException}
+	 */
+	public String appendToTheStack(Integer strToAdd) {
+		return appendToTheStack(0, strToAdd);
+	}
+	
+	/**
+	 * Append Longs to the stack (overloaded to allow for position 0 to be used)
+	 *
+	 * @param strToAdd String to add to the stack
+	 * @return String of the one at the top of the stack
+	 * @ {@link StackRawManagerException}
+	 */
+	public String appendToTheStack(Long strToAdd) {
+		return appendToTheStack(0, strToAdd);
+	}
+	
+	/**
+	 * Append Doubles to the stack (overloaded to allow for position 0 to be used)
+	 *
+	 * @param strToAdd String to add to the stack
+	 * @return String of the one at the top of the stack
+	 * @ {@link StackRawManagerException}
+	 */
+	public String appendToTheStack(Double strToAdd) {
 		return appendToTheStack(0, strToAdd);
 	}
 	
@@ -298,11 +511,11 @@ public class StackStringsManager {
 	 * @param tagToMatchToStrings Int tag to match the map in the constructor
 	 * @param strToAdd         String to add / append to the stack
 	 * @return String str of the one at the top of the stack
-	 * @ {@link StackStringsManagerException}
+	 * @ {@link StackRawManagerException}
 	 */
 	public String appendToTheStack(int tagToMatchToStrings, String strToAdd) {
 		try {
-			manageNullOrEmptyStrings(strToAdd);
+			this.manageNullOrEmptyStrings(strToAdd);
 			CustomStackManagerPOJO pojo = getStackPOJO(tagToMatchToStrings);
 			Stack stack = pojo.getManagedStack();
 			if(stack == null){
@@ -323,7 +536,118 @@ public class StackStringsManager {
 				L.m("stack matching tag " + tagToMatchToStrings + " String: " + stack.toString());
 			}
 			return ((String) stack.peek());
-		} catch (StackStringsManagerException sme) {
+		} catch (StackRawManagerException sme) {
+			L.m(sme.toString());
+			return null;
+		}
+	}
+	
+	/**
+	 * Append Strings to the stack
+	 *
+	 * @param tagToMatchToStrings Int tag to match the map in the constructor
+	 * @param strToAdd         String to add / append to the stack
+	 * @return String str of the one at the top of the stack
+	 * @ {@link StackRawManagerException}
+	 */
+	public String appendToTheStack(int tagToMatchToStrings, Integer strToAdd) {
+		try {
+			this.manageBadArgs(strToAdd);
+			CustomStackManagerPOJO pojo = getStackPOJO(tagToMatchToStrings);
+			Stack stack = pojo.getManagedStack();
+			if(stack == null){
+				return null;
+			}
+			if(stack.contains(strToAdd)){
+				if (allowStackDuplicates) {
+					stack.push(strToAdd);
+				} else {
+					//Replace position to the top
+					stack.remove(strToAdd);
+					stack.push(strToAdd);
+				}
+			} else {
+				stack.push(strToAdd);
+			}
+			if (logChangesInStacks) {
+				L.m("stack matching tag " + tagToMatchToStrings + " Integers: " + stack.toString());
+			}
+			return ((String) stack.peek());
+		} catch (StackRawManagerException sme) {
+			L.m(sme.toString());
+			return null;
+		}
+	}
+	
+	/**
+	 * Append Strings to the stack
+	 *
+	 * @param tagToMatchToStrings Int tag to match the map in the constructor
+	 * @param strToAdd         String to add / append to the stack
+	 * @return String str of the one at the top of the stack
+	 * @ {@link StackRawManagerException}
+	 */
+	public String appendToTheStack(int tagToMatchToStrings, Long strToAdd) {
+		try {
+			this.manageBadArgs(strToAdd);
+			CustomStackManagerPOJO pojo = getStackPOJO(tagToMatchToStrings);
+			Stack stack = pojo.getManagedStack();
+			if(stack == null){
+				return null;
+			}
+			if(stack.contains(strToAdd)){
+				if (allowStackDuplicates) {
+					stack.push(strToAdd);
+				} else {
+					//Replace position to the top
+					stack.remove(strToAdd);
+					stack.push(strToAdd);
+				}
+			} else {
+				stack.push(strToAdd);
+			}
+			if (logChangesInStacks) {
+				L.m("stack matching tag " + tagToMatchToStrings + " Longs: " + stack.toString());
+			}
+			return ((String) stack.peek());
+		} catch (StackRawManagerException sme) {
+			L.m(sme.toString());
+			return null;
+		}
+	}
+	
+	/**
+	 * Append Strings to the stack
+	 *
+	 * @param tagToMatchToStrings Int tag to match the map in the constructor
+	 * @param strToAdd         String to add / append to the stack
+	 * @return String str of the one at the top of the stack
+	 * @ {@link StackRawManagerException}
+	 */
+	public String appendToTheStack(int tagToMatchToStrings, Double strToAdd) {
+		try {
+			this.manageBadArgs(strToAdd);
+			CustomStackManagerPOJO pojo = getStackPOJO(tagToMatchToStrings);
+			Stack stack = pojo.getManagedStack();
+			if(stack == null){
+				return null;
+			}
+			if(stack.contains(strToAdd)){
+				if (allowStackDuplicates) {
+					stack.push(strToAdd);
+				} else {
+					//Replace position to the top
+					stack.remove(strToAdd);
+					stack.push(strToAdd);
+				}
+			} else {
+				stack.push(strToAdd);
+			}
+			if (logChangesInStacks) {
+				L.m("stack matching tag " + tagToMatchToStrings + " Doubles: " + stack.toString());
+			}
+			return ((String) stack.peek());
+		} catch (StackRawManagerException sme) {
 			L.m(sme.toString());
 			return null;
 		}
@@ -334,7 +658,7 @@ public class StackStringsManager {
 	 *
 	 * @param strsToAdd List of Strings to add / append to the stack
 	 * @return String of the one at the top of the stack
-	 * @ {@link StackStringsManagerException}
+	 * @ {@link StackRawManagerException}
 	 */
 	public String appendToTheStack(List<String> strsToAdd) {
 		return appendToTheStack(0, strsToAdd);
@@ -346,7 +670,7 @@ public class StackStringsManager {
 	 * @param tagToMatchToStrings Int tag to match the map in the constructor
 	 * @param strsToAdd        List of Strings to add / append to the stack
 	 * @return String of the one at the top of the stack
-	 * @ {@link StackStringsManagerException}
+	 * @ {@link StackRawManagerException}
 	 */
 	public String appendToTheStack(int tagToMatchToStrings, List<String> strsToAdd) {
 		try {
@@ -375,7 +699,7 @@ public class StackStringsManager {
 				}
 			}
 			return ((String) stack.peek());
-		} catch (StackStringsManagerException sme) {
+		} catch (StackRawManagerException sme) {
 			L.m(sme.toString());
 			return null;
 		}
@@ -390,7 +714,7 @@ public class StackStringsManager {
 	 * Pop the stack matching the int String used. (overloaded to allow for position 0 to be used)
 	 *
 	 * @return Returns the String at the top of the stack. If the stack is empty, returns null
-	 * @ {@link StackStringsManagerException}
+	 * @ {@link StackRawManagerException}
 	 */
 	public String popTheStack() {
 		return popTheStack(0);
@@ -401,7 +725,7 @@ public class StackStringsManager {
 	 *
 	 * @param tagToMatchToStrings Int tag to match the map in the constructor
 	 * @return Returns the String at the top of the stack. If the stack is empty, returns null
-	 * @ {@link StackStringsManagerException}
+	 * @ {@link StackRawManagerException}
 	 */
 	public String popTheStack(int tagToMatchToStrings) {
 		try {
@@ -428,7 +752,7 @@ public class StackStringsManager {
 			} else {
 				return null;
 			}
-		} catch (StackStringsManagerException sme) {
+		} catch (StackRawManagerException sme) {
 			L.m(sme.toString());
 			return null;
 		}
@@ -440,7 +764,7 @@ public class StackStringsManager {
 	 * @param tagToMatchToStrings Int tag to match the map in the constructor
 	 * @param numToPop          Number to pop off the stack
 	 * @return Returns the String at the top of the stack. If the stack is empty, returns null
-	 * @ {@link StackStringsManagerException}
+	 * @ {@link StackRawManagerException}
 	 */
 	public String popTheStack(int tagToMatchToStrings, int numToPop) {
 		try {
@@ -476,7 +800,7 @@ public class StackStringsManager {
 		} catch (EmptyStackException ese){
 			L.m(ese.getMessage());
 			return null;
-		} catch (StackStringsManagerException sme) {
+		} catch (StackRawManagerException sme) {
 			L.m(sme.toString());
 			return null;
 		}
@@ -491,7 +815,7 @@ public class StackStringsManager {
 	 * Overloaded to allow for single stack management to be used
 	 *
 	 * @return {@link Stack<String>}
-	 * @ {@link StackStringsManagerException}
+	 * @ {@link StackRawManagerException}
 	 */
 	public Stack<String> getStack() {
 		return getStack(0);
@@ -502,14 +826,14 @@ public class StackStringsManager {
 	 *
 	 * @param tag Tag matches one(s) passed in Constructor
 	 * @return {@link Stack<String>}
-	 * @ {@link StackStringsManagerException}
+	 * @ {@link StackRawManagerException}
 	 */
 	public Stack<String> getStack(int tag) {
 		try {
 			CustomStackManagerPOJO pojo = getStackPOJO(tag);
 			Stack<String> stackToManage = pojo.getManagedStack();
 			return stackToManage;
-		} catch (StackStringsManagerException sme) {
+		} catch (StackRawManagerException sme) {
 			L.m(sme.toString());
 			return null;
 		}
@@ -530,7 +854,7 @@ public class StackStringsManager {
 		try {
 			Stack<String> stack = getStack(pos);
 			return ((stack == null) ? 0 : stack.size());
-		} catch (StackStringsManagerException sme) {
+		} catch (StackRawManagerException sme) {
 			L.m(sme.toString());
 			return 0;
 		}
@@ -558,7 +882,7 @@ public class StackStringsManager {
 	private boolean stackContainsString(Stack<String> stack, String strToCheck) {
 		try {
 			for (String e : stack) {
-				if(StackStringsManager.this.shouldIgnoreStringCase){
+				if(StackRawManager.this.shouldIgnoreStringCase){
 					if (e.equalsIgnoreCase(strToCheck)) {
 						return true;
 					}
@@ -578,7 +902,7 @@ public class StackStringsManager {
 	 * Manage null Strings passed. If null is passed, will throw exception
 	 *
 	 * @param strWorkingOn
-	 * @ {@link StackStringsManagerException}
+	 * @ {@link StackRawManagerException}
 	 */
 	private void manageNullOrEmptyStrings(String strWorkingOn) {
 		if (StringUtilities.isNullOrEmpty(strWorkingOn)) {
@@ -587,13 +911,29 @@ public class StackStringsManager {
 	}
 	
 	/**
+	 * Manage null Objects passed. If null is passed, will throw exception
+	 *
+	 * @param obj
+	 * @ {@link StackRawManagerException}
+	 */
+	private void manageBadArgs(Object obj) {
+		if(obj == null){
+			throw buildException(BAD_STRING, obj, null);
+		} else {
+			if(obj instanceof String){
+				manageNullOrEmptyStrings((String)obj);
+			}
+		}
+	}
+	
+	/**
 	 * Gets the POJO. If null is returned, will throw exception
 	 *
 	 * @param tag Tag matches one(s) passed in Constructor
 	 * @return {@link CustomStackManagerPOJO}
-	 * @ {@link StackStringsManagerException}
+	 * @ {@link StackRawManagerException}
 	 */
-	private CustomStackManagerPOJO getStackPOJO(int tag) throws StackStringsManagerException {
+	private CustomStackManagerPOJO getStackPOJO(int tag) throws StackRawManagerException {
 		if (tag < 0 || tag >= this.managedStacks.size()) {
 			throw buildException(INVALID_KEY, null, tag);
 		}
@@ -639,16 +979,16 @@ public class StackStringsManager {
 	/**
 	 * Build the the exception to throw
 	 *
-	 * @return {@link StackStringsManagerException}
+	 * @return {@link StackRawManagerException}
 	 */
-	private StackStringsManagerException buildException(String desc, String strPassed, Integer keyPassed) {
-		StackStringsManagerException e = new StackStringsManagerException();
+	private StackRawManagerException buildException(String desc, Object strPassed, Integer keyPassed) {
+		StackRawManagerException e = new StackRawManagerException();
 		if (StringUtilities.isNullOrEmpty(desc)) {
 			desc = "An unknown error has occurred";
 		}
 		e.setErrorMessage(desc);
 		e.setKey(keyPassed);
-		String str = (!StringUtilities.isNullOrEmpty(strPassed)) ? strPassed : "Null";
+		String str = (strPassed != null) ? strPassed.toString() : "Null";
 		e.setStr(str);
 		return e;
 	}

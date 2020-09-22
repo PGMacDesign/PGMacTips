@@ -4,7 +4,7 @@ Change Log
 Version 1.4.1 *(TBD)*
 ---------------------
 
-*
+* Update: Updated and renamed the [StackStringsManager](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/stackmanagement/StackStringsManager.java) (Formally StackStringsManager) so that it can use all raw types. It now supports Strings, Longs, Integers, and Doubles.  
 
 Version 1.4.0 *(2020-09-16)*
 ---------------------
