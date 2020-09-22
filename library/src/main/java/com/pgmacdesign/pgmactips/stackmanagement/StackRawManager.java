@@ -479,7 +479,7 @@ public class StackRawManager {
 	 * @return String of the one at the top of the stack
 	 * @ {@link StackRawManagerException}
 	 */
-	public String appendToTheStack(Integer strToAdd) {
+	public Integer appendToTheStack(Integer strToAdd) {
 		return appendToTheStack(0, strToAdd);
 	}
 	
@@ -490,7 +490,7 @@ public class StackRawManager {
 	 * @return String of the one at the top of the stack
 	 * @ {@link StackRawManagerException}
 	 */
-	public String appendToTheStack(Long strToAdd) {
+	public Long appendToTheStack(Long strToAdd) {
 		return appendToTheStack(0, strToAdd);
 	}
 	
@@ -501,7 +501,7 @@ public class StackRawManager {
 	 * @return String of the one at the top of the stack
 	 * @ {@link StackRawManagerException}
 	 */
-	public String appendToTheStack(Double strToAdd) {
+	public Double appendToTheStack(Double strToAdd) {
 		return appendToTheStack(0, strToAdd);
 	}
 	
@@ -550,7 +550,7 @@ public class StackRawManager {
 	 * @return String str of the one at the top of the stack
 	 * @ {@link StackRawManagerException}
 	 */
-	public String appendToTheStack(int tagToMatchToStrings, Integer strToAdd) {
+	public Integer appendToTheStack(int tagToMatchToStrings, Integer strToAdd) {
 		try {
 			this.manageBadArgs(strToAdd);
 			CustomStackManagerPOJO pojo = getStackPOJO(tagToMatchToStrings);
@@ -572,7 +572,7 @@ public class StackRawManager {
 			if (logChangesInStacks) {
 				L.m("stack matching tag " + tagToMatchToStrings + " Integers: " + stack.toString());
 			}
-			return ((String) stack.peek());
+			return ((Integer) stack.peek());
 		} catch (StackRawManagerException sme) {
 			L.m(sme.toString());
 			return null;
@@ -587,7 +587,7 @@ public class StackRawManager {
 	 * @return String str of the one at the top of the stack
 	 * @ {@link StackRawManagerException}
 	 */
-	public String appendToTheStack(int tagToMatchToStrings, Long strToAdd) {
+	public Long appendToTheStack(int tagToMatchToStrings, Long strToAdd) {
 		try {
 			this.manageBadArgs(strToAdd);
 			CustomStackManagerPOJO pojo = getStackPOJO(tagToMatchToStrings);
@@ -609,7 +609,7 @@ public class StackRawManager {
 			if (logChangesInStacks) {
 				L.m("stack matching tag " + tagToMatchToStrings + " Longs: " + stack.toString());
 			}
-			return ((String) stack.peek());
+			return ((Long) stack.peek());
 		} catch (StackRawManagerException sme) {
 			L.m(sme.toString());
 			return null;
@@ -624,7 +624,7 @@ public class StackRawManager {
 	 * @return String str of the one at the top of the stack
 	 * @ {@link StackRawManagerException}
 	 */
-	public String appendToTheStack(int tagToMatchToStrings, Double strToAdd) {
+	public Double appendToTheStack(int tagToMatchToStrings, Double strToAdd) {
 		try {
 			this.manageBadArgs(strToAdd);
 			CustomStackManagerPOJO pojo = getStackPOJO(tagToMatchToStrings);
@@ -646,7 +646,7 @@ public class StackRawManager {
 			if (logChangesInStacks) {
 				L.m("stack matching tag " + tagToMatchToStrings + " Doubles: " + stack.toString());
 			}
-			return ((String) stack.peek());
+			return ((Double) stack.peek());
 		} catch (StackRawManagerException sme) {
 			L.m(sme.toString());
 			return null;
@@ -716,7 +716,7 @@ public class StackRawManager {
 	 * @return Returns the String at the top of the stack. If the stack is empty, returns null
 	 * @ {@link StackRawManagerException}
 	 */
-	public String popTheStack() {
+	public Object popTheStack() {
 		return popTheStack(0);
 	}
 	
@@ -727,7 +727,7 @@ public class StackRawManager {
 	 * @return Returns the String at the top of the stack. If the stack is empty, returns null
 	 * @ {@link StackRawManagerException}
 	 */
-	public String popTheStack(int tagToMatchToStrings) {
+	public Object popTheStack(int tagToMatchToStrings) {
 		try {
 			CustomStackManagerPOJO pojo = getStackPOJO(tagToMatchToStrings);
 			Stack stack = pojo.getManagedStack();
@@ -748,7 +748,24 @@ public class StackRawManager {
 				L.m("stack matching tag " + tagToMatchToStrings + " String: " + stack.toString());
 			}
 			if (size > 0) {
-				return ((String) stack.peek());
+				return stack.peek();
+//				switch (this.stackType){
+//					case TypeString:
+//						return ((String) stack.peek());
+//
+//					case TypeLong:
+//						return ((Long) stack.peek());
+//
+//					case TypeDouble:
+//						return ((Double) stack.peek());
+//
+//					case TypeInteger:
+//						return ((Integer) stack.peek());
+//
+//					case TypeGenericObject:
+//						return ((Object) stack.peek());
+//
+//				}
 			} else {
 				return null;
 			}
@@ -766,7 +783,7 @@ public class StackRawManager {
 	 * @return Returns the String at the top of the stack. If the stack is empty, returns null
 	 * @ {@link StackRawManagerException}
 	 */
-	public String popTheStack(int tagToMatchToStrings, int numToPop) {
+	public Object popTheStack(int tagToMatchToStrings, int numToPop) {
 		try {
 			if (numToPop <= 0) {
 				throw buildException(NO_NEGATIVE_NUMBERS_TO_POP, null, tagToMatchToStrings);
@@ -793,7 +810,7 @@ public class StackRawManager {
 				L.m("stack matching tag " + tagToMatchToStrings + " String: " + stack.toString());
 			}
 			if (size > 0) {
-				return ((String) stack.peek());
+				return (stack.peek());
 			} else {
 				return null;
 			}
@@ -817,7 +834,7 @@ public class StackRawManager {
 	 * @return {@link Stack<String>}
 	 * @ {@link StackRawManagerException}
 	 */
-	public Stack<String> getStack() {
+	public Stack<Object> getStack() {
 		return getStack(0);
 	}
 	
@@ -828,10 +845,10 @@ public class StackRawManager {
 	 * @return {@link Stack<String>}
 	 * @ {@link StackRawManagerException}
 	 */
-	public Stack<String> getStack(int tag) {
+	public Stack<Object> getStack(int tag) {
 		try {
 			CustomStackManagerPOJO pojo = getStackPOJO(tag);
-			Stack<String> stackToManage = pojo.getManagedStack();
+			Stack<Object> stackToManage = pojo.getManagedStack();
 			return stackToManage;
 		} catch (StackRawManagerException sme) {
 			L.m(sme.toString());
@@ -852,7 +869,7 @@ public class StackRawManager {
 	 */
 	public int getStackSize(int pos) {
 		try {
-			Stack<String> stack = getStack(pos);
+			Stack stack = getStack(pos);
 			return ((stack == null) ? 0 : stack.size());
 		} catch (StackRawManagerException sme) {
 			L.m(sme.toString());
@@ -890,6 +907,66 @@ public class StackRawManager {
 					if (e.equals(strToCheck)) {
 						return true;
 					}
+				}
+			}
+		} catch (Exception e) {
+			return false;
+		}
+		return false;
+	}
+	
+	/**
+	 * Checker for whether or not the stack already contains the String passed
+	 *
+	 * @param stack       Stack containing current Strings
+	 * @param strToCheck String to check if it is already included in the stack
+	 * @return boolean, if true, stack already contains the String object
+	 */
+	private boolean stackContainsString(Stack<Integer> stack, Integer strToCheck) {
+		try {
+			for (Integer e : stack) {
+				if (e.equals(strToCheck)) {
+					return true;
+				}
+			}
+		} catch (Exception e) {
+			return false;
+		}
+		return false;
+	}
+	
+	/**
+	 * Checker for whether or not the stack already contains the String passed
+	 *
+	 * @param stack       Stack containing current Strings
+	 * @param strToCheck String to check if it is already included in the stack
+	 * @return boolean, if true, stack already contains the String object
+	 */
+	private boolean stackContainsString(Stack<Long> stack, Long strToCheck) {
+		try {
+			for (Long e : stack) {
+				if (e.equals(strToCheck)) {
+					return true;
+				}
+			}
+		} catch (Exception e) {
+			return false;
+		}
+		return false;
+	}
+	
+	/**
+	 * Checker for whether or not the stack already contains the String passed
+	 *
+	 * @param stack       Stack containing current Strings
+	 * @param strToCheck String to check if it is already included in the stack
+	 * @return boolean, if true, stack already contains the String object
+	 */
+	private boolean stackContainsString(Stack<Double> stack, Double strToCheck) {
+		try {
+			for (Double e : stack) {
+				if (e.equals(strToCheck)) {
+					return true;
 				}
 			}
 		} catch (Exception e) {
