@@ -24,7 +24,7 @@ allprojects {
 And include this in your dependencies section of your module .gradle file:
 
 ```groovy
-implementation ('com.github.PGMacDesign:PGMacTips:1.4.1')
+implementation ('com.github.PGMacDesign:PGMacTips:1.4.3')
 ```
 
 Having trouble with Jitpack? [This link](https://jitpack.io/#pgmacdesign/PGMacTips) here will show what is going on with the current build as well as give you instructions on integrating Jitpack into your project.
