@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
@@ -105,25 +106,6 @@ public class GUIUtilities {
         view.destroyDrawingCache();
         //return new BitmapDrawable(viewBmp);
         return viewBmp;
-    }
-
-    /**
-     * This will hide the keyboard
-     * @param activity
-     */
-    public static void hideKeyboard(Activity activity) {
-        try {
-            InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-            //Find the currently focused view, so we can grab the correct window token from it.
-            View view = activity.getCurrentFocus();
-            //If no view currently has focus, create a new one, just so we can grab a window token from it
-            if (view == null) {
-                view = new View(activity);
-            }
-            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -247,5 +229,56 @@ public class GUIUtilities {
         return alertDialog;
     }
 
-
+	//region Keyboard Management
+	
+	
+	/**
+	 * This will hide the keyboard
+	 * @param activity
+	 */
+	public static void hideKeyboard(Activity activity) {
+		try {
+			InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+			//Find the currently focused view, so we can grab the correct window token from it.
+			View view = activity.getCurrentFocus();
+			//If no view currently has focus, create a new one, just so we can grab a window token from it
+			if (view == null) {
+				view = new View(activity);
+			}
+			inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Show the keyboard (Attempt 1)
+	 * https://stackoverflow.com/questions/5105354/how-to-show-soft-keyboard-when-edittext-is-focused
+	 * @param activity
+	 */
+	public static void showKeyboard(Activity activity){
+		if(activity != null){
+			activity.getWindow().setSoftInputMode(
+					WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+		}
+	}
+	
+	/**
+	 * Show the keyboard (Attempt 2)
+	 * https://stackoverflow.com/questions/5105354/how-to-show-soft-keyboard-when-edittext-is-focused
+	 * @param context
+	 * @param editText
+	 * @param <T>
+	 */
+	public static <T extends  EditText> void showKeyboard(Context context, T editText){
+		if(context != null && editText != null){
+			InputMethodManager imm = (InputMethodManager) context.getSystemService(
+					Context.INPUT_METHOD_SERVICE);
+			if(imm != null){
+				editText.requestFocus();
+				imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+			}
+		}
+	}
+	//endregion
 }

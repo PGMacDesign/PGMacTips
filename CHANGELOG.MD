@@ -4,7 +4,8 @@ Change Log
 Version 1.4.4 *(TBD)*
 ---------------------
 
-* 
+* Update: Updated some of the methods in the [GUIUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/GUIUtilities.java) to allow for dismissing a keyboard and not just showing it.
+*
 
 Version 1.4.3 *(2020-09-22)*
 ---------------------

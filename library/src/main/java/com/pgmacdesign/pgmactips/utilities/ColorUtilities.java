@@ -1,7 +1,9 @@
 package com.pgmacdesign.pgmactips.utilities;
 
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.ColorSpace;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 
@@ -270,6 +272,35 @@ public class ColorUtilities {
 			arr[i] = parseMyColor(colors[i]);
 		}
 		return buildGradientDrawable(colorDirection, arr);
+	}
+	
+	/**
+	 * Create a background Edge Gradient Drawable to set into the background of an image.
+	 * @param backgroundColor The color of the background. If it fails or the color cannot be found,
+	 *                        it will set white as the default
+	 * @param cornersRadiusInPixels Edge of the corners (rounded) in pixels
+	 * @param edgeStrokeColor The color of the background. If it fails or the color cannot be found,
+	 *                        it will set black as the default
+	 * @param strokeWidthInPixels Width of the edge stroke in pixels
+	 * @return
+	 */
+	public static GradientDrawable createBackgroundEdge(@ColorInt int backgroundColor,
+	                                                    float cornersRadiusInPixels,
+	                                                    @ColorInt int edgeStrokeColor,
+	                                                    int strokeWidthInPixels){
+		GradientDrawable gd = new GradientDrawable();
+		try {
+			gd.setColor(backgroundColor);
+		} catch (Resources.NotFoundException rnf){
+			gd.setColor(Color.WHITE);
+		}
+		gd.setCornerRadius((cornersRadiusInPixels <= 0) ? 0 : cornersRadiusInPixels);
+		try {
+			gd.setStroke((strokeWidthInPixels < 0) ? 1 : strokeWidthInPixels, edgeStrokeColor);
+		} catch (Resources.NotFoundException rnf){
+			gd.setStroke((strokeWidthInPixels < 0) ? 1 : strokeWidthInPixels, Color.BLACK);
+		}
+		return gd;
 	}
 	
 	//endregion
