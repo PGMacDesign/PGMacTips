@@ -252,6 +252,20 @@ public class GUIUtilities {
 	}
 	
 	/**
+	 * Hide the keyboard in reference to the passed view
+	 * @param context
+	 * @param view
+	 */
+	public static void hideKeyboard(Context context, View view){
+		try {
+			InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+		} catch (Exception e){
+			L.e(e);
+		}
+	}
+	
+	/**
 	 * Show the keyboard (Attempt 1)
 	 * https://stackoverflow.com/questions/5105354/how-to-show-soft-keyboard-when-edittext-is-focused
 	 * @param activity

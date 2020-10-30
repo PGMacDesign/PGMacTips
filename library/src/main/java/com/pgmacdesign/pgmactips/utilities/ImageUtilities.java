@@ -5,6 +5,7 @@ import android.animation.ValueAnimator;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -30,6 +31,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
+import androidx.core.widget.ImageViewCompat;
 
 import android.util.Base64;
 import android.view.animation.Transformation;
@@ -1568,6 +1570,39 @@ public class ImageUtilities {
 		}
 		drawable.setTint(colorId);
 		return drawable;
+	}
+	
+	
+	/**
+	 * Adjust the color of the Image View via a tint
+	 * @param hexColor
+	 */
+	public static boolean setImageViewColor (ImageView iv, String hexColor){
+		if(StringUtilities.isNullOrEmpty(hexColor)){
+			return false;
+		}
+		return setImageViewColor(iv, ColorUtilities.parseMyColor(hexColor));
+	}
+	
+	/**
+	 * Adjust the color of the Image View via a tint
+	 * @param color
+	 */
+	public static boolean setImageViewColor(ImageView iv, @ColorInt int color){
+		try {
+			ImageViewCompat.setImageTintList(iv, ColorStateList.valueOf(color));
+			return true;
+		} catch (Exception e){
+			L.e(e);
+			
+		}
+		try {
+			iv.setColorFilter(color, android.graphics.PorterDuff.Mode.MULTIPLY);
+			return true;
+		} catch (Exception e){
+			L.e(e);
+		}
+		return false;
 	}
 	
 	//endregion
