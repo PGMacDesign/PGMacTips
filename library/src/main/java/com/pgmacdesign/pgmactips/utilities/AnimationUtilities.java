@@ -1,5 +1,6 @@
 package com.pgmacdesign.pgmactips.utilities;
 
+import android.animation.Animator;
 import android.app.Activity;
 import android.view.View;
 
@@ -121,6 +122,20 @@ public class AnimationUtilities {
     @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.AndroidAnimations,
             CustomAnnotationsBase.Dependencies.AndroidAnimationsEasing})
     public static <E extends View> void animateMyView(E view, Integer mDuration, Techniques tech){
+        animateMyView(view, mDuration, tech, null);
+    }
+
+    /**
+     * Animates a view.
+     * @param view View to be animated
+     * @param mDuration Duration (in milliseconds) of animation. 1000 would be 1 second
+     * @param tech The animation to actually be done. {@link Techniques}
+     *             Obtain technique with static reference: IE {@link Techniques#Wobble}
+     * @param <E> A View object (IE EditText, TextView, Button, View, etc)
+     */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.AndroidAnimations,
+            CustomAnnotationsBase.Dependencies.AndroidAnimationsEasing})
+    public static <E extends View> void animateMyView(E view, Integer mDuration, Techniques tech, Animator.AnimatorListener callbackListener){
         //If the view is null, stop here
         if(view == null){
             return;
@@ -135,7 +150,15 @@ public class AnimationUtilities {
 
         //If the animation is not null, move forward with the animation
         if(tech != null){
-            YoYo.with(tech).duration(mDuration).playOn(view);
+	        try {
+		        if (callbackListener != null) {
+			        YoYo.with(tech).duration(mDuration).withListener(callbackListener).playOn(view);
+		        } else {
+			        YoYo.with(tech).duration(mDuration).playOn(view);
+		        }
+	        } catch (Exception e){
+		        L.e(e);
+	        }
         }
     }
 
@@ -149,6 +172,19 @@ public class AnimationUtilities {
     @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.AndroidAnimations,
             CustomAnnotationsBase.Dependencies.AndroidAnimationsEasing})
     public static <E extends View> void animateMyView(E view, Long mDuration, Techniques tech){
+        animateMyView(view, mDuration, tech, null);
+    }
+
+    /**
+     * Animate a view using Techniques (AndroidAnimations)
+     * @param view
+     * @param mDuration
+     * @param tech
+     * @param <E>
+     */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.AndroidAnimations,
+            CustomAnnotationsBase.Dependencies.AndroidAnimationsEasing})
+    public static <E extends View> void animateMyView(E view, Long mDuration, Techniques tech, Animator.AnimatorListener callbackListener){
         //If the view is null, stop here
         if(view == null){
             return;
@@ -163,7 +199,15 @@ public class AnimationUtilities {
 
         //If the animation is not null, move forward with the animation
         if(tech != null){
-            YoYo.with(tech).duration(mDuration).playOn(view);
+            try {
+	            if (callbackListener != null) {
+		            YoYo.with(tech).duration(mDuration).withListener(callbackListener).playOn(view);
+	            } else {
+		            YoYo.with(tech).duration(mDuration).playOn(view);
+	            }
+            } catch (Exception e){
+            	L.e(e);
+            }
         }
     }
 
@@ -177,6 +221,18 @@ public class AnimationUtilities {
             CustomAnnotationsBase.Dependencies.AndroidAnimationsEasing, CustomAnnotationsBase.Dependencies.AndroidSupport_Design})
     public static void animateMyView(RecyclerView.ViewHolder holder,
                                      Integer duration, Techniques techniques){
+	    animateMyView(holder, duration, techniques, null);
+    }
+    /**
+     * Animates a holder within a recyclerview
+     * @param holder The holder to animate
+     * @param duration Duration in milliseconds. IF null passed, will default to 500 milliseconds
+     * @param techniques The technique to use in the animation
+     */
+    @CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.AndroidAnimations,
+            CustomAnnotationsBase.Dependencies.AndroidAnimationsEasing, CustomAnnotationsBase.Dependencies.AndroidSupport_Design})
+    public static void animateMyView(RecyclerView.ViewHolder holder,
+                                     Integer duration, Techniques techniques, Animator.AnimatorListener callbackListener){
         if(holder == null){
             return;
         }
@@ -186,13 +242,17 @@ public class AnimationUtilities {
         if(duration == null){
             duration = 500;
         }
-        if(duration < 100 || duration > 10000){
-            duration = 100;
+        if(duration < 50 || duration > 10000){
+            duration = 50;
         }
         try{
-            YoYo.with(techniques).duration(duration).playOn(holder.itemView);
+            if(callbackListener != null){
+	            YoYo.with(techniques).duration(duration).withListener(callbackListener).playOn(holder.itemView);
+            } else {
+	            YoYo.with(techniques).duration(duration).playOn(holder.itemView);
+            }
         } catch (Exception e){
-            e.printStackTrace();
+            L.e(e);
         }
     }
 }

@@ -1,11 +1,17 @@
 Change Log
 ==========
 
-Version 1.4.4 *(TBD)*
+Version 1.4.5 *(TBD)*
+---------------------
+
+*
+
+Version 1.4.4 *(2020-12-08)*
 ---------------------
 
 * Update: Updated some of the methods in the [GUIUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/GUIUtilities.java) to allow for dismissing a keyboard and not just showing it. Also added in an overloaded `hideKeyboard` method using context + a View.
-* New: New methods in the [ImageUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ImageUtilities.java) to allow for setting the Image View Color using tint logic. 
+* New: New methods in the [ImageUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ImageUtilities.java) to allow for setting the Image View Color using tint logic. Also added in a method to determine if a passed color argument is a valid resource. 
+* New: New overloaded methods in the [AnimationUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/AnimationUtilities.java) to allow users to pass a callback listener whenever the animation completes. 
 
 Version 1.4.3 *(2020-09-22)*
 ---------------------

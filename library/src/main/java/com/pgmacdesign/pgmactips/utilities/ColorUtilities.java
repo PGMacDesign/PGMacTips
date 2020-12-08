@@ -1,5 +1,6 @@
 package com.pgmacdesign.pgmactips.utilities;
 
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -8,10 +9,12 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 
 import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
 import androidx.annotation.FloatRange;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.core.content.res.ResourcesCompat;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -88,6 +91,21 @@ public class ColorUtilities {
 	//endregion
 	
 	//region Misc Color Utilities
+	
+	/**
+	 * Check if the color passed is valid or not
+	 * @param context
+	 * @param color
+	 * @return
+	 */
+	public static boolean isValidColor(@NonNull Context context, @ColorRes int color){
+		try {
+			ResourcesCompat.getColor(context.getResources(), color, null);
+			return true;
+		} catch (Resources.NotFoundException e) {
+			return false;
+		}
+	}
 	
 	/**
 	 * Checks if the passed in String is a valid hex color String.
