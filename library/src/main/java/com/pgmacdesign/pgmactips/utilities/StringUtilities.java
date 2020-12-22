@@ -4,14 +4,23 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.FloatRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.ColorUtils;
+
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.BackgroundColorSpan;
 
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.misc.TempString;
@@ -2122,5 +2131,73 @@ public class StringUtilities {
     public static long getSizeInBytes(@Nullable String str){
         return getStringSizeInBytes(str);
     }
+	
+	//region Highlighting
+	
+	/**
+	 * Overloaded to maintain backwards compatibility
+	 * @param originalText
+	 * @param textToHighlight
+	 * @return
+	 */
+	public static SpannableString buildHighlightString(String originalText, String textToHighlight){
+		return buildHighlightString(originalText, textToHighlight, false, Color.YELLOW, 1.0F);
+	}
+	
+	/**
+	 * Build a spannable String for use in highlighting text colors
+	 * Pulled from: https://stackoverflow.com/a/47249004/2480714
+	 * @param originalText The original text that is being highlighted
+	 * @param textToHighlight The text / query that determines what to highlight
+	 * @param ignoreCase Whether or not to ignore case. If true, will ignore and "test" will have
+	 *                   the same return as "TEST". If false, will return an item as highlighted
+	 *                   only if it matches it case specficic.
+	 * @param highlightColor The highlight color to use. IE {@link Color#YELLOW} || {@link Color#BLUE}
+	 * @param colorAlpha Alpha to adjust how transparent the color is. 1.0 means it looks exactly
+	 *                   as it should normally where as 0.0 means it is completely transparent and
+	 *                   see-through. 0.5 means it is 50% transparent. Useful for darker colors
+	 * @return
+	 */
+	public static SpannableString buildHighlightString(String originalText, String textToHighlight,
+	                                                   boolean ignoreCase, @ColorInt int highlightColor,
+	                                                   @FloatRange(from = 0.0, to = 1.0) float colorAlpha){
+		SpannableString spannableString = new SpannableString(originalText);
+		if (TextUtils.isEmpty(originalText) || TextUtils.isEmpty(textToHighlight)) {
+			return spannableString;
+		}
+		String lowercaseOriginalString = originalText.toLowerCase();
+		String lowercaseTextToHighlight = textToHighlight.toLowerCase();
+		try {
+			if(colorAlpha < 1){
+				highlightColor = ColorUtils.setAlphaComponent(highlightColor, ((int)(255*colorAlpha)));
+			}
+			//Get the previous spans and remove them
+			BackgroundColorSpan[] backgroundSpans = spannableString.getSpans(0, spannableString.length(), BackgroundColorSpan.class);
+			for (BackgroundColorSpan span: backgroundSpans) {
+				spannableString.removeSpan(span);
+			}
+			//Search for all occurrences of the keyword in the string
+			int indexOfKeyword = (ignoreCase)
+					? lowercaseOriginalString.indexOf(lowercaseTextToHighlight)
+					: originalText.indexOf(textToHighlight);
+			while (indexOfKeyword != -1) {
+				//Create a background color span on the keyword
+				spannableString.setSpan(new BackgroundColorSpan(highlightColor), indexOfKeyword,
+						indexOfKeyword + (textToHighlight.length()), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+				
+				//Get the next index of the keyword
+				indexOfKeyword = (ignoreCase)
+						? lowercaseOriginalString.indexOf(lowercaseTextToHighlight, (indexOfKeyword) + textToHighlight.length())
+						: originalText.indexOf(textToHighlight, (indexOfKeyword) + textToHighlight.length());
+			}
+			return spannableString;
+		} catch (Exception e){
+			L.e(e);
+			return spannableString;
+		}
+	}
+	
+	//endregion
+	
 }
 

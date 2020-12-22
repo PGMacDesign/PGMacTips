@@ -15,6 +15,7 @@ import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.core.graphics.ColorUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -968,6 +969,17 @@ public class ColorUtilities {
 	//endregion
 	
 	//region Color Transparency
+	
+	/**
+	 * Adjust the transparency / alpha of a color
+	 * @param color
+	 * @param alpha
+	 * @return
+	 */
+	public static int adjustAlpha(@ColorInt int color, @FloatRange(from = 0.0, to = 1.0) float alpha){
+		return ColorUtils.setAlphaComponent(color, (int)(255*alpha));
+	}
+	
     /*
     Color Transparency --> Hex Codes. Originates from: https://gist.github.com/lopspower/03fb1cc0ac9f32ef38f4
 		100% — FF
