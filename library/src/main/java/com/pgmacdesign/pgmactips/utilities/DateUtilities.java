@@ -26,7 +26,9 @@ public class DateUtilities {
     private static final long MINUTE_MILLIS = PGMacTipsConstants.ONE_MINUTE;
     private static final long HOUR_MILLIS = PGMacTipsConstants.ONE_HOUR;
     private static final long DAY_MILLIS = PGMacTipsConstants.ONE_DAY;
+    private static final long WEEK_MILLIS = PGMacTipsConstants.ONE_WEEK;
     private static final long MONTH_MILLIS = PGMacTipsConstants.ONE_MONTH;
+    private static final long YEAR_MILLIS = PGMacTipsConstants.ONE_YEAR;
 	
     //region Simple Millisecond Converters
 	
@@ -179,7 +181,7 @@ public class DateUtilities {
             return "just now";
         } else if (diff < 2 * MINUTE_MILLIS) {
             return "a minute ago";
-        } else if (diff < 50 * MINUTE_MILLIS) {
+        } else if (diff < 60 * MINUTE_MILLIS) {
             return diff / MINUTE_MILLIS + " minutes ago";
         } else if (diff < 120 * MINUTE_MILLIS) {
             return "an hour ago";
@@ -193,9 +195,51 @@ public class DateUtilities {
             return "a month ago";
         } else if (diff >= 60 * DAY_MILLIS && diff < 365 * DAY_MILLIS){
             return diff / MONTH_MILLIS + " months ago";
+        } else if (diff >= 1 * YEAR_MILLIS && diff < 2 * YEAR_MILLIS){
+            return "a year ago";
+        } else if (diff >= 2 * YEAR_MILLIS){
+            return diff / YEAR_MILLIS + " years ago";
         } else {
             return "years ago";
         }
+    }
+	
+    /**
+     * Returns a shortened version of the getTimeAgo String
+     * @param time Time
+     * @return
+     */
+    public static String getTimeAgoShort(long time) {
+        if (time < 1000000000000L) {
+            // if timestamp given in seconds, convert to millis
+            time *= 1000;
+        }
+
+        long now = System.currentTimeMillis();
+        if (time > now || time <= 0) {
+            return null;
+        }
+
+        final long diff = now - time;
+	    if (diff < MINUTE_MILLIS) {
+		    return "1m";
+	    } else if (diff < 60 * MINUTE_MILLIS) {
+		    return diff / MINUTE_MILLIS + "m";
+	    } else if (diff < 120 * MINUTE_MILLIS) {
+		    return "1h";
+	    } else if (diff < 24 * HOUR_MILLIS) {
+		    return diff / HOUR_MILLIS + "h";
+	    } else if (diff < 48 * HOUR_MILLIS) {
+		    return "1d";
+	    } else if (diff >= 48 * HOUR_MILLIS && diff < 7 * DAY_MILLIS) {
+		    return diff / DAY_MILLIS + "d";
+	    } else if (diff >= 7 * DAY_MILLIS && diff < 1 * YEAR_MILLIS){
+		    return diff / WEEK_MILLIS + "w";
+	    } else if (diff >= 1 * YEAR_MILLIS){
+		    return diff / YEAR_MILLIS + "y";
+	    } else {
+		    return "";
+	    }
     }
 
     /**

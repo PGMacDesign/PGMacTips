@@ -6,11 +6,12 @@ Version 1.4.6 *(TBD)*
 
 *
 
-Version 1.4.5 *(TBD)*
+Version 1.4.5 *(2020-12-22)*
 ---------------------
 
 * New: New methods in the [StringUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/StringUtilities.java) class to work with Spannable Strings which are useful in highlighting text.
 * New: Added in a new method for alpha augmentation in the [ColorUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ColorUtilities.java) class.
+* New: Added in a new method into the [DateUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/DateUtilities.java) that is used for a shorter date String calculation on the `how long ago` method. 
 
 Version 1.4.4 *(2020-12-08)*
 ---------------------
