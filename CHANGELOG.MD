@@ -1,10 +1,15 @@
 Change Log
 ==========
 
-Version 1.4.6 *(TBD)*
+Version 1.4.7 *(TBD)*
 ---------------------
 
 *
+
+Version 1.4.6 *(2021-01-01)*
+---------------------
+
+* New: New Overloaded methods in the [ImageUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ImageUtilities.java) to allow for setting images with Android Uris instead of only Strings.
 
 Version 1.4.5 *(2020-12-22)*
 ---------------------
