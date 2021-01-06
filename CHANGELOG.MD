@@ -6,10 +6,10 @@ Version 1.4.8 *(TBD)*
 
 * 
 
-Version 1.4.7 *(2021-01-06)*
+Version 1.4.7 *(TBD)*
 ---------------------
 
-* New: New Overloaded methods in the [ImageUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/ImageUtilities.java) to include placeholder loading that utilizes the passed backup resource. Also added `@DrawableRes` and `@NonNull` Annotations over the various methods for more clarification on required input types.
+* 
 
 Version 1.4.6 *(2021-01-01)*
 ---------------------

@@ -100,7 +100,6 @@ public class ImageUtilities {
 		if (StringUtilities.isNullOrEmpty(urlThumbnail)) {
 			try {
 				Picasso.get().load(backupImageResourceId)
-						.placeholder(backupImageResourceId)
 						.transform(ImageUtilities.buildCircularImageTransformation(circularFrameColor, circularFrameWidth))
 						.into(viewToSet);
 				
@@ -114,7 +113,6 @@ public class ImageUtilities {
 			try {
 				Picasso.get()
 						.load(innerUrlThumbnail)
-						.placeholder(backupImageResourceId)
 						.networkPolicy(NetworkPolicy.OFFLINE)
 						.transform(ImageUtilities.buildCircularImageTransformation(circularFrameColor, circularFrameWidth))
 						.into(viewToSet, new Callback() {
@@ -135,101 +133,6 @@ public class ImageUtilities {
 							public void onError(Exception e) {
 								//Can trigger if image not in cache
 								Picasso.get().load(innerUrlThumbnail)
-										.placeholder(backupImageResourceId)
-										.transform(ImageUtilities.buildCircularImageTransformation(circularFrameColor, circularFrameWidth))
-										.into(viewToSet, new Callback() {
-											@Override
-											public void onSuccess() {
-												//Load the image into cache for next time
-												try {
-													List<Uri> toCache = new ArrayList<>();
-													toCache.add(innerUrlThumbnail);
-													ImageUtilities.LoadImagesIntoPicassoCache async = new
-															ImageUtilities.LoadImagesIntoPicassoCache(null, toCache);
-													async.execute();
-												} catch (Exception e2) {
-												}
-											}
-											
-											@Override
-											public void onError(Exception e) {
-												L.e(e);
-												Picasso.get().load(backupImageResourceId)
-														.transform(ImageUtilities.buildCircularImageTransformation(circularFrameColor, circularFrameWidth))
-														.into(viewToSet);
-											}
-										});
-								
-							}
-							
-						});
-			} catch (Exception e) {
-				L.e(e);
-				try {
-					Picasso.get().load(backupImageResourceId)
-							.transform(ImageUtilities.buildCircularImageTransformation(circularFrameColor, circularFrameWidth))
-							.into(viewToSet);
-				} catch (Exception e1) {
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Set a circular image into a view and set caching.
-	 *
-	 * @param urlThumbnail          URL String to use
-	 * @param viewToSet             View to set it into
-	 * @param backupImageResourceId Backup resource id in case the String url fails parsing
-	 * @param <T>                   {T extends View}
-	 */
-	@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
-	public static <T extends ImageView> void setCircularImageWithPicasso(Uri urlThumbnail,
-	                                                                     @NonNull final T viewToSet,
-	                                                                     @DrawableRes final int backupImageResourceId,
-	                                                                     @DrawableRes final int placeholderResourceId,
-	                                                                     @ColorInt final Integer circularFrameColor,
-	                                                                     final Integer circularFrameWidth) {
-		
-		if (StringUtilities.isNullOrEmpty(urlThumbnail)) {
-			try {
-				Picasso.get().load(backupImageResourceId)
-						.placeholder(placeholderResourceId)
-						.transform(ImageUtilities.buildCircularImageTransformation(circularFrameColor, circularFrameWidth))
-						.into(viewToSet);
-				
-			} catch (Exception e) {
-				L.e(e);
-			}
-		} else {
-			
-			final Uri innerUrlThumbnail = urlThumbnail;
-			
-			try {
-				Picasso.get()
-						.load(innerUrlThumbnail)
-						.placeholder(placeholderResourceId)
-						.networkPolicy(NetworkPolicy.OFFLINE)
-						.transform(ImageUtilities.buildCircularImageTransformation(circularFrameColor, circularFrameWidth))
-						.into(viewToSet, new Callback() {
-							@Override
-							public void onSuccess() {
-								//Load the image into cache for next time
-								try {
-									List<Uri> toCache = new ArrayList<>();
-									toCache.add(innerUrlThumbnail);
-									ImageUtilities.LoadImagesIntoPicassoCache async = new
-											ImageUtilities.LoadImagesIntoPicassoCache(null, toCache);
-									async.execute();
-								} catch (Exception e2) {
-								}
-							}
-							
-							@Override
-							public void onError(Exception e) {
-								//Can trigger if image not in cache
-								Picasso.get().load(innerUrlThumbnail)
-										.placeholder(placeholderResourceId)
 										.transform(ImageUtilities.buildCircularImageTransformation(circularFrameColor, circularFrameWidth))
 										.into(viewToSet, new Callback() {
 											@Override
@@ -300,7 +203,6 @@ public class ImageUtilities {
 			try {
 				Picasso.get()
 						.load(innerUrlThumbnail)
-						.placeholder(backupImageResourceId)
 						.networkPolicy(NetworkPolicy.OFFLINE)
 						.transform(ImageUtilities.buildCircularImageTransformation(circularFrameColor, circularFrameWidth))
 						.into(viewToSet, new Callback() {
@@ -321,7 +223,6 @@ public class ImageUtilities {
 							public void onError(Exception e) {
 								//Can trigger if image not in cache
 								Picasso.get().load(innerUrlThumbnail)
-										.placeholder(backupImageResourceId)
 										.transform(ImageUtilities.buildCircularImageTransformation(circularFrameColor, circularFrameWidth))
 										.into(viewToSet, new Callback() {
 											@Override
@@ -353,101 +254,6 @@ public class ImageUtilities {
 				L.e(e);
 				try {
 					Picasso.get().load(backupImageResourceId)
-							.placeholder(backupImageResourceId)
-							.transform(ImageUtilities.buildCircularImageTransformation(circularFrameColor, circularFrameWidth))
-							.into(viewToSet);
-				} catch (Exception e1) {
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Set a circular image into a view and set caching.
-	 *
-	 * @param urlThumbnail          URL String to use
-	 * @param viewToSet             View to set it into
-	 * @param backupImageResourceId Backup resource id in case the String url fails parsing
-	 * @param <T>                   {T extends View}
-	 */
-	@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
-	public static <T extends ImageView> void setCircularImageWithPicasso(String urlThumbnail,
-	                                                                     @NonNull final T viewToSet,
-	                                                                     @DrawableRes final int backupImageResourceId,
-	                                                                     @DrawableRes final int placeholderResourceId,
-	                                                                     @ColorInt final Integer circularFrameColor,
-	                                                                     final Integer circularFrameWidth) {
-		
-		if (StringUtilities.isNullOrEmpty(urlThumbnail)) {
-			try {
-				Picasso.get().load(backupImageResourceId)
-						.transform(ImageUtilities.buildCircularImageTransformation(circularFrameColor, circularFrameWidth))
-						.into(viewToSet);
-				
-			} catch (Exception e) {
-				L.e(e);
-			}
-		} else {
-			
-			final String innerUrlThumbnail = urlThumbnail;
-			
-			try {
-				Picasso.get()
-						.load(innerUrlThumbnail)
-						.placeholder(placeholderResourceId)
-						.networkPolicy(NetworkPolicy.OFFLINE)
-						.transform(ImageUtilities.buildCircularImageTransformation(circularFrameColor, circularFrameWidth))
-						.into(viewToSet, new Callback() {
-							@Override
-							public void onSuccess() {
-								//Load the image into cache for next time
-								try {
-									List<String> toCache = new ArrayList<String>();
-									toCache.add(innerUrlThumbnail);
-									ImageUtilities.LoadImagesIntoPicassoCache async = new
-											ImageUtilities.LoadImagesIntoPicassoCache(toCache, null);
-									async.execute();
-								} catch (Exception e2) {
-								}
-							}
-							
-							@Override
-							public void onError(Exception e) {
-								//Can trigger if image not in cache
-								Picasso.get().load(innerUrlThumbnail)
-										.placeholder(placeholderResourceId)
-										.transform(ImageUtilities.buildCircularImageTransformation(circularFrameColor, circularFrameWidth))
-										.into(viewToSet, new Callback() {
-											@Override
-											public void onSuccess() {
-												//Load the image into cache for next time
-												try {
-													List<String> toCache = new ArrayList<String>();
-													toCache.add(innerUrlThumbnail);
-													ImageUtilities.LoadImagesIntoPicassoCache async = new
-															ImageUtilities.LoadImagesIntoPicassoCache(toCache, null);
-													async.execute();
-												} catch (Exception e2) {
-												}
-											}
-											
-											@Override
-											public void onError(Exception e) {
-												L.e(e);
-												Picasso.get().load(backupImageResourceId)
-														.transform(ImageUtilities.buildCircularImageTransformation(circularFrameColor, circularFrameWidth))
-														.into(viewToSet);
-											}
-										});
-								
-							}
-							
-						});
-			} catch (Exception e) {
-				L.e(e);
-				try {
-					Picasso.get().load(backupImageResourceId)
-							.placeholder(backupImageResourceId)
 							.transform(ImageUtilities.buildCircularImageTransformation(circularFrameColor, circularFrameWidth))
 							.into(viewToSet);
 				} catch (Exception e1) {
@@ -483,47 +289,11 @@ public class ImageUtilities {
 	 * @param <T>                   {T extends View}
 	 */
 	@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
-	public static <T extends ImageView> void setCircularImageWithPicasso(String urlThumbnail,
-	                                                                     @NonNull final T viewToSet,
-	                                                                     @DrawableRes final int backupImageResourceId,
-	                                                                     @DrawableRes final int placeholderResourceId) {
-		ImageUtilities.setCircularImageWithPicasso(urlThumbnail, viewToSet, backupImageResourceId,
-				placeholderResourceId, null, null);
-	}
-	
-	/**
-	 * Set a circular image into a view and set caching. Overloaded to allow for excluding
-	 * max cache size float
-	 *
-	 * @param urlThumbnail          URL String to use
-	 * @param viewToSet             View to set it into
-	 * @param backupImageResourceId Backup resource id in case the String url fails parsing
-	 * @param <T>                   {T extends View}
-	 */
-	@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
 	public static <T extends ImageView> void setCircularImageWithPicasso(Uri urlThumbnail,
 	                                                                     @NonNull final T viewToSet,
 	                                                                     @DrawableRes final int backupImageResourceId) {
 		ImageUtilities.setCircularImageWithPicasso(urlThumbnail, viewToSet, backupImageResourceId,
 				null, null);
-	}
-	
-	/**
-	 * Set a circular image into a view and set caching. Overloaded to allow for excluding
-	 * max cache size float
-	 *
-	 * @param urlThumbnail          URL String to use
-	 * @param viewToSet             View to set it into
-	 * @param backupImageResourceId Backup resource id in case the String url fails parsing
-	 * @param <T>                   {T extends View}
-	 */
-	@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
-	public static <T extends ImageView> void setCircularImageWithPicasso(Uri urlThumbnail,
-	                                                                     @NonNull final T viewToSet,
-	                                                                     @DrawableRes final int backupImageResourceId,
-	                                                                     @DrawableRes final int placeholderResourceId) {
-		ImageUtilities.setCircularImageWithPicasso(urlThumbnail, viewToSet, backupImageResourceId,
-				placeholderResourceId, null, null);
 	}
 	
 	//endregion
@@ -547,9 +317,8 @@ public class ImageUtilities {
 	                                                                            final Integer circularFrameWidth) {
 		if (StringUtilities.isNullOrEmpty(urlThumbnail)) {
 			try {
-				Picasso.get()
-						.load(backupImageResourceId)
-						.transform(new CircleTransform()).into(viewToSet);
+				Picasso.get().load(backupImageResourceId).
+						transform(new CircleTransform()).into(viewToSet);
 				
 			} catch (Exception e) {
 			}
@@ -560,63 +329,13 @@ public class ImageUtilities {
 			try {
 				Picasso.get()
 						.load(innerUrlThumbnail)
-						.placeholder(backupImageResourceId)
 						.transform(ImageUtilities.buildCircularImageTransformation(circularFrameColor, circularFrameWidth))
 						.into(viewToSet);
 			} catch (Exception e) {
 				L.e(e);
 				try {
-					Picasso.get()
-							.load(backupImageResourceId)
-							.placeholder(backupImageResourceId)
-							.transform(new CircleTransform()).into(viewToSet);
-				} catch (Exception e1) {
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Set a circular image into a view and set caching. Overloaded to allow for excluding
-	 * max cache size float
-	 *
-	 * @param urlThumbnail          URL String to use
-	 * @param viewToSet             View to set it into
-	 * @param backupImageResourceId Backup resource id in case the String url fails parsing
-	 * @param <T>                   {T extends View}
-	 */
-	@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
-	public static <T extends ImageView> void setCircularImageWithPicassoNoCache(String urlThumbnail,
-	                                                                            @NonNull final T viewToSet,
-	                                                                            @DrawableRes final int backupImageResourceId,
-	                                                                            @DrawableRes final int placeholderResourceId,
-	                                                                            @ColorInt final Integer circularFrameColor,
-	                                                                            final Integer circularFrameWidth) {
-		if (StringUtilities.isNullOrEmpty(urlThumbnail)) {
-			try {
-				Picasso.get()
-						.load(backupImageResourceId)
-						.transform(new CircleTransform()).into(viewToSet);
-				
-			} catch (Exception e) {
-			}
-		} else {
-			
-			final String innerUrlThumbnail = urlThumbnail;
-			
-			try {
-				Picasso.get()
-						.load(innerUrlThumbnail)
-						.placeholder(placeholderResourceId)
-						.transform(ImageUtilities.buildCircularImageTransformation(circularFrameColor, circularFrameWidth))
-						.into(viewToSet);
-			} catch (Exception e) {
-				L.e(e);
-				try {
-					Picasso.get()
-							.load(backupImageResourceId)
-							.placeholder(backupImageResourceId)
-							.transform(new CircleTransform()).into(viewToSet);
+					Picasso.get().load(backupImageResourceId).
+							transform(new CircleTransform()).into(viewToSet);
 				} catch (Exception e1) {
 				}
 			}
@@ -640,10 +359,8 @@ public class ImageUtilities {
 	                                                                            final Integer circularFrameWidth) {
 		if (urlThumbnail == null) {
 			try {
-				Picasso.get()
-						.load(backupImageResourceId)
-						.placeholder(backupImageResourceId)
-						.transform(new CircleTransform()).into(viewToSet);
+				Picasso.get().load(backupImageResourceId).
+						transform(new CircleTransform()).into(viewToSet);
 				
 			} catch (Exception e) {
 				L.e(e);
@@ -652,68 +369,19 @@ public class ImageUtilities {
 			try {
 				Picasso.get()
 						.load(urlThumbnail)
-						.placeholder(backupImageResourceId)
 						.transform(ImageUtilities.buildCircularImageTransformation(circularFrameColor, circularFrameWidth))
 						.into(viewToSet);
 			} catch (Exception e) {
 				L.e(e);
 				try {
-					Picasso.get()
-							.load(backupImageResourceId)
-							.placeholder(backupImageResourceId)
-							.transform(new CircleTransform()).into(viewToSet);
+					Picasso.get().load(backupImageResourceId).
+							transform(new CircleTransform()).into(viewToSet);
 				} catch (Exception e1) {
 				}
 			}
 		}
 	}
 	
-	
-	/**
-	 * Set a circular image into a view and set caching. Overloaded to allow for excluding
-	 * max cache size float
-	 *
-	 * @param urlThumbnail          URL String to use
-	 * @param viewToSet             View to set it into
-	 * @param backupImageResourceId Backup resource id in case the String url fails parsing
-	 * @param <T>                   {T extends View}
-	 */
-	@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
-	public static <T extends ImageView> void setCircularImageWithPicassoNoCache(Uri urlThumbnail,
-	                                                                            @NonNull final T viewToSet,
-	                                                                            @DrawableRes final int backupImageResourceId,
-	                                                                            @DrawableRes final int placeholderResourceId,
-	                                                                            @ColorInt final Integer circularFrameColor,
-	                                                                            final Integer circularFrameWidth) {
-		if (urlThumbnail == null) {
-			try {
-				Picasso.get()
-						.load(backupImageResourceId)
-						.placeholder(backupImageResourceId)
-						.transform(new CircleTransform()).into(viewToSet);
-				
-			} catch (Exception e) {
-				L.e(e);
-			}
-		} else {
-			try {
-				Picasso.get()
-						.load(urlThumbnail)
-						.placeholder(placeholderResourceId)
-						.transform(ImageUtilities.buildCircularImageTransformation(circularFrameColor, circularFrameWidth))
-						.into(viewToSet);
-			} catch (Exception e) {
-				L.e(e);
-				try {
-					Picasso.get()
-							.load(backupImageResourceId)
-							.placeholder(backupImageResourceId)
-							.transform(new CircleTransform()).into(viewToSet);
-				} catch (Exception e1) {
-				}
-			}
-		}
-	}
 	
 	/**
 	 * Set a circular image into a view and set caching. Overloaded to allow for excluding
@@ -742,30 +410,11 @@ public class ImageUtilities {
 	 * @param <T>                   {T extends View}
 	 */
 	@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
-	public static <T extends ImageView> void setCircularImageWithPicassoNoCache(String urlThumbnail,
-	                                                                            @NonNull final T viewToSet,
-	                                                                            @DrawableRes final int backupImageResourceId,
-	                                                                            @DrawableRes final int placeholderResourceId) {
-		setCircularImageWithPicassoNoCache(urlThumbnail, viewToSet, backupImageResourceId,
-				placeholderResourceId, null, null);
-	}
-	
-	/**
-	 * Set a circular image into a view and set caching. Overloaded to allow for excluding
-	 * max cache size float
-	 *
-	 * @param urlThumbnail          URL String to use
-	 * @param viewToSet             View to set it into
-	 * @param backupImageResourceId Backup resource id in case the String url fails parsing
-	 * @param <T>                   {T extends View}
-	 */
-	@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
 	public static <T extends ImageView> void setCircularImageWithPicassoNoCache(Uri urlThumbnail,
 	                                                                            @NonNull final T viewToSet,
-	                                                                            @DrawableRes final int backupImageResourceId,
-	                                                                            @DrawableRes final int placeholderResourceId) {
+	                                                                            @DrawableRes final int backupImageResourceId) {
 		setCircularImageWithPicassoNoCache(urlThumbnail, viewToSet, backupImageResourceId,
-				placeholderResourceId, null, null);
+				null, null);
 	}
 	
 	//endregion
@@ -796,162 +445,6 @@ public class ImageUtilities {
 				if (isCenterCrop) {
 					try {
 						Picasso.get().load(backupImageResourceId)
-								.placeholder(backupImageResourceId)
-								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
-								.centerCrop()
-								.into(viewToSet);
-					} catch (IllegalArgumentException ile){
-						Picasso.get().load(backupImageResourceId)
-								.placeholder(backupImageResourceId)
-								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-								.fit().centerCrop()
-								.into(viewToSet);
-					}
-				} else {
-					Picasso.get().load(backupImageResourceId)
-							.placeholder(backupImageResourceId)
-							.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-							.into(viewToSet);
-				}
-			} catch (Exception e) {
-			}
-		} else {
-			final String innerUrlThumbnail = urlThumbnail;
-			try {
-				final Callback cBackup = new Callback() {
-					@Override
-					public void onSuccess() {
-						//Load the image into cache for next time
-						try {
-							List<String> toCache = new ArrayList<String>();
-							toCache.add(innerUrlThumbnail);
-							ImageUtilities.LoadImagesIntoPicassoCache async = new
-									ImageUtilities.LoadImagesIntoPicassoCache(toCache, null);
-							async.execute();
-						} catch (Exception e2) {
-						}
-					}
-					
-					@Override
-					public void onError(Exception e) {
-						L.e(e);
-						Picasso.get()
-								.load(backupImageResourceId)
-								.placeholder(backupImageResourceId)
-								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-								.into(viewToSet);
-					}
-				};
-				final Callback c = new Callback() {
-					@Override
-					public void onSuccess() {
-						//Load the image into cache for next time
-						try {
-							List<String> toCache = new ArrayList<String>();
-							toCache.add(innerUrlThumbnail);
-							ImageUtilities.LoadImagesIntoPicassoCache async = new
-									ImageUtilities.LoadImagesIntoPicassoCache(toCache, null);
-							async.execute();
-						} catch (Exception e2) {
-						}
-					}
-					
-					@Override
-					public void onError(Exception e) {
-						//Can trigger if image not in cache
-						if(isCenterCrop){
-							try {
-								Picasso.get()
-										.load(innerUrlThumbnail)
-										.placeholder(backupImageResourceId)
-										.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-										.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
-										.centerCrop()
-										.into(viewToSet, cBackup);
-							} catch (IllegalArgumentException ile){
-								Picasso.get()
-										.load(backupImageResourceId)
-										.placeholder(backupImageResourceId)
-										.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-										.fit().centerCrop().into(viewToSet, cBackup);
-							}
-						} else {
-							Picasso.get()
-									.load(innerUrlThumbnail)
-									.placeholder(backupImageResourceId)
-									.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-									.into(viewToSet, cBackup);
-						}
-					}
-					
-				};
-				if(isCenterCrop){
-					try {
-						Picasso.get()
-								.load(innerUrlThumbnail)
-								.placeholder(backupImageResourceId)
-								.networkPolicy(NetworkPolicy.OFFLINE)
-								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
-								.centerCrop()
-								.into(viewToSet, c);
-					} catch (IllegalArgumentException ile){
-						Picasso.get()
-								.load(innerUrlThumbnail)
-								.placeholder(backupImageResourceId)
-								.networkPolicy(NetworkPolicy.OFFLINE)
-								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-								.fit().centerCrop()
-								.into(viewToSet, c);
-					}
-				} else {
-					Picasso.get()
-							.load(innerUrlThumbnail)
-							.placeholder(backupImageResourceId)
-							.networkPolicy(NetworkPolicy.OFFLINE)
-							.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-							.into(viewToSet, c);
-				}
-			} catch (Exception e) {
-				L.e(e);
-				try {
-					Picasso.get()
-							.load(backupImageResourceId)
-							.placeholder(backupImageResourceId)
-							.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-							.into(viewToSet);
-				} catch (Exception e1) {
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Set a rounded edge image into a view and set caching.
-	 *
-	 * @param urlThumbnail URL String to use
-	 * @param viewToSet View to set it into
-	 * @param cornersRadius The Radius of the corners
-	 * @param cornersMargin The margin of hte corners
-	 * @param isCenterCrop Whether or not the scaleType is `centerCrop`. This is important as it
-	 *                     will change the transformation logic.
-	 * @param <T> {T extends View}
-	 */
-	@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Picasso,
-			CustomAnnotationsBase.Dependencies.PicassoTransformations})
-	public static <T extends ImageView> void setRoundedEdgeImageWithPicasso(String urlThumbnail,
-	                                                                        @NonNull final T viewToSet,
-	                                                                        @DrawableRes final int backupImageResourceId,
-	                                                                        @DrawableRes final int placeholderResourceId,
-	                                                                        @IntRange(from = 0) final int cornersRadius,
-	                                                                        @IntRange(from = 0) final int cornersMargin,
-	                                                                        final boolean isCenterCrop) {
-		if (StringUtilities.isNullOrEmpty(urlThumbnail)) {
-			try {
-				if (isCenterCrop) {
-					try {
-						Picasso.get().load(backupImageResourceId)
 								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
 								.centerCrop()
@@ -989,9 +482,7 @@ public class ImageUtilities {
 					@Override
 					public void onError(Exception e) {
 						L.e(e);
-						Picasso.get()
-								.load(backupImageResourceId)
-								.placeholder(placeholderResourceId)
+						Picasso.get().load(backupImageResourceId)
 								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 								.into(viewToSet);
 					}
@@ -1015,23 +506,18 @@ public class ImageUtilities {
 						//Can trigger if image not in cache
 						if(isCenterCrop){
 							try {
-								Picasso.get()
-										.load(innerUrlThumbnail)
-										.placeholder(placeholderResourceId)
+								Picasso.get().load(innerUrlThumbnail)
 										.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 										.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
 										.centerCrop()
 										.into(viewToSet, cBackup);
 							} catch (IllegalArgumentException ile){
-								Picasso.get()
-										.load(backupImageResourceId)
+								Picasso.get().load(backupImageResourceId)
 										.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 										.fit().centerCrop().into(viewToSet, cBackup);
 							}
 						} else {
-							Picasso.get()
-									.load(innerUrlThumbnail)
-									.placeholder(placeholderResourceId)
+							Picasso.get().load(innerUrlThumbnail)
 									.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 									.into(viewToSet, cBackup);
 						}
@@ -1040,27 +526,21 @@ public class ImageUtilities {
 				};
 				if(isCenterCrop){
 					try {
-						Picasso.get()
-								.load(innerUrlThumbnail)
-								.placeholder(placeholderResourceId)
+						Picasso.get().load(innerUrlThumbnail)
 								.networkPolicy(NetworkPolicy.OFFLINE)
 								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
 								.centerCrop()
 								.into(viewToSet, c);
 					} catch (IllegalArgumentException ile){
-						Picasso.get()
-								.load(innerUrlThumbnail)
-								.placeholder(placeholderResourceId)
+						Picasso.get().load(innerUrlThumbnail)
 								.networkPolicy(NetworkPolicy.OFFLINE)
 								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 								.fit().centerCrop()
 								.into(viewToSet, c);
 					}
 				} else {
-					Picasso.get()
-							.load(innerUrlThumbnail)
-							.placeholder(placeholderResourceId)
+					Picasso.get().load(innerUrlThumbnail)
 							.networkPolicy(NetworkPolicy.OFFLINE)
 							.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 							.into(viewToSet, c);
@@ -1068,8 +548,7 @@ public class ImageUtilities {
 			} catch (Exception e) {
 				L.e(e);
 				try {
-					Picasso.get()
-							.load(backupImageResourceId)
+					Picasso.get().load(backupImageResourceId)
 							.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 							.into(viewToSet);
 				} catch (Exception e1) {
@@ -1101,25 +580,19 @@ public class ImageUtilities {
 			try {
 				if (isCenterCrop) {
 					try {
-						Picasso.get()
-								.load(backupImageResourceId)
-								.placeholder(backupImageResourceId)
+						Picasso.get().load(backupImageResourceId)
 								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
 								.centerCrop()
 								.into(viewToSet);
 					} catch (IllegalArgumentException ile){
-						Picasso.get()
-								.load(backupImageResourceId)
-								.placeholder(backupImageResourceId)
+						Picasso.get().load(backupImageResourceId)
 								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 								.fit().centerCrop()
 								.into(viewToSet);
 					}
 				} else {
-					Picasso.get()
-							.load(backupImageResourceId)
-							.placeholder(backupImageResourceId)
+					Picasso.get().load(backupImageResourceId)
 							.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 							.into(viewToSet);
 				}
@@ -1145,9 +618,7 @@ public class ImageUtilities {
 					@Override
 					public void onError(Exception e) {
 						L.e(e);
-						Picasso.get()
-								.load(backupImageResourceId)
-								.placeholder(backupImageResourceId)
+						Picasso.get().load(backupImageResourceId)
 								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 								.into(viewToSet);
 					}
@@ -1171,24 +642,18 @@ public class ImageUtilities {
 						//Can trigger if image not in cache
 						if(isCenterCrop){
 							try {
-								Picasso.get()
-										.load(innerUrlThumbnail)
-										.placeholder(backupImageResourceId)
+								Picasso.get().load(innerUrlThumbnail)
 										.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 										.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
 										.centerCrop()
 										.into(viewToSet, cBackup);
 							} catch (IllegalArgumentException ile){
-								Picasso.get()
-										.load(backupImageResourceId)
-										.placeholder(backupImageResourceId)
+								Picasso.get().load(backupImageResourceId)
 										.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 										.fit().centerCrop().into(viewToSet, cBackup);
 							}
 						} else {
-							Picasso.get()
-									.load(innerUrlThumbnail)
-									.placeholder(backupImageResourceId)
+							Picasso.get().load(innerUrlThumbnail)
 									.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 									.into(viewToSet, cBackup);
 						}
@@ -1197,27 +662,21 @@ public class ImageUtilities {
 				};
 				if(isCenterCrop){
 					try {
-						Picasso.get()
-								.load(innerUrlThumbnail)
-								.placeholder(backupImageResourceId)
+						Picasso.get().load(innerUrlThumbnail)
 								.networkPolicy(NetworkPolicy.OFFLINE)
 								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
 								.centerCrop()
 								.into(viewToSet, c);
 					} catch (IllegalArgumentException ile){
-						Picasso.get()
-								.load(innerUrlThumbnail)
-								.placeholder(backupImageResourceId)
+						Picasso.get().load(innerUrlThumbnail)
 								.networkPolicy(NetworkPolicy.OFFLINE)
 								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 								.fit().centerCrop()
 								.into(viewToSet, c);
 					}
 				} else {
-					Picasso.get()
-							.load(innerUrlThumbnail)
-							.placeholder(backupImageResourceId)
+					Picasso.get().load(innerUrlThumbnail)
 							.networkPolicy(NetworkPolicy.OFFLINE)
 							.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 							.into(viewToSet, c);
@@ -1225,162 +684,7 @@ public class ImageUtilities {
 			} catch (Exception e) {
 				L.e(e);
 				try {
-					Picasso.get()
-							.load(backupImageResourceId)
-							.placeholder(backupImageResourceId)
-							.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-							.into(viewToSet);
-				} catch (Exception e1) {
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Set a rounded edge image into a view and set caching.
-	 *
-	 * @param urlThumbnail URL String to use
-	 * @param viewToSet View to set it into
-	 * @param cornersRadius The Radius of the corners
-	 * @param cornersMargin The margin of hte corners
-	 * @param isCenterCrop Whether or not the scaleType is `centerCrop`. This is important as it
-	 *                     will change the transformation logic.
-	 * @param <T> {T extends View}
-	 */
-	@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Picasso,
-			CustomAnnotationsBase.Dependencies.PicassoTransformations})
-	public static <T extends ImageView> void setRoundedEdgeImageWithPicasso(Uri urlThumbnail,
-	                                                                        @NonNull final T viewToSet,
-	                                                                        @DrawableRes final int backupImageResourceId,
-	                                                                        @DrawableRes final int placeholderResourceId,
-	                                                                        @IntRange(from = 0) final int cornersRadius,
-	                                                                        @IntRange(from = 0) final int cornersMargin,
-	                                                                        final boolean isCenterCrop) {
-		if (StringUtilities.isNullOrEmpty(urlThumbnail)) {
-			try {
-				if (isCenterCrop) {
-					try {
-						Picasso.get()
-								.load(backupImageResourceId)
-								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
-								.centerCrop()
-								.into(viewToSet);
-					} catch (IllegalArgumentException ile){
-						Picasso.get()
-								.load(backupImageResourceId)
-								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-								.fit().centerCrop()
-								.into(viewToSet);
-					}
-				} else {
-					Picasso.get()
-							.load(backupImageResourceId)
-							.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-							.into(viewToSet);
-				}
-			} catch (Exception e) {
-			}
-		} else {
-			final Uri innerUrlThumbnail = urlThumbnail;
-			try {
-				final Callback cBackup = new Callback() {
-					@Override
-					public void onSuccess() {
-						//Load the image into cache for next time
-						try {
-							List<Uri> toCache = new ArrayList<>();
-							toCache.add(innerUrlThumbnail);
-							ImageUtilities.LoadImagesIntoPicassoCache async = new
-									ImageUtilities.LoadImagesIntoPicassoCache(null, toCache);
-							async.execute();
-						} catch (Exception e2) {
-						}
-					}
-					
-					@Override
-					public void onError(Exception e) {
-						L.e(e);
-						Picasso.get()
-								.load(backupImageResourceId)
-								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-								.into(viewToSet);
-					}
-				};
-				final Callback c = new Callback() {
-					@Override
-					public void onSuccess() {
-						//Load the image into cache for next time
-						try {
-							List<Uri> toCache = new ArrayList<>();
-							toCache.add(innerUrlThumbnail);
-							ImageUtilities.LoadImagesIntoPicassoCache async = new
-									ImageUtilities.LoadImagesIntoPicassoCache(null, toCache);
-							async.execute();
-						} catch (Exception e2) {
-						}
-					}
-					
-					@Override
-					public void onError(Exception e) {
-						//Can trigger if image not in cache
-						if(isCenterCrop){
-							try {
-								Picasso.get()
-										.load(innerUrlThumbnail)
-										.placeholder(placeholderResourceId)
-										.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-										.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
-										.centerCrop()
-										.into(viewToSet, cBackup);
-							} catch (IllegalArgumentException ile){
-								Picasso.get()
-										.load(backupImageResourceId)
-										.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-										.fit().centerCrop().into(viewToSet, cBackup);
-							}
-						} else {
-							Picasso.get()
-									.load(innerUrlThumbnail)
-									.placeholder(placeholderResourceId)
-									.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-									.into(viewToSet, cBackup);
-						}
-					}
-					
-				};
-				if(isCenterCrop){
-					try {
-						Picasso.get()
-								.load(innerUrlThumbnail)
-								.placeholder(placeholderResourceId)
-								.networkPolicy(NetworkPolicy.OFFLINE)
-								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
-								.centerCrop()
-								.into(viewToSet, c);
-					} catch (IllegalArgumentException ile){
-						Picasso.get()
-								.load(innerUrlThumbnail)
-								.placeholder(placeholderResourceId)
-								.networkPolicy(NetworkPolicy.OFFLINE)
-								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-								.fit().centerCrop()
-								.into(viewToSet, c);
-					}
-				} else {
-					Picasso.get()
-							.load(innerUrlThumbnail)
-							.placeholder(placeholderResourceId)
-							.networkPolicy(NetworkPolicy.OFFLINE)
-							.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-							.into(viewToSet, c);
-				}
-			} catch (Exception e) {
-				L.e(e);
-				try {
-					Picasso.get()
-							.load(backupImageResourceId)
+					Picasso.get().load(backupImageResourceId)
 							.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 							.into(viewToSet);
 				} catch (Exception e1) {
@@ -1421,36 +725,12 @@ public class ImageUtilities {
 	 */
 	@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Picasso,
 			CustomAnnotationsBase.Dependencies.PicassoTransformations})
-	public static <T extends ImageView> void setRoundedEdgeImageWithPicasso(String urlThumbnail,
-	                                                                        @NonNull final T viewToSet,
-	                                                                        @DrawableRes final int backupImageResourceId,
-	                                                                        @DrawableRes final int placeholderResourceId,
-	                                                                        @IntRange(from = 0) final int cornersRadius,
-	                                                                        @IntRange(from = 0) final int cornersMargin) {
-		ImageUtilities.setRoundedEdgeImageWithPicasso(urlThumbnail, viewToSet, backupImageResourceId,
-				placeholderResourceId, cornersRadius, cornersMargin, false);
-	}
-	
-	/**
-	 * Set a rounded edge image into a view and set caching.
-	 * Note, this assumes the image is not a centerCrop!
-	 *
-	 * @param urlThumbnail URL String to use
-	 * @param viewToSet View to set it into
-	 * @param cornersRadius The Radius of the corners
-	 * @param cornersMargin The margin of hte corners
-	 * @param <T> {T extends View}
-	 */
-	@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Picasso,
-			CustomAnnotationsBase.Dependencies.PicassoTransformations})
 	public static <T extends ImageView> void setRoundedEdgeImageWithPicasso(Uri urlThumbnail,
 	                                                                        @NonNull final T viewToSet,
 	                                                                        @DrawableRes final int backupImageResourceId,
-	                                                                        @DrawableRes final int placeholderResourceId,
 	                                                                        @IntRange(from = 0) final int cornersRadius,
 	                                                                        @IntRange(from = 0) final int cornersMargin) {
-		ImageUtilities.setRoundedEdgeImageWithPicasso(urlThumbnail, viewToSet, backupImageResourceId,
-				placeholderResourceId, cornersRadius, cornersMargin, false);
+		ImageUtilities.setRoundedEdgeImageWithPicasso(urlThumbnail, viewToSet, backupImageResourceId, cornersRadius, cornersMargin, false);
 	}
 	
 	//endregion
@@ -1482,93 +762,6 @@ public class ImageUtilities {
 					try {
 						Picasso.get()
 								.load(backupImageResourceId)
-								.placeholder(backupImageResourceId)
-								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
-								.centerCrop()
-								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-								.into(viewToSet);
-					} catch (IllegalArgumentException ile){
-						Picasso.get()
-								.load(backupImageResourceId)
-								.placeholder(backupImageResourceId)
-								.fit().centerCrop()
-								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-								.into(viewToSet);
-					}
-				} else {
-					Picasso.get()
-							.load(backupImageResourceId)
-							.placeholder(backupImageResourceId)
-							.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-							.into(viewToSet);
-				}
-			} catch (Exception e) {
-			}
-		} else {
-			try {
-				if(isCenterCrop){
-					try {
-						Picasso.get()
-								.load(urlThumbnail)
-								.placeholder(backupImageResourceId)
-								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
-								.centerCrop()
-								.into(viewToSet);
-					} catch (IllegalArgumentException ile){
-						Picasso.get()
-								.load(urlThumbnail)
-								.placeholder(backupImageResourceId)
-								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-								.fit().centerCrop()
-								.into(viewToSet);
-					}
-				} else {
-					Picasso.get()
-							.load(urlThumbnail)
-							.placeholder(backupImageResourceId)
-							.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-							.into(viewToSet);
-				}
-			} catch (Exception e) {
-				L.e(e);
-				try {
-					Picasso.get()
-							.load(backupImageResourceId)
-							.placeholder(backupImageResourceId)
-							.transform(new CircleTransform()).into(viewToSet);
-				} catch (Exception e1) {
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Set a rounded edge image into a view and set caching.
-	 *
-	 * @param urlThumbnail URL String to use
-	 * @param viewToSet View to set it into
-	 * @param cornersRadius The Radius of the corners
-	 * @param cornersMargin The margin of hte corners
-	 * @param isCenterCrop Whether or not the scaleType is `centerCrop`. This is important as it
-	 *                     will change the transformation logic.
-	 * @param <T> {T extends View}
-	 */
-	@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Picasso,
-			CustomAnnotationsBase.Dependencies.PicassoTransformations})
-	public static <T extends ImageView> void setRoundedEdgeImageWithPicassoNoCache(String urlThumbnail,
-	                                                                               @NonNull final T viewToSet,
-	                                                                               @DrawableRes final int backupImageResourceId,
-	                                                                               @DrawableRes final int placeholderResourceId,
-	                                                                               @IntRange(from = 0) final int cornersRadius,
-	                                                                               @IntRange(from = 0) final int cornersMargin,
-	                                                                               final boolean isCenterCrop) {
-		if (StringUtilities.isNullOrEmpty(urlThumbnail)) {
-			try {
-				if(isCenterCrop){
-					try {
-						Picasso.get()
-								.load(backupImageResourceId)
 								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
 								.centerCrop()
 								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
@@ -1594,7 +787,6 @@ public class ImageUtilities {
 					try {
 						Picasso.get()
 								.load(urlThumbnail)
-								.placeholder(placeholderResourceId)
 								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
 								.centerCrop()
@@ -1602,7 +794,6 @@ public class ImageUtilities {
 					} catch (IllegalArgumentException ile){
 						Picasso.get()
 								.load(urlThumbnail)
-								.placeholder(placeholderResourceId)
 								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 								.fit().centerCrop()
 								.into(viewToSet);
@@ -1610,17 +801,14 @@ public class ImageUtilities {
 				} else {
 					Picasso.get()
 							.load(urlThumbnail)
-							.placeholder(placeholderResourceId)
 							.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 							.into(viewToSet);
 				}
 			} catch (Exception e) {
 				L.e(e);
 				try {
-					Picasso.get()
-							.load(backupImageResourceId)
-							.placeholder(placeholderResourceId)
-							.transform(new CircleTransform()).into(viewToSet);
+					Picasso.get().load(backupImageResourceId).
+							transform(new CircleTransform()).into(viewToSet);
 				} catch (Exception e1) {
 				}
 			}
@@ -1652,7 +840,6 @@ public class ImageUtilities {
 					try {
 						Picasso.get()
 								.load(backupImageResourceId)
-								.placeholder(backupImageResourceId)
 								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
 								.centerCrop()
 								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
@@ -1660,7 +847,6 @@ public class ImageUtilities {
 					} catch (IllegalArgumentException ile){
 						Picasso.get()
 								.load(backupImageResourceId)
-								.placeholder(backupImageResourceId)
 								.fit().centerCrop()
 								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 								.into(viewToSet);
@@ -1668,7 +854,6 @@ public class ImageUtilities {
 				} else {
 					Picasso.get()
 							.load(backupImageResourceId)
-							.placeholder(backupImageResourceId)
 							.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 							.into(viewToSet);
 				}
@@ -1680,7 +865,6 @@ public class ImageUtilities {
 					try {
 						Picasso.get()
 								.load(urlThumbnail)
-								.placeholder(backupImageResourceId)
 								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
 								.centerCrop()
@@ -1688,7 +872,6 @@ public class ImageUtilities {
 					} catch (IllegalArgumentException ile){
 						Picasso.get()
 								.load(urlThumbnail)
-								.placeholder(backupImageResourceId)
 								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 								.fit().centerCrop()
 								.into(viewToSet);
@@ -1696,106 +879,20 @@ public class ImageUtilities {
 				} else {
 					Picasso.get()
 							.load(urlThumbnail)
-							.placeholder(backupImageResourceId)
 							.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 							.into(viewToSet);
 				}
 			} catch (Exception e) {
 				L.e(e);
 				try {
-					Picasso.get()
-							.load(backupImageResourceId)
-							.placeholder(backupImageResourceId)
-							.transform(new CircleTransform()).into(viewToSet);
+					Picasso.get().load(backupImageResourceId).
+							transform(new CircleTransform()).into(viewToSet);
 				} catch (Exception e1) {
 				}
 			}
 		}
 	}
 	
-	/**
-	 * Set a rounded edge image into a view and set caching.
-	 *
-	 * @param urlThumbnail URL String to use
-	 * @param viewToSet View to set it into
-	 * @param cornersRadius The Radius of the corners
-	 * @param cornersMargin The margin of hte corners
-	 * @param isCenterCrop Whether or not the scaleType is `centerCrop`. This is important as it
-	 *                     will change the transformation logic.
-	 * @param <T> {T extends View}
-	 */
-	@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Picasso,
-			CustomAnnotationsBase.Dependencies.PicassoTransformations})
-	public static <T extends ImageView> void setRoundedEdgeImageWithPicassoNoCache(Uri urlThumbnail,
-	                                                                               @NonNull final T viewToSet,
-	                                                                               @DrawableRes final int backupImageResourceId,
-	                                                                               @DrawableRes final int placeholderResourceId,
-	                                                                               @IntRange(from = 0) final int cornersRadius,
-	                                                                               @IntRange(from = 0) final int cornersMargin,
-	                                                                               final boolean isCenterCrop) {
-		if (StringUtilities.isNullOrEmpty(urlThumbnail)) {
-			try {
-				if(isCenterCrop){
-					try {
-						Picasso.get()
-								.load(backupImageResourceId)
-								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
-								.centerCrop()
-								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-								.into(viewToSet);
-					} catch (IllegalArgumentException ile){
-						Picasso.get()
-								.load(backupImageResourceId)
-								.fit().centerCrop()
-								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-								.into(viewToSet);
-					}
-				} else {
-					Picasso.get()
-							.load(backupImageResourceId)
-							.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-							.into(viewToSet);
-				}
-			} catch (Exception e) {
-			}
-		} else {
-			try {
-				if(isCenterCrop){
-					try {
-						Picasso.get()
-								.load(urlThumbnail)
-								.placeholder(placeholderResourceId)
-								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
-								.centerCrop()
-								.into(viewToSet);
-					} catch (IllegalArgumentException ile){
-						Picasso.get()
-								.load(urlThumbnail)
-								.placeholder(placeholderResourceId)
-								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-								.fit().centerCrop()
-								.into(viewToSet);
-					}
-				} else {
-					Picasso.get()
-							.load(urlThumbnail)
-							.placeholder(placeholderResourceId)
-							.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
-							.into(viewToSet);
-				}
-			} catch (Exception e) {
-				L.e(e);
-				try {
-					Picasso.get()
-							.load(backupImageResourceId)
-							.placeholder(placeholderResourceId)
-							.transform(new CircleTransform()).into(viewToSet);
-				} catch (Exception e1) {
-				}
-			}
-		}
-	}
 	
 	/**
 	 * Set a rounded edge image into a view and set caching.
@@ -1829,56 +926,12 @@ public class ImageUtilities {
 	 */
 	@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Picasso,
 			CustomAnnotationsBase.Dependencies.PicassoTransformations})
-	public static <T extends ImageView> void setRoundedEdgeWithPicassoNoCache(String urlThumbnail,
-	                                                                          @NonNull final T viewToSet,
-	                                                                          @DrawableRes final int backupImageResourceId,
-	                                                                          @DrawableRes final int placeholderResourceId,
-	                                                                          @IntRange(from = 0) final int cornersRadius,
-	                                                                          @IntRange(from = 0) final int cornersMargin) {
-		setRoundedEdgeImageWithPicassoNoCache(urlThumbnail, viewToSet, backupImageResourceId,
-				placeholderResourceId, cornersRadius, cornersMargin, false);
-	}
-	
-	/**
-	 * Set a rounded edge image into a view and set caching.
-	 * Note, this assumes
-	 *
-	 * @param urlThumbnail URL String to use
-	 * @param viewToSet View to set it into
-	 * @param cornersRadius The Radius of the corners
-	 * @param cornersMargin The margin of hte corners
-	 * @param <T> {T extends View}
-	 */
-	@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Picasso,
-			CustomAnnotationsBase.Dependencies.PicassoTransformations})
 	public static <T extends ImageView> void setRoundedEdgeWithPicassoNoCache(Uri urlThumbnail,
 	                                                                          @NonNull final T viewToSet,
 	                                                                          @DrawableRes final int backupImageResourceId,
 	                                                                          @IntRange(from = 0) final int cornersRadius,
 	                                                                          @IntRange(from = 0) final int cornersMargin) {
 		setRoundedEdgeImageWithPicassoNoCache(urlThumbnail, viewToSet, backupImageResourceId, cornersRadius, cornersMargin, false);
-	}
-	
-	/**
-	 * Set a rounded edge image into a view and set caching.
-	 * Note, this assumes
-	 *
-	 * @param urlThumbnail URL String to use
-	 * @param viewToSet View to set it into
-	 * @param cornersRadius The Radius of the corners
-	 * @param cornersMargin The margin of hte corners
-	 * @param <T> {T extends View}
-	 */
-	@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Picasso,
-			CustomAnnotationsBase.Dependencies.PicassoTransformations})
-	public static <T extends ImageView> void setRoundedEdgeWithPicassoNoCache(Uri urlThumbnail,
-	                                                                          @NonNull final T viewToSet,
-	                                                                          @DrawableRes final int backupImageResourceId,
-	                                                                          @DrawableRes final int placeholderResourceId,
-	                                                                          @IntRange(from = 0) final int cornersRadius,
-	                                                                          @IntRange(from = 0) final int cornersMargin) {
-		setRoundedEdgeImageWithPicassoNoCache(urlThumbnail, viewToSet, backupImageResourceId,
-				placeholderResourceId, cornersRadius, cornersMargin, false);
 	}
 	
 	//endregion
@@ -1908,7 +961,6 @@ public class ImageUtilities {
 			try {
 				Picasso.get()
 						.load(urlThumbnail)
-						.placeholder(backupImageResourceId)
 						.networkPolicy(NetworkPolicy.OFFLINE)
 						.into(viewToSet, new Callback() {
 							@Override
@@ -1919,79 +971,7 @@ public class ImageUtilities {
 							@Override
 							public void onError(Exception e) {
 								//Can trigger if image not in cache
-								Picasso.get()
-										.load(innerUrlThumbnail)
-										.placeholder(backupImageResourceId)
-										.into(viewToSet, new Callback() {
-											@Override
-											public void onSuccess() {
-												try {
-													List<String> toCache = new ArrayList<String>();
-													toCache.add(innerUrlThumbnail);
-													ImageUtilities.LoadImagesIntoPicassoCache async = new
-															ImageUtilities.LoadImagesIntoPicassoCache(toCache, null);
-													async.execute();
-												} catch (Exception e2) {
-												}
-											}
-											
-											@Override
-											public void onError(Exception e) {
-												Picasso.get()
-														.load(backupImageResourceId)
-														.into(viewToSet);
-											}
-										});
-								//Load the image into cache for next time
-								
-							}
-						});
-			} catch (Exception e) {
-				L.e(e);
-				viewToSet.setImageResource(backupImageResourceId);
-			}
-			
-		}
-	}
-	
-	/**
-	 * Set an image into a view and set caching.
-	 *
-	 * @param urlThumbnail          URL String to use
-	 * @param viewToSet             View to set it into
-	 * @param backupImageResourceId Backup resource id in case the String url fails parsing
-	 * @param <T>                   {T extends View}
-	 */
-	@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
-	public static <T extends ImageView> void setImageWithPicasso(String urlThumbnail,
-	                                                             @NonNull final T viewToSet,
-	                                                             @DrawableRes final int backupImageResourceId,
-	                                                             @DrawableRes final int placeholderResourceId) {
-		if (urlThumbnail == null) {
-			urlThumbnail = "";
-		}
-		if (urlThumbnail.isEmpty() || urlThumbnail.equalsIgnoreCase("")) {
-			viewToSet.setImageResource(backupImageResourceId);
-		} else {
-			final String innerUrlThumbnail = urlThumbnail;
-			
-			try {
-				Picasso.get()
-						.load(urlThumbnail)
-						.placeholder(placeholderResourceId)
-						.networkPolicy(NetworkPolicy.OFFLINE)
-						.into(viewToSet, new Callback() {
-							@Override
-							public void onSuccess() {
-								//Nothing, image is set
-							}
-							
-							@Override
-							public void onError(Exception e) {
-								//Can trigger if image not in cache
-								Picasso.get()
-										.load(innerUrlThumbnail)
-										.placeholder(placeholderResourceId)
+								Picasso.get().load(innerUrlThumbnail)
 										.into(viewToSet, new Callback() {
 											@Override
 											public void onSuccess() {
@@ -2039,7 +1019,6 @@ public class ImageUtilities {
 		try {
 			Picasso.get()
 					.load(urlThumbnail)
-					.placeholder(backupImageResourceId)
 					.networkPolicy(NetworkPolicy.OFFLINE)
 					.into(viewToSet, new Callback() {
 						@Override
@@ -2050,69 +1029,7 @@ public class ImageUtilities {
 						@Override
 						public void onError(Exception e) {
 							//Can trigger if image not in cache
-							Picasso.get()
-									.load(urlThumbnail)
-									.placeholder(backupImageResourceId)
-									.into(viewToSet, new Callback() {
-										@Override
-										public void onSuccess() {
-											try {
-												List<Uri> toCache = new ArrayList<>();
-												toCache.add(urlThumbnail);
-												ImageUtilities.LoadImagesIntoPicassoCache async = new
-														ImageUtilities.LoadImagesIntoPicassoCache(null, toCache);
-												async.execute();
-											} catch (Exception e2) {
-											}
-										}
-										
-										@Override
-										public void onError(Exception e) {
-											Picasso.get()
-													.load(backupImageResourceId)
-													.into(viewToSet);
-										}
-									});
-							//Load the image into cache for next time
-							
-						}
-					});
-		} catch (Exception e) {
-			L.e(e);
-			viewToSet.setImageResource(backupImageResourceId);
-		}
-	}
-	
-	/**
-	 * Set an image into a view and set caching.
-	 *
-	 * @param urlThumbnail          URL String to use
-	 * @param viewToSet             View to set it into
-	 * @param backupImageResourceId Backup resource id in case the String url fails parsing
-	 * @param <T>                   {T extends View}
-	 */
-	@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
-	public static <T extends ImageView> void setImageWithPicasso(Uri urlThumbnail,
-	                                                             @NonNull final T viewToSet,
-	                                                             @DrawableRes final int backupImageResourceId,
-	                                                             @DrawableRes final int placeholderResourceId) {
-		try {
-			Picasso.get()
-					.load(urlThumbnail)
-					.placeholder(placeholderResourceId)
-					.networkPolicy(NetworkPolicy.OFFLINE)
-					.into(viewToSet, new Callback() {
-						@Override
-						public void onSuccess() {
-							//Nothing, image is set
-						}
-						
-						@Override
-						public void onError(Exception e) {
-							//Can trigger if image not in cache
-							Picasso.get()
-									.load(urlThumbnail)
-									.placeholder(placeholderResourceId)
+							Picasso.get().load(urlThumbnail)
 									.into(viewToSet, new Callback() {
 										@Override
 										public void onSuccess() {
@@ -2170,41 +1087,6 @@ public class ImageUtilities {
 			try {
 				Picasso.get()
 						.load(urlThumbnail)
-						.placeholder(backupImageResourceId)
-						.into(viewToSet);
-			} catch (Exception e) {
-				L.e(e);
-				viewToSet.setImageResource(backupImageResourceId);
-			}
-			
-		}
-	}
-	
-	/**
-	 * Set an image into a view and set caching. Overloaded to allow for excluding
-	 * max cache size float
-	 *
-	 * @param urlThumbnail          URL String to use
-	 * @param viewToSet             View to set it into
-	 * @param backupImageResourceId Backup resource id in case the String url fails parsing
-	 * @param <T>                   {T extends View}
-	 */
-	@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
-	public static <T extends ImageView> void setImageWithPicassoNoCache(String urlThumbnail,
-	                                                                    @NonNull final T viewToSet,
-	                                                                    @DrawableRes final int backupImageResourceId,
-	                                                                    @DrawableRes final int placeholderResourceId) {
-		if (urlThumbnail == null) {
-			urlThumbnail = "";
-		}
-		if (urlThumbnail.isEmpty() || urlThumbnail.equalsIgnoreCase("")) {
-			viewToSet.setImageResource(backupImageResourceId);
-		} else {
-			final String innerUrlThumbnail = urlThumbnail;
-			try {
-				Picasso.get()
-						.load(urlThumbnail)
-						.placeholder(placeholderResourceId)
 						.into(viewToSet);
 			} catch (Exception e) {
 				L.e(e);
@@ -2230,32 +1112,6 @@ public class ImageUtilities {
 		try {
 			Picasso.get()
 					.load(urlThumbnail)
-					.placeholder(backupImageResourceId)
-					.into(viewToSet);
-		} catch (Exception e) {
-			L.e(e);
-			viewToSet.setImageResource(backupImageResourceId);
-		}
-	}
-	
-	/**
-	 * Set an image into a view and set caching. Overloaded to allow for excluding
-	 * max cache size float
-	 *
-	 * @param urlThumbnail          URL String to use
-	 * @param viewToSet             View to set it into
-	 * @param backupImageResourceId Backup resource id in case the String url fails parsing
-	 * @param <T>                   {T extends View}
-	 */
-	@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.Picasso)
-	public static <T extends ImageView> void setImageWithPicassoNoCache(Uri urlThumbnail,
-	                                                                    @NonNull final T viewToSet,
-	                                                                    @DrawableRes final int backupImageResourceId,
-	                                                                    @DrawableRes final int placeholderResourceId) {
-		try {
-			Picasso.get()
-					.load(urlThumbnail)
-					.placeholder(placeholderResourceId)
 					.into(viewToSet);
 		} catch (Exception e) {
 			L.e(e);
