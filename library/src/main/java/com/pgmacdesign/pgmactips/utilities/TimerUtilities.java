@@ -72,7 +72,7 @@ public class TimerUtilities {
         final Handler handler = new Handler(Looper.getMainLooper()){
             @Override
             public void handleMessage(Message msg) {
-                if(dataToReturn == null){
+                if(dataToReturn != null){
                     listener.onTaskComplete(dataToReturn,
                             TAG_TIMER_UTILITIES_FINISHED_WITH_DATA);
                 } else {
