@@ -72,6 +72,16 @@ import okhttp3.Response;
 
 /**
  * Created by pmacdowell on 8/15/2016.
+ * Useful reminder for Image Scaling (from https://guides.codepath.com/android/Working-with-the-ImageView):
+ * <p>
+ * center	Displays the image centered in the view with no scaling.
+ * centerCrop	Scales the image such that both the x and y dimensions are greater than or equal to the view, while maintaining the image aspect ratio; centers the image in the view.
+ * centerInside	Scales the image to fit inside the view, while maintaining the image aspect ratio. If the image is already smaller than the view, then this is the same as center.
+ * fitCenter	Scales the image to fit inside the view, while maintaining the image aspect ratio. At least one axis will exactly match the view, and the result is centered inside the view.
+ * fitStart	Same as fitCenter but aligned to the top left of the view.
+ * fitEnd	Same as fitCenter but aligned to the bottom right of the view.
+ * fitXY	Scales the x and y dimensions to exactly match the view size; does not maintain the image aspect ratio.
+ * matrix	Scales the image using a supplied Matrix class. The matrix can be supplied using the setImageMatrix method. A Matrix class can be used to apply transformations such as rotations to an image.
  */
 public class ImageUtilities {
 	
@@ -424,13 +434,13 @@ public class ImageUtilities {
 	/**
 	 * Set a rounded edge image into a view and set caching.
 	 *
-	 * @param urlThumbnail URL String to use
-	 * @param viewToSet View to set it into
+	 * @param urlThumbnail  URL String to use
+	 * @param viewToSet     View to set it into
 	 * @param cornersRadius The Radius of the corners
 	 * @param cornersMargin The margin of hte corners
-	 * @param isCenterCrop Whether or not the scaleType is `centerCrop`. This is important as it
-	 *                     will change the transformation logic.
-	 * @param <T> {T extends View}
+	 * @param isCenterCrop  Whether or not the scaleType is `centerCrop`. This is important as it
+	 *                      will change the transformation logic.
+	 * @param <T>           {T extends View}
 	 */
 	@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Picasso,
 			CustomAnnotationsBase.Dependencies.PicassoTransformations})
@@ -449,7 +459,7 @@ public class ImageUtilities {
 								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
 								.centerCrop()
 								.into(viewToSet);
-					} catch (IllegalArgumentException ile){
+					} catch (IllegalArgumentException ile) {
 						Picasso.get().load(backupImageResourceId)
 								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 								.fit().centerCrop()
@@ -504,14 +514,14 @@ public class ImageUtilities {
 					@Override
 					public void onError(Exception e) {
 						//Can trigger if image not in cache
-						if(isCenterCrop){
+						if (isCenterCrop) {
 							try {
 								Picasso.get().load(innerUrlThumbnail)
 										.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 										.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
 										.centerCrop()
 										.into(viewToSet, cBackup);
-							} catch (IllegalArgumentException ile){
+							} catch (IllegalArgumentException ile) {
 								Picasso.get().load(backupImageResourceId)
 										.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 										.fit().centerCrop().into(viewToSet, cBackup);
@@ -524,7 +534,7 @@ public class ImageUtilities {
 					}
 					
 				};
-				if(isCenterCrop){
+				if (isCenterCrop) {
 					try {
 						Picasso.get().load(innerUrlThumbnail)
 								.networkPolicy(NetworkPolicy.OFFLINE)
@@ -532,7 +542,7 @@ public class ImageUtilities {
 								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
 								.centerCrop()
 								.into(viewToSet, c);
-					} catch (IllegalArgumentException ile){
+					} catch (IllegalArgumentException ile) {
 						Picasso.get().load(innerUrlThumbnail)
 								.networkPolicy(NetworkPolicy.OFFLINE)
 								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
@@ -560,13 +570,13 @@ public class ImageUtilities {
 	/**
 	 * Set a rounded edge image into a view and set caching.
 	 *
-	 * @param urlThumbnail URL String to use
-	 * @param viewToSet View to set it into
+	 * @param urlThumbnail  URL String to use
+	 * @param viewToSet     View to set it into
 	 * @param cornersRadius The Radius of the corners
 	 * @param cornersMargin The margin of hte corners
-	 * @param isCenterCrop Whether or not the scaleType is `centerCrop`. This is important as it
-	 *                     will change the transformation logic.
-	 * @param <T> {T extends View}
+	 * @param isCenterCrop  Whether or not the scaleType is `centerCrop`. This is important as it
+	 *                      will change the transformation logic.
+	 * @param <T>           {T extends View}
 	 */
 	@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Picasso,
 			CustomAnnotationsBase.Dependencies.PicassoTransformations})
@@ -585,7 +595,7 @@ public class ImageUtilities {
 								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
 								.centerCrop()
 								.into(viewToSet);
-					} catch (IllegalArgumentException ile){
+					} catch (IllegalArgumentException ile) {
 						Picasso.get().load(backupImageResourceId)
 								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 								.fit().centerCrop()
@@ -640,14 +650,14 @@ public class ImageUtilities {
 					@Override
 					public void onError(Exception e) {
 						//Can trigger if image not in cache
-						if(isCenterCrop){
+						if (isCenterCrop) {
 							try {
 								Picasso.get().load(innerUrlThumbnail)
 										.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 										.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
 										.centerCrop()
 										.into(viewToSet, cBackup);
-							} catch (IllegalArgumentException ile){
+							} catch (IllegalArgumentException ile) {
 								Picasso.get().load(backupImageResourceId)
 										.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 										.fit().centerCrop().into(viewToSet, cBackup);
@@ -660,7 +670,7 @@ public class ImageUtilities {
 					}
 					
 				};
-				if(isCenterCrop){
+				if (isCenterCrop) {
 					try {
 						Picasso.get().load(innerUrlThumbnail)
 								.networkPolicy(NetworkPolicy.OFFLINE)
@@ -668,7 +678,7 @@ public class ImageUtilities {
 								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
 								.centerCrop()
 								.into(viewToSet, c);
-					} catch (IllegalArgumentException ile){
+					} catch (IllegalArgumentException ile) {
 						Picasso.get().load(innerUrlThumbnail)
 								.networkPolicy(NetworkPolicy.OFFLINE)
 								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
@@ -697,11 +707,11 @@ public class ImageUtilities {
 	 * Set a rounded edge image into a view and set caching.
 	 * Note, this assumes the image is not a centerCrop!
 	 *
-	 * @param urlThumbnail URL String to use
-	 * @param viewToSet View to set it into
+	 * @param urlThumbnail  URL String to use
+	 * @param viewToSet     View to set it into
 	 * @param cornersRadius The Radius of the corners
 	 * @param cornersMargin The margin of hte corners
-	 * @param <T> {T extends View}
+	 * @param <T>           {T extends View}
 	 */
 	@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Picasso,
 			CustomAnnotationsBase.Dependencies.PicassoTransformations})
@@ -717,11 +727,11 @@ public class ImageUtilities {
 	 * Set a rounded edge image into a view and set caching.
 	 * Note, this assumes the image is not a centerCrop!
 	 *
-	 * @param urlThumbnail URL String to use
-	 * @param viewToSet View to set it into
+	 * @param urlThumbnail  URL String to use
+	 * @param viewToSet     View to set it into
 	 * @param cornersRadius The Radius of the corners
 	 * @param cornersMargin The margin of hte corners
-	 * @param <T> {T extends View}
+	 * @param <T>           {T extends View}
 	 */
 	@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Picasso,
 			CustomAnnotationsBase.Dependencies.PicassoTransformations})
@@ -740,13 +750,13 @@ public class ImageUtilities {
 	/**
 	 * Set a rounded edge image into a view and set caching.
 	 *
-	 * @param urlThumbnail URL String to use
-	 * @param viewToSet View to set it into
+	 * @param urlThumbnail  URL String to use
+	 * @param viewToSet     View to set it into
 	 * @param cornersRadius The Radius of the corners
 	 * @param cornersMargin The margin of hte corners
-	 * @param isCenterCrop Whether or not the scaleType is `centerCrop`. This is important as it
-	 *                     will change the transformation logic.
-	 * @param <T> {T extends View}
+	 * @param isCenterCrop  Whether or not the scaleType is `centerCrop`. This is important as it
+	 *                      will change the transformation logic.
+	 * @param <T>           {T extends View}
 	 */
 	@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Picasso,
 			CustomAnnotationsBase.Dependencies.PicassoTransformations})
@@ -758,7 +768,7 @@ public class ImageUtilities {
 	                                                                               final boolean isCenterCrop) {
 		if (StringUtilities.isNullOrEmpty(urlThumbnail)) {
 			try {
-				if(isCenterCrop){
+				if (isCenterCrop) {
 					try {
 						Picasso.get()
 								.load(backupImageResourceId)
@@ -766,7 +776,7 @@ public class ImageUtilities {
 								.centerCrop()
 								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 								.into(viewToSet);
-					} catch (IllegalArgumentException ile){
+					} catch (IllegalArgumentException ile) {
 						Picasso.get()
 								.load(backupImageResourceId)
 								.fit().centerCrop()
@@ -783,7 +793,7 @@ public class ImageUtilities {
 			}
 		} else {
 			try {
-				if(isCenterCrop){
+				if (isCenterCrop) {
 					try {
 						Picasso.get()
 								.load(urlThumbnail)
@@ -791,7 +801,7 @@ public class ImageUtilities {
 								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
 								.centerCrop()
 								.into(viewToSet);
-					} catch (IllegalArgumentException ile){
+					} catch (IllegalArgumentException ile) {
 						Picasso.get()
 								.load(urlThumbnail)
 								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
@@ -818,13 +828,13 @@ public class ImageUtilities {
 	/**
 	 * Set a rounded edge image into a view and set caching.
 	 *
-	 * @param urlThumbnail URL String to use
-	 * @param viewToSet View to set it into
+	 * @param urlThumbnail  URL String to use
+	 * @param viewToSet     View to set it into
 	 * @param cornersRadius The Radius of the corners
 	 * @param cornersMargin The margin of hte corners
-	 * @param isCenterCrop Whether or not the scaleType is `centerCrop`. This is important as it
-	 *                     will change the transformation logic.
-	 * @param <T> {T extends View}
+	 * @param isCenterCrop  Whether or not the scaleType is `centerCrop`. This is important as it
+	 *                      will change the transformation logic.
+	 * @param <T>           {T extends View}
 	 */
 	@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Picasso,
 			CustomAnnotationsBase.Dependencies.PicassoTransformations})
@@ -836,7 +846,7 @@ public class ImageUtilities {
 	                                                                               final boolean isCenterCrop) {
 		if (StringUtilities.isNullOrEmpty(urlThumbnail)) {
 			try {
-				if(isCenterCrop){
+				if (isCenterCrop) {
 					try {
 						Picasso.get()
 								.load(backupImageResourceId)
@@ -844,7 +854,7 @@ public class ImageUtilities {
 								.centerCrop()
 								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
 								.into(viewToSet);
-					} catch (IllegalArgumentException ile){
+					} catch (IllegalArgumentException ile) {
 						Picasso.get()
 								.load(backupImageResourceId)
 								.fit().centerCrop()
@@ -861,7 +871,7 @@ public class ImageUtilities {
 			}
 		} else {
 			try {
-				if(isCenterCrop){
+				if (isCenterCrop) {
 					try {
 						Picasso.get()
 								.load(urlThumbnail)
@@ -869,7 +879,7 @@ public class ImageUtilities {
 								.resize(viewToSet.getMeasuredWidth(), viewToSet.getMeasuredHeight())
 								.centerCrop()
 								.into(viewToSet);
-					} catch (IllegalArgumentException ile){
+					} catch (IllegalArgumentException ile) {
 						Picasso.get()
 								.load(urlThumbnail)
 								.transform(ImageUtilities.buildRoundedCornersTransformation(cornersRadius, cornersMargin))
@@ -898,11 +908,11 @@ public class ImageUtilities {
 	 * Set a rounded edge image into a view and set caching.
 	 * Note, this assumes
 	 *
-	 * @param urlThumbnail URL String to use
-	 * @param viewToSet View to set it into
+	 * @param urlThumbnail  URL String to use
+	 * @param viewToSet     View to set it into
 	 * @param cornersRadius The Radius of the corners
 	 * @param cornersMargin The margin of hte corners
-	 * @param <T> {T extends View}
+	 * @param <T>           {T extends View}
 	 */
 	@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Picasso,
 			CustomAnnotationsBase.Dependencies.PicassoTransformations})
@@ -918,11 +928,11 @@ public class ImageUtilities {
 	 * Set a rounded edge image into a view and set caching.
 	 * Note, this assumes
 	 *
-	 * @param urlThumbnail URL String to use
-	 * @param viewToSet View to set it into
+	 * @param urlThumbnail  URL String to use
+	 * @param viewToSet     View to set it into
 	 * @param cornersRadius The Radius of the corners
 	 * @param cornersMargin The margin of hte corners
-	 * @param <T> {T extends View}
+	 * @param <T>           {T extends View}
 	 */
 	@CustomAnnotationsBase.RequiresDependency(requiresDependencies = {CustomAnnotationsBase.Dependencies.Picasso,
 			CustomAnnotationsBase.Dependencies.PicassoTransformations})
@@ -2092,10 +2102,11 @@ public class ImageUtilities {
 	
 	/**
 	 * Adjust the color of the Image View via a tint
+	 *
 	 * @param hexColor
 	 */
-	public static boolean setImageViewColor (ImageView iv, String hexColor){
-		if(StringUtilities.isNullOrEmpty(hexColor)){
+	public static boolean setImageViewColor(ImageView iv, String hexColor) {
+		if (StringUtilities.isNullOrEmpty(hexColor)) {
 			return false;
 		}
 		return setImageViewColor(iv, ColorUtilities.parseMyColor(hexColor));
@@ -2103,20 +2114,21 @@ public class ImageUtilities {
 	
 	/**
 	 * Adjust the color of the Image View via a tint
+	 *
 	 * @param color
 	 */
-	public static boolean setImageViewColor(ImageView iv, @ColorInt int color){
+	public static boolean setImageViewColor(ImageView iv, @ColorInt int color) {
 		try {
 			ImageViewCompat.setImageTintList(iv, ColorStateList.valueOf(color));
 			return true;
-		} catch (Exception e){
+		} catch (Exception e) {
 			L.e(e);
 			
 		}
 		try {
 			iv.setColorFilter(color, android.graphics.PorterDuff.Mode.MULTIPLY);
 			return true;
-		} catch (Exception e){
+		} catch (Exception e) {
 			L.e(e);
 		}
 		return false;
@@ -2653,26 +2665,26 @@ public class ImageUtilities {
 	/**
 	 * Animate and rotate an image.
 	 *
-	 * @param t The Imageview to rotate
-	 * @param degreesToRotate The degrees to rotate. Positive degrees will rotate clockwise and negative
-	 *                        degrees will rotate counter-clockwise. This var is capped between -360
-	 *                        and 360 to allow for a single rotation.
+	 * @param t                           The Imageview to rotate
+	 * @param degreesToRotate             The degrees to rotate. Positive degrees will rotate clockwise and negative
+	 *                                    degrees will rotate counter-clockwise. This var is capped between -360
+	 *                                    and 360 to allow for a single rotation.
 	 * @param animationTimeInMilliseconds The animation time in milliseconds. If it is < 0 milliseconds,
 	 *                                    it will default to 0 milliseconds as it assumes it was an error.
-	 * @param <T> T extends {@link ImageView}
+	 * @param <T>                         T extends {@link ImageView}
 	 */
 	public static <T extends ImageView> void rotateImage(T t,
 	                                                     @IntRange(from = -360, to = 360) int degreesToRotate,
-	                                                     long animationTimeInMilliseconds){
-		if(t == null){
+	                                                     long animationTimeInMilliseconds) {
+		if (t == null) {
 			return;
 		}
-		if(animationTimeInMilliseconds < 0){
+		if (animationTimeInMilliseconds < 0) {
 			animationTimeInMilliseconds = 0;
 		}
 		try {
-			t.animate().setDuration(animationTimeInMilliseconds).rotationBy((float)degreesToRotate).start();
-		} catch (Exception e){
+			t.animate().setDuration(animationTimeInMilliseconds).rotationBy((float) degreesToRotate).start();
+		} catch (Exception e) {
 			L.e(e);
 		}
 	}
@@ -2680,21 +2692,21 @@ public class ImageUtilities {
 	/**
 	 * Animate and rotate an image 45 degrees (1/8 of a full turn, clockwise)
 	 *
-	 * @param t The Imageview to rotate
+	 * @param t                           The Imageview to rotate
 	 * @param animationTimeInMilliseconds The animation time in milliseconds. If it is < 0 milliseconds,
 	 *                                    it will default to 0 milliseconds as it assumes it was an error.
-	 * @param <T> T extends {@link ImageView}
+	 * @param <T>                         T extends {@link ImageView}
 	 */
-	public static <T extends ImageView> void rotateImage45(T t, long animationTimeInMilliseconds){
-		if(t == null){
+	public static <T extends ImageView> void rotateImage45(T t, long animationTimeInMilliseconds) {
+		if (t == null) {
 			return;
 		}
-		if(animationTimeInMilliseconds < 0){
+		if (animationTimeInMilliseconds < 0) {
 			animationTimeInMilliseconds = 0;
 		}
 		try {
 			t.animate().setDuration(animationTimeInMilliseconds).rotationBy(45F).start();
-		} catch (Exception e){
+		} catch (Exception e) {
 			L.e(e);
 		}
 	}
@@ -2702,21 +2714,21 @@ public class ImageUtilities {
 	/**
 	 * Animate and rotate an image 90 degrees (1/4 of a full turn, clockwise)
 	 *
-	 * @param t The Imageview to rotate
+	 * @param t                           The Imageview to rotate
 	 * @param animationTimeInMilliseconds The animation time in milliseconds. If it is < 0 milliseconds,
 	 *                                    it will default to 0 milliseconds as it assumes it was an error.
-	 * @param <T> T extends {@link ImageView}
+	 * @param <T>                         T extends {@link ImageView}
 	 */
-	public static <T extends ImageView> void rotateImage90(T t, long animationTimeInMilliseconds){
-		if(t == null){
+	public static <T extends ImageView> void rotateImage90(T t, long animationTimeInMilliseconds) {
+		if (t == null) {
 			return;
 		}
-		if(animationTimeInMilliseconds < 0){
+		if (animationTimeInMilliseconds < 0) {
 			animationTimeInMilliseconds = 0;
 		}
 		try {
 			t.animate().setDuration(animationTimeInMilliseconds).rotationBy(90F).start();
-		} catch (Exception e){
+		} catch (Exception e) {
 			L.e(e);
 		}
 	}
@@ -2724,21 +2736,21 @@ public class ImageUtilities {
 	/**
 	 * Animate and rotate an image 180 degrees (1/2 turn, clockwise)
 	 *
-	 * @param t The Imageview to rotate
+	 * @param t                           The Imageview to rotate
 	 * @param animationTimeInMilliseconds The animation time in milliseconds. If it is < 0 milliseconds,
 	 *                                    it will default to 0 milliseconds as it assumes it was an error.
-	 * @param <T> T extends {@link ImageView}
+	 * @param <T>                         T extends {@link ImageView}
 	 */
-	public static <T extends ImageView> void rotateImage180(T t, long animationTimeInMilliseconds){
-		if(t == null){
+	public static <T extends ImageView> void rotateImage180(T t, long animationTimeInMilliseconds) {
+		if (t == null) {
 			return;
 		}
-		if(animationTimeInMilliseconds < 0){
+		if (animationTimeInMilliseconds < 0) {
 			animationTimeInMilliseconds = 0;
 		}
 		try {
 			t.animate().setDuration(animationTimeInMilliseconds).rotationBy(180F).start();
-		} catch (Exception e){
+		} catch (Exception e) {
 			L.e(e);
 		}
 	}
@@ -2746,21 +2758,21 @@ public class ImageUtilities {
 	/**
 	 * Animate and rotate an image 270 degrees (3/4 of a full turn, clockwise)
 	 *
-	 * @param t The Imageview to rotate
+	 * @param t                           The Imageview to rotate
 	 * @param animationTimeInMilliseconds The animation time in milliseconds. If it is < 0 milliseconds,
 	 *                                    it will default to 0 milliseconds as it assumes it was an error.
-	 * @param <T> T extends {@link ImageView}
+	 * @param <T>                         T extends {@link ImageView}
 	 */
-	public static <T extends ImageView> void rotateImage270(T t, long animationTimeInMilliseconds){
-		if(t == null){
+	public static <T extends ImageView> void rotateImage270(T t, long animationTimeInMilliseconds) {
+		if (t == null) {
 			return;
 		}
-		if(animationTimeInMilliseconds < 0){
+		if (animationTimeInMilliseconds < 0) {
 			animationTimeInMilliseconds = 0;
 		}
 		try {
 			t.animate().setDuration(animationTimeInMilliseconds).rotationBy(270F).start();
-		} catch (Exception e){
+		} catch (Exception e) {
 			L.e(e);
 		}
 	}
@@ -2768,21 +2780,21 @@ public class ImageUtilities {
 	/**
 	 * Animate and rotate an image 360 degrees (1 full turn, clockwise)
 	 *
-	 * @param t The Imageview to rotate
+	 * @param t                           The Imageview to rotate
 	 * @param animationTimeInMilliseconds The animation time in milliseconds. If it is < 0 milliseconds,
 	 *                                    it will default to 0 milliseconds as it assumes it was an error.
-	 * @param <T> T extends {@link ImageView}
+	 * @param <T>                         T extends {@link ImageView}
 	 */
-	public static <T extends ImageView> void rotateImage360(T t, long animationTimeInMilliseconds){
-		if(t == null){
+	public static <T extends ImageView> void rotateImage360(T t, long animationTimeInMilliseconds) {
+		if (t == null) {
 			return;
 		}
-		if(animationTimeInMilliseconds < 0){
+		if (animationTimeInMilliseconds < 0) {
 			animationTimeInMilliseconds = 0;
 		}
 		try {
 			t.animate().setDuration(animationTimeInMilliseconds).rotationBy(360F).start();
-		} catch (Exception e){
+		} catch (Exception e) {
 			L.e(e);
 		}
 	}
@@ -2845,6 +2857,7 @@ public class ImageUtilities {
 	
 	/**
 	 * Build a {@link RoundedCornersTransformation} Transformation using the passed radius and margin
+	 *
 	 * @param radius
 	 * @param margin
 	 * @return
@@ -2861,24 +2874,26 @@ public class ImageUtilities {
 	
 	public static final int TAG_FAILURE = -1;
 	public static final int TAG_SUCCESS = 1;
+	
 	/**
 	 * Download an image from a URL and convert it into a byteArray (byte[])
+	 *
 	 * @param listener Listener to send data back on. If it fails, the object will always be null
 	 *                 and the tag will be {@link #TAG_FAILURE}. If it is successful, the object
 	 *                 will always be a byte array and the tag will be {@link #TAG_SUCCESS}
-	 * @param client The web client being used. If null is passed, will create one using
-	 *               {@link NetworkUtilities#buildOkHttpClient()}
+	 * @param client   The web client being used. If null is passed, will create one using
+	 *                 {@link NetworkUtilities#buildOkHttpClient()}
 	 * @param imageUrl
 	 */
 	@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.OkHttp3)
 	public static void downloadImage(@NonNull OnTaskCompleteListener listener,
 	                                 @Nullable OkHttpClient client,
-	                                 String imageUrl){
-		if(StringUtilities.isNullOrEmpty(imageUrl)){
+	                                 String imageUrl) {
+		if (StringUtilities.isNullOrEmpty(imageUrl)) {
 			listener.onTaskComplete(null, TAG_FAILURE);
 			return;
 		}
-		if(client == null){
+		if (client == null) {
 			client = NetworkUtilities.buildOkHttpClient();
 		}
 		final Request request = new Request.Builder().url(imageUrl).build();
@@ -2890,19 +2905,19 @@ public class ImageUtilities {
 			
 			@Override
 			public void onResponse(Call call, Response response) throws IOException {
-				if (response.isSuccessful()){
+				if (response.isSuccessful()) {
 					byte[] toReturn = null;
 					try {
 						toReturn = response.body().bytes();
-					} catch (Exception e){
+					} catch (Exception e) {
 						e.printStackTrace();
 						try {
 							toReturn = FileUtilities.readAllBytes(response.body().byteStream());
-						} catch (Exception e1){
+						} catch (Exception e1) {
 							e1.printStackTrace();
 						}
 					}
-					if(toReturn == null){
+					if (toReturn == null) {
 						listener.onTaskComplete(null, TAG_FAILURE);
 					} else {
 						listener.onTaskComplete(toReturn, TAG_SUCCESS);

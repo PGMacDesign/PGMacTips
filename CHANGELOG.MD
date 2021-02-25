@@ -4,13 +4,9 @@ Change Log
 Version 1.4.8 *(TBD)*
 ---------------------
 
-* 
-
-Version 1.4.7 *(TBD)*
----------------------
-
-* New: New methods in the [MiscUtilities](d) class for determining if the device running is an emulator or not. 
-* New: New Class, RecyclerArrayAdapter, to allow for a simple listview approach to a Recyclerview with a wrapper with generics for access. 
+* Update: Added a new method in the [StackManager] class to allow to remove 1 or more stack items without using the `pop` functionality.
+* New: New methods in the [MiscUtilities](d) class for determining if the device running is an emulator or not.
+* New: New Class, RecyclerArrayAdapter, to allow for a simple `listview` approach to a Recyclerview with a wrapper with generics for access.
 
 Version 1.4.6 *(2021-01-01)*
 ---------------------

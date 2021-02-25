@@ -7,6 +7,7 @@ import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
 import com.pgmacdesign.pgmactips.utilities.StringUtilities;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -28,7 +29,7 @@ public class StackManager<E extends Enum<E>> {
     private boolean maintainMinimumOneItemInStack, logChangesInStacks, allowEnumStackDuplicates;
 
     ///////////////
-    //Constructor//
+    //region Constructor//
     ///////////////
 
     /**
@@ -194,8 +195,10 @@ public class StackManager<E extends Enum<E>> {
         }
     }
 
+    //endregion
+	
     ///////////////////////////////////////////
-    //Public methods for managing Stack State//
+    //region Public methods for managing Stack State//
     ///////////////////////////////////////////
 
     /**
@@ -249,7 +252,54 @@ public class StackManager<E extends Enum<E>> {
             }
         }
     }
-
+	
+	/**
+	 * Remove items from the stack. Useful for clearing all items desired as opposed to
+	 * having to go through the normal `pop` process.
+	 * @param toRemove
+	 * @return
+	 */
+	public int removeFromStack(E... toRemove){
+		return removeFromStack(0, toRemove);
+	}
+	
+	/**
+	 * Remove items from the stack. Useful for clearing all items desired as opposed to
+	 * having to go through the normal `pop` process.
+	 * @param tag
+	 * @param toRemove
+	 * @return
+	 */
+	public int removeFromStack(int tag, E... toRemove){
+	    try {
+		    CustomStackManagerPOJO pojo = getStackPOJO(tag);
+		    if (pojo != null) {
+			    Stack<E> myStack = pojo.getManagedStack();
+			    if (myStack != null) {
+			    	if(myStack.size() > 0){
+					    int numRemoved = 0;
+					    for(E e : toRemove){
+						    if (myStack.contains(e)) {
+							    if (logChangesInStacks) {
+								    L.m("removing from tag " + tag + " enum: " + e);
+							    }
+						    	numRemoved++;
+						    	myStack.remove(e);
+						    	
+						    }
+					    }
+					    pojo.setManagedStack(myStack);
+//					    this.managedStacks.put(tag, pojo);
+					    return numRemoved;
+				    }
+			    }
+		    }
+	    } catch (StackManagerException sme) {
+		    L.m(sme.toString());
+	    }
+	    return 0;
+    }
+    
     /**
      * Append enums to the stack (overloaded to allow for position 0 to be used)
      *
@@ -477,8 +527,10 @@ public class StackManager<E extends Enum<E>> {
         }
     }
 
+    //endregion
+	
     //////////////////////////////////////
-    //Private classes for arg management//
+    //region Private classes for arg management//
     //////////////////////////////////////
 
     /**
@@ -531,8 +583,10 @@ public class StackManager<E extends Enum<E>> {
         return pojo;
     }
 
+    //endregion
+	
     ///////////////////////////////
-    //Object for Stack Management//
+    //region Object for Stack Management//
     ///////////////////////////////
 
     /**
@@ -568,9 +622,10 @@ public class StackManager<E extends Enum<E>> {
         }
     }
 
-
+    //endregion
+	
     //////////////////
-    //Misc Utilities//
+    ////region Misc Utilities//
     //////////////////
 
     public int getStackSize(int pos) {
@@ -603,4 +658,6 @@ public class StackManager<E extends Enum<E>> {
         e.setEnumToString(enumString);
         return e;
     }
+    
+    //endregion
 }
