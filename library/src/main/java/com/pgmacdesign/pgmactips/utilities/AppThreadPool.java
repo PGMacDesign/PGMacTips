@@ -15,6 +15,8 @@ import java.util.concurrent.TimeUnit;
  * threads depending on the end goal / need.
  * To use it in a simple way, just call {@link #getInstance()#runInBackground(Runnable)} and the
  * item will run in the background
+ * Previously this class held the methods found in `ThreadUtilities` so if you find this
+ * sentence by looking for that string, this is the class you are looking for.
  */
 public class AppThreadPool {
 	

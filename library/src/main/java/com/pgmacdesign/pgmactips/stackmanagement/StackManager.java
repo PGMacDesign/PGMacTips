@@ -279,17 +279,17 @@ public class StackManager<E extends Enum<E>> {
 			    	if(myStack.size() > 0){
 					    int numRemoved = 0;
 					    for(E e : toRemove){
-						    if (myStack.contains(e)) {
-							    if (logChangesInStacks) {
-								    L.m("removing from tag " + tag + " enum: " + e);
+						    if(e != null){
+							    if (myStack.contains(e)) {
+								    if (logChangesInStacks) {
+									    L.m("removing from tag " + tag + " enum: " + e);
+								    }
+								    numRemoved++;
+								    myStack.remove(e);
 							    }
-						    	numRemoved++;
-						    	myStack.remove(e);
-						    	
 						    }
 					    }
 					    pojo.setManagedStack(myStack);
-//					    this.managedStacks.put(tag, pojo);
 					    return numRemoved;
 				    }
 			    }

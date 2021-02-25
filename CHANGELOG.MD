@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-Version 1.4.8 *(TBD)*
+Version 1.4.8 *(2021-02-25)*
 ---------------------
 
 * Update: Added a new method in the [StackManager] class to allow to remove 1 or more stack items without using the `pop` functionality.
