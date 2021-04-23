@@ -19,6 +19,7 @@ import android.provider.MediaStore;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.loader.content.CursorLoader;
 
 import android.provider.OpenableColumns;
@@ -1046,6 +1047,42 @@ public class FileUtilities {
 	//endregion
 	
 	//region Public Methods
+	
+	/**
+	 * Get the mime type for a Uri.
+	 * @param context
+	 * @param uri
+	 * @return
+	 */
+	@RequiresApi(value = 19)
+	public static String getMimeTypeForFile(Context context, Uri uri){
+		DocumentFile f = DocumentFile.fromSingleUri(context, uri);
+		if(f != null){
+			if(!StringUtilities.isNullOrEmpty(f.getType())){
+				return f.getType();
+			}
+		}
+		return "application/octet-stream";
+	}
+	
+	/**
+	 * Get the mime type for a file.
+	 * @param file
+	 * @return
+	 */
+	public static String getMimeTypeForFile(File file){
+		try {
+			DocumentFile f = DocumentFile.fromFile(file);
+			if(f != null){
+				if(!StringUtilities.isNullOrEmpty(f.getType())){
+					return f.getType();
+				}
+			}
+		} catch (Exception e){
+			L.e(e);
+		}
+		return "application/octet-stream";
+	}
 	
 	/**
 	 * Overloaded for naming simplicity so as to have another way to find.

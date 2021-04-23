@@ -1,11 +1,16 @@
 Change Log
 ==========
 
+Version 1.5.0 *(TBD)*
+---------------------
+
+* New: New methods in the [FileUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/FileUtilities.java) class for determining the Mimetype of a file
+
 Version 1.4.8 *(2021-02-25)*
 ---------------------
 
 * Update: Added a new method in the [StackManager] class to allow to remove 1 or more stack items without using the `pop` functionality.
-* New: New methods in the [MiscUtilities](d) class for determining if the device running is an emulator or not.
+* New: New methods in the [MiscUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/MiscUtilities.java) class for determining if the device running is an emulator or not.
 * New: New Class, RecyclerArrayAdapter, to allow for a simple `listview` approach to a Recyclerview with a wrapper with generics for access.
 
 Version 1.4.6 *(2021-01-01)*
