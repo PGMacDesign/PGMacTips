@@ -310,6 +310,9 @@ public class PGAnimatedSvgView extends View {
 	 */
 	@SuppressWarnings("SuspiciousNameCombination")
 	public void rebuildGlyphData() {
+		if(this.mGlyphStrings == null){
+			return;
+		}
 		float X = mWidth / mViewport.x;
 		float Y = mHeight / mViewport.y;
 		

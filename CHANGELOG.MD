@@ -5,6 +5,7 @@ Version 1.5.0 *(TBD)*
 ---------------------
 
 * New: New methods in the [FileUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/FileUtilities.java) class for determining the Mimetype of a file
+* Bugfix: Fixed a bug that could cause a NPE if a PGAnimatedSvgView is set but not initialized properly.
 
 Version 1.4.8 *(2021-02-25)*
 ---------------------
