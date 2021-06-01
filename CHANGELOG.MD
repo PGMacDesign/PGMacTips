@@ -6,7 +6,8 @@ Version 1.5.0 *(TBD)*
 
 * New: New methods in the [FileUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/FileUtilities.java) class for determining the Mimetype of a file
 * Bugfix: Fixed a bug that could cause a NPE if a PGAnimatedSvgView is set but not initialized properly.
-* New: Created a new package for live data utilities and 2 simple classes, [AbsentLiveData](tbd) and [DynamicLiveData](tbd). These 2 classes are used to return an object with wither null or the passed object so it can be returned along a LiveData approach.
+* New: Created a new package for live data utilities and 2 simple classes, [AbsentLiveData](tbd) and [DynamicLiveData](link tbd). These 2 classes are used to return an object with wither null or the passed object so it can be returned along a LiveData approach.
+* New: Added in a utilities class [ObjectGsonParceler](link tbd) that provides Gson-wrapper functionality to the Android Parceler class.
 
 Version 1.4.8 *(2021-02-25)*
 ---------------------
