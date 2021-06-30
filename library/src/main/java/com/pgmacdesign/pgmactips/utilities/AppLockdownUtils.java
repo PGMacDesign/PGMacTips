@@ -89,6 +89,27 @@ public class AppLockdownUtils {
     public static void shouldToastResults(final boolean shouldToast){
         AppLockdownUtils.shouldToastResults = shouldToast;
     }
+	
+	/**
+	 * Check if the current app context is device admin (locked)
+	 * @param context
+	 * @return
+	 */
+	@RequiresApi(api = Build.VERSION_CODES.M)
+	public static boolean isDeviceAdmin(final Context context){
+		try {
+			DevicePolicyManager mDevicePolicyManager = (DevicePolicyManager) context.getSystemService(
+					Context.DEVICE_POLICY_SERVICE);
+			if (mDevicePolicyManager.isDeviceOwnerApp(context.getPackageName())) {
+				return true;
+			} else {
+				return false;
+			}
+		} catch (Exception e){
+			L.e(e);
+			return false;
+		}
+	}
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public static void lockApp(final Context context, final Class myClass,
