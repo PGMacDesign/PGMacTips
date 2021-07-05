@@ -1,12 +1,12 @@
 Change Log
 ==========
 
-Version 1.5.1 *(TBD)*
+Version 1.5.2 *(TBD)*
 ---------------------
 
-* 
+*
 
-Version 1.5.0 *(2021-07-04)*
+Version 1.5.1 *(2021-07-04)*
 ---------------------
 
 * New: New methods in the [FileUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/FileUtilities.java) class for determining the Mimetype of a file
