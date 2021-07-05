@@ -1,12 +1,17 @@
 Change Log
 ==========
 
+Version 1.5.1 *(TBD)*
+---------------------
+
+* 
+
 Version 1.5.0 *(2021-07-04)*
 ---------------------
 
 * New: New methods in the [FileUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/FileUtilities.java) class for determining the Mimetype of a file
 * Bugfix: Fixed a bug that could cause a NPE if a PGAnimatedSvgView is set but not initialized properly.
-* New: Created a new package for live data utilities and 2 simple classes, [AbsentLiveData](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/livedatautils/AbsentLiveData.kt) and [DynamicLiveData](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/livedatautils/DynamicLiveData.kt). These 2 classes are used to return an object with wither null or the passed object so it can be returned along a LiveData approach.
+* New: Created a new package for live data utilities and 2 simple classes, [AbsentLiveData](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/livedatautils/AbsentLiveData.kt) and [DynamicLiveData](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/livedatautils/DynamicLiveData.kt). These 2 classes are used to return an object with either null or the passed object so it can be returned along a LiveData approach.
 * New: Added in a utilities class [ObjectGsonParceler](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/networkclasses/ObjectGsonParceler.java) that provides Gson-wrapper functionality to the Android Parceler class.
 * New: Added a new method to the [AppLockdownUtils](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/AppLockdownUtils.java) class for determining if the app is locked down / a device admin.
 * Update: Updated the [RecyclerArrayAdapter](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/adapters/RecyclerArrayAdapter.java) class to change the default constructor to public.
