@@ -1,11 +1,12 @@
 Change Log
 ==========
 
-Version 1.5.2 *(TBD)*
+Version 1.5.2 *(2021-08-10)*
 ---------------------
 
 * Update: Updates to the [RecyclerArrayAdapter](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/adapters/RecyclerArrayAdapter.java) class to add more utility functions and better error handling for scenarios where a bad position or item is sent as a argument.
-* Update: Update in the [FileUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/FileUtilities.java) class to allow for byte[] file writes.
+* Update: Update in the [FileUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/FileUtilities.java) class to allow for byte[] file writes. Also added in a FileDownloader Util
+* New: The [FileMover](link tbd) class has been added and will copy files from one directory to another
 
 Version 1.5.1 *(2021-07-04)*
 ---------------------
