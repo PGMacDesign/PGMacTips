@@ -380,7 +380,6 @@ And it should resolve the issue. (Make sure to clean / rebuild your project!)
 
 ### GSON Exceptions
 
-#### ddddd
 
 If you update to a recent version of PGMacTips and spot this exception:
 
