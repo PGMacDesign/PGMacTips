@@ -28,6 +28,7 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.misc.TempString;
 
@@ -39,11 +40,16 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.util.Date;
 import java.util.Scanner;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import static com.pgmacdesign.pgmactips.utilities.StringUtilities.getDataColumn;
 
@@ -301,6 +307,39 @@ public class FileUtilities {
 	 *
 	 * @param filePathAndNameWithExtension File name and extension
 	 * @param dataToWrite                  Data to write
+	 * @return boolean, if successful, true, if not successful, false
+	 */
+	public static boolean writeFile(@NonNull String filePathAndNameWithExtension,
+	                                @NonNull byte[] dataToWrite) {
+		File file = null;
+		try {
+			try {
+				file = new File(filePathAndNameWithExtension);
+			} catch (RuntimeException e) {
+				e.printStackTrace();
+			}
+			if (file == null) {
+				return false;
+			}
+			if (!file.exists()) {
+				file.getParentFile().mkdirs();
+			}
+			FileOutputStream fos = new FileOutputStream(file);
+			fos.write(dataToWrite);
+			fos.flush();
+			fos.close();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	/**
+	 * Write to a file
+	 *
+	 * @param filePathAndNameWithExtension File name and extension
+	 * @param dataToWrite                  Data to write
 	 * @param charsetValue                 Charset of the data, IE: "UTF-8"
 	 * @return boolean if successful, true, if not successful, false
 	 */
@@ -334,7 +373,7 @@ public class FileUtilities {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Read String data from a file
 	 *
@@ -1988,6 +2027,117 @@ public class FileUtilities {
 	}
 	
 	//endregion
+	
+	//endregion
+	
+	//region File Downloader
+	
+	/**
+	 * Simple File Downloader. This sends returns along a {@link OnTaskCompleteListener} with
+	 * one of 3 different values:
+	 *   -1: progress (Integer)
+	 *   0: File failed to download
+	 *   1: File downloaded successfully
+	 */
+	@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.OkHttp3)
+	public static class SimpleFileDownloader extends AsyncTask<Void, Integer, File> {
+		
+		private String fileUrl;
+		private String fileName;
+		private String internalStorageDirectory;
+		private OnTaskCompleteListener onTaskCompleteListener;
+		
+		/**
+		 *
+		 * @param onTaskCompleteListener The callback listener
+		 * @param fileUrl The file URL to download
+		 * @param fileName The file name. May be null
+		 * @param internalStorageDirectory IF you are unsure what to use for this, simple call:
+		 *                                 {@link Context#getFilesDir()}.getAbsolutePath()     or
+		 *                                 {@link Context#getFilesDir()}.getAbsolutePath() + "/Downloads",
+		 *                                 whichever you have defined within your
+		 *                                 {@link androidx.core.content.FileProvider}
+		 */
+		public SimpleFileDownloader(@NonNull OnTaskCompleteListener onTaskCompleteListener,
+		                            @NonNull String fileUrl,
+		                            @Nullable String fileName,
+		                            @NonNull String internalStorageDirectory){
+			this.onTaskCompleteListener = onTaskCompleteListener;
+			this.fileName = StringUtilities.isNullOrEmpty(fileName) ? ("PGMac_" + System.currentTimeMillis()) : fileName;
+			this.internalStorageDirectory = internalStorageDirectory;
+			this.fileUrl = fileUrl;
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+		}
+		
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			if(values == null){
+				return;
+			}
+			if(values.length <= 0){
+				return;
+			}
+			this.onTaskCompleteListener.onTaskComplete(values[0], -1);
+			super.onProgressUpdate(values);
+		}
+		
+		@Override
+		protected File doInBackground(Void... voids) {
+			try {
+				long lengthOfFile = 0;
+				int status = 0;
+				OkHttpClient client = new OkHttpClient();
+				Request request = new Request.Builder().url(this.fileUrl).build();
+				Response res = client.newCall(request).execute();
+				lengthOfFile = res.body().contentLength();
+				InputStream is = res.body().byteStream();
+				byte[] buffer = new byte[1024*4];
+				long downloaded = 0;
+				File file2 = new File(this.internalStorageDirectory);
+				file2.mkdirs();
+				File file3 = new File(file2, fileName);
+				if(file3.exists()){
+					file3.delete();
+				}
+				OutputStream os = new FileOutputStream(file3, false);
+				boolean shouldContinue = true;
+				while(shouldContinue){
+					int read = is.read(buffer);
+					if(read == -1){
+						shouldContinue = false;
+					}
+					if(this.isCancelled()){
+						shouldContinue = false;
+					}
+					if(!shouldContinue){
+						break;
+					}
+					downloaded += read;
+					float x = (downloaded * 100 / (float)lengthOfFile);
+					status = (int)x;
+					publishProgress(status);
+					os.write(buffer, 0, read);
+				}
+				os.flush();
+				os.close();
+				return file3;
+			} catch (Exception e){
+				L.e(e);
+			}
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(File file) {
+			super.onPostExecute(file);
+			this.onTaskCompleteListener.onTaskComplete(file, (file != null) ? 1 : 0);
+		}
+		
+	}
 	
 	//endregion
 }

@@ -170,12 +170,13 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
 //	    this.writeEncryptedFileTest();
 //		this.readEncryptedFileTest();
 //		this.patTests();
-	    this.init5();
+//	    this.init5();
 //	    this.testHexColors();
 //	    this.loadTestCall();
 //	    this.testDB2();
 //	    Intent intent = new Intent(this, SampleColorClass.class);
 //	    this.startActivity(intent);
+//	    this.init7();
     }
 
     private void testHexColors(){
@@ -568,6 +569,23 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
         sp.save(KEY_INT, 222);
     }
 
+    private void init7(){
+    	L.m("Starting file download test");
+    	String s = "https://embed-ssl.wistia.com/deliveries/d72d45f070baebc3873354cdd04c70385cf38f9e.bin";
+    	new FileUtilities.SimpleFileDownloader((OnTaskCompleteListener) (result, customTag) -> {
+			switch (customTag){
+				case -1:
+					L.m("Progress: " + result);
+					break;
+				case 0:
+					L.m("Download Failed");
+					break;
+				case 1:
+					L.m("Download Success! File path == " + ((File)result).getAbsolutePath());
+					break;
+			}
+	    }, s, "myFile", this.getFilesDir().getAbsolutePath()).execute();
+    }
 
     @SuppressLint("MissingPermission")
     private void init3(){
@@ -872,7 +890,12 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
     @SuppressLint("MissingPermission")
     @Override
     public void onClick(View view) {
-	
+    	
+	    this.init7();
+	    
+	    if(true){
+	    	return;
+	    }
 	
 	    loadTestCall();
 	    

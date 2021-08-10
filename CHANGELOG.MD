@@ -5,7 +5,7 @@ Version 1.5.2 *(TBD)*
 ---------------------
 
 * Update: Updates to the [RecyclerArrayAdapter](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/adapters/RecyclerArrayAdapter.java) class to add more utility functions and better error handling for scenarios where a bad position or item is sent as a argument.
-*
+* Update: Update in the [FileUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/FileUtilities.java) class to allow for byte[] file writes.
 
 Version 1.5.1 *(2021-07-04)*
 ---------------------
