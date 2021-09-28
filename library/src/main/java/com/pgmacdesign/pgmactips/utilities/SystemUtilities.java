@@ -332,7 +332,21 @@ public class SystemUtilities {
 	public static boolean isDeviceRooted() {
 		return checkRootMethod1() || checkRootMethod2() || checkRootMethod3();
 	}
-	
+
+    /**
+     * Checks if a user has auto rotation set to `on` in their settings
+     * @param context
+     * @return
+     */
+	public static boolean doesUserHaveAutoRotateEnabled(Context context){
+        try {
+            return android.provider.Settings.System.getInt(context.getContentResolver(),
+                    Settings.System.ACCELEROMETER_ROTATION, 0) == 1;
+        } catch (Exception e){
+            return false;
+        }
+    }
+
 	/**
 	 * Check if a device is rooted
 	 * @return

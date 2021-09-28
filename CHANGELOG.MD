@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+Version 1.5.3 *(TBD)*
+---------------------
+
+* New: New method in the [FileUtilities](https://github.com/PGMacDesign/PGMacTips/blob/master/library/src/main/java/com/pgmacdesign/pgmactips/utilities/FileUtilities.java) class that allows users to check if the owner of the device has enabled auto rotation.
+
 Version 1.5.2 *(2021-08-10)*
 ---------------------
 
