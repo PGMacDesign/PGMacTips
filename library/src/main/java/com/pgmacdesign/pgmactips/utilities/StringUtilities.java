@@ -2250,6 +2250,21 @@ public class StringUtilities {
     }
 
     /**
+     * Overloaded methods to allow for string passing
+     * @param url
+     * @return Map; will always be !null
+     * @throws UnsupportedEncodingException
+     */
+    public static Map<String, String> splitQuery(String url) throws UnsupportedEncodingException {
+        try {
+            return splitQuery(new URL(url));
+        } catch (MalformedURLException e){
+            L.m(String.format("Invalid String: %s", e.getMessage()));
+            return new LinkedHashMap<>();
+        }
+    }
+
+    /**
      * Splits a URL String with query params into a map of String to strings. IE
      * https://www.somesite.com?name=bob&age=99&height=55 would become a map containing:
      * {"name": "bob", "age": "99", "height": "55"}
