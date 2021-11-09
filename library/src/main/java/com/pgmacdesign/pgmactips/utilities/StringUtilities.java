@@ -21,6 +21,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.BackgroundColorSpan;
+import android.util.ArrayMap;
 
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 import com.pgmacdesign.pgmactips.misc.TempString;
@@ -30,6 +31,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -2208,11 +2210,26 @@ public class StringUtilities {
     //region URL Query String Splitting
 
     /**
+     * Overloaded methods to allow for string passing
+     * @param url
+     * @return Map; will always be !null
+     * @throws UnsupportedEncodingException
+     */
+    public static Map<String, List<String>> splitQueryIntoList(String url) throws UnsupportedEncodingException {
+	    try {
+	        return splitQueryIntoList(new URL(url));
+        } catch (MalformedURLException e){
+	        L.m(String.format("Invalid String: %s", e.getMessage()));
+	        return new LinkedHashMap<>();
+        }
+    }
+
+    /**
      * Splits a URL String with query params into a map of String to list of strings. IE
      * https://www.somesite.com?name=bob&age=99&height=55 would become a map containing:
      * {"name": ["bob"], "age": ["99"], "height": ["55"]}
      * @param url
-     * @return
+     * @return Map; will always be !null
      * @throws UnsupportedEncodingException
      */
     public static Map<String, List<String>> splitQueryIntoList(URL url) throws UnsupportedEncodingException {
@@ -2237,7 +2254,7 @@ public class StringUtilities {
      * https://www.somesite.com?name=bob&age=99&height=55 would become a map containing:
      * {"name": "bob", "age": "99", "height": "55"}
      * @param url
-     * @return
+     * @return Map; will always be !null
      * @throws UnsupportedEncodingException
      */
     public static Map<String, String> splitQuery(URL url) throws UnsupportedEncodingException {
