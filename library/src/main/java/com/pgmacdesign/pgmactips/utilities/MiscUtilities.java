@@ -16,6 +16,7 @@ import androidx.annotation.FloatRange;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import android.provider.Settings;
 import android.text.format.DateFormat;
@@ -26,8 +27,10 @@ import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 
+import com.google.gson.Gson;
 import com.pgmacdesign.pgmactips.BuildConfig;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
+import com.pgmacdesign.pgmactips.misc.CustomAnnotationsBase;
 import com.pgmacdesign.pgmactips.misc.GenericComparator;
 import com.pgmacdesign.pgmactips.misc.PGMacTipsConstants;
 
@@ -216,7 +219,9 @@ public class MiscUtilities {
 	/**
      * Print out a list of objects
      * @param myList
+	 * @deprecated Please move to {@link #printOutCollection(Collection)} 
      */
+	@Deprecated
     public static void printOutList(List<?> myList){
         if(isListNullOrEmpty(myList)){
             return;
@@ -231,6 +236,52 @@ public class MiscUtilities {
             x++;
         }
     }
+    
+	/**
+     * Print out a collection of objects
+     * @param myList
+     */
+    public static void printOutCollection(Collection<?> myList){
+        if(myList == null){
+        	return;
+        }
+        if(myList.size() == 0){
+        	return;
+        }
+        int x = 0;
+        for(Object item : myList){
+            try {
+                L.m(item.toString());
+            } catch (Exception e){
+                L.m("Could not print position " + x);
+            }
+            x++;
+        }
+    }
+      
+	/**
+     * Print out a collection of objects by serializing each item into JSON using GSON
+     * @param myList
+     */
+	@CustomAnnotationsBase.RequiresDependency(requiresDependency = CustomAnnotationsBase.Dependencies.GSON)
+    public static void printOutCollection(Collection<?> myList, Gson gson){
+        if(myList == null){
+        	return;
+        }
+        if(myList.size() == 0){
+        	return;
+        }
+        int x = 0;
+        for(Object item : myList){
+            try {
+                L.m(gson.toJson(item));
+            } catch (Exception e){
+                L.m("Could not print position " + x);
+            }
+            x++;
+        }
+    }
+    
 	//endregion
 	
     //region Array Utilities
@@ -1494,7 +1545,7 @@ public class MiscUtilities {
 	@Deprecated
 	public static String getPackageName(){
 		try {
-			return BuildConfig.APPLICATION_ID;
+			return BuildConfig.LIBRARY_PACKAGE_NAME;
 		} catch (Exception e){
 			return null;
 		}

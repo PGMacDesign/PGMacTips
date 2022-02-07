@@ -4,10 +4,11 @@ https://www.devsbedevin.com/android-understanding-gradle-dependencies-and-resolv
  */
 //apply plugin: 'com.android.application' //Add this when switching from lib to app
 apply plugin: 'com.android.library' //Remove this when switching from lib to app
-
-//apply plugin: 'kotlin-android' //Removing for now due to problems
-apply plugin: 'realm-android'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'realm-android'
 group='com.github.PGMacDesign'
 allprojects {
 	repositories {
@@ -26,12 +27,12 @@ buildscript{
 	}
 }
 android {
-	compileSdkVersion 29
-	buildToolsVersion '29.0.2'
+	compileSdkVersion 31
+	buildToolsVersion '30.0.2'
 	defaultConfig {
 		//applicationId "com.pgmacdesign.pgmactips" //Remove this when switching from lib to app
 		minSdkVersion 15
-		targetSdkVersion 29
+		targetSdkVersion 31
 		//multiDexEnabled true
 //        versionCode 1
 		versionName "1.5.2"
@@ -112,7 +113,7 @@ android {
 		api 'com.daimajia.easing:library:2.0@aar'
 		//Android Animations. Link: https://github.com/daimajia/AndroidViewAnimations
 		api 'com.daimajia.androidanimations:library:2.2@aar'
-		
+
 		//////////////////////////////////////
 		//Misc Dependencies (IE Google Libs)//
 		//////////////////////////////////////
@@ -130,6 +131,8 @@ android {
 		implementation "androidx.annotation:annotation:$annotation_version"
 //		api 'com.android.support:design:28.0.0'
 //		api 'com.android.support:support-annotations:28.0.0'
+
+		implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 	}
 }
 // Publish default flavour as main artifact, otherwise the maven pom is not generated

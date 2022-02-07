@@ -280,7 +280,7 @@ public class SystemUtilities {
      */
     public static String getPackageName(){
         try {
-            return BuildConfig.APPLICATION_ID;
+            return BuildConfig.LIBRARY_PACKAGE_NAME;
         } catch (Exception e){
             return null;
         }

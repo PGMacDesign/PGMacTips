@@ -9,10 +9,9 @@ import java.lang.annotation.RetentionPolicy;
 public class CustomAnnotationsBase {
 
     public static enum Dependencies {
-        //Removed on 2018-07-10; refactored into SharedPrefs
-//        SecurePreferences("https://github.com/scottyab/secure-preferences",
-//                "com.scottyab:secure-preferences-lib:0.1.4", "0.1.4",
-//                "Used for Shared Preferences encryption to protect data"),
+        Biometrics("https://developer.android.com/jetpack/androidx/releases/biometric",
+                "implementation androidx.biometric:biometric-ktx:1.1.0", "1.1.0",
+                "Google's Biometrics Library"),
         ElasticDownload("https://github.com/Tibolte/ElasticDownload",
                 "com.github.tibolte:elasticdownload:1.0.4", "1.0.4",
                 "Used as a UI animation for progress bars"),
@@ -34,10 +33,6 @@ public class CustomAnnotationsBase {
         PicassoTransformations("https://github.com/wasabeef/picasso-transformations",
                 "jp.wasabeef:picasso-transformations:2.2.1", "2.2.1",
                 "The Transformations addition to Picasso will allow for more custom transformations"),
-        //Removed on 2018-07-01; not needed anymore with AndroidAnimations
-//        NineOldAndroids("https://github.com/JakeWharton/NineOldAndroids",
-//                "com.nineoldandroids:library:2.4.0", "2.4.0",
-//                "Old Android library is used as the base for a large number of animations libraries"),
         Retrofit2("com.squareup.retrofit2:retrofit:2.8.1",
                 "https://github.com/square/retrofit", "2.8.1",
                 "Used for web calls, building local apis, and interacting with complicated web interfaces"),
@@ -68,19 +63,6 @@ public class CustomAnnotationsBase {
         AndroidSupport_Annotations("https://developer.android.com/topic/libraries/support-library/packages",
                 "com.android.support:support-annotations:28.0.0", "28.0.0",
                 "Android support annotations is used for custom annotations like the ones used here with the 'RequiresDependency' interface"),
-        //Removed on 2019-01-15 to modularize into sample project instead. Link: https://github.com/PGMacDesign/Jetpack-Samples
-//        Android_Lifecycle("https://developer.android.com/topic/libraries/architecture/adding-components",
-//                "androidx.lifecycle:lifecycle-extensions:2.0.0", "2.0.0",
-//                "Android lifecycle support lib requires the following 2 fields to be set in your gradle.properties file:" +
-//                        "android.useAndroidX=true" + "android.enableJetifier=true" + ", or use version 1.1.1 or below. For more info, see " +
-//                        "1) https://developer.android.com/jetpack/androidx/ && " +
-//                        "2) https://developer.android.com/topic/libraries/architecture/adding-components"),
-//        Android_Lifecycle_Annotations("https://developer.android.com/topic/libraries/architecture/adding-components",
-//                "androidx.lifecycle:lifecycle-compiler:2.0.0", "2.0.0",
-//                "Android lifecycle support lib requires the following 2 fields to be set in your gradle.properties file:" +
-//                        "android.useAndroidX=true & " + "android.enableJetifier=true" + ", or use version 1.1.1 or below. For more info, see " +
-//                        "1) https://developer.android.com/jetpack/androidx/ && " +
-//                        "2) https://developer.android.com/topic/libraries/architecture/adding-components"),
         Realm("https://github.com/realm/realm-java",
                 "classpath 'io.realm:realm-gradle-plugin:4.2.0'", "4.2.0",
                 "Realm is a Database wrapper used to interact with the SQLite DB in the device. It is used in the DatabaseUtilities class"),

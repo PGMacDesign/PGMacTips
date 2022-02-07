@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -18,11 +16,10 @@ import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.GenericRecyclerviewAdapter;
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
+import com.pgmacdesign.pgmactips.biometricutilities.BiometricException;
 import com.pgmacdesign.pgmactips.biometricutilities.BiometricVerification;
-import com.pgmacdesign.pgmactips.biometricutilities.FingerprintException;
 import com.pgmacdesign.pgmactips.customui.MultiColorLine;
 import com.pgmacdesign.pgmactips.customui.animatedsvg.PGAnimatedSvgView;
 import com.pgmacdesign.pgmactips.customui.animatedsvg.PGSVG;
@@ -43,10 +40,7 @@ import com.pgmacdesign.pgmactips.utilities.ColorUtilities;
 import com.pgmacdesign.pgmactips.utilities.ContactUtilities;
 import com.pgmacdesign.pgmactips.utilities.DatabaseUtilities;
 import com.pgmacdesign.pgmactips.utilities.DateUtilities;
-import com.pgmacdesign.pgmactips.utilities.DisplayManagerUtilities;
-import com.pgmacdesign.pgmactips.utilities.EncryptionUtilities;
 import com.pgmacdesign.pgmactips.utilities.FileUtilities;
-import com.pgmacdesign.pgmactips.utilities.GsonUtilities;
 import com.pgmacdesign.pgmactips.utilities.ImageUtilities;
 import com.pgmacdesign.pgmactips.utilities.L;
 import com.pgmacdesign.pgmactips.utilities.MiscUtilities;
@@ -66,6 +60,7 @@ import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -73,7 +68,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.ConnectionSpec;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
-import pgmacdesign.pgmactips.samples.activitysamples.SampleColorClass;
 import pgmacdesign.pgmactips.samples.activitysamples.SampleDBClass;
 import pgmacdesign.pgmactips.samples.activitysamples.SampleDBClassKotlin;
 import pgmacdesign.pgmactips.samples.misc.SampleMyApplication;
@@ -102,6 +96,7 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
     private ScrollView testing_layout_scrollview;
     private ImageView image1, image2, image3, image4, image5, image6;
     private Button button;
+    private TextView testing_layout_tv;
     private RecyclerView testing_layout_recyclerview;
     private PGAnimatedSvgView pganimated_svg_view;
 
@@ -127,6 +122,7 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
         tv1.setTextColor(getResources().getColor(com.pgmacdesign.pgmactips.R.color.black));
         this.testing_layout_rootview = this.findViewById(com.pgmacdesign.pgmactips.R.id.testing_layout_rootview);
         button = (Button) this.findViewById(com.pgmacdesign.pgmactips.R.id.button);
+	    testing_layout_tv = (TextView) this.findViewById(com.pgmacdesign.pgmactips.R.id.testing_layout_tv);
 	    pganimated_svg_view = (PGAnimatedSvgView) this.findViewById(com.pgmacdesign.pgmactips.R.id.pganimated_svg_view);
         button.setTag("button");
         button.setTransformationMethod(null);
@@ -149,7 +145,7 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
 //        this.init3();
 //        this.init5();
 //        this.testDB2();
-	    this.startDisplayMetricTests();
+//	    this.startDisplayMetricTests();
 	    
 	    L.m("TESTING TIME CALL: ");
 	    String str1 = DateUtilities.convertMillisecondsToTimeString(System.currentTimeMillis(),
@@ -589,47 +585,128 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
 
     @SuppressLint("MissingPermission")
     private void init3(){
-        if(Build.VERSION.SDK_INT >= 23) {
-            this.biometricVerification = new BiometricVerification(
-                    new OnTaskCompleteListener() {
-                        @SuppressLint("NewApi")
-                        @Override
-                        public void onTaskComplete(Object result, int customTag) {
-                            switch (customTag){
-                                case BiometricVerification.TAG_AUTHENTICATION_FAIL:
-                                    //Authentication failed / finger does not match
-                                    boolean fail = (boolean) result;
-                                    break;
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+	        final String biometricVariation = "BiometricAuth: (Android SDK: " + Build.VERSION.SDK_INT + ") \n";
+	        this.biometricVerification = new BiometricVerification((result, customTag) -> {
+		        switch (customTag){
+			        case BiometricVerification.TAG_AUTHENTICATION_FAIL:
+				        //Authentication failed / finger does not match
+				        boolean fail = (boolean) result;
+				        L.m("AUTH FAIL!");
+				        this.testing_layout_tv.setText(biometricVariation + "Authentication fail!");
+				        break;
 
-                                case BiometricVerification.TAG_AUTHENTICATION_SUCCESS:
-                                    //Authentication success / finger matches
-                                    boolean success = (boolean) result;
-                                    break;
+			        case BiometricVerification.TAG_AUTHENTICATION_SUCCESS:
+				        //Authentication success / finger matches
+				        boolean success = (boolean) result;
+				        L.m("AUTH SUCCESS!");
+				        this.testing_layout_tv.setText(biometricVariation + "Authentication success!");
+				        break;
 
-                                case BiometricVerification.TAG_AUTHENTICATION_ERROR:
-                                    //Error (IE called stopFingerprintAuth() or onStop() triggered)
-                                    String knownAuthenticationError = (String) result;
-                                    break;
+			        case BiometricVerification.TAG_AUTHENTICATION_ERROR:
+				        //Error (IE called stopFingerprintAuth() or onStop() triggered)
+				        String knownAuthenticationError = (String) result;
+				        L.m("AUTH ERROR! str== " + knownAuthenticationError);
+				        this.testing_layout_tv.setText(biometricVariation + "Authentication error: " + knownAuthenticationError);
+				        break;
 
-                                case BiometricVerification.TAG_AUTHENTICATION_HELP:
-                                    //Authentication did not work, help string passed
-                                    String helpString = (String) result;
-                                    break;
+			        case BiometricVerification.TAG_AUTHENTICATION_HELP:
+				        //Authentication did not work, help string passed
+				        String helpString = (String) result;
+				        L.m("AUTH HELP! STR == " + helpString);
+				        this.testing_layout_tv.setText(biometricVariation + "Authentication help: " + helpString);
+				        break;
 
-                                case BiometricVerification.TAG_GENERIC_ERROR:
-                                    //Some error has occurred
-                                    String genericError = (String) result;
-                                    break;
-                            }
-                        }
-                    }, this, "my_key_name");
+			        case BiometricVerification.TAG_GENERIC_ERROR:
+				        //Some error has occurred
+				        String genericError = (String) result;
+				        L.m("AUTH GENERIC ERROR! == " + genericError);
+				        this.testing_layout_tv.setText(biometricVariation + "Authentication error: " + genericError);
+				        break;
+
+			        default:
+				        this.testing_layout_tv.setText(biometricVariation + "(Default Switch Statment hit.) (res,tag) == (" + result + "," + customTag + ")");
+				        break;
+		        }
+	        }, this, "my_key_name");
             try {
+            	L.m("Starting biometric auth:");
                 if(this.biometricVerification.isCriteriaMet()) {
-                    this.biometricVerification.startFingerprintAuth();
+                    this.biometricVerification.startBiometricAuth();
+                } else {
+                	L.m("Criteria not met!");
+                	L.m("doesHaveFingerprintPermission ? == " + this.biometricVerification.doesHaveFingerprintPermission());
+                	L.m("doesUserHaveLockEnabled ? == " + this.biometricVerification.doesUserHaveLockEnabled());
+                	L.m("doesUserHaveEnrolledFingerprints ? == " + this.biometricVerification.doesUserHaveEnrolledFingerprints());
+                	L.m("isFingerprintSensorAvailable ? == " + this.biometricVerification.isFingerprintSensorAvailable());
+	                this.testing_layout_tv.setText(biometricVariation + "Unable to run biometrics! "
+			                + "doesUserHaveLockEnabled? " + this.biometricVerification.doesUserHaveLockEnabled() + ", \n"
+			                + "doesUserHaveEnrolledFingerprints? " + this.biometricVerification.doesUserHaveEnrolledFingerprints() + ", \n"
+			                + "isFingerprintSensorAvailable? " + this.biometricVerification.isFingerprintSensorAvailable() + " \n"
+	                );
                 }
-            } catch (FingerprintException e){
+            } catch (BiometricException e){
                 e.printStackTrace();
+	            this.testing_layout_tv.setText(e.getMessage());
             }
+        } else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+        	final String biometricVariation = "FingerprintAuth: (Android SDK: " + Build.VERSION.SDK_INT + ") \n";
+	        this.biometricVerification = new BiometricVerification((result, customTag) -> {
+		        switch (customTag){
+			        case BiometricVerification.TAG_AUTHENTICATION_FAIL:
+				        //Authentication failed / finger does not match
+				        boolean fail = (boolean) result;
+				        L.m("AUTH FAIL!");
+				        this.testing_layout_tv.setText(biometricVariation + "Authentication fail!");
+				        break;
+
+			        case BiometricVerification.TAG_AUTHENTICATION_SUCCESS:
+				        //Authentication success / finger matches
+				        boolean success = (boolean) result;
+				        L.m("AUTH SUCCESS!");
+				        this.testing_layout_tv.setText(biometricVariation + "Authentication success!");
+				        break;
+
+			        case BiometricVerification.TAG_AUTHENTICATION_ERROR:
+				        //Error (IE called stopFingerprintAuth() or onStop() triggered)
+				        String knownAuthenticationError = (String) result;
+				        L.m("AUTH ERROR! str== " + knownAuthenticationError);
+				        this.testing_layout_tv.setText(biometricVariation + "Authentication error: " + knownAuthenticationError);
+				        break;
+
+			        case BiometricVerification.TAG_AUTHENTICATION_HELP:
+				        //Authentication did not work, help string passed
+				        String helpString = (String) result;
+				        L.m("AUTH HELP! STR == " + helpString);
+				        this.testing_layout_tv.setText(biometricVariation + "Authentication help: " + helpString);
+				        break;
+
+			        case BiometricVerification.TAG_GENERIC_ERROR:
+				        //Some error has occurred
+				        String genericError = (String) result;
+				        L.m("AUTH GENERIC ERROR! == " + genericError);
+				        this.testing_layout_tv.setText(biometricVariation + "Authentication error: " + genericError);
+				        break;
+
+			        default:
+				        this.testing_layout_tv.setText(biometricVariation + "(Default Switch Statment hit.) (res,tag) == (" + result + "," + customTag + ")");
+				        break;
+		        }
+	        }, this, "my_key_name");
+        	if(this.biometricVerification.isCriteriaMet()){
+        		try {
+			        this.biometricVerification.startBiometricAuth();
+		        } catch (BiometricException biometricException){
+        			L.e(biometricException);
+        			this.testing_layout_tv.setText(biometricException.getMessage());
+		        }
+	        } else {
+		        this.testing_layout_tv.setText(biometricVariation + "Unable to run biometrics! "
+				        + "doesUserHaveLockEnabled? " + this.biometricVerification.doesUserHaveLockEnabled() + ", \n"
+				        + "doesUserHaveEnrolledFingerprints? " + this.biometricVerification.doesUserHaveEnrolledFingerprints() + ", \n"
+				        + "isFingerprintSensorAvailable? " + this.biometricVerification.isFingerprintSensorAvailable() + " \n"
+		        );
+	        }
         }
     }
 
@@ -890,8 +967,10 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
     @SuppressLint("MissingPermission")
     @Override
     public void onClick(View view) {
-    	
-	    this.init7();
+
+	    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+		    this.init3();
+	    }
 	    
 	    if(true){
 	    	return;
