@@ -34,64 +34,54 @@ import javax.crypto.SecretKey
 @RequiresApi(api = Build.VERSION_CODES.M)
 class BiometricVerification {
 
-	//region Constructor
-
-
-	//endregion
-
-	//region Sample
-
-	/*
-    //Sample Usage after you have requested permission via the manifest
-    if(Build.VERSION.SDK_INT >= 23) {
-                //Initialize here
-                BiometricVerification biometricVerification = new BiometricVerification(
-                        new OnTaskCompleteListener() {
-                            @Override
-                            public void onTaskComplete(Object result, int customTag) {
-                                //Switch Statement to handle one of the five possible responses
-                                switch (customTag){
-                                    case BiometricVerificationV2.TAG_AUTHENTICATION_FAIL:
-                                        //Authentication failed / finger does not match
-                                        boolean fail = (boolean) result;
-                                        break;
-
-                                    case BiometricVerificationV2.TAG_AUTHENTICATION_SUCCESS:
-                                        //Authentication success / finger matches.
-                                        //(NOTE! Stops fingerprint listener when this triggers)
-                                        boolean success = (boolean) result;
-                                        break;
-
-                                    case BiometricVerificationV2.TAG_AUTHENTICATION_ERROR:
-                                        //Error (IE called stopFingerprintAuth() or onStop() triggered)
-                                        String knownAuthenticationError = (String) result;
-                                        break;
-
-                                    case BiometricVerificationV2.TAG_AUTHENTICATION_HELP:
-                                        //Authentication did not work, help string passed
-                                        String helpString = (String) result;
-                                        break;
-
-                                    case BiometricVerificationV2.TAG_GENERIC_ERROR:
-                                        //Some unknown error has occurred
-                                        String genericErrorString = (String) result;
-                                        break;
-                                }
-                            }
-                        }, mContext, "my_key_name");
-
-                //Start auth here
-                try {
-                    if(BiometricVerificationV2.isCriteriaMet()){
-                        this.BiometricVerificationV2.startFingerprintAuth();
-                    }
-                } catch (BiometricException e){
-                    e.printStackTrace();
-                }
-    }
-     */
-
-	//endregion
+//	fun doStuff(mContext: Context){
+//		if(Build.VERSION.SDK_INT >= 23) {
+//			//Initialize here
+//			BiometricVerification biometricVerification = new BiometricVerification(
+//				new OnTaskCompleteListener() {
+//					@Override
+//					public void onTaskComplete(Object result, int customTag) {
+//						//Switch Statement to handle one of the five possible responses
+//						switch (customTag){
+//							case BiometricVerificationV2.TAG_AUTHENTICATION_FAIL:
+//							//Authentication failed / finger does not match
+//							boolean fail = (boolean) result;
+//							break;
+//
+//							case BiometricVerificationV2.TAG_AUTHENTICATION_SUCCESS:
+//							//Authentication success / finger matches.
+//							//(NOTE! Stops fingerprint listener when this triggers)
+//							boolean success = (boolean) result;
+//							break;
+//
+//							case BiometricVerificationV2.TAG_AUTHENTICATION_ERROR:
+//							//Error (IE called stopFingerprintAuth() or onStop() triggered)
+//							String knownAuthenticationError = (String) result;
+//							break;
+//
+//							case BiometricVerificationV2.TAG_AUTHENTICATION_HELP:
+//							//Authentication did not work, help string passed
+//							String helpString = (String) result;
+//							break;
+//
+//							case BiometricVerificationV2.TAG_GENERIC_ERROR:
+//							//Some unknown error has occurred
+//							String genericErrorString = (String) result;
+//							break;
+//						}
+//					}
+//				}, mContext, "my_key_name");
+//
+//			//Start auth here
+//			try {
+//				if(BiometricVerificationV2.isCriteriaMet()){
+//					this.BiometricVerificationV2.startFingerprintAuth();
+//				}
+//			} catch (BiometricException e){
+//				e.printStackTrace();
+//			}
+//		}
+//	}
 
 	//region Sample
 	/*
@@ -337,18 +327,6 @@ class BiometricVerification {
 	private fun init() {
 		try {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-				if (!doesHaveFingerprintPermission()) {
-					throw BiometricException(ERROR_MISSING_PERMISSION)
-				}
-				if (!isFingerprintSensorAvailable()) {
-					throw BiometricException(HARDWARE_UNAVAILABLE)
-				}
-				if (!doesUserHaveEnrolledFingerprints()) {
-					throw BiometricException(NO_STORED_FINGERPRINTS)
-				}
-				if (!doesUserHaveLockEnabled()) {
-					throw BiometricException(LOCK_SCREEN_NOT_ENABLED)
-				}
 				val res = canAuthenticate()
 				when (res) {
 					BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> throw BiometricException(
@@ -422,10 +400,10 @@ class BiometricVerification {
 			)
 
 			//Initialize an empty KeyStore//
-			keyStore!!.load(null)
+			keyStore?.load(null)
 
 			//Initialize the KeyGenerator//
-			keyGenerator!!.init(
+			keyGenerator?.init(
 				KeyGenParameterSpec.Builder(
 					keyName!!,
 					KeyProperties.PURPOSE_ENCRYPT or
@@ -438,7 +416,7 @@ class BiometricVerification {
 			)
 
 			//Generate the key//
-			return keyGenerator!!.generateKey()
+			return keyGenerator?.generateKey()
 		} catch (exc: KeyStoreException) {
 			exc.printStackTrace()
 			return null
@@ -490,14 +468,14 @@ class BiometricVerification {
 			}
 			if (keyStore != null) {
 				if (!this.keystoreInitialized) {
-					keyStore!!.load(null)
+					keyStore?.load(null)
 					this.keystoreInitialized = true
 				}
 			}
 			//            key = (SecretKey) this.keyStore.getKey(keyName, null); todo needed?
 			if (cipher != null) {
 				if (!cipherInitialized) {
-					cipher!!.init(Cipher.ENCRYPT_MODE, secretKey)
+					cipher?.init(Cipher.ENCRYPT_MODE, secretKey)
 					cipherInitialized = true
 				}
 			}
@@ -669,9 +647,6 @@ class BiometricVerification {
 	//endregion
 
 	//region Public Auth
-
-	//endregion
-	//region Public Auth
 	/**
 	 * Begins the Authentication session and starts listening for the finger to hit the sensor or
 	 * the face to be viewed in the front-facing camera (if applicable).
@@ -806,14 +781,14 @@ class BiometricVerification {
 			context!!.mainExecutor,
 			DialogInterface.OnClickListener { dialog: DialogInterface?, which: Int ->
 				//The case does not matter here as it can only represent 'cancel'
-				listener!!.onTaskComplete(false, BiometricVerification.TAG_AUTHENTICATION_FAIL)
+				listener?.onTaskComplete(false, BiometricVerification.TAG_AUTHENTICATION_FAIL)
 			})
 		biometricPrompt = builder.build()
 		val c: BiometricPrompt.AuthenticationCallback =
 			object : BiometricPrompt.AuthenticationCallback() {
 				override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
 					//Authentication error
-					listener!!.onTaskComplete(
+					listener?.onTaskComplete(
 						errString,
 						BiometricVerification.TAG_AUTHENTICATION_ERROR
 					)
@@ -821,7 +796,7 @@ class BiometricVerification {
 
 				override fun onAuthenticationHelp(helpCode: Int, helpString: CharSequence) {
 					//Non-Fatal error (IE moved finger too quickly)
-					listener!!.onTaskComplete(
+					listener?.onTaskComplete(
 						helpString?.toString() ?: UNKNOWN_ERROR,
 						BiometricVerification.TAG_AUTHENTICATION_HELP
 					)
@@ -829,7 +804,7 @@ class BiometricVerification {
 
 				override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
 					//Authentication Succeeded
-					listener!!.onTaskComplete(
+					listener?.onTaskComplete(
 						true,
 						BiometricVerification.TAG_AUTHENTICATION_SUCCESS
 					)
@@ -837,16 +812,16 @@ class BiometricVerification {
 
 				override fun onAuthenticationFailed() {
 					//Authentication failed (Fingerprints don't match ones on device)
-					listener!!.onTaskComplete(false, BiometricVerification.TAG_AUTHENTICATION_FAIL)
+					listener?.onTaskComplete(false, BiometricVerification.TAG_AUTHENTICATION_FAIL)
 				}
 			}
 		if (biometricCryptoObject != null) {
-			biometricPrompt!!.authenticate(
+			biometricPrompt?.authenticate(
 				biometricCryptoObject!!, cancellationSignal!!,
 				context!!.mainExecutor, c
 			)
 		} else {
-			biometricPrompt!!.authenticate(
+			biometricPrompt?.authenticate(
 				cancellationSignal!!,
 				context!!.mainExecutor, c
 			)
@@ -860,9 +835,9 @@ class BiometricVerification {
 	fun stopBiometricAuth() {
 		try {
 			if (cancellationSignal != null) {
-				cancellationSignal!!.cancel()
+				cancellationSignal?.cancel()
 			} else {
-				listener!!.onTaskComplete(
+				listener?.onTaskComplete(
 					BiometricVerification.MUST_CALL_START_BEFORE_STOP,
 					TAG_GENERIC_ERROR
 				)
