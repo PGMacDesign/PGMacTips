@@ -7,7 +7,6 @@ apply plugin: 'com.android.library' //Remove this when switching from lib to app
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'realm-android'
 group='com.github.PGMacDesign'
 allprojects {
@@ -27,12 +26,12 @@ buildscript{
 	}
 }
 android {
-	compileSdkVersion 31
+	compileSdkVersion 33
 	buildToolsVersion '30.0.2'
 	defaultConfig {
 		//applicationId "com.pgmacdesign.pgmactips" //Remove this when switching from lib to app
 		minSdkVersion 15
-		targetSdkVersion 31
+		targetSdkVersion 33
 		//multiDexEnabled true
 //        versionCode 1
 		versionName "1.5.2"

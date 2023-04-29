@@ -2,6 +2,9 @@ package com.pgmacdesign.pgmactips.networkclasses.retrofitutilities;
 
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
+
+import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 
 import com.pgmacdesign.pgmactips.adaptersandlisteners.OnTaskCompleteListener;
@@ -39,6 +42,7 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RawRes;
 
 import okhttp3.ConnectionSpec;
 import okhttp3.Headers;
@@ -92,7 +96,9 @@ public class RetrofitClient {
     private int[] retryOnStatusCodes;
     private long readTimeout, writeTimeout;
     private ConnectionSpec connectionSpec;
-    private String dateFormat;
+    private String dateFormat, privateKeyContent, privateCertContent, keyCertSecret;
+	private @RawRes int privateKeyRawFileRes, privateCertRawFileRes;
+	private Context privateKeyCertRawResContext;
     private String[] customCookieHeaderStrings;
     private Class serviceInterface;
     private Converter.Factory customConverterFactory;
@@ -122,6 +128,14 @@ public class RetrofitClient {
 	    this.customCookieHeaderStrings = builder.builder_customCookieHeaderString;
         this.shouldSaveResponseCookies = builder.builder_shouldSaveResponseCookies;
         this.forceAcceptAllCertificates = builder.builder_forceAcceptAllCertificates;
+
+	    this.keyCertSecret = builder.keyCertSecret;
+	    this.privateKeyContent = builder.privateKeyContent;
+	    this.privateCertContent = builder.privateCertContent;
+	    this.privateKeyRawFileRes = builder.privateKeyRawFileRes;
+	    this.privateCertRawFileRes = builder.privateCertRawFileRes;
+	    this.privateKeyCertRawResContext = builder.privateKeyCertRawResContext;
+
     }
 
     /**
@@ -352,7 +366,21 @@ public class RetrofitClient {
         builder.addInterceptor(logging);
         
         //Configure SSL
-        builder = configureClient(builder);
+	    if(Build.VERSION.SDK_INT < 19){
+		    builder = configureClient(builder);
+	    } else {
+		    if(!StringUtilities.isNullOrEmpty(this.privateCertContent) && !StringUtilities.isNullOrEmpty(this.privateKeyContent)){
+			    builder = RetrofitClientUtils.Companion.configureCerts(builder,
+					    this.privateKeyContent, this.privateCertContent, this.keyCertSecret);
+		    } else if(this.privateCertRawFileRes != 0 && this.privateKeyRawFileRes != 0){
+			    builder = RetrofitClientUtils.Companion.configureCertsRawFile(this.privateKeyCertRawResContext, builder,
+					    this.privateKeyRawFileRes, this.privateCertRawFileRes, this.keyCertSecret);
+		    } else {
+			    builder = configureClient(builder);
+		    }
+	    }
+		//To prevent a memory leak, this needs to be cleared after initialization & then not referenced again.
+		this.privateKeyCertRawResContext = null;
 
         //Build the client
         OkHttpClient client = builder.build();
@@ -536,6 +564,9 @@ public class RetrofitClient {
         boolean builder_shouldSaveResponseCookies;
         boolean builder_forceAcceptAllCertificates;
 	    ConnectionSpec builder_connectionSpec;
+	    String privateKeyContent, privateCertContent, keyCertSecret;
+		Context privateKeyCertRawResContext;
+	    @RawRes int privateKeyRawFileRes, privateCertRawFileRes;
 
         static final int SIXTY_SECONDS = (int)(1000*60);
 
@@ -583,6 +614,39 @@ public class RetrofitClient {
             if(connectionSpec != null){
                 this.builder_connectionSpec = connectionSpec;
             }
+            return this;
+        }
+
+	    /**
+	     * Set the mTLS Private Key and Certificate Resource Files
+	     * @param privateKeyRawFileRes
+	     * @param privateCertRawFileRes
+	     * @param keyCertSecret If null, will use the word "secret"
+	     * @param context Note that this is only used to look up the `Raw Resource` file. After the
+	     *                lookup is complete it will remove the context reference.
+	     * @return
+	     */
+        public Builder setMTLSCertRawFiles(@RawRes int privateKeyRawFileRes, @RawRes int privateCertRawFileRes,
+                                           @Nullable String keyCertSecret, @NonNull Context context){
+            this.privateCertRawFileRes = privateCertRawFileRes;
+			this.privateKeyRawFileRes = privateKeyRawFileRes;
+	        this.keyCertSecret = keyCertSecret;
+			this.privateKeyCertRawResContext = context;
+            return this;
+        }
+
+	    /**
+	     * Set the mTLS Private Key and Certificate Strings (pulled from files most likely)
+	     * @param privateKeyContent
+	     * @param privateCertContent
+	     * @param keyCertSecret If null, will use the word "secret"
+	     * @return
+	     */
+        public Builder setMTLSCertStrings(String privateKeyContent, String privateCertContent,
+                                          @Nullable String keyCertSecret){
+            this.privateKeyContent = privateKeyContent;
+			this.privateCertContent = privateCertContent;
+			this.keyCertSecret = keyCertSecret;
             return this;
         }
 

@@ -18,14 +18,14 @@ buildscript{
 	}
 }
 android {
-	compileSdkVersion 29
+	compileSdkVersion 33
 	
 	
 	
 	defaultConfig {
 		applicationId "pgmacdesign.pgmactips.samples"
 		minSdkVersion 15
-		targetSdkVersion 29
+		targetSdkVersion 33
 		versionCode 1
 		versionName "1.5.2"
 		
@@ -56,7 +56,7 @@ dependencies {
 	implementation project(':library')
 	implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 	implementation "com.github.skydoves:colorpickerpreference:2.0.0"
-	
+	implementation "androidx.biometric:biometric-ktx:1.2.0-alpha04"
 	def recyclerview_version = "1.0.0"
 	def annotation_version = "1.1.0"
 	
