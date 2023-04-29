@@ -83,12 +83,12 @@ android {
 		api 'com.jaredrummler:animated-svg-view:1.0.5'
 		
 		//Volley. Link: https://github.com/google/volley
-		api 'com.android.volley:volley:1.1.0'
+		api 'com.android.volley:volley:1.2.1'
 		
 		//GSON. Link https://github.com/google/gson
-		api 'com.google.code.gson:gson:2.8.6'
+		api 'com.google.code.gson:gson:2.9.0'
 		//Being used in Turbolinks, may be required here
-		api 'org.apache.commons:commons-lang3:3.4'
+		api 'org.apache.commons:commons-lang3:3.8'
 		
 		//Picasso. Link: https://github.com/square/picasso
 		api 'com.squareup.picasso:picasso:2.71828'
@@ -98,11 +98,11 @@ android {
 		//Retrofit, Retrofit Converters, and OKHTTP.
 		//Retrofit - https://github.com/square/retrofit
 		//OKHttp - https://github.com/square/okhttp
-		api 'com.squareup.retrofit2:retrofit:2.8.1'
+		api 'com.squareup.retrofit2:retrofit:2.9.0'
 		api 'com.squareup.okhttp3:okhttp:4.5.0'
 		api 'com.squareup.okhttp3:logging-interceptor:4.5.0'
 		//Type-safe HTTP client for Android and Java: https://github.com/square/retrofit
-		api 'com.squareup.retrofit2:converter-gson:2.8.1'
+		api 'com.squareup.retrofit2:converter-gson:2.9.0'
 		//OKIO. Link: https://github.com/square/okio
 		api 'com.squareup.okio:okio:2.5.0'
 		
