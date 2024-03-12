@@ -12,8 +12,6 @@ import android.util.TypedValue;
 import android.view.Display;
 import android.view.WindowManager;
 
-import com.pgmacdesign.pgmactips.R;
-
 import java.lang.reflect.InvocationTargetException;
 
 /*
@@ -632,7 +630,7 @@ public class DisplayManagerUtilities {
     public int getNavigationBarSizeOld(){
         try {
             float x = context.getResources().getDimension(
-                    R.dimen.abc_action_bar_default_height_material);
+                    is.arontibo.library.R.dimen.abc_action_bar_default_height_material);
             return (int) x;
         } catch (Exception e){
             try {

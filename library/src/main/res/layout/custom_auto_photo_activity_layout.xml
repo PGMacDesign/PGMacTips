@@ -34,28 +34,28 @@
                 android:background="@color/black">
 
                 <!-- Coordinator layout for Snackbars -->
-                <android.support.design.widget.CoordinatorLayout
+                <androidx.coordinatorlayout.widget.CoordinatorLayout
                     android:id="@+id/auto_photo_activity_coordinator_layout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
             </RelativeLayout>
 
-            <!-- Preview -->
-            <com.pgmacdesign.pgmactips.enhancedphotoclasses.CameraSourcePreview
-                android:id="@+id/camera_source_preview"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="85">
+<!--            &lt;!&ndash; Preview &ndash;&gt;-->
+<!--            <com.pgmacdesign.pgmactips.enhancedphotoclasses.CameraSourcePreview-->
+<!--                android:id="@+id/camera_source_preview"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="0dp"-->
+<!--                android:layout_weight="85">-->
 
-                <!-- Overlay for your face (oval  /  circle) -->
-                <com.pgmacdesign.pgmactips.enhancedphotoclasses.GraphicOverlay
-                    android:id="@+id/graphic_face_overlay"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+<!--                &lt;!&ndash; Overlay for your face (oval  /  circle) &ndash;&gt;-->
+<!--                <com.pgmacdesign.pgmactips.enhancedphotoclasses.GraphicOverlay-->
+<!--                    android:id="@+id/graphic_face_overlay"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent" />-->
 
 
-            </com.pgmacdesign.pgmactips.enhancedphotoclasses.CameraSourcePreview>
+<!--            </com.pgmacdesign.pgmactips.enhancedphotoclasses.CameraSourcePreview>-->
 
         </LinearLayout>
 
@@ -112,7 +112,7 @@
             android:src="@drawable/shutter_blue" />
 
     <!-- ListView for simple Text / checkmark oks -->
-    <android.support.v7.widget.ListViewCompat
+    <ListView
         android:id="@+id/auto_photo_listview"
         android:layout_width="match_parent"
         android:layout_height="100dp"
