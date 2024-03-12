@@ -16,13 +16,13 @@
             android:layout_height="match_parent"
             />
 
-        <!-- Overlay for your face (dynamic circle) -->
-        <com.pgmacdesign.pgmactips.enhancedphotoclasses.GraphicOverlay
-            android:id="@+id/graphic_face_overlay"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="invisible"
-            />
+<!--        &lt;!&ndash; Overlay for your face (dynamic circle) &ndash;&gt;-->
+<!--        <com.pgmacdesign.pgmactips.enhancedphotoclasses.GraphicOverlay-->
+<!--            android:id="@+id/graphic_face_overlay"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:visibility="invisible"-->
+<!--            />-->
 
         <!-- Overlay for the face (static / non tracking -->
         <FrameLayout
@@ -88,7 +88,7 @@
                 />
         </ScrollView>
 
-        <android.support.design.widget.CoordinatorLayout
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/take_photo_activity_api21_top_coordinator_layout"

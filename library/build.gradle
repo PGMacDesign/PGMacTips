@@ -2,10 +2,26 @@
 Really useful link for dependency conflict issues:
 https://www.devsbedevin.com/android-understanding-gradle-dependencies-and-resolving-conflicts/
  */
-//apply plugin: 'com.android.application' //Add this when switching from lib to app
-apply plugin: 'com.android.library' //Remove this when switching from lib to app
+
+buildscript{
+	repositories {
+		jcenter()
+		mavenCentral()
+		google()
+		maven { url "https://maven.google.com" }
+	}
+}
+plugins {
+	id 'com.android.application' //Add this when switching from lib to app
+//	id 'com.android.library' //Remove this when switching from lib to app
+	id 'org.jetbrains.kotlin.android'
+	id 'org.jetbrains.kotlin.kapt'
+	id 'kotlin-android'
+	id 'kotlin-kapt'
+	id 'org.jetbrains.kotlin.plugin.parcelize'
+}
+
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'realm-android'
 group='com.github.PGMacDesign'
@@ -17,36 +33,35 @@ allprojects {
 		maven { url "https://maven.google.com" }
 	}
 }
-buildscript{
-	repositories {
-		jcenter()
-		mavenCentral()
-		google()
-		maven { url "https://maven.google.com" }
-	}
-}
 android {
-	compileSdkVersion 33
-	buildToolsVersion '30.0.2'
+	namespace 'com.pgmacdesign.pgmactips'
+	compileSdk 34
 	defaultConfig {
-		//applicationId "com.pgmacdesign.pgmactips" //Remove this when switching from lib to app
-		minSdkVersion 15
-		targetSdkVersion 33
-		//multiDexEnabled true
+		applicationId "com.pgmacdesign.pgmactips" 
+		minSdkVersion 24
+		targetSdkVersion 34
+		multiDexEnabled true
 //        versionCode 1
 		versionName "1.5.2"
 	}
 //    dexOptions {
 //        javaMaxHeapSize "4g"
 //    }
+	buildFeatures {
+		viewBinding true
+		buildConfig = true
+	}
 	compileOptions {
-		sourceCompatibility JavaVersion.VERSION_1_8
-		targetCompatibility JavaVersion.VERSION_1_8
+		sourceCompatibility JavaVersion.VERSION_17
+		targetCompatibility JavaVersion.VERSION_17
+	}
+	kotlinOptions {
+		jvmTarget = '17'
 	}
 	lintOptions {
 		abortOnError false
 	}
-	configurations.all {
+	configurations.configureEach {
 		//Use this if you want a different support library version than the one here
 //        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
 //            def requested = details.requested
@@ -60,6 +75,10 @@ android {
 	buildTypes {
 		release {
 			consumerProguardFiles 'proguard-project.txt'
+			buildConfigField 'String', 'LIBRARY_PACKAGE_NAME', '"com.pgmacdesign.pgmactips"'
+		}
+		debug {
+			buildConfigField 'String', 'LIBRARY_PACKAGE_NAME', '"com.pgmacdesign.pgmactips"'
 		}
 //		release {
 //			minifyEnabled false
@@ -67,9 +86,6 @@ android {
 //		}
 	}
 	dependencies {
-		
-		def recyclerview_version = "1.1.0"
-		def annotation_version = "1.1.0"
 		
 		//Image Cropper. https://github.com/Yalantis/uCrop
 		api 'com.yalantis:ucrop:2.2.0'
@@ -86,9 +102,9 @@ android {
 		api 'com.android.volley:volley:1.2.1'
 		
 		//GSON. Link https://github.com/google/gson
-		api 'com.google.code.gson:gson:2.9.0'
+		api 'com.google.code.gson:gson:2.10.1'
 		//Being used in Turbolinks, may be required here
-		api 'org.apache.commons:commons-lang3:3.8'
+		api 'org.apache.commons:commons-lang3:3.12.0'
 		
 		//Picasso. Link: https://github.com/square/picasso
 		api 'com.squareup.picasso:picasso:2.71828'
@@ -104,7 +120,7 @@ android {
 		//Type-safe HTTP client for Android and Java: https://github.com/square/retrofit
 		api 'com.squareup.retrofit2:converter-gson:2.9.0'
 		//OKIO. Link: https://github.com/square/okio
-		api 'com.squareup.okio:okio:2.5.0'
+		api 'com.squareup.okio:okio:3.3.0'
 		
 		//Animations Base. Link: https://github.com/JakeWharton/NineOldAndroids
 //        api 'com.nineoldandroids:library:2.4.0'
@@ -118,25 +134,26 @@ android {
 		//////////////////////////////////////
 		
 		//Multi-dex. For more info: https://developer.android.com/studio/build/multidex.html
-		//api 'com.android.support:multidex:1.0.1'
+		api 'com.android.support:multidex:1.0.3'
 		
 		//Maps. Link: https://developers.google.com/android/guides/setup
-		api 'com.google.android.gms:play-services-maps:17.0.0'
+		api 'com.google.android.gms:play-services-maps:18.2.0'
 		
 		//Android support libs. Link: https://developer.android.com/topic/libraries/support-library/packages
 		
-		
-		implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
-		implementation "androidx.annotation:annotation:$annotation_version"
+		implementation "androidx.recyclerview:recyclerview:1.3.2"
+		implementation "androidx.annotation:annotation:1.7.1"
 //		api 'com.android.support:design:28.0.0'
 //		api 'com.android.support:support-annotations:28.0.0'
 
-		implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+		implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.20"
+		implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+		implementation 'com.google.android.material:material:1.12.0-alpha03'
 	}
 }
 // Publish default flavour as main artifact, otherwise the maven pom is not generated
 if( android.productFlavors.size() > 0 ) {
-	android.libraryVariants.all { variant ->
+	android.libraryVariants.configureEach { variant ->
 		if( android.publishNonDefault && variant.name == android.defaultPublishConfig ) {
 			def bundleTask = tasks["bundle${name.capitalize()}"]
 			artifacts {
@@ -150,7 +167,7 @@ if( android.productFlavors.size() > 0 ) {
 }
 dependencies {
 	api fileTree(include: ['*.jar'], dir: 'libs')
-	testImplementation 'junit:junit:4.12'
+	testImplementation 'junit:junit:4.13.2'
 	//compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
 repositories {

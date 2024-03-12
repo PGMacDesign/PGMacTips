@@ -38,6 +38,7 @@ public class ClientSSLSocketFactory extends SSLCertificateSocketFactory {
      * @param handshakeTimeoutMillis
      * @deprecated Use {@link #getDefault(int)} instead.
      */
+    @Deprecated
     private ClientSSLSocketFactory(int handshakeTimeoutMillis) {
         super(handshakeTimeoutMillis);
     }
