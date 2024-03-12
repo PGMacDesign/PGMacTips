@@ -8,10 +8,13 @@ import android.content.pm.PackageInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -60,7 +63,6 @@ import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -85,6 +87,12 @@ import retrofit2.http.GET;
         CustomAnnotationsBase.Dependencies.OkHttp3LoggingInterceptor, CustomAnnotationsBase.Dependencies.Okio})
 public class MyTestActivity  extends Activity implements View.OnClickListener {
 
+	private static final String[] dbSpinnerOptions = {
+		"Write To DB", //0
+		"Read From DB", //1
+		"Update Row In DB", //2
+		"Delete From DB"	//3
+	};
     //Please note! these are for testing purposes only. I do not own the rights to the images below, I am referencing the URL link for testing loading times of images
     private static final String LOTR_TEST_URL_1 = "https://vignette.wikia.nocookie.net/lotr/images/8/87/Ringstrilogyposter.jpg/revision/latest?cb=20070806215413";
     private static final String LOTR_TEST_URL_2 = "https://vignette.wikia.nocookie.net/lotr/images/3/3a/The_Lord_of_the_Rings_Characters.jpg/revision/latest?cb=20150328111911";
@@ -104,23 +112,36 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
     private DatabaseUtilities dbUtilities;
     private CameraMediaUtilities cam;
     private BiometricVerification biometricVerification;
+	private int spinnerPosition = -1;
    // private MultipurposeEditText et;
     private static final String CUSTOM_STRING = "-PAT";
     private ContactUtilities contactUtilities;
     private OnTaskCompleteListener contactUtilsListener;
 
     private RelativeLayout testing_layout_rootview;
+    private Spinner testing_layout_spinner;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(com.pgmacdesign.pgmactips.R.layout.testing_layout);
-        //et = (MultipurposeEditText) this.findViewById(R.id.et);
-        //et.setState(MultipurposeEditText.EditTextState.FOCUSED);
+		dbUtilities = new DatabaseUtilities(this);
 	    SampleMyApplication.getInstance();
         TextView tv1 = new TextView(this);
         tv1.setTextColor(getResources().getColor(com.pgmacdesign.pgmactips.R.color.black));
         this.testing_layout_rootview = this.findViewById(com.pgmacdesign.pgmactips.R.id.testing_layout_rootview);
+        this.testing_layout_spinner = this.findViewById(com.pgmacdesign.pgmactips.R.id.testing_layout_spinner);
+		this.testing_layout_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				spinnerPosition = position;
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {}
+		});
+		ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, dbSpinnerOptions);
+		this.testing_layout_spinner.setAdapter(adapter);
         button = (Button) this.findViewById(com.pgmacdesign.pgmactips.R.id.button);
 	    testing_layout_tv = (TextView) this.findViewById(com.pgmacdesign.pgmactips.R.id.testing_layout_tv);
 	    pganimated_svg_view = (PGAnimatedSvgView) this.findViewById(com.pgmacdesign.pgmactips.R.id.pganimated_svg_view);
@@ -740,58 +761,6 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
 		}
 	}
 
-    private <E extends Enum<E>> void  init(){
-
-        //contactQuery();
-        //temp();
-        //temp2();
-
-
-
-        //Custom stuff here
-        dbUtilities = new DatabaseUtilities(this);
-
-        //writeDBStuff();
-        //moveDBFile();
-        //queryDB();
-        //deleteStuff();
-        //deleteCustom();
-        //deleteAll();
-        //superDeleteEverything();
-
-	    List<Enum> testEnum1s = new ArrayList<>();
-	    testEnum1s.add(TestEnum1.ONE);
-	    testEnum1s.add(TestEnum1.TWO);
-	    testEnum1s.add(TestEnum1.THREE);
-	    testEnum1s.add(TestEnum1.FOUR);
-	    testEnum1s.add(TestEnum1.FIVE);
-	    List<Enum> testEnum2s = new ArrayList<>();
-	    testEnum2s.add(TestEnum2.A);
-	    testEnum2s.add(TestEnum2.B);
-	    testEnum2s.add(TestEnum2.C);
-	    testEnum2s.add(TestEnum2.D);
-	    List<Enum> testEnum3s = new ArrayList<>();
-	    testEnum3s.add(TestEnum3.Pat);
-	    testEnum3s.add(TestEnum3.Mac);
-
-	    Map<Integer, List<Enum>> myEnums = new HashMap<>();
-	    myEnums.put(1, testEnum1s);
-	    myEnums.put(2, testEnum2s);
-	    myEnums.put(3, testEnum3s);
-
-	    Map<Integer, Enum> myInitialEnums = new HashMap<>();
-	    myInitialEnums.put(1, TestEnum1.ONE);
-	    myInitialEnums.put(2, TestEnum2.A);
-	    myInitialEnums.put(3, TestEnum3.Pat);
-	    try {
-		    StackManager s = new StackManager(myEnums, myInitialEnums);
-		    s.appendToTheStack(1, TestEnum1.THREE);
-
-	    } catch (StackManagerException e1){
-	    	L.m("e1 == " + e1.toString());
-	    }
-    }
-
     public static enum TestEnum1 {
         ONE, TWO, THREE, FOUR, FIVE
     }
@@ -968,6 +937,22 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 
+		if(this.spinnerPosition >= 0){
+			switch (this.spinnerPosition){
+				case 0: //"Write To DB"
+					writeDBStuff();
+					return;
+				case 1: //"Read From DB"
+					retrieveDBStuff();
+					return;
+				case 2: //"Update Row In DB"
+					updateDBStuff();
+					return;
+				case 3: //"Delete From DB"
+					deleteDBStuff();
+					return;
+			}
+		}
 	    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
 		    this.init3();
 	    }
@@ -1267,6 +1252,79 @@ public class MyTestActivity  extends Activity implements View.OnClickListener {
 	    }
     }
 	
-	
+	//region DB Utils and Recommendations
+
+	private void writeDBStuff(){
+		SomeBasicObject smo = new SomeBasicObject();
+		smo.age = SomeBasicObject.SOME_AGE;
+		smo.name = SomeBasicObject.SOME_NAME;
+		boolean wasSaved = this.dbUtilities.persistObject(SomeBasicObject.class, smo);
+		String res = "Was saved? " + wasSaved;
+		this.testing_layout_tv.setText(res);
+	}
+
+	private void writeDBStuffCustom(String custom){
+		SomeBasicObject smo = new SomeBasicObject();
+		smo.age = SomeBasicObject.SOME_AGE;
+		smo.name = SomeBasicObject.SOME_NAME;
+		boolean wasSaved = this.dbUtilities.persistObjectCustom(SomeBasicObject.class, smo, custom);
+		String res = "Was saved? " + wasSaved;
+		this.testing_layout_tv.setText(res);
+	}
+
+	private void retrieveDBStuff(){
+		SomeBasicObject smo = this.dbUtilities.getPersistedObject(SomeBasicObject.class);
+		String res = "object == " + ((smo == null) ? "null" : new Gson().toJson(smo));
+		this.testing_layout_tv.setText(res);
+	}
+
+	private void retrieveDBStuffCustom(String custom){
+		SomeBasicObject smo = this.dbUtilities.getPersistedObjectCustom(SomeBasicObject.class, custom);
+		String res = "object == " + ((smo == null) ? "null" : new Gson().toJson(smo));
+		this.testing_layout_tv.setText(res);
+	}
+
+	private void updateDBStuff(){
+		SomeBasicObject smo = this.dbUtilities.getPersistedObject(SomeBasicObject.class);
+		String res = "Successfully updated? ";
+		if(smo == null){
+			res = res + "false";
+		} else {
+			smo.age -= 1;
+			boolean didUpdate = this.dbUtilities.persistObject(SomeBasicObject.class, smo);
+			res = res + didUpdate;
+		}
+		this.testing_layout_tv.setText(res);
+	}
+
+	private void updateDBStuffCustom(String custom){
+		SomeBasicObject smo = this.dbUtilities.getPersistedObjectCustom(SomeBasicObject.class, custom);
+		smo.age -= 1;
+		smo.name = smo.name + "-" + custom;
+		boolean didUpdate = this.dbUtilities.persistObject(SomeBasicObject.class, smo);
+		String res = "Successfully updated? " + didUpdate;
+		this.testing_layout_tv.setText(res);
+	}
+
+	private void deleteDBStuff(){
+		boolean didDelete = this.dbUtilities.deletePersistedObject(SomeBasicObject.class);
+		String res = "Successfully deleted? " + didDelete;
+		this.testing_layout_tv.setText(res);
+	}
+
+	private void deleteDBStuffCustom(String custom){
+		boolean didDelete = this.dbUtilities.deletePersistedObjectCustom(SomeBasicObject.class, custom);
+		String res = "Successfully deleted? " + didDelete;
+		this.testing_layout_tv.setText(res);
+	}
+
+	public static class SomeBasicObject {
+		public static final String SOME_NAME = "some name";
+		public static final int SOME_AGE = 99;
+		private String name;
+		private int age;
+	}
+
+	//endregion
 	
 }

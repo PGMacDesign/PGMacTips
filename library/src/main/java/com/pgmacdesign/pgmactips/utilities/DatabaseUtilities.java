@@ -1943,6 +1943,8 @@ public class DatabaseUtilities {
 		if (deleteIfNeeded) {
 			builder.deleteRealmIfMigrationNeeded();
 		}
+		builder.allowQueriesOnUiThread(true);
+		builder.allowWritesOnUiThread(true);
 		builder.schemaVersion(schemaVersion);
 		builder.modules(new DatabaseUtilities.PGMacTipsModule());
 		//Realm Config

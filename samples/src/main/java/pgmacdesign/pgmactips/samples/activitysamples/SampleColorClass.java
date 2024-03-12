@@ -35,12 +35,9 @@ import pgmacdesign.pgmactips.samples.R;
  */
 public class SampleColorClass extends AppCompatActivity {
 	
-	
-	@BindView(R.id.colorPickerView)
+
 	ColorPickerView colorPickerView;
-	@BindView(R.id.sample_color_results)
 	TextView sample_color_results;
-	@BindView(R.id.sample_color_lv)
 	ListView sample_color_lv;
 	
 	//Vars
@@ -59,7 +56,9 @@ public class SampleColorClass extends AppCompatActivity {
 	}
 	
 	private void initUI(){
-		ButterKnife.bind(this);
+		this.colorPickerView = this.findViewById(R.id.colorPickerView);
+		this.sample_color_results = this.findViewById(R.id.sample_color_results);
+		this.sample_color_lv = this.findViewById(R.id.sample_color_lv);
 		this.colorPickerView.setColorListener((ColorEnvelopeListener) (envelope, fromUser) -> {
 			userPickedColor(envelope);
 		});
@@ -148,8 +147,8 @@ public class SampleColorClass extends AppCompatActivity {
 		public MySimpleAdapter(Context context, int resource) {
 			super(context, resource);
 			this.layoutInflater = LayoutInflater.from(context);
-			this.colorBlack = ContextCompat.getColor(context, R.color.black);
-			this.colorWhite = ContextCompat.getColor(context, R.color.white);
+			this.colorBlack = ContextCompat.getColor(context, com.pgmacdesign.pgmactips.R.color.black);
+			this.colorWhite = ContextCompat.getColor(context, com.pgmacdesign.pgmactips.R.color.white);
 		}
 		
 		public void updateData(List<SimpleObject> data){

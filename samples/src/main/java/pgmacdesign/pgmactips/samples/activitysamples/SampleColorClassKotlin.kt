@@ -29,11 +29,8 @@ import java.util.ArrayList
 class SampleColorClassKotlin : AppCompatActivity() {
 
 
-    @BindView(R.id.colorPickerView)
     internal var colorPickerView: ColorPickerView? = null
-    @BindView(R.id.sample_color_results)
     internal var sample_color_results: TextView? = null
-    @BindView(R.id.sample_color_lv)
     internal var sample_color_lv: ListView? = null
 
     //Vars
@@ -51,7 +48,9 @@ class SampleColorClassKotlin : AppCompatActivity() {
     }
 
     private fun initUI() {
-        ButterKnife.bind(this)
+        this.colorPickerView = this.findViewById(R.id.colorPickerView)
+        this.sample_color_results = this.findViewById(R.id.sample_color_results)
+        this.sample_color_lv = this.findViewById(R.id.sample_color_lv)
         val cc = ColorEnvelopeListener { envelope, fromUser ->
             userPickedColor(envelope)
         }
@@ -140,8 +139,8 @@ class SampleColorClassKotlin : AppCompatActivity() {
 
         init {
             this.layoutInflater = LayoutInflater.from(context)
-            this.colorBlack = ContextCompat.getColor(context, R.color.black)
-            this.colorWhite = ContextCompat.getColor(context, R.color.white)
+            this.colorBlack = ContextCompat.getColor(context, com.pgmacdesign.pgmactips.R.color.black)
+            this.colorWhite = ContextCompat.getColor(context, com.pgmacdesign.pgmactips.R.color.white)
         }
 
         fun updateData(data: List<SimpleObject>) {

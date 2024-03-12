@@ -19,6 +19,14 @@
         />
     -->
 
+	<Spinner
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_above="@+id/button"
+		android:layout_margin="32dp"
+		android:id="@+id/testing_layout_spinner"
+		/>
+
 	<Button
 		android:id="@+id/button"
 		android:layout_width="match_parent"
