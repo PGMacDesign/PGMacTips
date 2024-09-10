@@ -463,7 +463,7 @@ public class NumberUtilities {
     public static int parseIntegerSafe(String intx, int fallbackNumber){
         try {
             return Integer.parseInt(intx);
-        } catch (NumberFormatException e){
+        } catch (Exception e){
             return fallbackNumber;
         }
     }
@@ -477,7 +477,7 @@ public class NumberUtilities {
     public static long parseLongSafe(String lng, long fallbackNumber){
         try {
             return Long.parseLong(lng);
-        } catch (NumberFormatException e){
+        } catch (Exception e){
             return fallbackNumber;
         }
     }
@@ -491,7 +491,7 @@ public class NumberUtilities {
     public static double parseDoubleSafe(String dbl, double fallbackNumber){
         try {
             return Double.parseDouble(dbl);
-        } catch (NumberFormatException e){
+        } catch (Exception e){
             return fallbackNumber;
         }
     }
@@ -505,7 +505,7 @@ public class NumberUtilities {
     public static float parseFloatSafe(String flt, float fallbackNumber){
         try {
             return Long.parseLong(flt);
-        } catch (NumberFormatException e){
+        } catch (Exception e){
             return fallbackNumber;
         }
     }
