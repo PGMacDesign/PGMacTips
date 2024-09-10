@@ -11,12 +11,11 @@ For a list of changes and the differences in versions, please see the [Changelog
 To install, insert this into your projects root build.gradle file
 
 ```groovy
-allprojects {
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        jcenter()
-        google()
-        maven { url "https://jitpack.io" }
-        maven { url "https://maven.google.com" }
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
     }
 }
 ```
@@ -24,7 +23,7 @@ allprojects {
 And include this in your dependencies section of your module .gradle file:
 
 ```groovy
-implementation ('com.github.PGMacDesign:PGMacTips:1.5.2')
+implementation ('com.github.PGMacDesign:PGMacTips:1.6.0')
 ```
 
 Having trouble with Jitpack? [This link](https://jitpack.io/#pgmacdesign/PGMacTips) here will show what is going on with the current build as well as give you instructions on integrating Jitpack into your project.

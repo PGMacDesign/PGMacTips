@@ -12,8 +12,8 @@ buildscript{
 	}
 }
 plugins {
-	id 'com.android.application' //Add this when switching from lib to app
-//	id 'com.android.library' //Remove this when switching from lib to app
+//	id 'com.android.application' //Add this when switching from lib to app
+	id 'com.android.library' //Remove this when switching from lib to app
 	id 'org.jetbrains.kotlin.android'
 	id 'org.jetbrains.kotlin.kapt'
 	id 'kotlin-android'
@@ -37,12 +37,11 @@ android {
 	namespace 'com.pgmacdesign.pgmactips'
 	compileSdk 34
 	defaultConfig {
-		applicationId "com.pgmacdesign.pgmactips" 
 		minSdkVersion 24
 		targetSdkVersion 34
 		multiDexEnabled true
 //        versionCode 1
-		versionName "1.5.2"
+		versionName "1.6.0"
 	}
 //    dexOptions {
 //        javaMaxHeapSize "4g"
