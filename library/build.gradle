@@ -108,7 +108,7 @@ android {
 		//Picasso. Link: https://github.com/square/picasso
 		api 'com.squareup.picasso:picasso:2.71828'
 		//Picasso Transformations: https://github.com/wasabeef/picasso-transformations
-		api 'jp.wasabeef:picasso-transformations:2.2.1'
+		api 'jp.wasabeef:picasso-transformations:2.4.0'
 		
 		//Retrofit, Retrofit Converters, and OKHTTP.
 		//Retrofit - https://github.com/square/retrofit
